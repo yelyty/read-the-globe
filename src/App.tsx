@@ -1,71 +1,48 @@
 import { useState, useEffect, useCallback } from "react";
-import { useFormState, useFormStatus } from "react-dom";
-import { supabase } from "./utils/supabase";
+
 import WorldMap from "./WorldMap";
 import ProgressBar from "./ProgressBar";
+import AddBook from "./AddBook";
 import Dialog, { DialogContent, DialogTitle } from "./components/Dialog";
 import toCountryData from "./helpers/toCountryData";
+import type { BookEntry } from "./types";
 
 import "./App.css";
+import getBooks from "./api/getBooks";
 
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  return (
-    <button type="submit" disabled={pending}>
-      Save
-    </button>
-  );
-}
-
-async function saveAction(_: any, formData: FormData) {
-  const countryCode = formData.get("countryCode") as string;
-  const title = formData.get("title") as string;
-  const author = formData.get("author") as string;
-
-  const { error } = await supabase.from("books").insert({
-    title,
-    author,
-    countryCode,
-    created_at: new Date().toISOString(),
-  });
-
-  if (error) {
-    return { success: false, error: error.message };
-  }
-
-  return { success: true, error: null };
-}
+type SelectedCountry = {
+  code: string;
+  name: string;
+};
 
 export default function App() {
-  const [books, setBooks] = useState([]);
+  const [books, setBooks] = useState<BookEntry[]>([]);
   const [openDialog, setOpenDialog] = useState(false);
-  const [state, formAction] = useFormState(saveAction, {
-    success: false,
-    error: null,
+
+  const [selectedCountry, setSelectedCountry] = useState<SelectedCountry>({
+    code: "",
+    name: "",
   });
 
-  // Todo: store both in the same state
-  const [selectedCountry, setSelectedCountry] = useState("");
-  const [selectedCountryCode, setSelectedCountryCode] = useState("");
-
   useEffect(() => {
-    async function getBooks() {
-      const { data: books } = await supabase.from("books").select();
-
+    const loadBooks = async () => {
+      const books = await getBooks();
       if (books) {
         setBooks(books);
       }
-    }
+    };
 
-    getBooks();
+    loadBooks();
   }, []);
 
   const countryData = toCountryData(books);
 
   const onCountryClick = useCallback((countryCode: string, name: string) => {
     setOpenDialog(true);
-    setSelectedCountry(name);
-    setSelectedCountryCode(countryCode);
+    setSelectedCountry({
+      code: countryCode,
+      name,
+    });
   }, []);
 
   return (
@@ -77,21 +54,7 @@ export default function App() {
       <Dialog isOpen={openDialog} onClose={() => setOpenDialog(false)}>
         <DialogTitle>What have you read?</DialogTitle>
         <DialogContent>
-          <form action={formAction}>
-            <input name="country" value={selectedCountry} />
-            <input type="text" name="title" />
-            <input type="text" name="author" />
-            <input
-              type="hidden"
-              name="countryCode"
-              value={selectedCountryCode}
-            />
-
-            <SubmitButton />
-
-            {state?.error && <p>{state.error}</p>}
-            {state?.success && <p>Saved!</p>}
-          </form>
+          <AddBook selectedCountry={selectedCountry} />
         </DialogContent>
       </Dialog>
     </>

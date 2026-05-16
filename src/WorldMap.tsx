@@ -10,10 +10,10 @@ import type { CountryData } from "./types";
 const GEO_URL =
   "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
-interface WorldMapProps {
+type WorldMapProps = {
   countryData: CountryData;
   onCountryClick: (code: string, name: string) => void;
-}
+};
 
 const WorldMap = memo(({ countryData, onCountryClick }: WorldMapProps) => {
   const [tooltip, setTooltip] = useState("");

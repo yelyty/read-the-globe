@@ -1,14 +1,14 @@
 :root {
+  --color-primary: pink;
   --color-overlay: rgba(0, 0, 0, 0.5);
   --color-bg: #ffffff;
   --color-text: #1a1a1a;
   --color-text-muted: #6b6b6b;
   --color-text-secondary: #888888;
   --color-text-disabled: #b0b0b0;
-  --radius: 0.75rem;
+  --color-border: blue;
+  --color-error: red;
+  --radius: 15px;
 
-  
-  
-    font-family: "DM Sans", system-ui, sans-serif;
-
+  font-family: "DM Sans", system-ui, sans-serif;
 }
