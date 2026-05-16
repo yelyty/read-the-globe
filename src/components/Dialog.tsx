@@ -51,12 +51,4 @@ export const DialogContent = ({ children }: DialogContentProps) => {
   return <div className="content">{children}</div>;
 };
 
-type DialogActionsProps = {
-  children: ReactNode;
-};
-
-export const DialogActions = ({ children }: DialogActionsProps) => {
-  return <div className="actions">{children}</div>;
-};
-
 export default Dialog;
