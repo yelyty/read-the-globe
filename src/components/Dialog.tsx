@@ -4,9 +4,15 @@ type DialogProps = {
   isOpen: boolean;
   children: ReactNode;
   onClose: () => void;
+  canClose?: boolean;
 };
 
-const Dialog = ({ isOpen, onClose, children }: DialogProps) => {
+const Dialog = ({
+  isOpen,
+  onClose,
+  children,
+  canClose = true,
+}: DialogProps) => {
   if (!isOpen) return null;
 
   const handleOverlayClick = (e: React.MouseEvent) => {
@@ -18,13 +24,15 @@ const Dialog = ({ isOpen, onClose, children }: DialogProps) => {
   return (
     <div className="overlay" onClick={handleOverlayClick}>
       <div className="dialog">
-        <button
-          className="closeButton"
-          onClick={onClose}
-          aria-label="Close dialog"
-        >
-          X
-        </button>
+        {canClose && (
+          <button
+            className="closeButton"
+            onClick={onClose}
+            aria-label="Close dialog"
+          >
+            X
+          </button>
+        )}
         {children}
       </div>
     </div>

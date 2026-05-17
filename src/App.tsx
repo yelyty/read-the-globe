@@ -6,9 +6,12 @@ import AddBook from "./AddBook";
 import Dialog, { DialogContent, DialogTitle } from "./components/Dialog";
 import getBooks from "./api/getBooks";
 import toCountryData from "./helpers/toCountryData";
+import type { User } from "@supabase/supabase-js";
 import type { BookEntry } from "./types";
 
 import "./App.css";
+import LoginForm from "./LoginForm";
+import { supabase } from "./utils/supabase";
 
 type SelectedCountry = {
   code: string;
@@ -18,6 +21,9 @@ type SelectedCountry = {
 export default function App() {
   const [books, setBooks] = useState<BookEntry[]>([]);
   const [openDialog, setOpenDialog] = useState(false);
+
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const [selectedCountry, setSelectedCountry] = useState<SelectedCountry>({
     code: "",
@@ -48,6 +54,26 @@ export default function App() {
   const closeDialog = useCallback(() => {
     setOpenDialog(false);
   }, []);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user);
+      setLoading(false);
+    });
+
+    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+      console.log(session?.user);
+      setUser(session?.user ?? null);
+    });
+
+    return () => data.subscription.unsubscribe();
+  }, []);
+
+  if (loading) return null;
+
+  if (!user) {
+    return <LoginForm />;
+  }
 
   return (
     <>

@@ -1,3 +1,15 @@
+/* Login */
+
+.login-wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.login-button {
+	background-color: var(--color-primary);
+}
+
 /* App container */
 .wrapper {
   background-color: var(--color-bg);
@@ -139,7 +151,6 @@
   padding: 0.75rem 1rem;
   border-radius: var(--radius);
   cursor: pointer;	
-  background-color: var(--color-bg);
 }
 
 .button:hover {
