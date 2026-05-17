@@ -18,19 +18,24 @@ type WorldMapProps = {
 const WorldMap = memo(({ countryData, onCountryClick }: WorldMapProps) => {
   const [tooltip, setTooltip] = useState("");
 
+  const displayTooltip = (code: string, name: string) => {
+    const book = countryData[code];
+    setTooltip(book ? `${name} — "${book.title}" by ${book.author}` : name);
+  };
+
+  const clearTooltip = () => {
+    setTooltip("");
+  };
+
   return (
-    <div className="relative w-full">
-      {/* {tooltip && <div className="">{tooltip}</div>} */}
-      <ComposableMap
-        projectionConfig={{ rotate: [-10, 0, 0], scale: 147 }}
-        className="w-full h-auto"
-      >
+    <div className="map-wrapper">
+      {tooltip && <div className="">{tooltip}</div>}
+      <ComposableMap projection="geoEqualEarth">
         <ZoomableGroup>
           <Geographies geography={GEO_URL}>
             {({ geographies }) =>
               geographies.map((geo) => {
                 const code = geo.id;
-                console.log(code);
                 const name = geo.properties.name;
                 const isRead = !!countryData[code];
                 return (
@@ -38,36 +43,29 @@ const WorldMap = memo(({ countryData, onCountryClick }: WorldMapProps) => {
                     key={geo.rsmKey}
                     geography={geo}
                     onClick={() => onCountryClick(code, name)}
-                    onMouseEnter={() => {
-                      const book = countryData[code];
-                      setTooltip(
-                        book
-                          ? `${name} — "${book.title}" by ${book.author}`
-                          : name,
-                      );
-                    }}
-                    onMouseLeave={() => setTooltip("")}
+                    onMouseEnter={() => displayTooltip(code, name)}
+                    onMouseLeave={clearTooltip}
                     style={{
                       default: {
                         fill: isRead
-                          ? "hsl(152, 45%, 30%)"
-                          : "hsl(39, 20%, 88%)",
-                        stroke: "hsl(33, 20%, 80%)",
+                          ? "var(--color-primary)"
+                          : "var(--color-secondary)",
+                        stroke: "var(--color-stroke)",
                         strokeWidth: 0.5,
                         outline: "none",
                         transition: "fill 0.2s ease",
                       },
                       hover: {
                         fill: isRead
-                          ? "hsl(152, 45%, 38%)"
-                          : "hsl(152, 30%, 75%)",
-                        stroke: "hsl(33, 20%, 70%)",
+                          ? "var(--color-text)"
+                          : "var(--color-text)",
+                        stroke: "var(--color-stroke)",
                         strokeWidth: 0.75,
                         outline: "none",
                         cursor: "pointer",
                       },
                       pressed: {
-                        fill: "hsl(152, 45%, 25%)",
+                        fill: "var(--color-primary)",
                         outline: "none",
                       },
                     }}

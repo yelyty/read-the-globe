@@ -1,8 +1,10 @@
 :root {
   --color-primary: rgb(255, 132, 38);
+  --color-secondary: rgb(186, 175, 146);
   --color-overlay: rgba(0, 0, 0, 0.5);
   --color-bg: rgb(242, 238, 227);
   --color-text: rgb(120, 94, 77);
+  --color-stroke: hsl(33, 20%, 80%);
   --color-text-muted: #6b6b6b;
   --color-text-secondary: rgb(120, 94, 77);
   --color-text-disabled: #b0b0b0;
