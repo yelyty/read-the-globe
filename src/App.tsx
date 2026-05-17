@@ -47,7 +47,7 @@ export default function App() {
 
   return (
     <>
-      <div>
+      <div className="wrapper">
         <ProgressBar countriesCount={books.length} />
         <WorldMap countryData={countryData} onCountryClick={onCountryClick} />
       </div>

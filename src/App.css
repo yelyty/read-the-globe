@@ -1,3 +1,9 @@
+/* App container */
+.wrapper {
+  background-color: var(--color-bg);
+  padding: 1rem 2rem;
+}
+
 /* Dialog */
 .overlay {
   position: fixed;
@@ -80,7 +86,7 @@
   &:focus {
     outline: none;
     border-color: var(--color-primary);
-	border-width: 2px;
+    border-width: 2px;
   }
 }
 
@@ -92,25 +98,65 @@
 /* Button */
 
 .button {
-	outline: none;
-	border: none;
-	padding: 10px;
-	border-radius: var(--radius);
+  outline: none;
+  border: none;
+  padding: 10px;
+  border-radius: var(--radius);
 }
 
 .submit {
-	background-color: var(--color-primary);
+  background-color: var(--color-primary);
 }
 
 /* Form */
 
 .form {
-	display: flex;
-	flex-direction: column;
-	gap: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .actions {
-	display: flex;
-	align-items: end;
+  display: flex;
+  align-items: end;
+}
+
+/* Progress Bar */
+
+.primary {
+  color: var(--color-primary);
+}
+
+.emphasized {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.secondary {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+.progress-bar-wrapper {
+  flex: 1;
+  min-width: 0;
+}
+
+.progress-bar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.progress {
+  height: 100%;
+  background-color: var(--color-primary);
+}
+
+.progress-bar {
+  height: 10px;
+  background-color: var(--color-text-secondary);
+  border-radius: 9999px;
+  overflow: hidden;
 }
