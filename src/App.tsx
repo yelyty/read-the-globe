@@ -33,7 +33,7 @@ export default function App() {
     };
 
     loadBooks();
-  }, []);
+  }, [openDialog]);
 
   const countryData = toCountryData(books);
 
