@@ -16,13 +16,14 @@ type AddBookProps = {
     code: string;
     name: string;
   };
+  onCancel: () => void;
 };
 export type SaveBookState = {
   success: boolean;
   error: string | null;
 };
 
-const AddBook = ({ selectedCountry }: AddBookProps) => {
+const AddBook = ({ selectedCountry, onCancel }: AddBookProps) => {
   const [state, formAction] = useFormState(saveBook, {
     success: false,
     error: null,
@@ -37,7 +38,7 @@ const AddBook = ({ selectedCountry }: AddBookProps) => {
       <TextInput type="hidden" name="countryCode" value={code} />
 
       <div className="actions">
-        <button type="button" className="button">
+        <button type="button" className="button" onClick={onCancel}>
           Cancel
         </button>
         <SubmitButton />
