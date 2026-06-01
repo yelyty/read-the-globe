@@ -12,6 +12,7 @@ import type { BookEntry } from "./types";
 import "./App.css";
 import LoginForm from "./LoginForm";
 import { supabase } from "./utils/supabase";
+import Header from "./Header";
 
 type SelectedCountry = {
   code: string;
@@ -78,6 +79,7 @@ export default function App() {
   return (
     <>
       <div className="wrapper">
+        <Header />
         <ProgressBar countriesCount={books.length} />
         <WorldMap countryData={countryData} onCountryClick={onCountryClick} />
       </div>

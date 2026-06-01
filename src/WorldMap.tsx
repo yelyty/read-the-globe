@@ -29,9 +29,6 @@ const WorldMap = memo(({ countryData, onCountryClick }: WorldMapProps) => {
 
   return (
     <div className="map-wrapper">
-      <div className="tooltip">
-        <span className="tooltip-text">{tooltip}</span>
-      </div>
       <ComposableMap projection="geoEqualEarth">
         <ZoomableGroup>
           <Geographies geography={GEO_URL}>
@@ -50,8 +47,8 @@ const WorldMap = memo(({ countryData, onCountryClick }: WorldMapProps) => {
                     style={{
                       default: {
                         fill: isRead
-                          ? "var(--color-primary)"
-                          : "var(--color-secondary)",
+                          ? "var(--color-secondary)"
+                          : "var(--color-text-muted)",
                         stroke: "var(--color-stroke)",
                         strokeWidth: 0.5,
                         outline: "none",

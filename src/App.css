@@ -8,12 +8,12 @@
 
 .login-button {
 	background-color: var(--color-primary);
+	color: var(--color-text-secondary)
 }
 
 /* App container */
 .wrapper {
   background-color: var(--color-bg);
-  padding: 1rem 2rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -147,6 +147,8 @@
 
 .button {
   outline: none;
+  background-color: var(--color-primary);
+  color: var(--color-text);
   border: none;
   padding: 0.75rem 1rem;
   border-radius: var(--radius);
@@ -213,4 +215,24 @@
   background-color: var(--color-text-secondary);
   border-radius: 9999px;
   overflow: hidden;
+}
+
+/* Header */
+.header {
+	display: flex;
+justify-content: space-between;
+align-items: center;
+	border-bottom: 1px solid var(--color-border);
+}
+
+.right-header {
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	gap: 20px;
+}
+
+.title {
+	color: var(--color-text);
+	font-size: 20px;
 }
