@@ -13,6 +13,7 @@ import "./App.css";
 import LoginForm from "./LoginForm";
 import { supabase } from "./utils/supabase";
 import Header from "./Header";
+import ReadBooksSection from "./ReadBooksSection";
 
 type SelectedCountry = {
   code: string;
@@ -82,6 +83,7 @@ export default function App() {
         <Header />
         <ProgressBar countriesCount={books.length} />
         <WorldMap countryData={countryData} onCountryClick={onCountryClick} />
+        <ReadBooksSection books={books} />
       </div>
       <Dialog isOpen={openDialog} onClose={closeDialog}>
         <DialogTitle>What have you read?</DialogTitle>
