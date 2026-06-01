@@ -1,10 +1,5 @@
 import { useState, memo } from "react";
-import {
-  ComposableMap,
-  Geographies,
-  Geography,
-  ZoomableGroup,
-} from "react-simple-maps";
+import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 import type { CountryData } from "./types";
 
 const GEO_URL =
@@ -30,50 +25,46 @@ const WorldMap = memo(({ countryData, onCountryClick }: WorldMapProps) => {
   return (
     <div className="map-wrapper">
       <ComposableMap projection="geoEqualEarth">
-        <ZoomableGroup>
-          <Geographies geography={GEO_URL}>
-            {({ geographies }) =>
-              geographies.map((geo) => {
-                const code = geo.id;
-                const name = geo.properties.name;
-                const isRead = !!countryData[code];
-                return (
-                  <Geography
-                    key={geo.rsmKey}
-                    geography={geo}
-                    onClick={() => onCountryClick(code, name)}
-                    onMouseEnter={() => displayTooltip(code, name)}
-                    onMouseLeave={clearTooltip}
-                    style={{
-                      default: {
-                        fill: isRead
-                          ? "var(--color-secondary)"
-                          : "var(--color-text-muted)",
-                        stroke: "var(--color-stroke)",
-                        strokeWidth: 0.5,
-                        outline: "none",
-                        transition: "fill 0.2s ease",
-                      },
-                      hover: {
-                        fill: isRead
-                          ? "var(--color-text)"
-                          : "var(--color-text)",
-                        stroke: "var(--color-stroke)",
-                        strokeWidth: 0.75,
-                        outline: "none",
-                        cursor: "pointer",
-                      },
-                      pressed: {
-                        fill: "var(--color-primary)",
-                        outline: "none",
-                      },
-                    }}
-                  />
-                );
-              })
-            }
-          </Geographies>
-        </ZoomableGroup>
+        <Geographies geography={GEO_URL}>
+          {({ geographies }) =>
+            geographies.map((geo) => {
+              const code = geo.id;
+              const name = geo.properties.name;
+              const isRead = !!countryData[code];
+              return (
+                <Geography
+                  key={geo.rsmKey}
+                  geography={geo}
+                  onClick={() => onCountryClick(code, name)}
+                  onMouseEnter={() => displayTooltip(code, name)}
+                  onMouseLeave={clearTooltip}
+                  style={{
+                    default: {
+                      fill: isRead
+                        ? "var(--color-secondary)"
+                        : "var(--color-text-muted)",
+                      stroke: "var(--color-stroke)",
+                      strokeWidth: 0.5,
+                      outline: "none",
+                      transition: "fill 0.2s ease",
+                    },
+                    hover: {
+                      fill: isRead ? "var(--color-text)" : "var(--color-text)",
+                      stroke: "var(--color-stroke)",
+                      strokeWidth: 0.75,
+                      outline: "none",
+                      cursor: "pointer",
+                    },
+                    pressed: {
+                      fill: "var(--color-primary)",
+                      outline: "none",
+                    },
+                  }}
+                />
+              );
+            })
+          }
+        </Geographies>
       </ComposableMap>
     </div>
   );
