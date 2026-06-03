@@ -1,3 +1,4 @@
+import Book from "./Book";
 import type { BookEntry } from "./types";
 
 type ReadBooksSectionProps = {
@@ -7,10 +8,16 @@ type ReadBooksSectionProps = {
 const ReadBooksSection = ({ books }: ReadBooksSectionProps) => {
   return (
     <div className="read-books-wrapper">
-      <span className="section-title">Read books</span>
-      {books.map((book) => (
-        <div>{book.title}</div>
-      ))}
+      <div className="book-list">
+        {books.map((book) => (
+          <Book
+            key={book.id}
+            id={book.id}
+            title={book.title}
+            author={book.author}
+          />
+        ))}
+      </div>
     </div>
   );
 };

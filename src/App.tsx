@@ -81,7 +81,11 @@ export default function App() {
     <>
       <div className="wrapper">
         <Header />
-        <ProgressBar countriesCount={books.length} />
+        <div className="progress-wrapper">
+          <h2>My reading journey</h2>
+          <ProgressBar countriesCount={books.length} />
+        </div>
+
         <WorldMap countryData={countryData} onCountryClick={onCountryClick} />
         <ReadBooksSection books={books} />
       </div>

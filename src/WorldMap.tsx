@@ -1,5 +1,10 @@
 import { useState, memo } from "react";
-import { ComposableMap, Geographies, Geography } from "react-simple-maps";
+import {
+  ComposableMap,
+  Geographies,
+  Geography,
+  Graticule,
+} from "react-simple-maps";
 import type { CountryData } from "./types";
 
 const GEO_URL =
@@ -24,7 +29,13 @@ const WorldMap = memo(({ countryData, onCountryClick }: WorldMapProps) => {
 
   return (
     <div className="map-wrapper">
-      <ComposableMap projection="geoEqualEarth">
+      <ComposableMap
+        projection="geoEqualEarth"
+        width={800}
+        height={400}
+        projectionConfig={{ scale: 147 }}
+      >
+        <Graticule stroke="var(--map-ink)" />
         <Geographies geography={GEO_URL}>
           {({ geographies }) =>
             geographies.map((geo) => {
@@ -41,15 +52,17 @@ const WorldMap = memo(({ countryData, onCountryClick }: WorldMapProps) => {
                   style={{
                     default: {
                       fill: isRead
-                        ? "var(--color-secondary)"
-                        : "var(--color-text-muted)",
-                      stroke: "var(--color-stroke)",
+                        ? "var(--color-marker-author)"
+                        : "var(--map-land)",
+                      stroke: "var(--map-ink)",
                       strokeWidth: 0.5,
                       outline: "none",
                       transition: "fill 0.2s ease",
                     },
                     hover: {
-                      fill: isRead ? "var(--color-text)" : "var(--color-text)",
+                      fill: isRead
+                        ? "var(--color-marker-author)"
+                        : "var(--color-marker-author)",
                       stroke: "var(--color-stroke)",
                       strokeWidth: 0.75,
                       outline: "none",

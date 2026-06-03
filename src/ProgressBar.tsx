@@ -10,12 +10,8 @@ const ProgressBar = ({ countriesCount }: ProgressParProps) => {
   return (
     <div className="progress-bar-wrapper">
       <div className="progress-bar-header">
-        <span className="primary emphasized">
-          {countriesCount}{" "}
-          <span className="secondary">/ {TOTAL_COUNTRIES} countries</span>
-        </span>
-
-        <span className="secondary">{progress}%</span>
+        <span className="primary emphasized">{countriesCount}</span>
+        <span className="secondary"> / {TOTAL_COUNTRIES} countries</span>
       </div>
       <div className="progress-bar">
         <div className="progress" style={{ width: `${progress}%` }} />
