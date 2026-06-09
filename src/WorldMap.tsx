@@ -1,4 +1,4 @@
-import { useState, memo } from "react";
+import { memo } from "react";
 import {
   ComposableMap,
   Geographies,
@@ -16,17 +16,6 @@ type WorldMapProps = {
 };
 
 const WorldMap = memo(({ countryData, onCountryClick }: WorldMapProps) => {
-  const [tooltip, setTooltip] = useState("");
-
-  const displayTooltip = (code: string, name: string) => {
-    const book = countryData[code];
-    setTooltip(book ? `${name} — "${book.title}" by ${book.author}` : name);
-  };
-
-  const clearTooltip = () => {
-    setTooltip("");
-  };
-
   return (
     <div className="map-wrapper">
       <ComposableMap
@@ -47,8 +36,6 @@ const WorldMap = memo(({ countryData, onCountryClick }: WorldMapProps) => {
                   key={geo.rsmKey}
                   geography={geo}
                   onClick={() => onCountryClick(code, name)}
-                  onMouseEnter={() => displayTooltip(code, name)}
-                  onMouseLeave={clearTooltip}
                   style={{
                     default: {
                       fill: isRead
