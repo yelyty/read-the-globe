@@ -3,7 +3,6 @@ import { supabase } from "../utils/supabase";
 
 async function saveBook(_prevState: SaveBookState, formData: FormData) {
   const countryCode = formData.get("countryCode") as string;
-  console.log(formData);
   const title = formData.get("title") as string;
   const author = formData.get("author") as string;
 

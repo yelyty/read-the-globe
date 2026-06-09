@@ -33,7 +33,7 @@ const WorldMap = memo(({ countryData, onCountryClick }: WorldMapProps) => {
         projection="geoEqualEarth"
         width={800}
         height={400}
-        projectionConfig={{ scale: 147 }}
+        projectionConfig={{ scale: 145 }}
       >
         <Graticule stroke="var(--map-ink)" />
         <Geographies geography={GEO_URL}>
