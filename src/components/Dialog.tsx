@@ -1,3 +1,4 @@
+import { XIcon } from "@phosphor-icons/react";
 import type { ReactNode } from "react";
 
 type DialogProps = {
@@ -30,7 +31,7 @@ const Dialog = ({
             onClick={onClose}
             aria-label="Close dialog"
           >
-            X
+            <XIcon size={32} />
           </button>
         )}
         {children}
@@ -45,7 +46,7 @@ type DialogTitleProps = {
 
 export const DialogTitle = ({ children }: DialogTitleProps) => {
   return (
-    <div className="header">
+    <div className="dialog-header">
       <h2 className="title">{children}</h2>
     </div>
   );
