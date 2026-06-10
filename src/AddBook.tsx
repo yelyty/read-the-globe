@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import TextInput from "./components/TextInput";
 import saveBook from "./api/saveBook";
+import { getCountryNames } from "./countryNames";
 
 const SubmitButton = () => {
   const { pending } = useFormStatus();
@@ -24,6 +25,14 @@ export type SaveBookState = {
   error: string | null;
 };
 
+function useCountryNames() {
+  const [names, setNames] = useState<Record<string, string>>({});
+  useEffect(() => {
+    getCountryNames().then(setNames);
+  }, []);
+  return names;
+}
+
 const AddBook = ({ selectedCountry, onCancel }: AddBookProps) => {
   const [state, formAction] = useFormState(saveBook, {
     success: false,
@@ -33,7 +42,17 @@ const AddBook = ({ selectedCountry, onCancel }: AddBookProps) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
 
-  const { code, name } = selectedCountry;
+  const { code } = selectedCountry;
+
+  const countryNames = useCountryNames();
+
+  const [selectedCode, setSelectedCode] = useState(code);
+  const [prevCode, setPrevCode] = useState(code);
+
+  if (code !== prevCode) {
+    setPrevCode(code);
+    setSelectedCode(code);
+  }
 
   useEffect(() => {
     if (state.success) {
@@ -43,10 +62,24 @@ const AddBook = ({ selectedCountry, onCancel }: AddBookProps) => {
 
   return (
     <form action={formAction} className="form">
-      <label className="label" htmlFor="country">
+      <label className="label" htmlFor="countryCode">
         Country
       </label>
-      <TextInput id="country" type="text" disabled={true} value={name} />
+      <select
+        id="countryCode"
+        name="countryCode"
+        className="select"
+        value={selectedCode}
+        onChange={(e) => setSelectedCode(e.target.value)}
+      >
+        {Object.entries(countryNames)
+          .sort(([, a], [, b]) => a.localeCompare(b))
+          .map(([countryCode, countryName]) => (
+            <option key={countryCode} value={countryCode}>
+              {countryName}
+            </option>
+          ))}
+      </select>
       <label className="label" htmlFor="title">
         Title *
       </label>

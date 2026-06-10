@@ -1,15 +1,21 @@
 import { GlobeStandIcon } from "@phosphor-icons/react";
 import ThemeToggle from "./ThemeToggle";
 
-const Header = () => {
+type HeaderProps = {
+  onAddBookClick: () => void;
+};
+
+const Header = ({ onAddBookClick }: HeaderProps) => {
   return (
     <header className="header">
       <div className="logo-wrapper">
-        <GlobeStandIcon size={32} />
+        <GlobeStandIcon size={32} style={{ color: "var(--color-text)" }} />
         <span className="title">Read The Globe</span>
       </div>
       <div className="right-header">
-        <button className="button">+ Add Book</button>
+        <button className="button" onClick={onAddBookClick}>
+          + Add Book
+        </button>
         <ThemeToggle />
       </div>
     </header>

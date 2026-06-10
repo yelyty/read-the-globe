@@ -80,7 +80,7 @@ export default function App() {
   return (
     <>
       <div className="wrapper">
-        <Header />
+        <Header onAddBookClick={() => setOpenDialog(true)} />
         <div className="progress-wrapper">
           <h3>My reading journey</h3>
           <ProgressBar countriesCount={books.length} />

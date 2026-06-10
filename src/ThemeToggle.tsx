@@ -1,7 +1,16 @@
+import { useState } from "react";
 import type { CSSProperties } from "react";
 
 type IconProps = {
   style: CSSProperties;
+};
+
+const iconBase: CSSProperties = {
+  width: 28,
+  height: 28,
+  position: "relative",
+  zIndex: 1,
+  transition: "color .2s ease",
 };
 
 function SunIcon({ style }: IconProps) {
@@ -36,13 +45,33 @@ function MoonIcon({ style }: IconProps) {
 }
 
 export default function ThemeSwitcher() {
-  const isDark = "dark";
+  const [isDark, setIsDark] = useState<boolean>(() => {
+    if (typeof document !== "undefined") {
+      const attr = document.documentElement.getAttribute("data-theme");
+      if (attr) return attr === "dark";
+    }
+    if (typeof window !== "undefined" && window.matchMedia) {
+      return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+    return false;
+  });
 
-  const toggle = () => {};
+  const toggle = () => {
+    setIsDark((prev) => {
+      const next = !prev;
+      document.documentElement.setAttribute(
+        "data-theme",
+        next ? "dark" : "light",
+      );
+      return next;
+    });
+  };
+
   return (
     <button
       type="button"
       role="switch"
+      aria-checked={isDark}
       aria-label="Toggle dark mode"
       onClick={toggle}
       style={{
@@ -50,47 +79,45 @@ export default function ThemeSwitcher() {
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "space-between",
-        width: 48,
-        height: 24,
+        boxSizing: "border-box",
+        width: 70,
+        height: 39,
         padding: "0 5px",
-        borderRadius: 999,
+        borderRadius: "var(--radius)",
         background: "var(--color-surface)",
         border: "1px solid var(--color-stroke)",
         cursor: "pointer",
         flexShrink: 0,
+        zIndex: 1000,
       }}
     >
       <SunIcon
         style={{
-          width: 12,
-          height: 12,
+          ...iconBase,
           color: isDark
             ? "var(--color-text-disabled)"
             : "var(--color-secondary)",
-          transition: "color .2s ease",
         }}
       />
       <MoonIcon
         style={{
-          width: 12,
-          height: 12,
+          ...iconBase,
           color: isDark
             ? "var(--color-secondary)"
             : "var(--color-text-disabled)",
-          transition: "color .2s ease",
         }}
       />
       <span
         aria-hidden="true"
         style={{
           position: "absolute",
-          top: 2,
-          left: 2,
-          width: 18,
-          height: 18,
+          top: "50%",
+          left: 4,
+          width: 30,
+          height: 30,
           borderRadius: "50%",
           background: "var(--color-primary)",
-          transform: isDark ? "translateX(24px)" : "translateX(0)",
+          transform: isDark ? "translate(30px, -50%)" : "translate(0, -50%)",
           transition: "transform .2s ease",
         }}
       />

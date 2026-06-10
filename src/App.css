@@ -309,6 +309,9 @@ h3,
 
 .book-data {
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .book-title {
