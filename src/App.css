@@ -96,7 +96,7 @@ h3,
   position: relative;
 }
 
-.header {
+.dialog-header {
   padding: 24px;
   padding-right: 56px;
 }
@@ -246,6 +246,7 @@ h3,
   align-items: center;
   border-bottom: 1px solid var(--color-border);
   padding-right: 0;
+  padding: 24px;
   padding-left: 0;
 }
 
