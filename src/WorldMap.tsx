@@ -24,7 +24,7 @@ const WorldMap = memo(({ countryData, onCountryClick }: WorldMapProps) => {
         height={400}
         projectionConfig={{ scale: 145 }}
       >
-        <Graticule stroke="var(--map-ink)" />
+        <Graticule stroke="var(--map-ink)" strokeWidth={0.3} />
         <Geographies geography={GEO_URL}>
           {({ geographies }) =>
             geographies.map((geo) => {
