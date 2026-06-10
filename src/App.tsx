@@ -82,7 +82,7 @@ export default function App() {
       <div className="wrapper">
         <Header />
         <div className="progress-wrapper">
-          <h2>My reading journey</h2>
+          <h3>My reading journey</h3>
           <ProgressBar countriesCount={books.length} />
         </div>
 

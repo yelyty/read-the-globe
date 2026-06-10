@@ -6,6 +6,7 @@ import {
   Graticule,
 } from "react-simple-maps";
 import type { CountryData } from "./types";
+import { CompassRoseIcon } from "@phosphor-icons/react";
 
 const GEO_URL =
   "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
@@ -65,6 +66,7 @@ const WorldMap = memo(({ countryData, onCountryClick }: WorldMapProps) => {
             })
           }
         </Geographies>
+        <CompassRoseIcon size={32} style={{ color: "var(--color-primary)" }} />
       </ComposableMap>
     </div>
   );
