@@ -2,14 +2,24 @@ import type { BookEntry, CountryData } from "../types";
 
 const toCountryData = (entries: BookEntry[]): CountryData => {
 	return entries.reduce<CountryData>((acc, entry) => {
-		if (!entry.countryCode) {
+		const country = entry.author?.country;
+		if (!country?.code) {
 			return acc;
 		}
 
-		acc[entry.countryCode] = entry;
+		const existing = acc[country.code];
+		if (existing) {
+			existing.books.push(entry);
+		} else {
+			acc[country.code] = {
+				code: country.code,
+				name: country.name,
+				books: [entry],
+			};
+		}
 
 		return acc;
 	}, {});
-}
+};
 
 export default toCountryData;

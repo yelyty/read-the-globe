@@ -1,11 +1,26 @@
+export interface Country {
+	name: string;
+	code: string;
+}
+
+export interface Author {
+	name: string;
+	country: Country | null;
+}
+
 export interface BookEntry {
 	id: string;
 	title: string;
-	author: string;
 	createdAt?: string;
-	countryCode?: string;
+	author: Author | null;
+}
+
+export interface CountryGroup {
+	code: string;
+	name: string;
+	books: BookEntry[];
 }
 
 export interface CountryData {
-	[countryCode: string]: BookEntry;
+	[countryCode: string]: CountryGroup;
 }

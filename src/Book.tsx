@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
-import type { BookEntry } from "./types";
 import { getCountryNames } from "./countryNames";
 import { FlagIcon } from "@phosphor-icons/react";
 
-type BookProps = BookEntry;
+interface BookProps {
+  id: string;
+  title: string;
+  author?: string;
+  countryCode?: string;
+}
 
 const COVER_COLORS = [
   "#5C4220",

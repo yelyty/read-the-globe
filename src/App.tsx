@@ -23,6 +23,7 @@ type SelectedCountry = {
 
 export default function App() {
   const [books, setBooks] = useState<BookEntry[]>([]);
+  console.log(books);
   const [openDialog, setOpenDialog] = useState(false);
 
   const [openAddPlaceDialog, setOpenAddPlaceDialog] = useState(false);
@@ -81,13 +82,17 @@ export default function App() {
     return <LoginForm />;
   }
 
+  const uniqueCountries = [
+    ...new Set(books.map((b) => b.author?.country?.code).filter(Boolean)),
+  ];
+
   return (
     <>
       <div className="wrapper">
         <Header onAddBookClick={() => setOpenDialog(true)} />
         <div className="progress-wrapper">
           <h3>My reading journey</h3>
-          <ProgressBar countriesCount={books.length} />
+          <ProgressBar countriesCount={uniqueCountries.length} />
         </div>
 
         <WorldMap countryData={countryData} onCountryClick={onCountryClick} />

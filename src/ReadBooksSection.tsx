@@ -26,8 +26,8 @@ const ReadBooksSection = ({ books }: ReadBooksSectionProps) => {
             key={book.id}
             id={book.id}
             title={book.title}
-            author={book.author}
-            countryCode={book.countryCode}
+            author={book.author?.name}
+            countryCode={book.author?.country?.code}
           />
         ))}
       </div>
