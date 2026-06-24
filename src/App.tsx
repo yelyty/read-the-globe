@@ -14,6 +14,7 @@ import LoginForm from "./LoginForm";
 import { supabase } from "./utils/supabase";
 import Header from "./Header";
 import ReadBooksSection from "./ReadBooksSection";
+import { seedCountries } from "./api/saveBook";
 
 type SelectedCountry = {
   code: string;
@@ -23,6 +24,8 @@ type SelectedCountry = {
 export default function App() {
   const [books, setBooks] = useState<BookEntry[]>([]);
   const [openDialog, setOpenDialog] = useState(false);
+
+  const [openAddPlaceDialog, setOpenAddPlaceDialog] = useState(false);
 
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -55,6 +58,7 @@ export default function App() {
 
   const closeDialog = useCallback(() => {
     setOpenDialog(false);
+    seedCountries();
   }, []);
 
   useEffect(() => {
@@ -91,6 +95,15 @@ export default function App() {
       </div>
       <Dialog isOpen={openDialog} onClose={closeDialog}>
         <DialogTitle>What have you read?</DialogTitle>
+        <DialogContent>
+          <AddBook selectedCountry={selectedCountry} onCancel={closeDialog} />
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        isOpen={openAddPlaceDialog}
+        onClose={() => setOpenAddPlaceDialog(false)}
+      >
+        <DialogTitle>Where the book was set?</DialogTitle>
         <DialogContent>
           <AddBook selectedCountry={selectedCountry} onCancel={closeDialog} />
         </DialogContent>
