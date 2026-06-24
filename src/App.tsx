@@ -7,7 +7,7 @@ import Dialog, { DialogContent, DialogTitle } from "./components/Dialog";
 import getBooks from "./api/getBooks";
 import toCountryData from "./helpers/toCountryData";
 import type { User } from "@supabase/supabase-js";
-import type { BookEntry } from "./types";
+import type { BookEntry, Place } from "./types";
 
 import "./App.css";
 import LoginForm from "./LoginForm";
@@ -15,6 +15,7 @@ import { supabase } from "./utils/supabase";
 import Header from "./Header";
 import ReadBooksSection from "./ReadBooksSection";
 import { seedCountries } from "./api/saveBook";
+import getPlaces from "./api/getPlaces";
 
 type SelectedCountry = {
   code: string;
@@ -23,7 +24,7 @@ type SelectedCountry = {
 
 export default function App() {
   const [books, setBooks] = useState<BookEntry[]>([]);
-  console.log(books);
+  const [places, setPlaces] = useState<Place[]>([]);
   const [openDialog, setOpenDialog] = useState(false);
 
   const [openAddPlaceDialog, setOpenAddPlaceDialog] = useState(false);
@@ -44,7 +45,15 @@ export default function App() {
       }
     };
 
+    const loadPlaces = async () => {
+      const places = await getPlaces();
+      if (places) {
+        setPlaces(places);
+      }
+    };
+
     loadBooks();
+    loadPlaces();
   }, [openDialog]);
 
   const countryData = toCountryData(books);
@@ -95,7 +104,11 @@ export default function App() {
           <ProgressBar countriesCount={uniqueCountries.length} />
         </div>
 
-        <WorldMap countryData={countryData} onCountryClick={onCountryClick} />
+        <WorldMap
+          countryData={countryData}
+          onCountryClick={onCountryClick}
+          places={places}
+        />
         <ReadBooksSection books={books} />
       </div>
       <Dialog isOpen={openDialog} onClose={closeDialog}>
