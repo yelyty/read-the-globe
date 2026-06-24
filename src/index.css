@@ -1,69 +1,78 @@
-*{
-	padding: 0;
-	margin: 0;
-	box-sizing: border-box;
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 :root {
-	
-
+  /* Type */
   --font-display: "IM Fell English", Georgia, serif;
   --font-serif: "EB Garamond", Georgia, serif;
-  --font-sans: "DM Sans", system-ui, sans-serif; 
+  --font-sans: "DM Sans", system-ui, sans-serif;
 
-  --color-primary: #7A5A2C; 
-  --color-secondary: #C7A536;       
-  --color-primary-hover: #644A22;
+  /* Brand */
+  --color-primary: #4A6A40;         
+  --color-secondary: #C7A536;      
+  --color-primary-hover: #3C5734;
+  --on-accent: #F5E6B8;              
 
-  --color-bg: #ECCD8C;              
-  --color-surface: #F3DBA0;          
+  /* Surfaces */
+  --color-bg: #F8EDD0;              
+  --color-surface: #FDF6E3;          
   --color-overlay: rgba(43, 30, 10, 0.55);
 
-  --color-text: #3A2E14;            
+  /* Text */
+  --color-text: #3A2E14;
   --color-text-secondary: #6E5733;
   --color-text-muted: #8E764A;
   --color-text-disabled: #BCA56E;
-	--on-accent: #F5E6B8;
 
-  --color-stroke: #CDB16F;          
+  /* Lines & states */
+  --color-stroke: #CDB16F;
   --color-border: #CDB16F;
-  --color-error: #7E3030;            
-  --color-success: #5F7445;          
+  --color-error: #7E3030;
+  --color-success: #5F7445;
 
-  --map-sea: #F3D89A;                
-  --map-land: #D4B566;               
-  --map-ink: #AE8F44;                
-  --color-marker-author: #8B3A33;    
-  --color-marker-setting: #6F7A3B;   
-  --color-olive: #6F7445;            
-  --color-star: #C7A536;             
+  /* Map / cartography */
+  --map-sea: #F3D89A;
+  --map-land: #D4B566;
+  --map-ink: #AE8F44;
+  --color-marker-author: #8B3A33;
+  --color-marker-setting: #6F7A3B;
+  --color-olive: #6F7445;
+  --color-star: #C7A536;
 
   --radius: 15px;
+
+  color-scheme: light;
   font-family: var(--font-sans);
 }
 
 [data-theme="dark"] {
-
-  --color-primary: #9E7E46;
+  /* Brand */
+  --color-primary: #6E9466;         
   --color-secondary: #E2BD58;
-  --color-primary-hover: #B4905A;
+  --color-primary-hover: #5E8457;
+  --on-accent: #1C1509;            
 
-
-  --color-bg: #1C1509;               
+  /* Surfaces */
+  --color-bg: #1C1509;
   --color-surface: #271E11;
   --color-overlay: rgba(0, 0, 0, 0.62);
 
-
-  --color-text: #EEE3C8;             
+  /* Text */
+  --color-text: #EEE3C8;
   --color-text-secondary: #BBA274;
   --color-text-muted: #8E7C56;
   --color-text-disabled: #5F543B;
 
+  /* Lines & states */
   --color-stroke: #3D3120;
   --color-border: #3D3120;
   --color-error: #C2504A;
   --color-success: #8AA85C;
 
+  /* Map / cartography */
   --map-sea: #2A2412;
   --map-land: #4C4128;
   --map-ink: #71603C;
@@ -71,24 +80,31 @@
   --color-marker-setting: #93A155;
   --color-olive: #93A155;
   --color-star: #E2BD58;
+
+  color-scheme: dark;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    --color-primary: #9E7E46;
+    --color-primary: #6E9466;
     --color-secondary: #E2BD58;
-    --color-primary-hover: #B4905A;
+    --color-primary-hover: #5E8457;
+    --on-accent: #1C1509;
+
     --color-bg: #1C1509;
     --color-surface: #271E11;
     --color-overlay: rgba(0, 0, 0, 0.62);
+
     --color-text: #EEE3C8;
     --color-text-secondary: #BBA274;
     --color-text-muted: #8E7C56;
     --color-text-disabled: #5F543B;
+
     --color-stroke: #3D3120;
     --color-border: #3D3120;
     --color-error: #C2504A;
     --color-success: #8AA85C;
+
     --map-sea: #2A2412;
     --map-land: #4C4128;
     --map-ink: #71603C;
@@ -96,5 +112,7 @@
     --color-marker-setting: #93A155;
     --color-olive: #93A155;
     --color-star: #E2BD58;
+
+    color-scheme: dark;
   }
 }
