@@ -2,10 +2,11 @@ import { GlobeStandIcon } from "@phosphor-icons/react";
 import ThemeToggle from "./ThemeToggle";
 
 type HeaderProps = {
-  onAddBookClick: () => void;
+  authorized: boolean;
+  onAddBookClick?: () => void;
 };
 
-const Header = ({ onAddBookClick }: HeaderProps) => {
+const Header = ({ authorized = false, onAddBookClick }: HeaderProps) => {
   return (
     <header className="header">
       <div className="logo-wrapper">
@@ -13,9 +14,18 @@ const Header = ({ onAddBookClick }: HeaderProps) => {
         <span className="title">Read The Globe</span>
       </div>
       <div className="right-header">
-        <button className="button" onClick={onAddBookClick}>
-          + Add Book
-        </button>
+        {!authorized && (
+          <nav>
+            <a href="#how">How it works</a>
+            <a href="#features">Features</a>
+            <a href="/signin">Sign in</a>
+          </nav>
+        )}
+        {authorized && (
+          <button className="button" onClick={onAddBookClick}>
+            + Add Book
+          </button>
+        )}
         <ThemeToggle />
       </div>
     </header>

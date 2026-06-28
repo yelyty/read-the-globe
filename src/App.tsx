@@ -16,6 +16,7 @@ import Header from "./Header";
 import ReadBooksSection from "./ReadBooksSection";
 import { seedCountries } from "./api/saveBook";
 import getPlaces from "./api/getPlaces";
+import LandingPage from "./LandingPage";
 
 type SelectedCountry = {
   code: string;
@@ -88,7 +89,7 @@ export default function App() {
   if (loading) return null;
 
   if (!user) {
-    return <LoginForm />;
+    return <LandingPage />;
   }
 
   const uniqueCountries = [
@@ -98,7 +99,7 @@ export default function App() {
   return (
     <>
       <div className="wrapper">
-        <Header onAddBookClick={() => setOpenDialog(true)} />
+        <Header onAddBookClick={() => setOpenDialog(true)} authorized />
         <div className="progress-wrapper">
           <h3>My reading journey</h3>
           <ProgressBar countriesCount={uniqueCountries.length} />
