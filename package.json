@@ -12,6 +12,7 @@
   "dependencies": {
     "@phosphor-icons/react": "2.1.10",
     "@supabase/supabase-js": "2.105.4",
+    "@vanilla-extract/css": "1.21.0",
     "dotenv": "17.4.2",
     "prop-types": "15.8.1",
     "react": "19.2.6",
@@ -24,6 +25,7 @@
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@types/react-simple-maps": "3.0.6",
+    "@vanilla-extract/vite-plugin": "5.2.3",
     "@vitejs/plugin-react": "6.0.1",
     "eslint": "10.3.0",
     "eslint-plugin-react-hooks": "7.1.1",
