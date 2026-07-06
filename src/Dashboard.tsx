@@ -12,6 +12,7 @@ import type { BookEntry, Place } from "./types";
 import WorldMap from "./WorldMap";
 
 import "./App.css";
+import { Outlet } from "@tanstack/react-router";
 
 type SelectedCountry = {
   code: string;
@@ -99,6 +100,7 @@ const Dashboard = () => {
           <AddBook selectedCountry={selectedCountry} onCancel={closeDialog} />
         </DialogContent>
       </Dialog>
+      <Outlet />
     </>
   );
 };

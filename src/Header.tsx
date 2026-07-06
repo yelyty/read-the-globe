@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { GlobeStandIcon } from "@phosphor-icons/react";
 import ThemeToggle from "./ThemeToggle";
 
@@ -22,9 +23,14 @@ const Header = ({ authorized = false, onAddBookClick }: HeaderProps) => {
           </nav>
         )}
         {authorized && (
-          <button className="button" onClick={onAddBookClick}>
-            + Add Book
-          </button>
+          <>
+            <button className="button" onClick={onAddBookClick}>
+              + Add Book
+            </button>
+            <button className="button">
+              <Link to="/profile">My Profile</Link>
+            </button>
+          </>
         )}
         <ThemeToggle />
       </div>
