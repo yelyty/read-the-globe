@@ -44,7 +44,7 @@ function MoonIcon({ style }: IconProps) {
   );
 }
 
-export default function ThemeSwitcher() {
+export default function ThemeToggle() {
   const [isDark, setIsDark] = useState<boolean>(() => {
     if (typeof document !== "undefined") {
       const attr = document.documentElement.getAttribute("data-theme");
