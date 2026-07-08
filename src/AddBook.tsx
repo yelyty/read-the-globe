@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
-import TextInput from "./components/TextInput";
+import TextInput from "./components/TextInput/TextInput";
 import saveBook from "./api/saveBook";
-import { getCountryNames } from "./countryNames";
+import { getCountryNames } from "./utils/countryNames";
 import { MapPinSimpleIcon, XIcon } from "@phosphor-icons/react";
 
 const SubmitButton = () => {

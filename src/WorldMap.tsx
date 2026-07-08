@@ -17,6 +17,7 @@ type WorldMapProps = {
   places: Place[];
   onCountryClick: (code: string, name: string) => void;
   onPlaceClick?: (place: Place) => void;
+  showCompass?: boolean;
 };
 
 type Place = {
@@ -27,7 +28,13 @@ type Place = {
 };
 
 const WorldMap = memo(
-  ({ countryData, places, onCountryClick, onPlaceClick }: WorldMapProps) => {
+  ({
+    countryData,
+    places,
+    onCountryClick,
+    onPlaceClick,
+    showCompass = false,
+  }: WorldMapProps) => {
     return (
       <div className="map-wrapper">
         <ComposableMap
@@ -91,10 +98,12 @@ const WorldMap = memo(
               />
             </Marker>
           ))}
-          <CompassRoseIcon
-            size={32}
-            style={{ color: "var(--color-primary)" }}
-          />
+          {showCompass && (
+            <CompassRoseIcon
+              size={32}
+              style={{ color: "var(--color-primary)" }}
+            />
+          )}
         </ComposableMap>
       </div>
     );

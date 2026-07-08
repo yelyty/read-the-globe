@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getCountryNames } from "./countryNames";
+import { getCountryNames } from "./utils/countryNames";
 import { FlagIcon } from "@phosphor-icons/react";
 
 interface BookProps {

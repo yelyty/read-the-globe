@@ -1,4 +1,4 @@
-import type { CountryData, Place, Country } from "./types";
+import type { CountryData, Place, Country } from "../types";
 
 const COLOMBIA: Country = { name: "Colombia", code: "CO" };
 const JAPAN: Country = { name: "Japan", code: "JP" };

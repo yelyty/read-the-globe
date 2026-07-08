@@ -1,4 +1,3 @@
-// countryNames.ts
 const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
 let cache: Record<string, string> | null = null;

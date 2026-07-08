@@ -3,7 +3,7 @@ import AddBook from "./AddBook";
 import getBooks from "./api/getBooks";
 import getPlaces from "./api/getPlaces";
 import { seedCountries } from "./api/saveBook";
-import Dialog, { DialogTitle, DialogContent } from "./components/Dialog";
+import Dialog, { DialogTitle, DialogContent } from "./components/Dialog/Dialog";
 import Header from "./Header";
 import toCountryData from "./helpers/toCountryData";
 import ProgressBar from "./ProgressBar";

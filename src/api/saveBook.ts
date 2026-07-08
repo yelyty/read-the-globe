@@ -7,7 +7,7 @@ type PlaceInput = {
 	lat: number;
 };
 
-import { getCountryNames } from "../countryNames";
+import { getCountryNames } from "../utils/countryNames";
 
 export async function seedCountries() {
 	const names = await getCountryNames(); // { FR: "France", ... }

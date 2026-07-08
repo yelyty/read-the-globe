@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Dialog, { DialogContent, DialogTitle } from "./components/Dialog";
-import TextInput from "./components/TextInput";
+import Dialog, { DialogContent, DialogTitle } from "./components/Dialog/Dialog";
+import TextInput from "./components/TextInput/TextInput";
 import { supabase } from "./utils/supabase";
 
 async function signOut() {
