@@ -41,6 +41,7 @@ const WorldMap = memo(
           projection="geoEqualEarth"
           width={800}
           height={400}
+          style={{ width: "100%", height: "auto", display: "block" }}
           projectionConfig={{ scale: 145 }}
         >
           <Graticule stroke="var(--map-ink)" strokeWidth={0.3} />

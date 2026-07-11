@@ -100,7 +100,6 @@ export const hero = style({
 	display: "grid",
 	gridTemplateColumns: "1fr 1fr",
 	gap: "3.5rem",
-	alignItems: "start",
 	"@media": {
 		"screen and (max-width: 980px)": {
 			gridTemplateColumns: "1fr",
@@ -177,13 +176,16 @@ export const checkIcon = style({
 
 export const heroMap = style({
 	display: "flex",
-	alignItems: "center"
+	justifyContent: "center",  // horizontal center of the map within this column
+	alignItems: "center",      // vertical center against the text column
+	flex: 1,                   // let it take its share of the row
 })
 
 
 export const mapWrapper = style({
-	position: "relative",
-	alignSelf: "stretch",
+	width: "100%",
+	maxWidth: 800,             // cap so centering is visible
+	margin: "0 auto",
 });
 
 /* ================================================================== *

@@ -55,6 +55,12 @@ h3,
   outline-offset: 0.5rem;
 }
 
+.map-wrapper svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 /* Button */
 
 .button {
