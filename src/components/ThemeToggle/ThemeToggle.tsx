@@ -1,19 +1,11 @@
 import { useState } from "react";
-import type { CSSProperties } from "react";
+import * as styles from "./ThemeToggle.css";
 
 type IconProps = {
-  style: CSSProperties;
+  className: string;
 };
 
-const iconBase: CSSProperties = {
-  width: 28,
-  height: 28,
-  position: "relative",
-  zIndex: 1,
-  transition: "color .2s ease",
-};
-
-function SunIcon({ style }: IconProps) {
+function SunIcon({ className }: IconProps) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -22,7 +14,7 @@ function SunIcon({ style }: IconProps) {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
-      style={style}
+      className={className}
       aria-hidden="true"
     >
       <circle cx="12" cy="12" r="4" />
@@ -31,12 +23,12 @@ function SunIcon({ style }: IconProps) {
   );
 }
 
-function MoonIcon({ style }: IconProps) {
+function MoonIcon({ className }: IconProps) {
   return (
     <svg
       viewBox="0 0 24 24"
       fill="currentColor"
-      style={style}
+      className={className}
       aria-hidden="true"
     >
       <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
@@ -74,53 +66,11 @@ export default function ThemeToggle() {
       aria-checked={isDark}
       aria-label="Toggle dark mode"
       onClick={toggle}
-      style={{
-        position: "relative",
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        boxSizing: "border-box",
-        width: 70,
-        height: 39,
-        padding: "0 5px",
-        borderRadius: "var(--radius)",
-        background: "var(--color-surface)",
-        border: "1px solid var(--color-stroke)",
-        cursor: "pointer",
-        flexShrink: 0,
-        zIndex: 1000,
-      }}
+      className={styles.button}
     >
-      <SunIcon
-        style={{
-          ...iconBase,
-          color: isDark
-            ? "var(--color-text-disabled)"
-            : "var(--color-secondary)",
-        }}
-      />
-      <MoonIcon
-        style={{
-          ...iconBase,
-          color: isDark
-            ? "var(--color-secondary)"
-            : "var(--color-text-disabled)",
-        }}
-      />
-      <span
-        aria-hidden="true"
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: 4,
-          width: 30,
-          height: 30,
-          borderRadius: "50%",
-          background: "var(--color-primary)",
-          transform: isDark ? "translate(30px, -50%)" : "translate(0, -50%)",
-          transition: "transform .2s ease",
-        }}
-      />
+      <SunIcon className={styles.sunIcon({ dark: isDark })} />
+      <MoonIcon className={styles.moonIcon({ dark: isDark })} />
+      <span aria-hidden="true" className={styles.thumb({ dark: isDark })} />
     </button>
   );
 }

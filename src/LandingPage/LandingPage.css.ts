@@ -73,10 +73,14 @@ export const nav = style({
 export const navLink = style({
 	color: vars.color.textSecondary,
 	textDecoration: "none",
-	fontFamily: vars.font.serif,
 	fontSize: "1rem",
 	opacity: 0.85,
 	transition: "opacity 150ms ease",
+	textTransform: "uppercase",
+	letterSpacing: "2px",
+	fontFamily: mono,
+	fontWeight: 700,
+
 	":hover": { opacity: 1 },
 });
 

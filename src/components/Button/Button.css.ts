@@ -9,7 +9,8 @@ export const button = recipe({
 		fontSize: "14px",
 		fontWeight: 500,
 		lineHeight: 1,
-		padding: "10px 18px",
+		paddingBlock: "0.75rem",
+		paddingInline: "1rem",
 		borderRadius: vars.radius.md,
 		cursor: "pointer",
 		transition: "background-color 120ms ease, color 120ms ease",
@@ -18,13 +19,21 @@ export const button = recipe({
 			opacity: 0.5,
 			cursor: "not-allowed",
 		},
+		// 		//
+		// 		  outline: none;
+		//   background-color: var(--color-primary);
+		//   color: var(--on-accent);
+		//   border: none;
+		//   padding: 0.75rem 1rem;
+		//   border-radius: var(--radius);
+		//   cursor: pointer;
 	},
 
 	variants: {
 		variant: {
 			contained: {
 				backgroundColor: vars.color.primary,
-				color: vars.color.text,
+				color: vars.color.onAccent,
 				selectors: {
 					"&:not(:disabled):hover": {
 						backgroundColor: vars.color.primaryHover,

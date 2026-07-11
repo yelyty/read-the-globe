@@ -42,7 +42,7 @@ export const [themeClass, vars] = createTheme({
 	},
 
 	radius: {
-		md: '15px',
+		md: '10px',
 	},
 });
 
