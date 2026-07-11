@@ -5,6 +5,7 @@ import LandingHeader from "./components/LandingHeader";
 import Hero from "./components/Hero";
 import WorldMap from "../WorldMap";
 import { sampleCountries, samplePlaces } from "./sampleData";
+import Divider from "../components/Divider/Divider";
 
 const LandingPage = () => {
   const openSignup = () => {
@@ -16,7 +17,7 @@ const LandingPage = () => {
       <LandingHeader />
       <Hero />
 
-      <div className={s.divider} />
+      <Divider />
 
       {/* How it works */}
       <section id="how" className={s.section}>

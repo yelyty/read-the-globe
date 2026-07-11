@@ -1,6 +1,6 @@
 import { GlobeStandIcon } from "@phosphor-icons/react";
 import { Button } from "../../components/Button/Button";
-import ThemeToggle from "../../components/ThemeToggle/ThemeToggle";
+// import ThemeToggle from "../../components/ThemeToggle/ThemeToggle";
 import * as s from "../LandingPage.css";
 
 const LOGO_ICON_SIZE = 30;
@@ -35,7 +35,7 @@ const LandingHeader = () => {
           Log in
         </Button>
         <Button onClick={openSignUp}>Sign up</Button>
-        <ThemeToggle />
+        {/* <ThemeToggle /> */}
       </div>
     </header>
   );

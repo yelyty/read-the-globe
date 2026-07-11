@@ -326,16 +326,6 @@ export const cardFootLink = style({
 	cursor: "pointer",
 });
 
-/* ================================================================== *
- * Airmail divider
- * ================================================================== */
-export const divider = style({
-	...shell,
-	height: 6,
-	borderRadius: 3,
-	background: airmail,
-	marginBlock: "1rem",
-});
 
 /* ================================================================== *
  * Section scaffolding
