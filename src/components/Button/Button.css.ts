@@ -7,26 +7,22 @@ export const button = recipe({
 		alignItems: "center",
 		justifyContent: "center",
 		fontSize: "14px",
+		gap: "0.5rem",
+		fontFamily: "inherit",
 		fontWeight: 500,
 		lineHeight: 1,
+		textDecoration: 'none',
 		paddingBlock: "0.75rem",
 		paddingInline: "1rem",
-		borderRadius: vars.radius.md,
+		borderRadius: "999px",
 		cursor: "pointer",
 		transition: "background-color 120ms ease, color 120ms ease",
 		border: "1px solid transparent",
 		":disabled": {
 			opacity: 0.5,
 			cursor: "not-allowed",
+			transform: 'none',
 		},
-		// 		//
-		// 		  outline: none;
-		//   background-color: var(--color-primary);
-		//   color: var(--on-accent);
-		//   border: none;
-		//   padding: 0.75rem 1rem;
-		//   border-radius: var(--radius);
-		//   cursor: pointer;
 	},
 
 	variants: {
@@ -50,6 +46,28 @@ export const button = recipe({
 					},
 				},
 			},
+			text: {
+				backgroundColor: "transparent",
+				color: vars.color.primary,
+				paddingInline: "0.5rem",
+			}
+		},
+		size: {
+			sm: {
+				fontSize: "13px",
+				paddingBlock: "0.5rem",
+				paddingInline: "0.75rem"
+			},
+			md: {
+				fontSize: "14px",
+				paddingBlock: "0.75rem",
+				paddingInline: "1rem",
+			},
+			lg: {
+				fontSize: "16px",
+				paddingBlock: "0.875rem",
+				paddingInline: "1.5rem"
+			}
 		},
 	},
 

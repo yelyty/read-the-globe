@@ -1,21 +1,9 @@
 import { style, styleVariants, keyframes } from "@vanilla-extract/css";
 import { vars } from "../theme.css";
 
-/* ------------------------------------------------------------------ *
- * Local tokens — things NOT in the theme contract.
- * If you add a mono slot to your contract later, swap it here.
- * ------------------------------------------------------------------ */
-const mono = "'Space Mono', ui-monospace, 'Courier New', monospace";
-
 /* Derived semi-transparent tint of the primary color. */
 const primarySoft = `color-mix(in srgb, ${vars.color.primary} 12%, transparent)`;
 
-/* Airmail barber-pole stripe — references theme colors so it
-   shifts between day and night automatically. */
-const airmail =
-	`repeating-linear-gradient(-45deg,` +
-	` ${vars.color.primary} 0 11px, ${vars.color.background} 11px 15px,` +
-	` ${vars.color.markerAuthor} 15px 26px, ${vars.color.background} 26px 30px)`;
 
 /* ================================================================== *
  * Shell
@@ -42,11 +30,14 @@ const shell = {
  * ================================================================== */
 export const header = style({
 	...shell,
+	position: 'sticky',
+	top: 0,
 	display: "flex",
+	zIndex: 60,
+	background: vars.color.background,
 	alignItems: "center",
 	justifyContent: "space-between",
 	paddingBlock: "1.4rem",
-	borderBottom: `1px solid ${vars.color.stroke}`,
 });
 
 export const logoWrapper = style({
@@ -76,11 +67,6 @@ export const navLink = style({
 	fontSize: "1rem",
 	opacity: 0.85,
 	transition: "opacity 150ms ease",
-	textTransform: "uppercase",
-	letterSpacing: "2px",
-	fontFamily: mono,
-	fontWeight: 700,
-
 	":hover": { opacity: 1 },
 });
 
@@ -97,16 +83,18 @@ export const headerActions = style({
 export const hero = style({
 	...shell,
 	paddingBlock: "4rem",
-	display: "grid",
-	gridTemplateColumns: "1fr 1fr",
+	display: "flex",
+	justifyContent: "center",
+	alignItems: "center",
+	textAlign: 'center',
 	gap: "3.5rem",
-	"@media": {
-		"screen and (max-width: 980px)": {
-			gridTemplateColumns: "1fr",
-			gap: "2.5rem",
-			paddingBlock: "2.5rem",
-		},
-	},
+	// "@media": {
+	// 	"screen and (max-width: 980px)": {
+	// 		gridTemplateColumns: "1fr",
+	// 		gap: "2.5rem",
+	// 		paddingBlock: "2.5rem",
+	// 	},
+	// },
 });
 
 export const heroText = style({
@@ -120,7 +108,6 @@ export const heroText = style({
 export const kicker = style({
 	textTransform: "uppercase",
 	letterSpacing: "2px",
-	fontFamily: mono,
 	fontSize: "0.72rem",
 	fontWeight: 700,
 	color: vars.color.textMuted,
@@ -204,7 +191,6 @@ export const signupCard = style({
 		insetInline: 0,
 		top: 0,
 		height: 9,
-		background: airmail,
 		borderTopLeftRadius: 16,
 		borderTopRightRadius: 16,
 	},
@@ -245,7 +231,6 @@ export const field = style({ marginBottom: "1.1rem" });
 
 export const fieldLabel = style({
 	display: "block",
-	fontFamily: mono,
 	fontSize: "0.68rem",
 	fontWeight: 700,
 	letterSpacing: "0.11em",
@@ -339,7 +324,6 @@ export const sectionHead = style({
 });
 
 export const eyebrow = style({
-	fontFamily: mono,
 	fontSize: "0.72rem",
 	fontWeight: 700,
 	letterSpacing: "0.16em",
@@ -376,7 +360,7 @@ export const steps = style({
 });
 
 const panel = {
-	background: vars.color.surface,
+	// background: vars.color.surface,
 	border: `1px solid ${vars.color.border}`,
 	borderRadius: vars.radius.md,
 } as const;
@@ -396,14 +380,12 @@ export const stepBadge = style({
 	borderRadius: 9,
 	background: vars.color.primary,
 	color: vars.color.onAccent,
-	fontFamily: mono,
 	fontWeight: 700,
 	display: "grid",
 	placeItems: "center",
 });
 
 export const stepEyebrow = style({
-	fontFamily: mono,
 	fontSize: "0.7rem",
 	letterSpacing: "0.14em",
 	textTransform: "uppercase",
@@ -474,7 +456,6 @@ export const mapLabel = style({
 	position: "absolute",
 	top: 10,
 	left: 12,
-	fontFamily: mono,
 	fontSize: "0.62rem",
 	letterSpacing: "0.16em",
 	textTransform: "uppercase",
@@ -494,7 +475,6 @@ export const mapCaption = style({
 	top: "46%",
 	left: "50%",
 	transform: "translate(-50%, -50%)",
-	fontFamily: mono,
 	fontSize: "0.7rem",
 	letterSpacing: "0.14em",
 	color: `color-mix(in srgb, ${vars.map.ink} 55%, transparent)`,
@@ -524,7 +504,6 @@ export const pinVariant = styleVariants({
 
 export const pinLabel = style({
 	marginTop: 2,
-	fontFamily: mono,
 	fontSize: "0.62rem",
 	color: vars.color.text,
 	background: `color-mix(in srgb, ${vars.color.surface} 85%, transparent)`,
@@ -549,7 +528,6 @@ export const legendRow = style({
 	display: "flex",
 	alignItems: "center",
 	gap: "0.4rem",
-	fontFamily: mono,
 	fontSize: "0.65rem",
 	color: vars.color.textSecondary,
 });
@@ -663,7 +641,6 @@ export const goalName = style({
 
 export const goalCount = style({
 	marginLeft: "auto",
-	fontFamily: mono,
 	fontSize: "0.95rem",
 	color: vars.color.textMuted,
 });
@@ -698,14 +675,6 @@ export const cta = style({
 	padding: "3.5rem 2rem 3rem",
 	textAlign: "center",
 	overflow: "hidden",
-	"::before": {
-		content: '""',
-		position: "absolute",
-		insetInline: 0,
-		top: 0,
-		height: 9,
-		background: airmail,
-	},
 });
 
 export const ctaTitle = style({

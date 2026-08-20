@@ -56,25 +56,6 @@ const LandingPage = () => {
               onCountryClick={() => {}}
               countryData={sampleCountries}
             />
-
-            <div className={s.legend}>
-              <span className={s.legendRow}>
-                <MapPinIcon
-                  size={13}
-                  weight="fill"
-                  className={s.pinVariant.set}
-                />
-                Where it's set
-              </span>
-              <span className={s.legendRow}>
-                <MapPinIcon
-                  size={13}
-                  weight="fill"
-                  className={s.pinVariant.author}
-                />
-                Author's country
-              </span>
-            </div>
           </div>
         </div>
       </section>
