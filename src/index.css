@@ -11,36 +11,39 @@
   --font-sans: "DM Sans", system-ui, sans-serif;
 
   /* Brand */
-  --color-primary: #4A6A40;         
-  --color-secondary: #C7A536;      
-  --color-primary-hover: #3C5734;
-  --on-accent: #F5E6B8;              
+  --color-primary: #4a6a40;
+  --color-secondary: #c7a536;
+  --color-primary-hover: #3c5734;
+  --on-accent: #f5e6b8;
+  --color-accent: #4a6a40;
 
   /* Surfaces */
-  --color-bg: #F8EDD0;              
-  --color-surface: #FDF6E3;          
+  --color-bg: #f8edd0;
+  --color-surface: #fdf6e3;
   --color-overlay: rgba(43, 30, 10, 0.55);
+  --color-field: #fcf8ee;
+  --color-field-line: #9a7f35;
 
   /* Text */
-  --color-text: #3A2E14;
-  --color-text-secondary: #6E5733;
-  --color-text-muted: #8E764A;
-  --color-text-disabled: #BCA56E;
+  --color-text: #3a2e14;
+  --color-text-secondary: #6e5733;
+  --color-text-muted: #8e764a;
+  --color-text-disabled: #bca56e;
 
   /* Lines & states */
-  --color-stroke: #CDB16F;
-  --color-border: #CDB16F;
-  --color-error: #7E3030;
-  --color-success: #5F7445;
+  --color-stroke: #cdb16f;
+  --color-border: #cdb16f;
+  --color-error: #7e3030;
+  --color-success: #5f7445;
 
   /* Map / cartography */
-  --map-sea: #F3D89A;
-  --map-land: #D4B566;
-  --map-ink: #AE8F44;
-  --color-marker-author: #8B3A33;
-  --color-marker-setting: #6F7A3B;
-  --color-olive: #6F7445;
-  --color-star: #C7A536;
+  --map-sea: #f3d89a;
+  --map-land: #f5e1b2;
+  --map-ink: #ae8f44;
+  --color-marker-author: #8b3a33;
+  --color-marker-setting: #6f7a3b;
+  --color-olive: #6f7445;
+  --color-star: #c7a536;
 
   --radius: 15px;
 
@@ -50,68 +53,68 @@
 
 [data-theme="dark"] {
   /* Brand */
-  --color-primary: #6E9466;         
-  --color-secondary: #E2BD58;
-  --color-primary-hover: #5E8457;
-  --on-accent: #1C1509;            
+  --color-primary: #6e9466;
+  --color-secondary: #e2bd58;
+  --color-primary-hover: #5e8457;
+  --on-accent: #1c1509;
 
   /* Surfaces */
-  --color-bg: #1C1509;
-  --color-surface: #271E11;
+  --color-bg: #1c1509;
+  --color-surface: #271e11;
   --color-overlay: rgba(0, 0, 0, 0.62);
 
   /* Text */
-  --color-text: #EEE3C8;
-  --color-text-secondary: #BBA274;
-  --color-text-muted: #8E7C56;
-  --color-text-disabled: #5F543B;
+  --color-text: #eee3c8;
+  --color-text-secondary: #bba274;
+  --color-text-muted: #8e7c56;
+  --color-text-disabled: #5f543b;
 
   /* Lines & states */
-  --color-stroke: #3D3120;
-  --color-border: #3D3120;
-  --color-error: #C2504A;
-  --color-success: #8AA85C;
+  --color-stroke: #3d3120;
+  --color-border: #3d3120;
+  --color-error: #c2504a;
+  --color-success: #8aa85c;
 
   /* Map / cartography */
-  --map-sea: #2A2412;
-  --map-land: #4C4128;
-  --map-ink: #71603C;
-  --color-marker-author: #C2504A;
-  --color-marker-setting: #93A155;
-  --color-olive: #93A155;
-  --color-star: #E2BD58;
+  --map-sea: #2a2412;
+  --map-land: #433927;
+  --map-ink: #71603c;
+  --color-marker-author: #c2504a;
+  --color-marker-setting: #93a155;
+  --color-olive: #93a155;
+  --color-star: #e2bd58;
 
   color-scheme: dark;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    --color-primary: #6E9466;
-    --color-secondary: #E2BD58;
-    --color-primary-hover: #5E8457;
-    --on-accent: #1C1509;
+    --color-primary: #6e9466;
+    --color-secondary: #e2bd58;
+    --color-primary-hover: #5e8457;
+    --on-accent: #1c1509;
 
-    --color-bg: #1C1509;
-    --color-surface: #271E11;
+    --color-bg: #1c1509;
+    --color-surface: #271e11;
     --color-overlay: rgba(0, 0, 0, 0.62);
 
-    --color-text: #EEE3C8;
-    --color-text-secondary: #BBA274;
-    --color-text-muted: #8E7C56;
-    --color-text-disabled: #5F543B;
+    --color-text: #eee3c8;
+    --color-text-secondary: #bba274;
+    --color-text-muted: #8e7c56;
+    --color-text-disabled: #5f543b;
 
-    --color-stroke: #3D3120;
-    --color-border: #3D3120;
-    --color-error: #C2504A;
-    --color-success: #8AA85C;
+    --color-stroke: #3d3120;
+    --color-border: #3d3120;
+    --color-error: #c2504a;
+    --color-success: #8aa85c;
 
-    --map-sea: #2A2412;
-    --map-land: #4C4128;
-    --map-ink: #71603C;
-    --color-marker-author: #C2504A;
-    --color-marker-setting: #93A155;
-    --color-olive: #93A155;
-    --color-star: #E2BD58;
+    --map-sea: #2a2412;
+    --map-land: #433927;
+    --map-ink: #71603c;
+    --color-marker-author: #c2504a;
+    --color-marker-setting: #93a155;
+    --color-olive: #93a155;
+    --color-star: #e2bd58;
 
     color-scheme: dark;
   }
