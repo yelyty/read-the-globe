@@ -32,7 +32,7 @@ export const goalsLede = style({
 
 export const goalsList = style({
 	maxWidth: 760,
-	marginTop: "0 auto",
+	margin: "0 auto",
 	listStyle: "none",
 	borderTop: `1px solid ${vars.color.border}`,
 	padding: 0
