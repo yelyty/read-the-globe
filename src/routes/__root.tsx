@@ -1,6 +1,5 @@
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import type { AuthContextValue } from "../auth-context";
-import { themeClass } from "../theme.css";
 
 interface RouterContext {
   auth: AuthContextValue;
@@ -11,9 +10,5 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 });
 
 function RootComponent() {
-  return (
-    <div className={themeClass}>
-      <Outlet />
-    </div>
-  );
+  return <Outlet />;
 }

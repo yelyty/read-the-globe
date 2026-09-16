@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { GlobeStandIcon } from "@phosphor-icons/react";
-import ThemeToggle from "./components/ThemeToggle/ThemeToggle";
+import ThemeButton from "./components/ThemeButton/ThemeButton";
 
 type HeaderProps = {
   authorized: boolean;
@@ -32,7 +32,7 @@ const Header = ({ authorized = false, onAddBookClick }: HeaderProps) => {
             </button>
           </>
         )}
-        <ThemeToggle />
+        <ThemeButton />
       </div>
     </header>
   );

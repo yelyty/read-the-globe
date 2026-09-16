@@ -119,7 +119,7 @@ export const routeFill = style({
 
 export const routePin = style({
 	position: "absolute",
-	left: "calc(var(--p) * (100% - 16px)",
+	left: "calc(var(--p) * (100% - 16px))",
 	top: "50%",
 	width: 23,
 	height: 23,
