@@ -2,7 +2,7 @@ import { globalStyle, style } from "@vanilla-extract/css";
 import { vars } from "../../../theme.css";
 import { phone, sectionHead } from "../../LandingPage.css";
 
-const ease = "cubic-bezier(.2, .8, .25, 1)";
+export const ease = "cubic-bezier(.2, .8, .25, 1)";
 
 export const reveal = style({
 	transition: `opacity 0.7s ${ease}, translate 0.7s ${ease}`,

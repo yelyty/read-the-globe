@@ -5,6 +5,7 @@ import { useAuth } from "../auth-context";
 import { useNavigate } from "@tanstack/react-router";
 import Goals from "./components/Goals/Goals";
 import Header from "./components/Header/Header";
+import LoginDialog from "./components/LoginDialog/LoginDialog";
 
 const LandingPage = () => {
   const [isLogInOpen, setIsLogInOpen] = useState(false);
@@ -28,6 +29,7 @@ const LandingPage = () => {
         <Hero />
         <Goals />
       </main>
+      <LoginDialog open={isLogInOpen} onClose={closeLogIn} />
     </div>
   );
 };
