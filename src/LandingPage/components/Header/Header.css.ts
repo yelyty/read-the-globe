@@ -35,23 +35,19 @@ export const logoLink = style({
 	display: "flex",
 	flex: "none",
 	alignItems: "center",
+	gap: 8,
+	marginRight: "auto",
 	textDecoration: "none",
 	color: vars.color.text
 });
 
 export const logo = style({
 	display: "block",
-	width: 215,
+	flex: "none",
+	width: 40,
 	height: 40,
-	"@media": { [phone]: { display: "none" } },
 });
 
-export const logoMark = style({
-	display: "none",
-	width: 30,
-	height: 32,
-	"@media": { [phone]: { display: "block" } },
-});
 
 export const logoTitle = style({
 	fontFamily: vars.font.display,

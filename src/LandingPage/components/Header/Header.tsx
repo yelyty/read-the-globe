@@ -1,8 +1,7 @@
-import { GlobeStandIcon, MapPinIcon } from "@phosphor-icons/react";
+import { MapPinIcon } from "@phosphor-icons/react";
 import * as s from "./Header.css";
 import ThemeButton from "../../../components/ThemeButton/ThemeButton";
-
-const LOGO_ICON_SIZE = 30;
+import Logo from "../../../components/Logo/Logo";
 
 type HeaderProps = {
   onLogIn: () => void;
@@ -14,7 +13,7 @@ const Header = ({ onLogIn }: HeaderProps) => {
       <div className={s.headerRow}>
         {/* TODO: Add SVG logo */}
         <a href="#top" className={s.logoLink} aria-label="Read The Globe, home">
-          <GlobeStandIcon size={LOGO_ICON_SIZE} weight="bold" />
+          <Logo className={s.logo} />
           <span className={s.logoTitle}>Read The Globe</span>
         </a>
 
