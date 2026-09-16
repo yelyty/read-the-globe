@@ -7,6 +7,7 @@ import Goals from "./components/Goals/Goals";
 import Header from "./components/Header/Header";
 import LoginDialog from "./components/LoginDialog/LoginDialog";
 import Footer from "./components/Footer/Footer";
+import SignUp from "./components/SignUp/SignUp";
 
 const LandingPage = () => {
   const [isLogInOpen, setIsLogInOpen] = useState(false);
@@ -29,6 +30,7 @@ const LandingPage = () => {
       <main id="main" tabIndex={-1}>
         <Hero />
         <Goals />
+        <SignUp onLogIn={openLogIn} />
       </main>
       <LoginDialog open={isLogInOpen} onClose={closeLogIn} />
       <Footer />

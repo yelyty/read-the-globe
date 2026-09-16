@@ -47,3 +47,6 @@ export const GOALS: {
   { kind: "Countries", name: "Island nations", done: 6, total: 8 },
   { kind: "Theme", name: "Stories set in Paris", done: 1, total: 3 },
 ];
+
+export const GEO_URL =
+  "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
