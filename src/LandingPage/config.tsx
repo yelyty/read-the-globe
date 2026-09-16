@@ -36,3 +36,14 @@ export const goals = [
   { name: "Island nations", done: 6, total: 8 },
   { name: "Stories set in the Arctic", done: 1, total: 3 },
 ];
+
+export const GOALS: {
+  kind: "Region" | "Countries" | "Theme";
+  name: string;
+  done: number;
+  total: number;
+}[] = [
+  { kind: "Region", name: "Around South America", done: 3, total: 5 },
+  { kind: "Countries", name: "Island nations", done: 6, total: 8 },
+  { kind: "Theme", name: "Stories set in Paris", done: 1, total: 3 },
+];

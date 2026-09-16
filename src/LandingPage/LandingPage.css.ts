@@ -4,6 +4,36 @@ import { vars } from "../theme.css";
 /* Derived semi-transparent tint of the primary color. */
 const primarySoft = `color-mix(in srgb, ${vars.color.primary} 12%, transparent)`;
 
+export const phone = "screen and (max-width: 639px)";
+
+
+export const page = style({
+	minHeight: "100vh",
+	background: vars.color.background,
+	color: vars.color.text,
+	fontFamily: vars.font.serif,
+	fontSize: 17,
+	lineHeight: 1.5,
+	overflowX: "clip",
+	caretColor: vars.color.primary,
+	fontVariantNumeric: "tabular-nums",
+})
+
+export const sectionHead = style({
+	textAlign: "center",
+	maxWidth: 680,
+	scrollMarginTop: 72,
+	"@media": {
+		[phone]: { paddingTop: 72 }
+	}
+})
+
+
+export const wrap = style({
+	maxWidth: 1240,
+	marginInline: "auto",
+	paddingInline: "clamp(18px, 4vw, 40px)"
+})
 
 /* ================================================================== *
  * Shell
@@ -47,12 +77,7 @@ export const logoWrapper = style({
 	color: vars.color.text,
 });
 
-export const logoTitle = style({
-	fontFamily: vars.font.display,
-	fontSize: "1.35rem",
-	fontWeight: 700,
-	letterSpacing: "-0.01em",
-});
+
 
 export const nav = style({
 	display: "flex",
@@ -315,13 +340,18 @@ export const cardFootLink = style({
 /* ================================================================== *
  * Section scaffolding
  * ================================================================== */
-export const section = style({ ...shell, paddingBlock: "4rem" });
-
-export const sectionHead = style({
-	textAlign: "center",
-	maxWidth: 640,
-	margin: "0 auto 3rem",
-});
+export const section = style([
+	wrap,
+	{
+		position: 'relative',
+		isolation: 'isolate',
+		paddingTop: 96,
+		scrollMarginTop: 72,
+		"@media": {
+			[phone]: { paddingTop: 72 }
+		}
+	}
+]);
 
 export const eyebrow = style({
 	fontSize: "0.72rem",
