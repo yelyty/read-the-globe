@@ -6,43 +6,44 @@
 
 :root {
   /* Type */
-  --font-display: "Cormorant Garamond", Georgia, serif;
-  --font-serif: "EB Garamond", Georgia, serif;
-  --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-display: Alegreya, Georgia, "Times New Roman", serif;
+  --font-serif: "EB Garamond", Georgia, "Times New Roman", serif;
+  --font-sans:
+    "Alegreya Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
 
   /* Brand */
   --color-primary: #4a6a40;
   --color-secondary: #c7a536;
   --color-primary-hover: #3c5734;
   --on-accent: #f5e6b8;
-  --color-accent: #4a6a40;
+  --color-accent: #4a6a40; /* green for links, focus rings and text */
 
   /* Surfaces */
-  --color-bg: #f8edd0;
-  --color-surface: #fdf6e3;
-  --color-overlay: rgba(43, 30, 10, 0.55);
-  --color-field: #fcf8ee;
-  --color-field-line: #9a7f35;
+  --color-bg: #f6f0e2;
+  --color-surface: #f8edd0;
+  --color-overlay: rgba(60, 48, 20, 0.55);
+  --color-field: #fcf8ee; /* input background */
+  --color-field-line: #9a7f35; /* input border, 3:1 on the field */
 
   /* Text */
   --color-text: #3a2e14;
   --color-text-secondary: #6e5733;
-  --color-text-muted: #8e764a;
+  --color-text-muted: #7c673f;
   --color-text-disabled: #bca56e;
 
   /* Lines & states */
   --color-stroke: #cdb16f;
   --color-border: #cdb16f;
-  --color-error: #7e3030;
+  --color-error: #8b3a33;
   --color-success: #5f7445;
 
   /* Map / cartography */
-  --map-sea: #f3d89a;
-  --map-land: #f5e1b2;
-  --map-ink: #ae8f44;
+  --map-sea: #f8edd0;
+  --map-land: #f5e1b2; /* DESIGN.md #F3D89A at 55% over the sea */
+  --map-ink: #cdb16f;
   --color-marker-author: #8b3a33;
   --color-marker-setting: #6f7a3b;
-  --color-olive: #6f7445;
+  --color-olive: #6f7a3b;
   --color-star: #c7a536;
 
   --radius: 15px;
@@ -53,68 +54,74 @@
 
 [data-theme="dark"] {
   /* Brand */
-  --color-primary: #6e9466;
-  --color-secondary: #e2bd58;
-  --color-primary-hover: #5e8457;
-  --on-accent: #1c1509;
+  --color-primary: #4e6d44;
+  --color-secondary: #d9b94f;
+  --color-primary-hover: #28381f;
+  --on-accent: #f5e6b8;
+  --color-accent: #8dae7c;
 
   /* Surfaces */
-  --color-bg: #1c1509;
-  --color-surface: #271e11;
+  --color-bg: #1c1811;
+  --color-surface: #241f15;
   --color-overlay: rgba(0, 0, 0, 0.62);
+  --color-field: #1c1811;
+  --color-field-line: #7a6a45;
 
   /* Text */
-  --color-text: #eee3c8;
-  --color-text-secondary: #bba274;
-  --color-text-muted: #8e7c56;
+  --color-text: #f2e6c6;
+  --color-text-secondary: #c6b389;
+  --color-text-muted: #a8955f;
   --color-text-disabled: #5f543b;
 
   /* Lines & states */
-  --color-stroke: #3d3120;
-  --color-border: #3d3120;
-  --color-error: #c2504a;
+  --color-stroke: #4c4029;
+  --color-border: #4c4029;
+  --color-error: #e08a7e;
   --color-success: #8aa85c;
 
   /* Map / cartography */
-  --map-sea: #2a2412;
-  --map-land: #433927;
-  --map-ink: #71603c;
-  --color-marker-author: #c2504a;
-  --color-marker-setting: #93a155;
-  --color-olive: #93a155;
-  --color-star: #e2bd58;
+  --map-sea: #241f15;
+  --map-land: #433927; /* DESIGN.md #5C4E35 at 55% over the sea */
+  --map-ink: #4c4029;
+  --color-marker-author: #d07a6f;
+  --color-marker-setting: #a3b06a;
+  --color-olive: #a3b06a;
+  --color-star: #d9b94f;
 
   color-scheme: dark;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    --color-primary: #6e9466;
-    --color-secondary: #e2bd58;
-    --color-primary-hover: #5e8457;
-    --on-accent: #1c1509;
+    --color-primary: #4e6d44;
+    --color-secondary: #d9b94f;
+    --color-primary-hover: #28381f;
+    --on-accent: #f5e6b8;
+    --color-accent: #8dae7c;
 
-    --color-bg: #1c1509;
-    --color-surface: #271e11;
+    --color-bg: #1c1811;
+    --color-surface: #241f15;
     --color-overlay: rgba(0, 0, 0, 0.62);
+    --color-field: #1c1811;
+    --color-field-line: #7a6a45;
 
-    --color-text: #eee3c8;
-    --color-text-secondary: #bba274;
-    --color-text-muted: #8e7c56;
+    --color-text: #f2e6c6;
+    --color-text-secondary: #c6b389;
+    --color-text-muted: #a8955f;
     --color-text-disabled: #5f543b;
 
-    --color-stroke: #3d3120;
-    --color-border: #3d3120;
-    --color-error: #c2504a;
+    --color-stroke: #4c4029;
+    --color-border: #4c4029;
+    --color-error: #e08a7e;
     --color-success: #8aa85c;
 
-    --map-sea: #2a2412;
+    --map-sea: #241f15;
     --map-land: #433927;
-    --map-ink: #71603c;
-    --color-marker-author: #c2504a;
-    --color-marker-setting: #93a155;
-    --color-olive: #93a155;
-    --color-star: #e2bd58;
+    --map-ink: #4c4029;
+    --color-marker-author: #d07a6f;
+    --color-marker-setting: #a3b06a;
+    --color-olive: #a3b06a;
+    --color-star: #d9b94f;
 
     color-scheme: dark;
   }

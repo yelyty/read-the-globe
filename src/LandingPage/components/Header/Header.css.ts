@@ -36,6 +36,7 @@ export const logoLink = style({
 	flex: "none",
 	alignItems: "center",
 	textDecoration: "none",
+	color: vars.color.text
 });
 
 export const logo = style({
@@ -54,6 +55,7 @@ export const logoMark = style({
 
 export const logoTitle = style({
 	fontFamily: vars.font.display,
+	color: vars.color.text,
 	fontSize: "1.35rem",
 	fontWeight: 700,
 	letterSpacing: "-0.01em",
