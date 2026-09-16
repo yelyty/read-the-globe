@@ -1,6 +1,7 @@
 import { globalStyle, style } from "@vanilla-extract/css";
 import { vars } from "../../theme.css";
-import { label } from "../../LandingPage/temp.css";
+import { label } from "../../LandingPage/components/Goals/Goals.css";
+
 
 export const note = {
 	display: "flex",
