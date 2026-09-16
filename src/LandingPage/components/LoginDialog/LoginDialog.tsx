@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type SubmitEvent } from "react";
 import { WarningCircleIcon, XIcon } from "@phosphor-icons/react";
 
 import * as s from "./LoginDialog.css";
@@ -40,7 +40,7 @@ const LoginDialog = ({ open, onClose }: LoginDialogProps) => {
 
   const errors = submitted ? validate(email, password) : {};
 
-  const submit = async (event: FormEvent<HTMLFormElement>) => {
+  const submit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSubmitted(true);
     const found = validate(email, password);
