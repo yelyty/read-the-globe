@@ -31,11 +31,12 @@ export const goalsLede = style({
 });
 
 export const goalsList = style({
-	marginTop: 14,
-	fontSize: 17.5,
-	fontWeight: 500,
-	color: vars.color.textSecondary,
-})
+	maxWidth: 760,
+	marginTop: "0 auto",
+	listStyle: "none",
+	borderTop: `1px solid ${vars.color.border}`,
+	padding: 0
+});
 
 export const label = style({
 	fontFamily: vars.font.sans,

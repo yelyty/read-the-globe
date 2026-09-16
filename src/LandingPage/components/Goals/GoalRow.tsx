@@ -23,7 +23,7 @@ const GoalRow = ({ goal }: GoalRowProps) => {
       <div
         ref={routeRef}
         className={s.route}
-        data-reveled={routeRevealed}
+        data-revealed={routeRevealed}
         aria-hidden="true"
         style={{ "--p": goal.done / goal.total } as React.CSSProperties}
       >
@@ -31,7 +31,7 @@ const GoalRow = ({ goal }: GoalRowProps) => {
         <div className={s.routeFill} />
         <svg className={s.routePin} viewBox="0 0 24 24">
           <path
-            d="M12 2C8.1 2 5 5.1 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"
+            d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"
             fill="var(--route)"
             stroke={vars.color.surface}
             strokeWidth="1.6"

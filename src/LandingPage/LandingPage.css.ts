@@ -19,172 +19,30 @@ export const page = style({
 	fontVariantNumeric: "tabular-nums",
 })
 
-export const sectionHead = style({
-	textAlign: "center",
-	maxWidth: 680,
-	scrollMarginTop: 72,
-	"@media": {
-		[phone]: { paddingTop: 72 }
-	}
-})
-
-
 export const wrap = style({
 	maxWidth: 1240,
 	marginInline: "auto",
 	paddingInline: "clamp(18px, 4vw, 40px)"
 })
 
-/* ================================================================== *
- * Shell
- * ================================================================== */
-export const wrapper = style({
-	minHeight: "100vh",
-	background: vars.color.background,
-	color: vars.color.textSecondary,
-	fontFamily: vars.font.serif,
-	fontSize: 17,
-	lineHeight: 1.5,
-	WebkitFontSmoothing: "antialiased",
-});
+export const section = style([
+	wrap,
+	{
+		position: "relative",
+		isolation: "isolate",
+		paddingTop: 96,
+		scrollMarginTop: 72,
+		"@media": { [phone]: { paddingTop: 72 } },
+	},
+]);
 
-const shell = {
-	width: "100%",
-	maxWidth: 1200,
-	marginInline: "auto",
-	paddingInline: "2rem",
-} as const;
-
-/* ================================================================== *
- * Header
- * ================================================================== */
-export const header = style({
-	...shell,
-	position: 'sticky',
-	top: 0,
-	display: "flex",
-	zIndex: 60,
-	background: vars.color.background,
-	alignItems: "center",
-	justifyContent: "space-between",
-	paddingBlock: "1.4rem",
-});
-
-export const logoWrapper = style({
-	display: "flex",
-	alignItems: "center",
-	gap: "0.6rem",
-	color: vars.color.text,
+export const sectionHead = style({
+	textAlign: "center",
+	maxWidth: 680,
+	margin: "0 auto",
 });
 
 
-
-export const nav = style({
-	display: "flex",
-	alignItems: "center",
-	gap: "2rem",
-	"@media": { "screen and (max-width: 880px)": { display: "none" } },
-});
-
-export const navLink = style({
-	color: vars.color.textSecondary,
-	textDecoration: "none",
-	fontSize: "1rem",
-	opacity: 0.85,
-	transition: "opacity 150ms ease",
-	":hover": { opacity: 1 },
-});
-
-export const headerActions = style({
-	display: "flex",
-	alignItems: "center",
-	gap: "0.75rem",
-});
-
-
-/* ================================================================== *
- * Hero
- * ================================================================== */
-export const hero = style({
-	...shell,
-	paddingBlock: "4rem",
-	display: "flex",
-	justifyContent: "center",
-	alignItems: "center",
-	textAlign: 'center',
-	gap: "3.5rem",
-	// "@media": {
-	// 	"screen and (max-width: 980px)": {
-	// 		gridTemplateColumns: "1fr",
-	// 		gap: "2.5rem",
-	// 		paddingBlock: "2.5rem",
-	// 	},
-	// },
-});
-
-export const heroText = style({
-	display: "flex",
-	flexDirection: "column",
-	gap: "1.5rem",
-	paddingTop: "1rem",
-});
-
-
-export const kicker = style({
-	textTransform: "uppercase",
-	letterSpacing: "2px",
-	fontSize: "0.72rem",
-	fontWeight: 700,
-	color: vars.color.textMuted,
-})
-
-export const head = style({
-	margin: 0,
-	fontFamily: vars.font.display,
-	fontWeight: 700,
-	fontSize: "clamp(2.6rem, 5.5vw, 4rem)",
-	lineHeight: 1.02,
-	letterSpacing: "-0.02em",
-	color: vars.color.text,
-});
-
-export const sub = style({
-	margin: 0,
-	fontSize: "1.15rem",
-	lineHeight: 1.6,
-	color: vars.color.textSecondary,
-
-});
-
-export const checklist = style({
-	listStyle: "none",
-	margin: "0.5rem 0 0",
-	padding: 0,
-	display: "flex",
-	flexDirection: "column",
-	gap: "1rem",
-});
-
-export const checkItem = style({
-	display: "flex",
-	gap: "0.75rem",
-	alignItems: "flex-start",
-	fontSize: "1.05rem",
-	color: vars.color.textSecondary,
-});
-
-export const checkIcon = style({
-	flexShrink: 0,
-	marginTop: 2,
-	width: 22,
-	height: 22,
-	borderRadius: 999,
-	border: `1.5px solid ${vars.color.primary}`,
-	color: vars.color.primary,
-	display: "inline-flex",
-	alignItems: "center",
-	justifyContent: "center",
-});
 
 export const heroMap = style({
 	display: "flex",
@@ -338,46 +196,6 @@ export const cardFootLink = style({
 
 
 /* ================================================================== *
- * Section scaffolding
- * ================================================================== */
-export const section = style([
-	wrap,
-	{
-		position: 'relative',
-		isolation: 'isolate',
-		paddingTop: 96,
-		scrollMarginTop: 72,
-		"@media": {
-			[phone]: { paddingTop: 72 }
-		}
-	}
-]);
-
-export const eyebrow = style({
-	fontSize: "0.72rem",
-	fontWeight: 700,
-	letterSpacing: "0.16em",
-	textTransform: "uppercase",
-	color: vars.color.textMuted,
-});
-
-export const sectionTitle = style({
-	margin: "0.6rem 0 0.8rem",
-	fontFamily: vars.font.display,
-	fontSize: "clamp(1.9rem, 4vw, 2.6rem)",
-	fontWeight: 700,
-	letterSpacing: "-0.015em",
-	color: vars.color.text,
-});
-
-export const sectionLead = style({
-	margin: 0,
-	fontSize: "1.1rem",
-	lineHeight: 1.6,
-	color: vars.color.textSecondary,
-});
-
-/* ================================================================== *
  * How it works — step cards
  * ================================================================== */
 export const steps = style({
@@ -437,37 +255,6 @@ export const cardText = style({
 	fontSize: "1rem",
 });
 
-/* ================================================================== *
- * The Atlas
- * ================================================================== */
-export const atlasGrid = style({
-	...shell,
-	paddingBlock: "1rem 4rem",
-	display: "grid",
-	gridTemplateColumns: "1.55fr 1fr",
-	gap: "1.5rem",
-	alignItems: "start",
-	"@media": {
-		"screen and (max-width: 980px)": { gridTemplateColumns: "1fr" },
-	},
-});
-
-export const atlasCard = style({ ...panel, padding: "2rem" });
-
-export const atlasTitle = style({
-	margin: "0.5rem 0 0.6rem",
-	fontFamily: vars.font.display,
-	fontSize: "1.7rem",
-	fontWeight: 700,
-	color: vars.color.text,
-});
-
-export const atlasBody = style({
-	margin: "0 0 1.5rem",
-	color: vars.color.textSecondary,
-	lineHeight: 1.6,
-	maxWidth: "48ch",
-});
 
 /* map panel */
 export const mapPanel = style({
@@ -590,78 +377,6 @@ export const featureTitle = style({
 	color: vars.color.text,
 });
 
-/* ================================================================== *
- * Reading goals
- * ================================================================== */
-export const goalsSection = style({ ...shell, paddingBlock: "1rem 4rem" });
-
-export const goalsCard = style({
-	...panel,
-	padding: "2.5rem",
-	display: "grid",
-	gridTemplateColumns: "1fr 1.2fr",
-	gap: "3rem",
-	alignItems: "center",
-	"@media": {
-		"screen and (max-width: 900px)": {
-			gridTemplateColumns: "1fr",
-			gap: "2rem",
-		},
-	},
-});
-
-export const goalsTitle = style({
-	margin: "0.5rem 0 0.8rem",
-	fontFamily: vars.font.display,
-	fontSize: "clamp(1.8rem, 3.5vw, 2.3rem)",
-	fontWeight: 700,
-	lineHeight: 1.1,
-	color: vars.color.text,
-});
-
-export const chips = style({
-	display: "flex",
-	flexWrap: "wrap",
-	gap: "0.6rem",
-	marginTop: "1.2rem",
-});
-
-export const chip = style({
-	padding: "0.4rem 0.9rem",
-	borderRadius: 999,
-	border: `1px solid ${vars.color.border}`,
-	background: vars.color.surface,
-	color: vars.color.textSecondary,
-	fontFamily: vars.font.serif,
-	fontSize: "0.9rem",
-});
-
-export const goalRows = style({
-	display: "flex",
-	flexDirection: "column",
-	gap: "1.4rem",
-});
-
-export const goalRow = style({ display: "block" });
-
-export const goalHead = style({
-	display: "flex",
-	alignItems: "center",
-	gap: "0.6rem",
-	marginBottom: "0.5rem",
-});
-
-export const goalIcon = style({
-	width: 30,
-	height: 30,
-	borderRadius: 8,
-	background: primarySoft,
-	color: vars.color.primary,
-	display: "grid",
-	placeItems: "center",
-	flexShrink: 0,
-});
-
 export const goalName = style({
 	fontFamily: vars.font.display,
 	fontWeight: 700,
@@ -693,50 +408,3 @@ export const fill = style({
 	background: vars.color.primary,
 });
 
-/* ================================================================== *
- * CTA band
- * ================================================================== */
-export const ctaWrap = style({ ...shell, paddingBottom: "4rem" });
-
-export const cta = style({
-	position: "relative",
-	background: vars.color.primary,
-	borderRadius: 18,
-	padding: "3.5rem 2rem 3rem",
-	textAlign: "center",
-	overflow: "hidden",
-});
-
-export const ctaTitle = style({
-	margin: "0.5rem 0 0.8rem",
-	fontFamily: vars.font.display,
-	fontSize: "clamp(2rem, 4.5vw, 2.9rem)",
-	fontWeight: 700,
-	color: vars.color.onAccent,
-});
-
-export const ctaText = style({
-	margin: "0 auto 1.8rem",
-	maxWidth: "40ch",
-	fontSize: "1.1rem",
-	lineHeight: 1.6,
-	color: `color-mix(in srgb, ${vars.color.onAccent} 85%, transparent)`,
-});
-
-export const ctaBtn = style({
-	display: "inline-flex",
-	alignItems: "center",
-	gap: "0.5rem",
-	padding: "0.9rem 1.6rem",
-	borderRadius: vars.radius.md,
-	border: "none",
-	background: vars.color.onAccent,
-	color: vars.color.primary,
-	fontFamily: vars.font.serif,
-	fontSize: "1.05rem",
-	fontWeight: 700,
-	cursor: "pointer",
-	transition: "transform 120ms ease, opacity 150ms ease",
-	":hover": { opacity: 0.92 },
-	":active": { transform: "translateY(1px)" },
-});
