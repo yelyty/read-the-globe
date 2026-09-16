@@ -1,10 +1,12 @@
-import { style, styleVariants, keyframes } from "@vanilla-extract/css";
+import { style, styleVariants, keyframes, globalStyle } from "@vanilla-extract/css";
 import { vars } from "../theme.css";
+import { reducedMotion } from "../global.css";
 
 /* Derived semi-transparent tint of the primary color. */
 const primarySoft = `color-mix(in srgb, ${vars.color.primary} 12%, transparent)`;
 
 export const phone = "screen and (max-width: 639px)";
+
 
 
 export const page = style({
@@ -18,6 +20,37 @@ export const page = style({
 	caretColor: vars.color.primary,
 	fontVariantNumeric: "tabular-nums",
 })
+
+/* :where() keeps these at one class of specificity, so component classes win. */
+globalStyle(`${page} :where(h1, h2, h3)`, {
+	margin: 0,
+	fontFamily: vars.font.display,
+	fontWeight: 500,
+});
+globalStyle(`${page} :where(p)`, { margin: 0 });
+globalStyle(`${page} :where(a)`, {
+	color: vars.color.text,
+	textUnderlineOffset: 3,
+});
+globalStyle(`${page} :where(button, input)`, {
+	font: "inherit",
+	color: "inherit",
+});
+globalStyle(`${page} :where(a, button, input, [tabindex]):focus-visible`, {
+	outline: `2px solid ${vars.color.accent}`,
+	outlineOffset: 2,
+});
+globalStyle(`${page} ::selection`, { background: "rgba(74, 106, 64, 0.25)" });
+globalStyle(`${page} *, ${page} *::before, ${page} *::after`, {
+	"@media": {
+		[reducedMotion]: {
+			transitionDuration: "0s !important",
+			animationDuration: "0s !important",
+			animationDelay: "0s !important",
+		},
+	},
+});
+globalStyle("body:has(dialog[open])", { overflow: "hidden" });
 
 export const wrap = style({
 	maxWidth: 1240,
