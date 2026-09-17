@@ -12,6 +12,8 @@ export const tiny = "screen and (max-width: 379px)";
 globalStyle("html, body", {
 	margin: 0,
 	fontFamily: vars.font.sans,
+	background: vars.color.background,
+	color: vars.color.text,
 });
 
 globalStyle("*", {
