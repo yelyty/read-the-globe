@@ -6,6 +6,7 @@ import ShelfImage from "./ShelfImage";
 
 const Shelf = () => {
   const [textRef, textRevealed] = useReveal<HTMLDivElement>();
+  const [imageRef, imageRevealed] = useReveal<HTMLDivElement>();
 
   return (
     <section id="features" className={section}>
@@ -18,8 +19,8 @@ const Shelf = () => {
             author calls home.
           </p>
         </div>
-        <div>
-          <ShelfImage />
+        <div ref={imageRef} className={reveal} data-revealed={imageRevealed}>
+          <ShelfImage className={s.shelfImage} />
         </div>
       </div>
     </section>

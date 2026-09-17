@@ -22,9 +22,17 @@ export const shelfNote = style({
 
 export const shelfBlock = style({
 	display: "grid",
-	gridTemplateColumns: "minmax(0, 46ch) auto",
+	gridTemplateColumns: "minmax(0, 46ch) minmax(0, 520px)",
 	justifyContent: "center",
 	gap: "clamp(32px, 4vw, 68px)",
 	alignItems: "center",
 	"@media": { [tablet]: { gridTemplateColumns: "minmax(0, 1fr)" } },
 });
+
+export const shelfImage = style({
+	display: 'block',
+	width: "100%",
+	height: "auto",
+	maxWidth: 520,
+	marginInline: "auto"
+})

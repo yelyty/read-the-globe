@@ -1,11 +1,13 @@
-const ShelfImage = () => {
+type ShelfImageProps = {
+  className?: string;
+};
+const ShelfImage = ({ className }: ShelfImageProps) => {
   return (
     <svg
-      width="100%"
-      height="100%"
-      viewBox="0 0 1572 1487"
-      version="1.1"
-      //   style={{fillRule:"evenodd", clipRule:"evenodd",stroke-linejoin:round;stroke-miterlimit:2"}}
+      className={className}
+      viewBox="0 0 1572 960"
+      aria-hidden="true"
+      focusable="false"
     >
       <g transform="matrix(1,0,0,1,-363.486,-409.345)">
         <g>
@@ -384,7 +386,7 @@ const ShelfImage = () => {
               cy="1030.6"
               rx="29.99"
               ry="85.134"
-              fill=":rgb(47,74,48)"
+              fill="rgb(47,74,48)"
             />
           </g>
           <g transform="matrix(1.05826,-0.0313826,0.0296418,0.999561,12.7914,27.1287)">
