@@ -1,9 +1,8 @@
 import { useState } from "react";
 import Dialog, { DialogContent, DialogTitle } from "./components/Dialog/Dialog";
-import { supabase } from "./utils/supabase";
 
 async function signOut() {
-  const { error } = await supabase.auth.signOut();
+  //   const { error } = await supabase.auth.signOut();
 }
 
 const ProfileSettings = () => {

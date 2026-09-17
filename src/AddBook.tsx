@@ -80,7 +80,7 @@ const AddBook = ({ selectedCountry, onCancel }: AddBookProps) => {
     setSelectedCode(code);
   }
 
-  const [searchError, setSearchError] = useState<string | null>(null);
+  const [_, setSearchError] = useState<string | null>(null);
   const [searching, setSearching] = useState(false);
 
   useEffect(() => {
