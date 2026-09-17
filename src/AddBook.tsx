@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
-import TextInput from "./components/TextInput/TextInput";
 import saveBook from "./api/saveBook";
 import { getCountryNames } from "./utils/countryNames";
 import { MapPinSimpleIcon, XIcon } from "@phosphor-icons/react";
@@ -135,7 +134,7 @@ const AddBook = ({ selectedCountry, onCancel }: AddBookProps) => {
       <label className="label" htmlFor="title">
         Title *
       </label>
-      <TextInput
+      <input
         id="title"
         type="text"
         name="title"
@@ -145,19 +144,19 @@ const AddBook = ({ selectedCountry, onCancel }: AddBookProps) => {
       <label className="label" htmlFor="author">
         Author *
       </label>
-      <TextInput
+      <input
         id="author"
         name="author"
         type="text"
         value={author}
         onChange={(e) => setAuthor(e.target.value)}
       />
-      <TextInput type="hidden" name="countryCode" value={code} />
+      <input type="hidden" name="countryCode" value={code} />
 
       <label className="label" htmlFor="place">
         Places *
       </label>
-      <TextInput
+      <input
         id="place"
         type="text"
         value={query}
@@ -197,7 +196,7 @@ const AddBook = ({ selectedCountry, onCancel }: AddBookProps) => {
         </ul>
       )}
 
-      <TextInput
+      <input
         type="hidden"
         name="places"
         value={JSON.stringify(pins.map(({ id, ...rest }) => rest))}

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { supabase } from "./utils/supabase";
 import Dialog, { DialogContent, DialogTitle } from "./components/Dialog/Dialog";
-import TextInput from "./components/TextInput/TextInput";
 
 export default function LoginModal() {
   const [email, setEmail] = useState("");
@@ -40,7 +39,7 @@ export default function LoginModal() {
           <label className="label" htmlFor="email">
             Email *
           </label>
-          <TextInput
+          <input
             type="email"
             placeholder="Email"
             value={email}
@@ -49,7 +48,7 @@ export default function LoginModal() {
           <label className="label" htmlFor="password">
             Password *
           </label>
-          <TextInput
+          <input
             type="password"
             placeholder="Password"
             value={password}

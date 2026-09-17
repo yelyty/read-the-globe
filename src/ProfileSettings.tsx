@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Dialog, { DialogContent, DialogTitle } from "./components/Dialog/Dialog";
-import TextInput from "./components/TextInput/TextInput";
 import { supabase } from "./utils/supabase";
 
 async function signOut() {
@@ -20,7 +19,7 @@ const ProfileSettings = () => {
           <label className="label" htmlFor="name">
             Display Name *
           </label>
-          <TextInput
+          <input
             id="name"
             type="text"
             name="name"
@@ -30,13 +29,7 @@ const ProfileSettings = () => {
           <label className="label" htmlFor="email">
             Email *
           </label>
-          <TextInput
-            id="name"
-            type="email"
-            name="email"
-            value={email}
-            disabled
-          />
+          <input id="name" type="email" name="email" value={email} disabled />
         </form>
         <button className="button" onClick={signOut}>
           Sign Out
