@@ -1,6 +1,7 @@
 import { globalStyle, style } from "@vanilla-extract/css";
 import { vars } from "../../../theme.css";
 import { phone, wrap } from "../../LandingPage.css";
+import { hover } from "../../../global.css";
 
 export const header = style({
 	position: "sticky",
@@ -24,7 +25,6 @@ export const headerRow = style([
 		display: "flex",
 		flexWrap: "wrap",
 		alignItems: "center",
-		justifyContent: "space-between",
 		gap: "12px 22px",
 		paddingBlock: 14,
 		"@media": { [phone]: { gap: 8, flexWrap: "nowrap" } },
@@ -55,15 +55,17 @@ export const logoTitle = style({
 	fontSize: "1.35rem",
 	fontWeight: 700,
 	letterSpacing: "-0.01em",
+	"@media": {
+		[phone]: { display: "none" }
+	}
 });
 
 export const nav = style({
 	display: "flex",
 	alignItems: "center",
 	gap: 22,
-	marginLeft: "auto",
 	"@media": {
-		[phone]: { display: "none" },
+		"screen and (max-width: 759px)": { display: "none" },
 	},
 });
 
@@ -113,6 +115,13 @@ export const pill = style({
 	textDecoration: "none",
 	transition: "transform .14s, background .14s",
 	"@media": {
+		[hover]: {
+			selectors: {
+				"&:hover": {
+					transform: "translateY(-1px)"
+				}
+			}
+		},
 		[phone]: { padding: "10px 14px", fontSize: 14 },
 	},
 });

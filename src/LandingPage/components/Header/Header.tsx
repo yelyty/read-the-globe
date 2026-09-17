@@ -29,7 +29,7 @@ const Header = ({ onLogIn }: HeaderProps) => {
         <button type="button" className={s.loginBtn} onClick={onLogIn}>
           Log in
         </button>
-        <a href="start" className={s.pill}>
+        <a href="#start" className={s.pill}>
           <MapPinIcon weight="fill" aria-hidden="true" />
           <span>Start your atlas</span>
         </a>
