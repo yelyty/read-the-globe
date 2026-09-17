@@ -9,6 +9,7 @@ import LoginDialog from "./components/LoginDialog/LoginDialog";
 import Footer from "./components/Footer/Footer";
 import SignUp from "./components/SignUp/SignUp";
 import Story from "./components/Story/Story";
+import Shelf from "./components/Shelf/Shelf";
 
 const LandingPage = () => {
   const [isLogInOpen, setIsLogInOpen] = useState(false);
@@ -31,8 +32,8 @@ const LandingPage = () => {
       <main id="main" tabIndex={-1}>
         <Hero />
         <Story />
+        <Shelf />
         <Goals />
-
         <SignUp onLogIn={openLogIn} />
       </main>
       <LoginDialog open={isLogInOpen} onClose={closeLogIn} />
