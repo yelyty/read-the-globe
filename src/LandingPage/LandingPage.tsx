@@ -1,7 +1,7 @@
 import * as s from "./LandingPage.css";
 import Hero from "./components/Hero/Hero";
 import { useCallback, useEffect, useState } from "react";
-import { useAuth } from "../auth-context";
+import { useAuth } from "../auth/auth-context";
 import { useNavigate } from "@tanstack/react-router";
 import Goals from "./components/Goals/Goals";
 import Header from "./components/Header/Header";

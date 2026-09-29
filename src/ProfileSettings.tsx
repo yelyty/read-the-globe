@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import Dialog, { DialogContent, DialogTitle } from "./components/Dialog/Dialog";
-import { useAuth } from "./auth-context";
+import { useAuth } from "./auth/auth-context";
 
 import { supabase } from "./utils/supabase";
 import { getProfile } from "./api/Profile/getProfile";

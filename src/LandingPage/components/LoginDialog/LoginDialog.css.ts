@@ -1,5 +1,5 @@
 import { globalStyle, keyframes, style } from "@vanilla-extract/css";
-import { vars } from "../../../theme.css";
+import { vars } from "../../../styles/theme.css";
 import { ease } from "../Goals/Goals.css";
 import { note } from "../../../components/Field/Field.css";
 

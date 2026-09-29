@@ -1,15 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { MapPinIcon } from "@phosphor-icons/react";
-import * as s from "./LandingPage/components/Header/Header.css";
-import ThemeButton from "./components/ThemeButton/ThemeButton";
-import Logo from "./components/Logo/Logo";
-
-type HeaderProps = {
-  onLogBook: () => void;
-};
+import * as s from "../../LandingPage/components/Header/Header.css";
+import ThemeButton from "../ThemeButton/ThemeButton";
+import Logo from "../Logo/Logo";
 
 // The signed-in header, laid out like the landing one: logo home, nav, theme, primary action.
-const Header = ({ onLogBook }: HeaderProps) => {
+const AppHeader = () => {
   return (
     <header className={s.header}>
       <div className={s.headerRow}>
@@ -23,21 +19,34 @@ const Header = ({ onLogBook }: HeaderProps) => {
         </Link>
 
         <nav className={s.nav} aria-label="Main">
-          <Link className={s.navLink} to="/app">
-            Atlas
+          {/* exact: Home is not "current" on /app/shelf; includeSearch: nor does ?log=true change that */}
+          <Link
+            className={s.navLink}
+            to="/app"
+            activeOptions={{ exact: true, includeSearch: false }}
+          >
+            Home
           </Link>
+          {/* <Link className={s.navLink} to="/app/shelf">
+            Shelf
+          </Link> */}
           <Link className={s.navLink} to="/profile">
             Account
           </Link>
         </nav>
         <ThemeButton />
-        <button type="button" className={s.pill} onClick={onLogBook}>
+        {/* opens the book form over whichever page you are on */}
+        <Link
+          className={s.pill}
+          to="."
+          search={(prev) => ({ ...prev, log: true })}
+        >
           <MapPinIcon weight="fill" aria-hidden="true" />
           <span>Log a book</span>
-        </button>
+        </Link>
       </div>
     </header>
   );
 };
 
-export default Header;
+export default AppHeader;

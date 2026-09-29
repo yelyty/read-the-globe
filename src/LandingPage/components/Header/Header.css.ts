@@ -1,7 +1,7 @@
 import { globalStyle, style } from "@vanilla-extract/css";
-import { vars } from "../../../theme.css";
+import { vars } from "../../../styles/theme.css";
 import { phone, wrap } from "../../LandingPage.css";
-import { hover } from "../../../global.css";
+import { hover } from "../../../styles/global.css";
 
 export const header = style({
 	position: "sticky",

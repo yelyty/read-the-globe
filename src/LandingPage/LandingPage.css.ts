@@ -1,6 +1,6 @@
 import { style, styleVariants, keyframes, globalStyle } from "@vanilla-extract/css";
-import { vars } from "../theme.css";
-import { reducedMotion } from "../global.css";
+import { vars } from "../styles/theme.css";
+import { reducedMotion } from "../styles/global.css";
 
 /* Derived semi-transparent tint of the primary color. */
 const primarySoft = `color-mix(in srgb, ${vars.color.primary} 12%, transparent)`;

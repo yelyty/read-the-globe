@@ -1,6 +1,6 @@
 import { style } from "@vanilla-extract/css";
-import { tablet } from "../../../global.css";
-import { vars } from "../../../theme.css";
+import { tablet } from "../../../styles/global.css";
+import { vars } from "../../../styles/theme.css";
 
 export const h2 = style({ fontSize: "clamp(38px, 5vw, 54px)", lineHeight: 1 });
 
