@@ -1,8 +1,8 @@
 import { useState, type ChangeEvent, type SubmitEvent } from "react";
 import { MapPinIcon, WarningCircleIcon } from "@phosphor-icons/react";
-import { useReveal } from "../../../hooks/useReveal";
-import Field from "../../../components/Field/Field";
-import { supabase } from "../../../utils/supabase";
+import { useReveal } from "../../../../hooks/useReveal";
+import Field from "../../../../components/Field/Field";
+import { supabase } from "../../../../utils/supabase";
 import AtlasPlate from "./AtlasPlate";
 import * as s from "./SignUp.css";
 import { reveal } from "../Goals/Goals.css";

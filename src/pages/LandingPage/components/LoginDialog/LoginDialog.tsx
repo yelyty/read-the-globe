@@ -2,8 +2,8 @@ import { useEffect, useRef, useState, type SubmitEvent } from "react";
 import { WarningCircleIcon, XIcon } from "@phosphor-icons/react";
 
 import * as s from "./LoginDialog.css";
-import Field from "../../../components/Field/Field";
-import { supabase } from "../../../utils/supabase";
+import Field from "../../../../components/Field/Field";
+import { supabase } from "../../../../utils/supabase";
 
 const isEmail = (value: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());

@@ -1,7 +1,7 @@
 import { MapPinIcon } from "@phosphor-icons/react";
 import * as s from "./Header.css";
-import ThemeButton from "../../../components/ThemeButton/ThemeButton";
-import Logo from "../../../components/Logo/Logo";
+import ThemeButton from "../../../../components/ThemeButton/ThemeButton";
+import Logo from "../../../../components/Logo/Logo";
 
 type HeaderProps = {
   onLogIn: () => void;

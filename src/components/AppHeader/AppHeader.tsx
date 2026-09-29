@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { MapPinIcon } from "@phosphor-icons/react";
-import * as s from "../../LandingPage/components/Header/Header.css";
+import * as s from "../../pages/LandingPage/components/Header/Header.css";
 import ThemeButton from "../ThemeButton/ThemeButton";
 import Logo from "../Logo/Logo";
 

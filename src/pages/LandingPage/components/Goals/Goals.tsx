@@ -1,5 +1,5 @@
 // import { MapTrifoldIcon, PushPinIcon } from "@phosphor-icons/react";
-import { useReveal } from "../../../hooks/useReveal";
+import { useReveal } from "../../../../hooks/useReveal";
 import { GOALS } from "../../config";
 import GoalRow from "./GoalRow";
 import * as s from "./Goals.css";

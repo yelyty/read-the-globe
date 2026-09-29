@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import LandingPage from "../LandingPage/LandingPage";
+import LandingPage from "../pages/LandingPage/LandingPage";
 
 export const Route = createFileRoute("/")({
   beforeLoad: ({ context }) => {

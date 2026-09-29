@@ -1,6 +1,6 @@
 import { globalStyle, keyframes, style, styleVariants } from "@vanilla-extract/css";
-import { vars } from "../../../styles/theme.css";
-import { coarse, phone, tablet, tiny } from "../../../styles/global.css";
+import { vars } from "../../../../styles/theme.css";
+import { coarse, phone, tablet, tiny } from "../../../../styles/global.css";
 import { wrap } from "../../LandingPage.css";
 import { label } from "../Goals/Goals.css";
 import { btnPrimary } from "../LoginDialog/LoginDialog.css";

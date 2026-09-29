@@ -1,4 +1,4 @@
-import { useReveal } from "../../../hooks/useReveal";
+import { useReveal } from "../../../../hooks/useReveal";
 import * as s from "./Shelf.css";
 import { section } from "../../LandingPage.css";
 import { reveal } from "../Goals/Goals.css";
