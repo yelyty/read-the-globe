@@ -1,69 +1,54 @@
-// /* Dialog */
-// .overlay {
-//   position: fixed;
-//   top: 0;
-//   left: 0;
-//   right: 0;
-//   bottom: 0;
-//   background-color: var(--color-overlay);
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   z-index: 1000;
-// }
+import { style } from "@vanilla-extract/css";
+import { vars } from "../../styles/theme.css";
 
-// .dialog {
-//   background-color: var(--color-bg);
-//   border-radius: var(--radius);
-//   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-//   width: 90%;
-//   max-width: 500px;
-//   max-height: 90vh;
-//   overflow-y: auto;
-//   z-index: 1001;
-//   position: relative;
-// }
+export const overlay = style({
+	position: "fixed",
+	inset: 0,
+	zIndex: 1000,
+	display: "flex",
+	alignItems: "center",
+	justifyContent: "center",
+	background: vars.color.overlay
+})
 
-// .dialog-header {
-//   padding: 24px;
-//   padding-right: 56px;
-// }
+export const dialog = style({
+	position: 'relative',
+	width: "90%",
+	maxWidth: 500,
+	maxHeight: "90vh",
+	overflowY: "auto",
+	background: vars.color.background,
+	borderRadius: vars.radius.md,
+	boxShadow: "0 4px 20px rgba(0,0,0, 0.15)",
+})
 
-// .title {
-//   font-size: 20px;
-//   font-weight: 600;
-//   color: var(--color-text);
-//   margin: 0;
-// }
+export const header = style({
+	padding: 24,
+	paddingRight: 56
+})
 
-// .closeButton {
-//   position: absolute;
-//   top: 20px;
-//   right: 20px;
-//   background: none;
-//   border: none;
-//   font-size: 16px;
-//   cursor: pointer;
-//   padding: 0;
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   z-index: 1;
-//   color: var(--color-text-secondary);
 
-//   &:hover {
-//     background-color: var(--color-gray-200);
-//     border-radius: var(--radius);
-//   }
-// }
+export const closeButton = style({
+	position: "absolute",
+	top: 20,
+	right: 20,
+	zIndex: 1,
+	display: 'flex',
+	alignItems: "center",
+	justifyContent: "center",
+	padding: 0,
+	background: "none",
+	border: "none",
+	borderRadius: vars.radius.md,
+	color: vars.color.textSecondary,
+	cursor: "pointer",
+	":hover": {
+		background: vars.color.surface
+	}
+})
 
-// .content {
-//   padding: 24px;
-// }
 
-// .actions {
-//   padding: 16px 24px;
-//   display: flex;
-//   gap: 12px;
-//   justify-content: flex-end;
-// }
+export const content = style({
+	padding: 24,
+	paddingTop: 0,
+})
