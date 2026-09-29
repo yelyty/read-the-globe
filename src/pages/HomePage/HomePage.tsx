@@ -1,77 +1,83 @@
-import { getRouteApi, Link, useNavigate } from "@tanstack/react-router";
-import Book from "../../Book";
-import toCountryData from "../../helpers/toCountryData";
-import ProgressBar from "../../ProgressBar";
-import WorldMap from "../../WorldMap";
+import { useMemo, useState } from "react";
+import { getRouteApi, Link } from "@tanstack/react-router";
+import { MapPinIcon } from "@phosphor-icons/react";
+import AtlasMap, { type Show } from "../../components/AtlasMap/AtlasMap.tsx";
+import { atlasMarks, atlasStats } from "../../utils/atlasMarks";
+
 import * as s from "./HomePage.css";
+import { useAuth } from "../../auth/auth-context.ts";
+import { useCountryNames } from "../../hooks/useCountryNames.ts";
+import AtlasCountries from "./AtlasCountries.tsx";
+import Cartouche from "./Cartouche.tsx";
+import MapKey from "./MapKey.tsx";
+import RecentPins from "./RecentPins.tsx";
 
 const app = getRouteApi("/app");
-const RECENT = 3; // books under "Recent pins"; the rest are on the shelf
+const RECENT = 5; // rows under "Recent pins"; the rest are on the shelf
 
 const HomePage = () => {
-  const { books, places } = app.useLoaderData();
-  const navigate = useNavigate();
-  const countryData = toCountryData(books);
-  const recent = books.slice(0, RECENT);
+  const { books } = app.useLoaderData();
+  const { user } = useAuth();
+  const names = useCountryNames();
+  //   const navigate = useNavigate();
+  const [show, setShow] = useState<Show>("all");
 
-  return (
-    <>
-      <div className={s.head}>
-        <h1 className={s.title}>Your atlas</h1>
-        <ProgressBar countriesCount={Object.keys(countryData).length} />
-      </div>
+  const marks = useMemo(() => atlasMarks(books), [books]);
+  const stats = atlasStats(books, marks);
+  const dots = books
+    .flatMap((b) => b.places ?? [])
+    .filter((p) => p.lon != null && p.lat != null);
+  const firstName = String(user?.user_metadata?.display_name ?? "")
+    .trim()
+    .split(/\s+/)[0];
+  const title = firstName ? `${firstName}’s atlas` : "Your atlas";
 
-      {books.length === 0 && (
+  if (!books.length) {
+    return (
+      <div className={s.page}>
         <div className={s.firstRun}>
+          <h1 className={s.title}>Your atlas is blank, for now.</h1>
           <p>
-            Every book you log marks the country its author is from. Pin the
-            last book you loved, and watch the first country fill in.
+            Every book you log leaves two marks on this map: where its author is
+            from, and every country the story goes.
           </p>
           <Link
             className={s.primary}
             to="."
             search={(prev) => ({ ...prev, log: true })}
           >
+            <MapPinIcon weight="fill" aria-hidden="true" />
             Log your first book
           </Link>
         </div>
-      )}
+        <AtlasMap
+          marks={{}}
+          dots={[]}
+          caption="Your atlas: no countries marked yet."
+        />
+      </div>
+    );
+  }
 
-      <WorldMap
-        countryData={countryData}
-        places={places}
-        onCountryClick={(code) =>
-          navigate({
-            to: ".",
-            search: (prev) => ({ ...prev, log: true, country: code }),
-          })
-        }
-      />
-
-      {recent.length > 0 && (
-        <section className={s.recent} aria-labelledby="recent-title">
-          <div className={s.subHead}>
-            <h2 id="recent-title" className={s.subTitle}>
-              Recent pins
-            </h2>
-            {/* <Link className={s.more} to="/app/shelf">
-              The whole shelf
-            </Link> */}
-          </div>
-          <div className="book-list">
-            {recent.map((book) => (
-              <Book
-                key={book.id}
-                id={book.id}
-                title={book.title}
-                author={book.author?.name}
-                countryCode={book.author?.country?.code}
-              />
-            ))}
-          </div>
-        </section>
-      )}
-    </>
+  return (
+    <div className={s.page}>
+      {/* the cartouche carries the title on screen; the heading stays for screen readers */}
+      <h1 className={s.srOnly}>{title}</h1>
+      <AtlasMap
+        marks={marks}
+        dots={dots}
+        show={show}
+        // onCountryClick={(code) =>
+        //   navigate({ to: "/app/shelf", search: { country: code } })
+        // }
+        caption={`${title}: ${stats.countries} of 195 countries marked, ${stats.set} where stories are set and ${stats.authors} where authors are from.`}
+      >
+        <Cartouche title={title} stats={stats} show={show} />
+      </AtlasMap>
+      <MapKey show={show} onShow={setShow} canFilter={books.length > 1} />
+      <RecentPins books={books.slice(0, RECENT)} names={names} />
+      <AtlasCountries marks={marks} names={names} />
+    </div>
   );
 };
 

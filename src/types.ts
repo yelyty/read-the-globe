@@ -34,6 +34,7 @@ export interface Place {
 	name: string;
 	lon: number;
 	lat: number;
+	countryCode?: string | null;
 	bookId: string;
 }
 

@@ -13,13 +13,14 @@ async function getBooks(): Promise<BookEntry[]> {
 		.select(`
       id,
       title,
-      created_at,
+      createdaAt: created_at,
       author:authors (
         name,
         country:countries ( name, code )
-      )
+      ),  places!places_book_id_fkey ( id, name, lon, lat, countryCode:country_code, bookId:book_id )(id, name, lon, lat, counterCode: country_code, bookId: book_id)
     `)
 		.eq("user_id", user.id)
+		.order("created_at", { ascending: false })
 		.returns<BookEntry[]>();
 
 	if (error) {

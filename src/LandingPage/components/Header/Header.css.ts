@@ -91,7 +91,7 @@ export const navLink = style({
 	color: vars.color.textSecondary,
 	":hover": { color: vars.color.textSecondary },
 	selectors: {
-		'&[aria-current="page]': { color: vars.color.text }
+		'&[aria-current="page"]': { color: vars.color.text }
 	}
 });
 
@@ -131,19 +131,3 @@ export const pill = style({
 	},
 });
 globalStyle(`${pill} svg`, { width: 14, height: 14 });
-
-// export const pillLabel = style({
-// 	"@media": {
-// 		[tiny]: {
-// 			position: "absolute",
-// 			width: 1,
-// 			height: 1,
-// 			overflow: "hidden",
-// 			clipPath: "inset(50%)",
-// 			whiteSpace: "nowrap",
-// 		},
-// 	},
-// });
-// globalStyle(`${pill}:hover svg`, {
-// 	"@media": { [hover]: { color: c.secondaryBright } },
-// });
