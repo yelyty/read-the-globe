@@ -1,5 +1,8 @@
 import { style } from "@vanilla-extract/css";
 import { vars } from "../../../../styles/theme.css";
+import { phone } from "../../LandingPage.css";
+
+const tablet = "screen and (max-width: 999px)";
 
 export const wrap = style({
 	maxWidth: 1240,
@@ -15,13 +18,21 @@ export const footer = style({
 
 export const footerGrid = style({
 	display: "grid",
-	gridTemplateColumns: "minmax(0, 1.5fr) minmax(0, 1fr)",
+	gridTemplateColumns: "1.5fr 1fr 1fr 1fr",
 	gap: 32,
 	padding: "54px 0 30px",
+	"@media": {
+		[tablet]: { gridTemplateColumns: "repeat(3, minmax(0, 1fr))" },
+		[phone]: { gridTemplateColumns: "repeat(2, minmax(0, 1fr))" },
+	},
 });
 
+export const logoLink = style({ display: "inline-flex", alignItems: "center", gap: 10, textDecoration: "none" });
+export const logo = style({ display: "block", flex: "none", width: 36, height: 36 });
+export const logoTitle = style({ fontFamily: vars.font.wordmark, fontSize: 21, color: vars.color.onAccent });
+
 export const footerTag = style({
-	marginTop: 16,
+	margin: "16px 0 0",
 	fontSize: 16,
 	fontWeight: 500,
 	color: vars.color.onAccentBody,
