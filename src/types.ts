@@ -13,6 +13,10 @@ export interface BookEntry {
 	title: string;
 	createdAt?: string;
 	author: Author | null;
+	places: Place[];
+	goals: {
+		goalId: number
+	}[]
 }
 
 export interface CountryGroup {
@@ -30,5 +34,19 @@ export interface Place {
 	name: string;
 	lon: number;
 	lat: number;
-	book_id: string;
+	bookId: string;
 }
+
+export interface Goal {
+	id: number;
+	name: string;
+	countryCodes: string[] | null;
+	target: number | null;
+}
+
+export interface Profile {
+	displayName: string;
+	handle: string | null;
+	createdAt: string;
+}
+
