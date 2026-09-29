@@ -90,6 +90,9 @@ export const navLink = style({
 	...navText,
 	color: vars.color.textSecondary,
 	":hover": { color: vars.color.textSecondary },
+	selectors: {
+		'&[aria-current="page]': { color: vars.color.text }
+	}
 });
 
 export const loginBtn = style({
@@ -113,6 +116,8 @@ export const pill = style({
 	padding: "11px 22px",
 	minHeight: 40,
 	textDecoration: "none",
+	border: 0,
+	cursor: 'pointer',
 	transition: "transform .14s, background .14s",
 	"@media": {
 		[hover]: {
