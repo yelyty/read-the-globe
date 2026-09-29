@@ -1,7 +1,9 @@
 import { globalStyle, keyframes, style } from "@vanilla-extract/css";
-import { vars } from "../../../styles/theme.css";
+
 import { ease } from "../Goals/Goals.css";
-import { note } from "../../../components/Field/Field.css";
+
+import { vars } from "../../../../styles/theme.css";
+import { note } from "../SignUp/SignUp.css";
 
 export const formError = style({
 	...note,

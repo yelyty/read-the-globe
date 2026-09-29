@@ -1,5 +1,6 @@
 import { useReveal } from "../../../../hooks/useReveal";
-import { vars } from "../../../styles/theme.css";
+import { vars } from "../../../../styles/theme.css";
+
 import type { GOALS } from "../../config";
 import * as s from "./Goals.css";
 

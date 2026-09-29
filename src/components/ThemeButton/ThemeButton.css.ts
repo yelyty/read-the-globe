@@ -1,6 +1,6 @@
 import { globalStyle, style } from "@vanilla-extract/css";
 import { vars } from "../../styles/theme.css";
-import { phone } from "../../LandingPage/LandingPage.css";
+import { phone } from "../../pages/LandingPage/LandingPage.css";
 
 
 export const themeBtn = style({

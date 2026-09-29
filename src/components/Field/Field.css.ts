@@ -1,6 +1,6 @@
 import { globalStyle, style } from "@vanilla-extract/css";
 import { vars } from "../../styles/theme.css";
-import { label } from "../../LandingPage/components/Goals/Goals.css";
+import { label } from "../../pages/LandingPage/components/Goals/Goals.css";
 
 
 export const note = {

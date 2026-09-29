@@ -1,6 +1,7 @@
 import { globalStyle, style } from "@vanilla-extract/css";
-import { vars } from "../../../styles/theme.css";
+
 import { phone, sectionHead } from "../../LandingPage.css";
+import { vars } from "../../../../styles/theme.css";
 
 export const ease = "cubic-bezier(.2, .8, .25, 1)";
 

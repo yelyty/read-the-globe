@@ -1,6 +1,7 @@
 import { globalStyle, style, styleVariants } from "@vanilla-extract/css";
 import { section } from "../../LandingPage.css";
-import { vars } from "../../../styles/theme.css";
+import { vars } from "../../../../styles/theme.css";
+
 
 export const atlasSvg = style({ display: "block", width: "100%", height: "auto" });
 export const start = style([section, { paddingBottom: 90 }]);

@@ -1,6 +1,7 @@
 import { style } from "@vanilla-extract/css";
 import { wrap } from "../../LandingPage.css";
-import { vars } from "../../../styles/theme.css";
+import { vars } from "../../../../styles/theme.css";
+
 
 export const hero = style([
 	wrap,
