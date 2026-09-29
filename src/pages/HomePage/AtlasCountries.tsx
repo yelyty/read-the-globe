@@ -1,4 +1,4 @@
-// import { Link } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import type { Marks } from "../../utils/atlasMarks";
 import {
   CONTINENT_NAMES,
@@ -43,7 +43,7 @@ const AtlasCountries = ({ marks, names }: AtlasCountriesProps) => {
                   </span>
                 </h3>
               </summary>
-              {/* <ul className={s.ccList}>
+              <ul className={s.ccList}>
                 {codes.map((code) => {
                   const { set, author } = marks[code];
                   const kind =
@@ -71,7 +71,7 @@ const AtlasCountries = ({ marks, names }: AtlasCountriesProps) => {
                     </li>
                   );
                 })}
-              </ul> */}
+              </ul>
             </details>
           );
         })}

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { getRouteApi, Link } from "@tanstack/react-router";
+import { getRouteApi, Link, useNavigate } from "@tanstack/react-router";
 import { MapPinIcon } from "@phosphor-icons/react";
 import AtlasMap, { type Show } from "../../components/AtlasMap/AtlasMap.tsx";
 import { atlasMarks, atlasStats } from "../../utils/atlasMarks";
@@ -13,13 +13,13 @@ import MapKey from "./MapKey.tsx";
 import RecentPins from "./RecentPins.tsx";
 
 const app = getRouteApi("/app");
-const RECENT = 5; // rows under "Recent pins"; the rest are on the shelf
+const RECENT = 5;
 
 const HomePage = () => {
   const { books } = app.useLoaderData();
   const { user } = useAuth();
   const names = useCountryNames();
-  //   const navigate = useNavigate();
+  const navigate = useNavigate();
   const [show, setShow] = useState<Show>("all");
 
   const marks = useMemo(() => atlasMarks(books), [books]);
@@ -61,15 +61,14 @@ const HomePage = () => {
 
   return (
     <div className={s.page}>
-      {/* the cartouche carries the title on screen; the heading stays for screen readers */}
       <h1 className={s.srOnly}>{title}</h1>
       <AtlasMap
         marks={marks}
         dots={dots}
         show={show}
-        // onCountryClick={(code) =>
-        //   navigate({ to: "/app/shelf", search: { country: code } })
-        // }
+        onCountryClick={(code) =>
+          navigate({ to: "/app/shelf", search: { country: code } })
+        }
         caption={`${title}: ${stats.countries} of 195 countries marked, ${stats.set} where stories are set and ${stats.authors} where authors are from.`}
       >
         <Cartouche title={title} stats={stats} show={show} />

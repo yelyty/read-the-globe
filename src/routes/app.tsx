@@ -1,6 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import getBooks from "../api/getBooks";
-import getPlaces from "../api/getPlaces";
 import AppLayout from "../components/AppLayout/AppLayout";
 
 type AppSearch = {
@@ -18,9 +17,6 @@ export const Route = createFileRoute("/app")({
       throw redirect({ to: "/", search: { redirect: location.href } });
     }
   },
-  loader: async () => {
-    const [books, places] = await Promise.all([getBooks(), getPlaces()]);
-    return { books, places };
-  },
+  loader: async () => ({ books: await getBooks() }),
   component: AppLayout,
 });

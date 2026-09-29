@@ -15,7 +15,6 @@ type CartoucheProps = {
   show: Show;
 };
 
-// The atlas's title panel, set into the map like the title of a printed map.
 const Cartouche = ({ title, stats, show }: CartoucheProps) => {
   const count =
     show === "set"

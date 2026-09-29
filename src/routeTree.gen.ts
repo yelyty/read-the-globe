@@ -14,6 +14,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppShelfRouteImport } from './routes/app.shelf'
 
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
@@ -40,18 +41,25 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppShelfRoute = AppShelfRouteImport.update({
+  id: '/shelf',
+  path: '/shelf',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
+  '/app/shelf': typeof AppShelfRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
+  '/app/shelf': typeof AppShelfRoute
   '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
@@ -60,14 +68,15 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
+  '/app/shelf': typeof AppShelfRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/app' | '/login' | '/profile' | '/app/'
+  fullPaths: '/' | '/app' | '/login' | '/profile' | '/app/shelf' | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/profile' | '/app'
-  id: '__root__' | '/' | '/app' | '/login' | '/profile' | '/app/'
+  to: '/' | '/login' | '/profile' | '/app/shelf' | '/app'
+  id: '__root__' | '/' | '/app' | '/login' | '/profile' | '/app/shelf' | '/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -114,14 +123,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/shelf': {
+      id: '/app/shelf'
+      path: '/shelf'
+      fullPath: '/app/shelf'
+      preLoaderRoute: typeof AppShelfRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppShelfRoute: typeof AppShelfRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppShelfRoute: AppShelfRoute,
   AppIndexRoute: AppIndexRoute,
 }
 

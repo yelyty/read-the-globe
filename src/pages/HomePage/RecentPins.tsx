@@ -1,6 +1,6 @@
 import { Fragment } from "react";
-// import { Link } from "@tanstack/react-router";
-// import { ArrowRightIcon } from "@phosphor-icons/react";
+import { Link } from "@tanstack/react-router";
+import { ArrowRightIcon } from "@phosphor-icons/react";
 import type { BookEntry } from "../../types";
 import { coverColor } from "../../utils/coverColors";
 import * as s from "./HomePage.css";
@@ -21,9 +21,9 @@ const RecentPins = ({ books, names }: RecentPinsProps) => (
       <h2 id="recent-title" className={s.h2}>
         Recent pins
       </h2>
-      {/* <Link className={s.more} to="/app/shelf">
+      <Link className={s.more} to="/app/shelf">
         The whole shelf <ArrowRightIcon aria-hidden="true" />
-      </Link> */}
+      </Link>
     </div>
     <ul className={s.rows}>
       {books.map((book) => {

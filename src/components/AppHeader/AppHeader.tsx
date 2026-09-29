@@ -4,7 +4,6 @@ import * as s from "../../LandingPage/components/Header/Header.css";
 import ThemeButton from "../ThemeButton/ThemeButton";
 import Logo from "../Logo/Logo";
 
-// The signed-in header, laid out like the landing one: logo home, nav, theme, primary action.
 const AppHeader = () => {
   return (
     <header className={s.header}>
@@ -19,7 +18,6 @@ const AppHeader = () => {
         </Link>
 
         <nav className={s.nav} aria-label="Main">
-          {/* exact: Home is not "current" on /app/shelf; includeSearch: nor does ?log=true change that */}
           <Link
             className={s.navLink}
             to="/app"
@@ -27,15 +25,14 @@ const AppHeader = () => {
           >
             Home
           </Link>
-          {/* <Link className={s.navLink} to="/app/shelf">
+          <Link className={s.navLink} to="/app/shelf">
             Shelf
-          </Link> */}
+          </Link>
           <Link className={s.navLink} to="/profile">
             Account
           </Link>
         </nav>
         <ThemeButton />
-        {/* opens the book form over whichever page you are on */}
         <Link
           className={s.pill}
           to="."
