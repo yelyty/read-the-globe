@@ -11,10 +11,11 @@ import { seedCountries } from "../../api/saveBook";
 import Dialog, { DialogContent, DialogTitle } from "../Dialog/Dialog";
 import "../../App.css";
 import AppHeader from "../AppHeader/AppHeader";
+import AppFooter from "../AppFooter/AppFooter";
+import * as s from "./AppLayout.css";
 
 const app = getRouteApi("/app");
 
-// The frame of every signed-in page: header, the page itself, and the book form (?log=true).
 const AppLayout = () => {
   const { log, country } = app.useSearch();
   const navigate = useNavigate();
@@ -25,16 +26,19 @@ const AppLayout = () => {
       to: ".",
       search: (prev) => ({ ...prev, log: undefined, country: undefined }),
     });
-    seedCountries(); // as Dashboard did, until a migration fills in the countries table
-    router.invalidate(); // reload the books, so a new one shows on every page
+    seedCountries();
+    router.invalidate();
   }, [navigate, router]);
 
   return (
     <>
-      <AppHeader />
-      <main className="wrapper">
-        <Outlet />
-      </main>
+      <div className={s.shell}>
+        <AppHeader />
+        <main className={`wrapper ${s.main}`}>
+          <Outlet />
+        </main>
+        <AppFooter />
+      </div>
 
       <Dialog isOpen={Boolean(log)} onClose={closeForm}>
         <DialogTitle>What have you read?</DialogTitle>
