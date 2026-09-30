@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import Logo from "../../../../components/Logo/Logo";
 import * as s from "./Footer.css";
 
@@ -6,28 +7,29 @@ const COLUMNS = [
     id: "footer-product",
     title: "Product",
     links: [
-      ["The atlas", "#how"],
-      ["Goals", "#goals"],
+      { label: "The atlas", to: "/", hash: "how" },
+      { label: "Goals", to: "/", hash: "goals" },
     ],
   },
   {
     id: "footer-company",
     title: "Company",
     links: [
-      ["About", "/about.html"],
-      ["Roadmap", "/roadmap.html"],
-      ["Contact", "/contact.html"],
+      { label: "About", to: "/about" },
+      { label: "Roadmap", to: "/roadmap" },
+      { label: "Contact", to: "/contact" },
     ],
   },
   {
     id: "footer-legal",
     title: "Legal",
     links: [
-      ["Privacy", "/privacy.html"],
-      ["Terms", "/terms.html"],
+      { label: "Privacy", to: "/privacy" },
+      { label: "Terms", to: "/terms" },
     ],
   },
-];
+] as const;
+
 const Footer = () => {
   return (
     <footer className={s.footer}>
@@ -50,11 +52,15 @@ const Footer = () => {
                 {column.title}
               </h2>
               <ul className={s.footerList}>
-                {column.links.map(([label, href]) => (
-                  <li key={href}>
-                    <a className={s.footerLink} href={href}>
-                      {label}
-                    </a>
+                {column.links.map((link) => (
+                  <li key={link.label}>
+                    <Link
+                      className={s.footerLink}
+                      to={link.to}
+                      hash={"hash" in link ? link.hash : undefined}
+                    >
+                      {link.label}
+                    </Link>
                   </li>
                 ))}
               </ul>
