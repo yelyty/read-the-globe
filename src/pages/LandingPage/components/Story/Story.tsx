@@ -1,9 +1,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { MapPinIcon, PauseIcon, PlayIcon } from "@phosphor-icons/react";
+import { PushPinIcon, PauseIcon, PlayIcon } from "@phosphor-icons/react";
 import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 
 import {
-  ANTARCTICA,
   MAP,
   SPINES,
   STORY_BOOKS,
@@ -309,17 +308,15 @@ const Story = () => {
               <g ref={worldRef} className={s.world}>
                 <Geographies geography={GEO_URL}>
                   {({ geographies }) => [
-                    ...geographies
-                      .filter((geo) => geo.id !== ANTARCTICA)
-                      .map((geo) => (
-                        <Geography
-                          key={geo.rsmKey}
-                          geography={geo}
-                          className={s.land}
-                          tabIndex={-1}
-                          role={undefined}
-                        />
-                      )),
+                    ...geographies.map((geo) => (
+                      <Geography
+                        key={geo.rsmKey}
+                        geography={geo}
+                        className={s.land}
+                        tabIndex={-1}
+                        role={undefined}
+                      />
+                    )),
                     ...geographies
                       .filter((geo) => MARKS.has(geo.id))
                       .map((geo) => {
@@ -468,7 +465,7 @@ const Story = () => {
                 </span>
               </div>
               <span className={s.pinButton} data-pressed={pressed}>
-                <MapPinIcon weight="fill" />
+                <PushPinIcon weight="fill" />
                 Pin it
               </span>
             </div>

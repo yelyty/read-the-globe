@@ -1,5 +1,5 @@
 import { useState, type ChangeEvent, type SubmitEvent } from "react";
-import { MapPinIcon, WarningCircleIcon } from "@phosphor-icons/react";
+import { PushPinIcon, WarningCircleIcon } from "@phosphor-icons/react";
 import { useReveal } from "../../../../hooks/useReveal";
 import Field from "../../../../components/Field/Field";
 import { supabase } from "../../../../utils/supabase";
@@ -194,7 +194,7 @@ const StartSection = ({ onLogIn }: StartSectionProps) => {
             className={`${s.btnPrimary} ${s.btnBlock}`}
             disabled={pending}
           >
-            <MapPinIcon weight="fill" aria-hidden="true" />
+            <PushPinIcon weight="fill" aria-hidden="true" />
             {pending ? "One moment…" : "Create your atlas"}
           </button>
           <p className={s.signupNote}>Free to begin, and no card needed.</p>

@@ -1,6 +1,6 @@
 import { Fragment, useRef, useState } from "react";
 import { getRouteApi, Link, useNavigate } from "@tanstack/react-router";
-import { MagnifyingGlassIcon, MapPinIcon } from "@phosphor-icons/react";
+import { MagnifyingGlassIcon, PushPinIcon } from "@phosphor-icons/react";
 import { useCountryNames } from "../../hooks/useCountryNames";
 import type { BookEntry } from "../../types";
 import { list as bookList } from "../../components/BookRow/BookRow.css";
@@ -113,7 +113,7 @@ const ShelfPage = () => {
             to="."
             search={(prev) => ({ ...prev, log: true })}
           >
-            <MapPinIcon weight="fill" aria-hidden="true" />
+            <PushPinIcon weight="fill" aria-hidden="true" />
             Log a book
           </Link>
         </div>

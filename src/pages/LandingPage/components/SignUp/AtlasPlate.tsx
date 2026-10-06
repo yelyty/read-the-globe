@@ -9,7 +9,6 @@ type AtlasPlateProps = {
 };
 
 const MAP = { width: 800, height: 400, scale: 145 } as const;
-const ANTARCTICA = "010";
 
 const AtlasPlate = memo(({ landClassName, children }: AtlasPlateProps) => {
   return (
@@ -23,17 +22,15 @@ const AtlasPlate = memo(({ landClassName, children }: AtlasPlateProps) => {
     >
       <Geographies geography={GEO_URL}>
         {({ geographies }) =>
-          geographies
-            .filter((geo) => geo.id !== ANTARCTICA)
-            .map((geo) => (
-              <Geography
-                key={geo.rsmKey}
-                geography={geo}
-                tabIndex={-1}
-                role={undefined}
-                className={landClassName}
-              />
-            ))
+          geographies.map((geo) => (
+            <Geography
+              key={geo.rsmKey}
+              geography={geo}
+              tabIndex={-1}
+              role={undefined}
+              className={landClassName}
+            />
+          ))
         }
       </Geographies>
       {children}

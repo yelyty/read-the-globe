@@ -65,30 +65,28 @@ const AtlasMap = memo(
           >
             <Geographies geography={GEO_URL}>
               {({ geographies }) =>
-                geographies
-                  .filter((geo) => geo.id !== ANTARCTICA)
-                  .map((geo) => {
-                    const mark = marks[geo.id];
-                    const classes = [
-                      s.land,
-                      mark?.set.length && s.set,
-                      mark?.author.length && s.author,
-                      mark && s.marked,
-                    ];
-                    return (
-                      <Geography
-                        key={geo.rsmKey}
-                        geography={geo}
-                        tabIndex={-1} // the country list under the map is the keyboard way in
-                        className={classes.filter(Boolean).join(" ")}
-                        onClick={
-                          mark && onCountryClick
-                            ? () => onCountryClick(geo.id)
-                            : undefined
-                        }
-                      />
-                    );
-                  })
+                geographies.map((geo) => {
+                  const mark = marks[geo.id];
+                  const classes = [
+                    s.land,
+                    mark?.set.length && s.set,
+                    mark?.author.length && s.author,
+                    mark && s.marked,
+                  ];
+                  return (
+                    <Geography
+                      key={geo.rsmKey}
+                      geography={geo}
+                      tabIndex={-1} // the country list under the map is the keyboard way in
+                      className={classes.filter(Boolean).join(" ")}
+                      onClick={
+                        mark && onCountryClick
+                          ? () => onCountryClick(geo.id)
+                          : undefined
+                      }
+                    />
+                  );
+                })
               }
             </Geographies>
             <g className={s.dots}>

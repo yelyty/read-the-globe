@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { getRouteApi, Link, useNavigate } from "@tanstack/react-router";
-import { MapPinIcon } from "@phosphor-icons/react";
+import { PushPinIcon } from "@phosphor-icons/react";
 import AtlasMap, { type Show } from "../../components/AtlasMap/AtlasMap.tsx";
 import { atlasMarks, atlasStats } from "../../utils/atlasMarks";
 
@@ -46,7 +46,7 @@ const HomePage = () => {
             to="."
             search={(prev) => ({ ...prev, log: true })}
           >
-            <MapPinIcon weight="fill" aria-hidden="true" />
+            <PushPinIcon weight="fill" aria-hidden="true" />
             Log your first book
           </Link>
         </div>

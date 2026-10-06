@@ -1,4 +1,4 @@
-import { MapPinIcon } from "@phosphor-icons/react";
+import { PushPinIcon } from "@phosphor-icons/react";
 import * as s from "./Hero.css";
 import { btnPrimary } from "../LoginDialog/LoginDialog.css";
 
@@ -21,7 +21,7 @@ const Hero = () => {
           <div className={s.heroCta}>
             {/* Todo: fix that classname */}
             <a href="#start" className={btnPrimary}>
-              <MapPinIcon weight="fill" aria-hidden="true" />
+              <PushPinIcon weight="fill" aria-hidden="true" />
               Start your atlas
             </a>
           </div>

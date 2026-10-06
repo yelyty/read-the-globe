@@ -9,6 +9,10 @@ export const tablet = "screen and (max-width: 999px)";
 export const phone = "screen and (max-width: 639px)";
 export const tiny = "screen and (max-width: 379px)";
 
+globalStyle("html", {
+	scrollbarGutter: "stable "
+});
+
 globalStyle("html, body", {
 	margin: 0,
 	fontFamily: vars.font.sans,
@@ -19,3 +23,4 @@ globalStyle("html, body", {
 globalStyle("*", {
 	boxSizing: "border-box",
 });
+

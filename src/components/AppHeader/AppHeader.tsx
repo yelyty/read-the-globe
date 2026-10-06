@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { MapPinIcon } from "@phosphor-icons/react";
+import { PushPinIcon } from "@phosphor-icons/react";
 import * as s from "../../pages/LandingPage/components/Header/Header.css";
 import ThemeButton from "../ThemeButton/ThemeButton";
 import Logo from "../Logo/Logo";
@@ -38,7 +38,7 @@ const AppHeader = () => {
           to="."
           search={(prev) => ({ ...prev, log: true })}
         >
-          <MapPinIcon weight="fill" aria-hidden="true" />
+          <PushPinIcon weight="fill" aria-hidden="true" />
           <span>Log a book</span>
         </Link>
       </div>

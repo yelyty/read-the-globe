@@ -1,4 +1,4 @@
-import { MapPinIcon } from "@phosphor-icons/react";
+import { PushPinIcon } from "@phosphor-icons/react";
 import * as s from "./Header.css";
 import ThemeButton from "../../../../components/ThemeButton/ThemeButton";
 import Logo from "../../../../components/Logo/Logo";
@@ -30,7 +30,7 @@ const Header = ({ onLogIn }: HeaderProps) => {
           Log in
         </button>
         <a href="#start" className={s.pill}>
-          <MapPinIcon weight="fill" aria-hidden="true" />
+          <PushPinIcon weight="fill" aria-hidden="true" />
           <span>Start your atlas</span>
         </a>
       </div>
