@@ -29,6 +29,7 @@ type GeocodeResult = {
   name: string;
   lon: number;
   lat: number;
+  countryCode: string | null;
 };
 
 type Pin = GeocodeResult & { id: string };
@@ -37,15 +38,18 @@ type Pin = GeocodeResult & { id: string };
 async function geocode(query: string): Promise<GeocodeResult | null> {
   const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
     query,
-  )}&format=json&limit=1`;
+  )}&format=json&limit=1&addressDetails=1`;
   const res = await fetch(url);
   const results = await res.json();
   if (!results.length) return null;
-  const { lat, lon, display_name } = results[0];
+  const { lat, lon, display_name, address } = results[0];
   return {
     name: display_name,
     lon: parseFloat(lon),
     lat: parseFloat(lat),
+    countryCode: address?.country_code
+      ? String(address.country_code).toUpperCase()
+      : null,
   };
 }
 
@@ -80,7 +84,7 @@ const AddBook = ({ selectedCountry, onCancel }: AddBookProps) => {
     setSelectedCode(code);
   }
 
-  const [_, setSearchError] = useState<string | null>(null);
+  const [searchError, setSearchError] = useState<string | null>(null);
   const [searching, setSearching] = useState(false);
 
   useEffect(() => {
@@ -199,7 +203,14 @@ const AddBook = ({ selectedCountry, onCancel }: AddBookProps) => {
       <input
         type="hidden"
         name="places"
-        value={JSON.stringify(pins.map(({ id, ...rest }) => rest))}
+        value={JSON.stringify(
+          pins.map(({ name, lon, lat, countryCode }) => ({
+            name,
+            lon,
+            lat,
+            countryCode,
+          })),
+        )}
       />
       <div className="actions">
         <button type="button" className="button" onClick={onCancel}>
@@ -207,6 +218,7 @@ const AddBook = ({ selectedCountry, onCancel }: AddBookProps) => {
         </button>
         <SubmitButton />
       </div>
+      {searchError && <p role="alert">{searchError}</p>}
       {state?.error && <p>{state.error}</p>}
       {/* Todo: add toast */}
       {/* {state?.success && <p>Saved!</p>} */}

@@ -5,6 +5,7 @@ type PlaceInput = {
 	name: string;
 	lon: number;
 	lat: number;
+	countryCode?: string | null;
 };
 
 import { getCountryNames } from "../utils/countryNames";
@@ -75,6 +76,7 @@ async function saveBook(
 				name: p.name,
 				lon: p.lon,
 				lat: p.lat,
+				countryCode: p.countryCode ?? null
 			})),
 		);
 

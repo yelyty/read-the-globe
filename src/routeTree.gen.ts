@@ -11,9 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as RoadmapRouteImport } from './routes/roadmap'
-import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as LoginRouteImport } from './routes/login'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as AboutRouteImport } from './routes/about'
@@ -31,19 +29,9 @@ const RoadmapRoute = RoadmapRouteImport.update({
   path: '/roadmap',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProfileRoute = ProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -82,9 +70,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/app': typeof AppRouteWithChildren
   '/contact': typeof ContactRoute
-  '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
-  '/profile': typeof ProfileRoute
   '/roadmap': typeof RoadmapRoute
   '/terms': typeof TermsRoute
   '/app/shelf': typeof AppShelfRoute
@@ -94,9 +80,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
-  '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
-  '/profile': typeof ProfileRoute
   '/roadmap': typeof RoadmapRoute
   '/terms': typeof TermsRoute
   '/app/shelf': typeof AppShelfRoute
@@ -108,9 +92,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/app': typeof AppRouteWithChildren
   '/contact': typeof ContactRoute
-  '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
-  '/profile': typeof ProfileRoute
   '/roadmap': typeof RoadmapRoute
   '/terms': typeof TermsRoute
   '/app/shelf': typeof AppShelfRoute
@@ -123,9 +105,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/app'
     | '/contact'
-    | '/login'
     | '/privacy'
-    | '/profile'
     | '/roadmap'
     | '/terms'
     | '/app/shelf'
@@ -135,9 +115,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
-    | '/login'
     | '/privacy'
-    | '/profile'
     | '/roadmap'
     | '/terms'
     | '/app/shelf'
@@ -148,9 +126,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/app'
     | '/contact'
-    | '/login'
     | '/privacy'
-    | '/profile'
     | '/roadmap'
     | '/terms'
     | '/app/shelf'
@@ -162,9 +138,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AppRoute: typeof AppRouteWithChildren
   ContactRoute: typeof ContactRoute
-  LoginRoute: typeof LoginRoute
   PrivacyRoute: typeof PrivacyRoute
-  ProfileRoute: typeof ProfileRoute
   RoadmapRoute: typeof RoadmapRoute
   TermsRoute: typeof TermsRoute
 }
@@ -185,25 +159,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RoadmapRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -268,9 +228,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AppRoute: AppRouteWithChildren,
   ContactRoute: ContactRoute,
-  LoginRoute: LoginRoute,
   PrivacyRoute: PrivacyRoute,
-  ProfileRoute: ProfileRoute,
   RoadmapRoute: RoadmapRoute,
   TermsRoute: TermsRoute,
 }
