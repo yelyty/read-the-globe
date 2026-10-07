@@ -17,6 +17,10 @@ export const Route = createFileRoute("/app")({
       throw redirect({ to: "/", search: { redirect: location.href } });
     }
   },
-  loader: async () => ({ books: await getBooks() }),
+  loader: async ({ context }) => ({
+    books: await getBooks(context.auth.user!.id),
+  }),
+  //   TODO: Create error component
+  errorComponent: () => <p>Error</p>,
   component: AppLayout,
 });
