@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
+import { MapPinSimpleIcon, XIcon } from "@phosphor-icons/react";
 import { useFormState, useFormStatus } from "react-dom";
+import { toNumeric } from "./utils/toIsoNumeric";
 import saveBook from "./api/saveBook";
 import { getCountryNames } from "./utils/countryNames";
-import { MapPinSimpleIcon, XIcon } from "@phosphor-icons/react";
 
 const SubmitButton = () => {
   const { pending } = useFormStatus();
@@ -38,7 +39,7 @@ type Pin = GeocodeResult & { id: string };
 async function geocode(query: string): Promise<GeocodeResult | null> {
   const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
     query,
-  )}&format=json&limit=1&addressDetails=1`;
+  )}&format=json&limit=1&addressdetails=1`;
   const res = await fetch(url);
   const results = await res.json();
   if (!results.length) return null;
@@ -47,9 +48,7 @@ async function geocode(query: string): Promise<GeocodeResult | null> {
     name: display_name,
     lon: parseFloat(lon),
     lat: parseFloat(lat),
-    countryCode: address?.country_code
-      ? String(address.country_code).toUpperCase()
-      : null,
+    countryCode: toNumeric(address?.country_code),
   };
 }
 
