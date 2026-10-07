@@ -117,7 +117,7 @@ const AddBook = ({ selectedCountry, onCancel }: AddBookProps) => {
   return (
     <form action={formAction} className="form">
       <label className="label" htmlFor="countryCode">
-        Country
+        Author's Country
       </label>
       <select
         id="countryCode"
@@ -126,6 +126,7 @@ const AddBook = ({ selectedCountry, onCancel }: AddBookProps) => {
         value={selectedCode}
         onChange={(e) => setSelectedCode(e.target.value)}
       >
+        <option value="">Not sure</option>
         {Object.entries(countryNames)
           .sort(([, a], [, b]) => a.localeCompare(b))
           .map(([countryCode, countryName]) => (
@@ -134,6 +135,10 @@ const AddBook = ({ selectedCountry, onCancel }: AddBookProps) => {
             </option>
           ))}
       </select>
+      <p className="hint">
+        Lived in more than one? Choose the country where they lived most of
+        their life.
+      </p>
       <label className="label" htmlFor="title">
         Title *
       </label>

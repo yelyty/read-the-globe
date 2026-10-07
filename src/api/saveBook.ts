@@ -20,7 +20,7 @@ async function saveBook(
 		(formData.get("places") as string) || "[]",
 	);
 
-	// 1. Find the author, or create them if new
+	// 1. Find the author, or create them if new (their country goes on the book, step 2)
 	let authorId: number;
 
 	const { data: existingAuthor, error: findError } = await supabase
@@ -38,7 +38,7 @@ async function saveBook(
 	} else {
 		const { data: newAuthor, error: authorError } = await supabase
 			.from("authors")
-			.insert({ name: authorName, nationality_code: countryCode })
+			.insert({ name: authorName })
 			.select("id")
 			.single();
 
@@ -51,7 +51,7 @@ async function saveBook(
 	// 2. Insert the book pointing at the author
 	const { data: book, error: bookError } = await supabase
 		.from("books")
-		.insert({ title, author_id: authorId })
+		.insert({ title, author_id: authorId, author_country_code: countryCode })
 		.select()
 		.single();
 

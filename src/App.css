@@ -96,3 +96,10 @@ h3,
   font-size: 20px;
   font-family: var(--font-display);
 }
+
+/* Temporarely here */
+.hint {
+  margin: 0 0 6px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
