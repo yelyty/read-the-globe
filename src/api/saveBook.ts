@@ -8,15 +8,6 @@ type PlaceInput = {
 	countryCode?: string | null;
 };
 
-import { getCountryNames } from "../utils/countryNames";
-
-export async function seedCountries() {
-	const names = await getCountryNames(); // { FR: "France", ... }
-	const rows = Object.entries(names).map(([code, name]) => ({ code, name }));
-
-	const { error } = await supabase.from("countries").upsert(rows); // PK = code
-	if (error) console.error(error);
-}
 
 async function saveBook(
 	_prevState: SaveBookState,

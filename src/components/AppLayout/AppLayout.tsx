@@ -6,7 +6,6 @@ import {
   useRouter,
 } from "@tanstack/react-router";
 import AddBook from "../../AddBook";
-import { seedCountries } from "../../api/saveBook";
 
 import Dialog, { DialogContent, DialogTitle } from "../Dialog/Dialog";
 import "../../App.css";
@@ -26,7 +25,6 @@ const AppLayout = () => {
       to: ".",
       search: (prev) => ({ ...prev, log: undefined, country: undefined }),
     });
-    seedCountries();
     router.invalidate();
   }, [navigate, router]);
 
