@@ -159,8 +159,6 @@ const AddBook = ({ selectedCountry, onCancel }: AddBookProps) => {
         value={author}
         onChange={(e) => setAuthor(e.target.value)}
       />
-      <input type="hidden" name="countryCode" value={code} />
-
       <label className="label" htmlFor="place">
         Places *
       </label>

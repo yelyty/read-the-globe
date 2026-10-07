@@ -1,7 +1,7 @@
 import { supabase } from "../utils/supabase";
 import type { BookEntry, Country } from "../types";
 
-type BookRow = Omit<BookEntry, "autor"> & {
+type BookRow = Omit<BookEntry, "author"> & {
 	author: { name: string } | null;
 	authorCountry: Country | null;
 }

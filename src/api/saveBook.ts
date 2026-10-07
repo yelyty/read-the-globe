@@ -13,9 +13,9 @@ async function saveBook(
 	_prevState: SaveBookState,
 	formData: FormData,
 ): Promise<SaveBookState> {
-	const countryCode = formData.get("countryCode") as string;
-	const title = formData.get("title") as string;
-	const authorName = formData.get("author") as string;
+	const countryCode = (formData.get("countryCode") as string) || null;
+	const title = (formData.get("title") as string).trim();
+	const authorName = (formData.get("author") as string).trim();
 	const places: PlaceInput[] = JSON.parse(
 		(formData.get("places") as string) || "[]",
 	);
@@ -26,7 +26,9 @@ async function saveBook(
 	const { data: existingAuthor, error: findError } = await supabase
 		.from("authors")
 		.select("id")
-		.eq("name", authorName)
+		.ilike("name", authorName.replace(/[\\%_]/g, "\\$&"))
+		.order("id")
+		.limit(1)
 		.maybeSingle();
 
 	if (findError) {

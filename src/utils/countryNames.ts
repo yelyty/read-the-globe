@@ -9,6 +9,6 @@ export async function getCountryNames(): Promise<Record<string, string>> {
 		id: string;
 		properties: { name: string };
 	}>;
-	cache = Object.fromEntries(geometries.map((g) => [g.id, g.properties.name]));
+	cache = Object.fromEntries(geometries.filter((g) => g.id).map((g) => [g.id, g.properties.name]));
 	return cache;
 }
