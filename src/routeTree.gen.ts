@@ -18,6 +18,9 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppShelfRouteImport } from './routes/app.shelf'
+import { Route as AppPostcardRouteImport } from './routes/app.postcard'
+import { Route as AppGoalsRouteImport } from './routes/app.goals'
+import { Route as AppAccountRouteImport } from './routes/app.account'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -64,6 +67,21 @@ const AppShelfRoute = AppShelfRouteImport.update({
   path: '/shelf',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPostcardRoute = AppPostcardRouteImport.update({
+  id: '/postcard',
+  path: '/postcard',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGoalsRoute = AppGoalsRouteImport.update({
+  id: '/goals',
+  path: '/goals',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAccountRoute = AppAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -73,6 +91,9 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/roadmap': typeof RoadmapRoute
   '/terms': typeof TermsRoute
+  '/app/account': typeof AppAccountRoute
+  '/app/goals': typeof AppGoalsRoute
+  '/app/postcard': typeof AppPostcardRoute
   '/app/shelf': typeof AppShelfRoute
   '/app/': typeof AppIndexRoute
 }
@@ -83,6 +104,9 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/roadmap': typeof RoadmapRoute
   '/terms': typeof TermsRoute
+  '/app/account': typeof AppAccountRoute
+  '/app/goals': typeof AppGoalsRoute
+  '/app/postcard': typeof AppPostcardRoute
   '/app/shelf': typeof AppShelfRoute
   '/app': typeof AppIndexRoute
 }
@@ -95,6 +119,9 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/roadmap': typeof RoadmapRoute
   '/terms': typeof TermsRoute
+  '/app/account': typeof AppAccountRoute
+  '/app/goals': typeof AppGoalsRoute
+  '/app/postcard': typeof AppPostcardRoute
   '/app/shelf': typeof AppShelfRoute
   '/app/': typeof AppIndexRoute
 }
@@ -108,6 +135,9 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/roadmap'
     | '/terms'
+    | '/app/account'
+    | '/app/goals'
+    | '/app/postcard'
     | '/app/shelf'
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
@@ -118,6 +148,9 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/roadmap'
     | '/terms'
+    | '/app/account'
+    | '/app/goals'
+    | '/app/postcard'
     | '/app/shelf'
     | '/app'
   id:
@@ -129,6 +162,9 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/roadmap'
     | '/terms'
+    | '/app/account'
+    | '/app/goals'
+    | '/app/postcard'
     | '/app/shelf'
     | '/app/'
   fileRoutesById: FileRoutesById
@@ -208,15 +244,42 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppShelfRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/postcard': {
+      id: '/app/postcard'
+      path: '/postcard'
+      fullPath: '/app/postcard'
+      preLoaderRoute: typeof AppPostcardRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/goals': {
+      id: '/app/goals'
+      path: '/goals'
+      fullPath: '/app/goals'
+      preLoaderRoute: typeof AppGoalsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/account': {
+      id: '/app/account'
+      path: '/account'
+      fullPath: '/app/account'
+      preLoaderRoute: typeof AppAccountRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppAccountRoute: typeof AppAccountRoute
+  AppGoalsRoute: typeof AppGoalsRoute
+  AppPostcardRoute: typeof AppPostcardRoute
   AppShelfRoute: typeof AppShelfRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAccountRoute: AppAccountRoute,
+  AppGoalsRoute: AppGoalsRoute,
+  AppPostcardRoute: AppPostcardRoute,
   AppShelfRoute: AppShelfRoute,
   AppIndexRoute: AppIndexRoute,
 }

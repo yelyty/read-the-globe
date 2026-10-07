@@ -28,7 +28,13 @@ const AppHeader = () => {
           <Link className={s.navLink} to="/app/shelf">
             Shelf
           </Link>
-          <Link className={s.navLink} to="/profile">
+          <Link className={s.navLink} to="/app/goals">
+            Goals
+          </Link>
+          <Link className={s.navLink} to="/app/postcard">
+            Postcard
+          </Link>
+          <Link className={s.navLink} to="/app/account">
             Account
           </Link>
         </nav>
