@@ -76,7 +76,7 @@ async function saveBook(
 				name: p.name,
 				lon: p.lon,
 				lat: p.lat,
-				countryCode: p.countryCode ?? null
+				country_code: p.countryCode ?? null
 			})),
 		);
 
