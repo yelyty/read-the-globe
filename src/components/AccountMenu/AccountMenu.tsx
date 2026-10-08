@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { CaretDownIcon } from "@phosphor-icons/react";
 import { Link, useMatchRoute } from "@tanstack/react-router";
 
+import { useSignOut } from "../../hooks/useSignOut";
 import * as s from "./AccountMenu.css";
 
 const AccountMenu = () => {
@@ -11,7 +12,7 @@ const AccountMenu = () => {
   const matchRoute = useMatchRoute();
   const onAccount = Boolean(matchRoute({ to: "/app/account" }));
 
-  //   const signOut = useSignOut();
+  const { signOut } = useSignOut();
 
   useEffect(() => {
     if (!open) return;
@@ -49,9 +50,9 @@ const AccountMenu = () => {
           <button
             type="button"
             className={s.item}
-            onClick={() => {
+            onClick={async () => {
               setOpen(false);
-              //   signOut();
+              await signOut();
             }}
           >
             Sign out

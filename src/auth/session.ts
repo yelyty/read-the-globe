@@ -54,3 +54,7 @@ export async function signUp(details: {
 		return { problem: "failed", confirmEmail: false }
 	}
 }
+
+export async function signOut(): Promise<void> {
+	await supabase.auth.signOut();
+}
