@@ -1,4 +1,4 @@
-import { assignVars, createThemeContract, globalStyle } from '@vanilla-extract/css';
+import { assignVars, createGlobalTheme, createThemeContract, globalStyle } from '@vanilla-extract/css';
 
 export const vars = createThemeContract({
 	font: {
@@ -190,6 +190,29 @@ const dark = {
 		md: "15px",
 	},
 };
+
+export const space = createGlobalTheme(":root", {
+	sp1: '0.25rem',
+	sp2: '0.5rem',
+	sp3: '0.75rem',
+	sp4: '1rem',
+	sp5: '1.5rem',
+	sp6: '2rem',
+	sp7: '3rem',
+});
+
+export const fontSize = createGlobalTheme(":root", {
+	label: '0.75rem',
+	meta: '0.8125rem',
+	body: '0.9375rem',
+	action: '1rem',
+	item: '1.125rem',
+	heading: '1.375rem',
+	numerals: '1.625rem',
+	numeral: '2.75rem',
+	title: '1.875rem',
+
+})
 
 globalStyle(":root", {
 	vars: assignVars(vars, light),

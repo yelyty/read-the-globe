@@ -3,7 +3,6 @@ import { WarningCircleIcon, XIcon } from "@phosphor-icons/react";
 
 import * as s from "./LoginDialog.css";
 import Field from "../../../../components/Field/Field";
-import { supabase } from "../../../../utils/supabase";
 import { signIn } from "../../../../auth/session";
 
 const isEmail = (value: string) =>
