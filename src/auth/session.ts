@@ -6,12 +6,14 @@ export interface Reader {
 	id: string;
 	email: string | null;
 	signUpName: string | null;
+	createdAt: string
 }
 
 export const toReader = (user: User): Reader => ({
 	id: user.id,
 	email: user.email ?? null,
-	signUpName: typeof user.user_metadata?.display_name === "string" ? user.user_metadata.display.name : null
+	signUpName: typeof user.user_metadata?.display_name === "string" ? user.user_metadata.display.name : null,
+	createdAt: user.created_at
 }
 )
 
@@ -57,4 +59,20 @@ export async function signUp(details: {
 
 export async function signOut(): Promise<void> {
 	await supabase.auth.signOut();
+}
+
+export async function updateDisplayName(name: string): Promise<string | null> {
+	const { error } = await supabase.auth.updateUser({ data: { display_name: name } });
+	return error ? "Couldn't save your name. Try again" : null;
+}
+
+export async function changePassword(password: string): Promise<string | null> {
+	const { error } = await supabase.auth.updateUser({ password });
+
+	if (!error) return null;
+	if (error.code === "same_password") return "That's your current password. Choose a new one.";
+	if (error.code === "weak_password") return "Choose a stronger password: at least 8 characters.";
+	if (error.code === "reauthentication_needed") return "For your safety, sign out and in again, then change your password."
+
+	return "Couldn't change your password. Try again."
 }
