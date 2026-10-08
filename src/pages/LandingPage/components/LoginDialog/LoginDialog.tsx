@@ -4,6 +4,7 @@ import { WarningCircleIcon, XIcon } from "@phosphor-icons/react";
 import * as s from "./LoginDialog.css";
 import Field from "../../../../components/Field/Field";
 import { supabase } from "../../../../utils/supabase";
+import { signIn } from "../../../../auth/session";
 
 const isEmail = (value: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
@@ -53,23 +54,15 @@ const LoginDialog = ({ open, onClose }: LoginDialogProps) => {
 
     setPending(true);
     setFormError(null);
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password,
-      });
-      if (error) {
-        setFormError(
-          error.code === "invalid_credentials"
-            ? "That email and password don’t match."
-            : "Something went wrong. Please try again.",
-        );
-      }
-    } catch {
-      setFormError("Something went wrong. Please try again.");
-    } finally {
-      setPending(false);
+    const problem = await signIn(email.trim(), password);
+    if (problem) {
+      setFormError(
+        problem === "wrong-credentials"
+          ? "That email and password don't match"
+          : "Something went wrong.",
+      );
     }
+    setPending(false);
   };
 
   return (

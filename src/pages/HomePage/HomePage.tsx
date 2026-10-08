@@ -27,7 +27,7 @@ const HomePage = () => {
   const dots = books
     .flatMap((b) => b.places ?? [])
     .filter((p) => p.lon != null && p.lat != null);
-  const firstName = String(user?.user_metadata?.display_name ?? "")
+  const firstName = String(user?.signUpName ?? "")
     .trim()
     .split(/\s+/)[0];
   const title = firstName ? `${firstName}’s atlas` : "Your atlas";

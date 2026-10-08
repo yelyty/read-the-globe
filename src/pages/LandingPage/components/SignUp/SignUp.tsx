@@ -6,6 +6,7 @@ import { supabase } from "../../../../utils/supabase";
 import AtlasPlate from "./AtlasPlate";
 import * as s from "./SignUp.css";
 import { reveal } from "../Goals/Goals.css";
+import { signUp } from "../../../../auth/session";
 
 // TODO: move to utils
 const isEmail = (value: string) =>
@@ -73,28 +74,19 @@ const StartSection = ({ onLogIn }: StartSectionProps) => {
     setPending(true);
     setFormError(null);
     setNotice(null);
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email: values.email.trim(),
-        password: values.password,
-        options: { data: { display_name: values.name.trim() } },
-      });
-      if (error) {
-        const taken =
-          error.code === "user_already_exists" || error.code === "email_exists";
-        setFormError(
-          taken
-            ? "That email already has an atlas. Try logging in instead."
-            : "Something went wrong. Please try again.",
-        );
-      } else if (!data.session) {
-        setNotice("Check your inbox. We sent a link to confirm your email.");
-      }
-    } catch {
-      setFormError("Something went wrong. Please try again.");
-    } finally {
-      setPending(false);
-    }
+    const { problem, confirmEmail } = await signUp({
+      email: values.email.trim(),
+      password: values.password,
+      name: values.name.trim(),
+    });
+    if (problem) {
+      setFormError(
+        problem === "email-taken"
+          ? "That email already taken. Try logging in instead"
+          : "Something went wrong",
+      );
+    } else if (confirmEmail)
+      setNotice("Check your inbox. We sent a link to confirm your email");
   };
 
   return (
