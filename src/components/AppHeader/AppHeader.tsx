@@ -3,6 +3,7 @@ import { PushPinIcon } from "@phosphor-icons/react";
 import * as s from "../../pages/LandingPage/components/Header/Header.css";
 import ThemeButton from "../ThemeButton/ThemeButton";
 import Logo from "../Logo/Logo";
+import AccountMenu from "../AccountMenu/AccountMenu";
 
 const AppHeader = () => {
   return (
@@ -34,9 +35,7 @@ const AppHeader = () => {
           <Link className={s.navLink} to="/app/postcard">
             Postcard
           </Link>
-          <Link className={s.navLink} to="/app/account">
-            Account
-          </Link>
+          <AccountMenu />
         </nav>
         <ThemeButton />
         <Link
