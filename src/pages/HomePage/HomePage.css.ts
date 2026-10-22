@@ -16,12 +16,6 @@ export const title = style({
 	"@media": { [phone]: { fontSize: 26 } },
 });
 globalStyle(`${firstRun} p`, { margin: "12px 0 0", maxWidth: "56ch", fontSize: 16, color: vars.color.textSecondary });
-export const primary = style({
-	display: "inline-flex", alignItems: "center", gap: 10, marginTop: 16, padding: "12px 22px", borderRadius: 999,
-	background: vars.color.primary, color: vars.color.onAccent, fontFamily: vars.font.sans, fontWeight: 500, fontSize: 15,
-	textDecoration: "none", ":hover": { background: vars.color.primaryHover },
-});
-globalStyle(`${primary} svg`, { width: 16, height: 16 });
 
 /* ---------- the cartouche: over the empty South Pacific on wide screens, a strip under the map on phones ---------- */
 export const cartouche = style({
@@ -139,3 +133,12 @@ const chip = style({
 export const ccSet = style([chip, { "::before": { background: vars.color.olive } }]);
 export const ccAuthor = style([chip, { "::before": { boxShadow: `inset 0 0 0 2px ${vars.color.markerAuthor}` } }]);
 export const ccBoth = style([chip, { "::before": { borderRadius: 2, background: vars.color.olive, boxShadow: `inset 0 0 0 2px ${vars.color.markerAuthor}` } }]);
+
+export const primary = style({
+	// the app mock's .btn: body size, 40px tall like the fields beside it, no hero buttons
+	display: "inline-flex", alignItems: "center", gap: 10, marginTop: space.sp4, minHeight: 40, padding: `${space.sp2} ${space.sp5}`, borderRadius: 999,
+	background: vars.color.primary, color: vars.color.onAccent, fontFamily: vars.font.sans, fontWeight: 500, fontSize: fontSize.body,
+	textDecoration: "none", ":hover": { background: vars.color.primaryHover },
+});
+
+globalStyle(`${primary} svg`, { width: 16, height: 16 });

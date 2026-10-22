@@ -5,9 +5,10 @@ import Logo from "../../../../components/Logo/Logo";
 
 type HeaderProps = {
   onLogIn: () => void;
+  onSignUp: () => void;
 };
 
-const Header = ({ onLogIn }: HeaderProps) => {
+const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
   return (
     <header className={s.header}>
       <div className={s.headerRow}>
@@ -29,10 +30,10 @@ const Header = ({ onLogIn }: HeaderProps) => {
         <button type="button" className={s.loginBtn} onClick={onLogIn}>
           Log in
         </button>
-        <a href="#start" className={s.pill}>
+        <button type="button" className={s.pill} onClick={onSignUp}>
           <PushPinIcon weight="fill" aria-hidden="true" />
           <span>Start your atlas</span>
-        </a>
+        </button>
       </div>
     </header>
   );

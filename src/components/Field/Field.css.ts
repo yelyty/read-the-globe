@@ -1,6 +1,5 @@
 import { globalStyle, style } from "@vanilla-extract/css";
 import { vars } from "../../styles/theme.css";
-import { label } from "../../pages/LandingPage/components/Goals/Goals.css";
 
 
 export const note = {
@@ -30,26 +29,29 @@ export const formNotice = style({
 	background: vars.color.oliveWash,
 });
 
-export const field = style({ marginBottom: 14 });
+export const field = style({ marginBottom: 16 });
 
-export const fieldLabel = style([
-	label,
-	{
-		display: "block",
-		marginBottom: 7,
-		selectors: { '[data-invalid="true"] &': { color: vars.color.error } },
-	},
-]);
+export const fieldLabel = style({
+	display: "block",
+	marginBottom: 8,
+	fontFamily: vars.font.sans,
+	fontSize: 15,
+	fontWeight: 500,
+	lineHeight: 1.2,
+	color: vars.color.textSecondary,
+	selectors: { '[data-invalid="true"] &': { color: vars.color.error } },
+});
 
 export const input = style({
 	width: "100%",
-	background: vars.color.field,
+	height: 48,
+	background: vars.color.background,
 	border: `1.5px solid ${vars.color.fieldLine}`,
-	borderRadius: 6,
-	padding: "15px 16px",
+	borderRadius: 12,
+	padding: "0 16px",
 	fontFamily: vars.font.sans,
-	fontSize: 16,
-	fontWeight: 500,
+	fontSize: 17,
+	fontWeight: 400,
 	color: vars.color.text,
 	transition: "border-color .15s, box-shadow .15s",
 	"::placeholder": { color: vars.color.textMuted, opacity: 1 },
@@ -61,7 +63,7 @@ export const input = style({
 	selectors: { '&[aria-invalid="true"]': { borderColor: vars.color.error } },
 });
 
-export const inputPassword = style({ paddingRight: 78 });
+export const inputPassword = style({ paddingRight: 72 });
 
 export const pwWrap = style({ position: "relative" });
 
@@ -73,21 +75,23 @@ export const pwToggle = style({
 	background: "none",
 	border: 0,
 	fontFamily: vars.font.sans,
-	fontSize: 13,
+	fontSize: 15,
 	fontWeight: 500,
 	color: vars.color.textSecondary,
-	padding: 10,
-	minHeight: 40,
-	borderRadius: 6,
+	padding: "0 8px",
+	height: 32,
+	borderRadius: 8,
 	cursor: "pointer",
 	":hover": { color: vars.color.text },
 });
 
 export const fieldError = style({
 	fontFamily: vars.font.sans,
-	fontSize: 13,
+	fontSize: 15,
+	fontWeight: 500,
+	lineHeight: 1.3,
 	color: vars.color.error,
-	margin: "7px 0 0 3px",
+	margin: "8px 0 0",
 });
 
 export const strength = style({

@@ -2,7 +2,7 @@ import { PushPinIcon } from "@phosphor-icons/react";
 import * as s from "./Hero.css";
 import { btnPrimary } from "../LoginDialog/LoginDialog.css";
 
-const Hero = () => {
+const Hero = ({ onSignUp }: { onSignUp: () => void }) => {
   return (
     <section className={s.hero} id="top">
       <div className={s.heroCopy}>
@@ -19,11 +19,10 @@ const Hero = () => {
             countries fill in.
           </p>
           <div className={s.heroCta}>
-            {/* Todo: fix that classname */}
-            <a href="#start" className={btnPrimary}>
+            <button type="button" className={btnPrimary} onClick={onSignUp}>
               <PushPinIcon weight="fill" aria-hidden="true" />
               Start your atlas
-            </a>
+            </button>
           </div>
         </div>
       </div>
