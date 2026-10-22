@@ -71,7 +71,8 @@ const font = {
 	sans: "'Alegreya Sans', system-ui, -apple-system, 'Segoe UI', sans-serif",
 	wordmark: "'IM Fell English', Georgia, serif",
 };
-const light = {
+
+export const light = {
 	font,
 
 	color: {

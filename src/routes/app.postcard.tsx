@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import PlaceholderPage from "../pages/PlaceholderPage/PlaceholderPage";
+import PostcardPage from "../pages/PostcardPage/PostcardPage";
 
 export const Route = createFileRoute("/app/postcard")({
-  component: () => <PlaceholderPage title="Postcard" />,
+  component: () => <PostcardPage />,
 });
