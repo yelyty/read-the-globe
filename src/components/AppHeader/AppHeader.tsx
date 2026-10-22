@@ -1,21 +1,18 @@
 import { Link } from "@tanstack/react-router";
 import { PushPinIcon } from "@phosphor-icons/react";
-import * as s from "../../pages/LandingPage/components/Header/Header.css";
+import * as h from "../../pages/LandingPage/components/Header/Header.css";
+import * as s from "./AppHeader.css";
 import ThemeButton from "../ThemeButton/ThemeButton";
 import Logo from "../Logo/Logo";
 import AccountMenu from "../AccountMenu/AccountMenu";
 
 const AppHeader = () => {
   return (
-    <header className={`${s.header} ${s.appHeader}`}>
-      <div className={s.headerRow}>
-        <Link
-          to="/app"
-          className={s.logoLink}
-          aria-label="Read The Globe, home"
-        >
-          <Logo className={s.logo} />
-          <span className={s.logoTitle}>Read The Globe</span>
+    <header className={h.header}>
+      <div className={s.row}>
+        <Link to="/app" className={h.brand} aria-label="Read The Globe, home">
+          <Logo className={h.logo} />
+          <span className={h.brandWord}>Read The Globe</span>
         </Link>
 
         <nav className={s.nav} aria-label="Main">
@@ -37,15 +34,17 @@ const AppHeader = () => {
           </Link>
           <AccountMenu />
         </nav>
-        <ThemeButton />
-        <Link
-          className={s.pill}
-          to="."
-          search={(prev) => ({ ...prev, log: true })}
-        >
-          <PushPinIcon weight="fill" aria-hidden="true" />
-          <span>Log a book</span>
-        </Link>
+        <div className={s.tools}>
+          <ThemeButton />
+          <Link
+            className={h.start}
+            to="."
+            search={(prev) => ({ ...prev, log: true })}
+          >
+            <PushPinIcon weight="fill" aria-hidden="true" />
+            <span>Log a book</span>
+          </Link>
+        </div>
       </div>
     </header>
   );

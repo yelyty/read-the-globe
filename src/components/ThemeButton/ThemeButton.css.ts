@@ -1,6 +1,7 @@
 import { globalStyle, style } from "@vanilla-extract/css";
 import { vars } from "../../styles/theme.css";
 import { phone } from "../../pages/LandingPage/LandingPage.css";
+import { coarse, hover } from "../../styles/global.css";
 
 
 export const themeBtn = style({
@@ -9,16 +10,17 @@ export const themeBtn = style({
 	display: "grid",
 	placeItems: "center",
 	flex: "none",
-	background: vars.color.surface,
-	border: `1px solid ${vars.color.border}`,
+	background: `color-mix(in srgb, ${vars.color.text} 6%, ${vars.color.background})`,
+	border: 0,
 	borderRadius: 999,
-	color: vars.color.textSecondary,
+	color: vars.color.text,
 	padding: 0,
 	cursor: "pointer",
-	":hover": {
-		color: vars.color.text,
-	},
 	"@media": {
+		[hover]: {
+			selectors: { "&:hover": { background: `color-mix(in srgb, ${vars.color.text} 10%, ${vars.color.background})` } },
+		},
+		[coarse]: { width: 44, height: 44 },
 		// TODO: add other breakpoints
 		[phone]: { marginLeft: "auto" }
 	}
