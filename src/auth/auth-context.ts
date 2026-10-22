@@ -1,9 +1,9 @@
 import { createContext, useContext } from "react";
-import type { User } from "@supabase/supabase-js";
+import type { Reader } from "./session";
 
 export interface AuthContextValue {
 	isAuthenticated: boolean;
-	user: User | null;
+	user: Reader | null;
 	loading: boolean;
 }
 

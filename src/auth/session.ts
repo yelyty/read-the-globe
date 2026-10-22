@@ -12,7 +12,7 @@ export interface Reader {
 export const toReader = (user: User): Reader => ({
 	id: user.id,
 	email: user.email ?? null,
-	signUpName: typeof user.user_metadata?.display_name === "string" ? user.user_metadata.display.name : null,
+	signUpName: typeof user.user_metadata?.display_name === "string" ? user.user_metadata.display_name : null,
 	createdAt: user.created_at
 }
 )

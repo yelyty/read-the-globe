@@ -26,7 +26,7 @@ const ThemeButton = () => {
     document
       .querySelectorAll('meta[name="theme-color"]')
       .forEach((m) =>
-        m.setAttribute("content", next === "dark" ? "1c1811" : " f6f0e2"),
+        m.setAttribute("content", next === "dark" ? "#1c1811" : "#f6f0e2"),
       );
     try {
       localStorage.setItem(THEME_KEY, next);

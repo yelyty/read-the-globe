@@ -85,12 +85,12 @@ const light = {
 		onAccentMuted: "#D3C59B",
 		accent: "#4A6A40",
 
-		background: "#F6F0E2",
+		background: "#FFFFFD",
 		backgroundDeep: "#F3D89A",
-		surface: "#F8EDD0",
-		field: "#FCF8EE",
-		fieldLine: "#9A7F35",
-		headerBackground: "rgba(246, 240, 226, 0.92)",
+		surface: "#FFFFFF",
+		field: "#FFFFFF",
+		fieldLine: "#8D8676",
+		headerBackground: "rgba(255,255,253,.92)",
 		overlay: "rgba(60, 48, 20, 0.55)",
 
 		text: "#3A2E14",
@@ -98,8 +98,8 @@ const light = {
 		textMuted: "#7C673F",
 		textDisabled: "#BCA56E",
 
-		stroke: "#CDB16F",
-		border: "#CDB16F",
+		stroke: "#E7E6E1",
+		border: "#E7E6E1",
 
 		error: "#8B3A33",
 		success: "#5F7445",
@@ -117,7 +117,7 @@ const light = {
 
 	map: {
 		sea: "#F8EDD0",
-		land: "#F5E1B2",
+		land: "#E8D9B5",
 		ink: "#CDB16F",
 	},
 
@@ -149,7 +149,7 @@ const dark = {
 		backgroundDeep: "#2A2418",
 		surface: "#241F15",
 		field: "#1C1811",
-		fieldLine: "#7A6A45",
+		fieldLine: "#988F7A",
 		headerBackground: "rgba(28, 24, 17, 0.92)",
 		overlay: "rgba(0, 0, 0, 0.62)",
 
@@ -158,8 +158,8 @@ const dark = {
 		textMuted: "#A8955F",
 		textDisabled: "#5F543B",
 
-		stroke: "#4C4029",
-		border: "#4C4029",
+		stroke: "#36312700",
+		border: "#36312700",
 
 		error: "#E08A7E",
 		success: "#8AA85C",
@@ -177,7 +177,7 @@ const dark = {
 
 	map: {
 		sea: "#241F15",
-		land: "#433927",
+		land: "#8D7652",
 		ink: "#4C4029",
 	},
 

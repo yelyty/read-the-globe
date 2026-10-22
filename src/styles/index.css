@@ -19,7 +19,7 @@
   --color-accent: #4a6a40; /* green for links, focus rings and text */
 
   /* Surfaces */
-  --color-bg: #f6f0e2;
+  --color-bg: #fffffd;
   --color-surface: #f8edd0;
   --color-overlay: rgba(60, 48, 20, 0.55);
   --color-field: #fcf8ee; /* input background */
