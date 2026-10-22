@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useId, type ReactNode } from "react";
 import * as s from "./Block.css";
 
 type BlockProps = {
@@ -6,10 +6,15 @@ type BlockProps = {
   danger?: boolean;
   children: ReactNode;
 };
+
 const Block = ({ title, danger, children }: BlockProps) => {
+  const id = useId();
   return (
-    <section className={s.block}>
-      <h2 className={danger ? `${s.blockTitle} ${s.danger}` : s.blockTitle}>
+    <section className={s.block} aria-labelledby={id}>
+      <h2
+        id={id}
+        className={danger ? `${s.blockTitle} ${s.danger}` : s.blockTitle}
+      >
         {title}
       </h2>
       {children}

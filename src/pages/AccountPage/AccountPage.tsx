@@ -1,22 +1,30 @@
-import { UserIcon } from "@phosphor-icons/react";
+import { getRouteApi } from "@tanstack/react-router";
 import { useAuth } from "../../auth/auth-context";
+import { useCountryNames } from "../../hooks/useCountryNames";
+import UserDetails from "./components/UserDetails";
+
+import * as s from "./AccountPage.css";
+import ChangePassword from "./components/ChangePassword";
+import DeleteAccount from "./components/DeleteAccount";
+import YourData from "./components/YourData";
+
+const app = getRouteApi("/app");
 
 const AccountPage = () => {
   const { user } = useAuth();
-
-  const yearOf = (iso?: string) =>
-    iso ? new Date(iso).getFullYear() : Infinity;
-  const since = Math.min(yearOf(user?.created_at));
+  const { books } = app.useLoaderData();
+  const names = useCountryNames();
+  if (!user) return null;
 
   return (
-    <div>
-      <header>
-        <h1>
-          <UserIcon aria-hidden="true" />
-          Account
-        </h1>
-        {Number.isFinite(since) && <p>Mapping books since {since}</p>}
+    <div className={s.page}>
+      <header className={s.head}>
+        <h1 className={s.title}>Account</h1>
       </header>
+      <UserDetails user={user} />
+      <ChangePassword email={user.email ?? ""} />
+      <YourData books={books} names={names} />
+      <DeleteAccount books={books} names={names} />
     </div>
   );
 };
