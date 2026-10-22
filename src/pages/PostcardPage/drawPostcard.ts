@@ -7,6 +7,8 @@ import { light } from "../../styles/theme.css";
 
 export const SIZE = 1080;
 
+export type Country = { shape: Feature<Polygon | MultiPolygon>; main: Box };
+
 const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json";
 const projection = geoEquirectangular().scale(1000 / (2 * Math.PI)).translate([500, 250]);
 
@@ -84,7 +86,6 @@ type Topology = {
 	objects: { countries: { geometries: { id?: string; type: string; arcs?: number[][] | number[][][] }[] } };
 };
 type Box = [[number, number], [number, number]];
-type Country = { shape: Feature<Polygon | MultiPolygon>; main: Box };
 
 let world: Promise<Map<string, Country>> | null = null;
 
@@ -139,6 +140,13 @@ function flatBox([outer]: Position[][]) {
 	const ys = pts.map((p) => p[1]);
 	const box: Box = [[Math.min(...xs), Math.min(...ys)], [Math.max(...xs), Math.max(...ys)]];
 	return { area: Math.abs(area) / 2, box };
+}
+
+// a country's outline as SVG, framed on its main landmass like a stamp (the Shelf's country header)
+export function countryStamp({ shape, main: [[x0, y0], [x1, y1]] }: Country) {
+	const pad = Math.max(x1 - x0, y1 - y0) * 0.06;
+	const viewBox = [x0 - pad, y0 - pad, x1 - x0 + pad * 2, y1 - y0 + pad * 2].map((n) => n.toFixed(1)).join(" ");
+	return { d: geoPath(projection)(shape) ?? "", viewBox, width: x1 - x0 + pad * 2 };
 }
 
 /* ---------- the card ---------- */

@@ -9,7 +9,6 @@ import LoginDialog, {
   type AuthMode,
 } from "./components/LoginDialog/LoginDialog";
 import Footer from "./components/Footer/Footer";
-import Shelf from "./components/Shelf/Shelf";
 
 const LandingPage = () => {
   const [auth, setAuth] = useState<AuthMode | null>(null);
@@ -27,11 +26,9 @@ const LandingPage = () => {
 
   return (
     <div className={s.page}>
-      {/* <a href="main" className={s.skip}>Skip to content</a> */}
       <Header onLogIn={openLogIn} onSignUp={openSignUp} />
       <main id="main" tabIndex={-1}>
         <Hero onSignUp={openSignUp} />
-        <Shelf />
         <Goals />
       </main>
       <LoginDialog mode={auth} onMode={setAuth} onClose={closeAuth} />
