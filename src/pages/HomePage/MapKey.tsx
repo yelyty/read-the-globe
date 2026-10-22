@@ -1,10 +1,10 @@
 import type { Show } from "../../components/AtlasMap/AtlasMap.tsx";
 import * as s from "./HomePage.css";
 
-const SHOW: [Show, string][] = [
-  ["all", "All"],
-  ["set", "Settings"],
-  ["author", "Authors"],
+const SHOW: [Show, string, string?][] = [
+  ["all", "Both"],
+  ["set", "Where set"],
+  ["author", "Authors", "Authors: where authors are from"],
 ];
 
 type MapKeyProps = {
@@ -35,12 +35,13 @@ const MapKey = ({ show, onShow, canFilter }: MapKeyProps) => (
         <span className={s.capsLabel} aria-hidden="true">
           Show
         </span>
-        {SHOW.map(([value, label]) => (
+        {SHOW.map(([value, label, long]) => (
           <button
             key={value}
             type="button"
             className={s.showBtn}
             aria-pressed={show === value}
+            aria-label={long}
             onClick={() => onShow(value)}
           >
             {label}

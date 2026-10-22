@@ -55,3 +55,9 @@ export const dot = style({ fill: vars.color.surface, stroke: vars.color.oliveInk
 export const srOnly = style({
 	position: "absolute", width: 1, height: 1, margin: -1, overflow: "hidden", clipPath: "inset(50%)", whiteSpace: "nowrap",
 });
+
+globalStyle(`${land}${set}${author}`, { fill: "url(#both-hatch)" });
+export const hatchSet = style({ fill: vars.color.olive });
+export const hatchAuthor = style({ fill: vars.color.markerAuthor });
+globalStyle(`${plate}[data-show="set"] ${land}${set}${author}`, { fill: vars.color.olive });
+globalStyle(`${plate}[data-show="author"] ${land}${set}${author}`, { fill: vars.color.markerAuthor });

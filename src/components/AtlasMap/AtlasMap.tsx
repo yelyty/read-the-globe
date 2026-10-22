@@ -11,7 +11,8 @@ import type { Marks } from "../../utils/atlasMarks";
 import * as s from "./AtlasMap.css";
 
 // 50m, not 110m: the low-detail map leaves out small countries, which then could never be marked
-const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json";
+export const GEO_URL =
+  "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json";
 
 // A flat latitude/longitude grid, as in the mock: 360° across, 83°N to 57°S down (no Antarctica).
 const WIDTH = 1000;
@@ -34,8 +35,6 @@ type AtlasMapProps = {
   children?: ReactNode; // laid over the map: the cartouche
 };
 
-// The atlas plate: every country, olive where a story is set, rust where an author is from,
-// olive with a rust edge for both, and a dot for each place.
 const AtlasMap = memo(
   ({
     marks,
@@ -62,6 +61,18 @@ const AtlasMap = memo(
             height={HEIGHT}
             aria-hidden="true"
           >
+            <defs>
+              <pattern
+                id="both-hatch"
+                patternUnits="userSpaceOnUse"
+                width="4"
+                height="4"
+                patternTransform="rotate(45)"
+              >
+                <rect width="4" height="4" className={s.hatchSet} />
+                <rect width="2" height="4" className={s.hatchAuthor} />
+              </pattern>
+            </defs>
             <Geographies geography={GEO_URL}>
               {({ geographies }) =>
                 geographies.map((geo) => {
