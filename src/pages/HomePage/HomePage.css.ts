@@ -1,6 +1,6 @@
 
 import { globalStyle, style } from "@vanilla-extract/css";
-import { vars } from "../../styles/theme.css";
+import { fontSize, space, vars } from "../../styles/theme.css";
 
 const phone = "screen and (max-width: 639px)";
 
