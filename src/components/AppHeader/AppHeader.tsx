@@ -7,7 +7,7 @@ import AccountMenu from "../AccountMenu/AccountMenu";
 
 const AppHeader = () => {
   return (
-    <header className={s.header}>
+    <header className={`${s.header} ${s.appHeader}`}>
       <div className={s.headerRow}>
         <Link
           to="/app"

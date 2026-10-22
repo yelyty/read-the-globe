@@ -131,3 +131,6 @@ export const pill = style({
 	},
 });
 globalStyle(`${pill} svg`, { width: 14, height: 14 });
+
+export const appHeader = style({});
+globalStyle(`${appHeader} :is(a, button)`, { fontFamily: vars.font.display });

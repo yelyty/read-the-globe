@@ -10,8 +10,8 @@ export const page = style({
 	background: vars.color.background,
 	color: vars.color.text,
 	fontFamily: vars.font.serif,
-	fontSize: 17,
-	lineHeight: 1.5,
+	fontSize: 18,
+	lineHeight: 1.55,
 	overflowX: "clip",
 	caretColor: vars.color.primary,
 	fontVariantNumeric: "tabular-nums",
@@ -47,6 +47,15 @@ globalStyle(`${page} *, ${page} *::before, ${page} *::after`, {
 	},
 });
 globalStyle("body:has(dialog[open])", { overflow: "hidden" });
+
+export const headline = {
+	fontFamily: vars.font.sans,
+	fontWeight: 800,
+	lineHeight: 1.02,
+	letterSpacing: "-.03em",
+	textWrap: "balance",
+} as const;
+export const sectionTitle = { ...headline, fontSize: "clamp(34px, 4.6vw, 56px)" } as const;
 
 export const wrap = style({
 	maxWidth: 1240,

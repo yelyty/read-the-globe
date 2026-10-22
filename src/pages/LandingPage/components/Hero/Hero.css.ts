@@ -1,5 +1,5 @@
 import { style } from "@vanilla-extract/css";
-import { wrap } from "../../LandingPage.css";
+import { headline, wrap } from "../../LandingPage.css";
 import { vars } from "../../../../styles/theme.css";
 
 
@@ -18,12 +18,7 @@ export const heroCopy = style({
 	marginBottom: -12,
 });
 
-
-export const heroTitle = style({
-	fontSize: "clamp(48px, 6vw, 88px)",
-	lineHeight: 0.95,
-	textWrap: "balance",
-});
+export const heroTitle = style({ ...headline, fontSize: "clamp(40px, 6.4vw, 84px)" });
 
 export const heroSub = style({
 	margin: "26px auto 0",

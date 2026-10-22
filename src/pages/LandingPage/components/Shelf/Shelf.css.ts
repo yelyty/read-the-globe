@@ -1,8 +1,9 @@
 import { style } from "@vanilla-extract/css";
 import { tablet } from "../../../../styles/global.css";
 import { vars } from "../../../../styles/theme.css";
+import { sectionTitle } from "../../LandingPage.css";
 
-export const h2 = style({ fontSize: "clamp(38px, 5vw, 54px)", lineHeight: 1 });
+export const h2 = style(sectionTitle);
 
 export const lede = style({
 	marginTop: 18,

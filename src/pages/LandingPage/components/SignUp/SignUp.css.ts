@@ -1,5 +1,5 @@
 import { globalStyle, style, styleVariants } from "@vanilla-extract/css";
-import { section } from "../../LandingPage.css";
+import { section, sectionTitle } from "../../LandingPage.css";
 import { vars } from "../../../../styles/theme.css";
 
 
@@ -39,11 +39,7 @@ export const startGrid = style({
 	textAlign: "center",
 });
 
-export const startTitle = style({
-	fontSize: "clamp(38px, 4.5vw, 52px)",
-	lineHeight: 1,
-	textWrap: "balance",
-});
+export const startTitle = style({ ...sectionTitle, lineHeight: 1.04 });
 
 export const startSub = style({
 	margin: "20px auto 40px",

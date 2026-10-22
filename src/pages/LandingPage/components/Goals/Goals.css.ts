@@ -1,6 +1,6 @@
 import { globalStyle, style } from "@vanilla-extract/css";
 
-import { phone, sectionHead } from "../../LandingPage.css";
+import { phone, sectionHead, sectionTitle } from "../../LandingPage.css";
 import { vars } from "../../../../styles/theme.css";
 
 export const ease = "cubic-bezier(.2, .8, .25, 1)";
@@ -18,11 +18,7 @@ export const reveal = style({
 
 export const goalsHead = style([sectionHead, { marginBottom: 28 }]);
 
-export const h2Small = style({
-	fontSize: "clamp(34px, 4.5vw, 46px)",
-	lineHeight: 1.02,
-	textWrap: "balance"
-});
+export const h2Small = style(sectionTitle);
 
 export const goalsLede = style({
 	marginTop: 14,

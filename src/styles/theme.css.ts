@@ -67,7 +67,7 @@ export const vars = createThemeContract({
 
 const font = {
 	display: "Alegreya, Georgia, 'Times New Roman', serif",
-	serif: "'EB Garamond', Georgia, 'Times New Roman', serif",
+	serif: "Alegreya, Georgia, 'Times New Roman', serif",
 	sans: "'Alegreya Sans', system-ui, -apple-system, 'Segoe UI', sans-serif",
 	wordmark: "'IM Fell English', Georgia, serif",
 };

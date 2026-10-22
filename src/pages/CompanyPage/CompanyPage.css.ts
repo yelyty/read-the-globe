@@ -1,5 +1,6 @@
 import { globalStyle, style } from "@vanilla-extract/css";
 import { vars } from "../../styles/theme.css";
+import { headline } from "../LandingPage/LandingPage.css";
 
 export const main = style({
 	maxWidth: "44rem",
@@ -12,19 +13,16 @@ export const main = style({
 });
 
 globalStyle(`${main} h1`, {
+	...headline,
 	margin: "0 0 8px",
-	fontFamily: vars.font.display,
-	fontWeight: 500,
-	fontSize: "clamp(38px, 5vw, 54px)",
-	lineHeight: 1,
 	color: vars.color.text,
-	textWrap: "balance",
 });
 globalStyle(`${main} h2`, {
+	...headline,
 	margin: "40px 0 8px",
-	fontFamily: vars.font.display,
-	fontWeight: 500,
-	fontSize: "1.4rem",
+	fontSize: 28,
+	lineHeight: 1.1,
+	letterSpacing: "-.02em",
 	color: vars.color.text,
 });
 globalStyle(`${main} p, ${main} li`, { color: vars.color.text });
