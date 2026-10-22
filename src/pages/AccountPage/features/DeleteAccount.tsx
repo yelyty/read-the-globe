@@ -1,23 +1,24 @@
 import { useRef, useState, type SubmitEvent } from "react";
 import { useRouter } from "@tanstack/react-router";
 import { DownloadSimpleIcon, TrashIcon, XIcon } from "@phosphor-icons/react";
-import Block from "./Block";
+
 import Field from "../../../components/Field/Field";
 import type { BookEntry } from "../../../types";
 import { deleteAccount } from "../../../api/Profile/deleteAccount";
-import { bookCount, exportReadingList } from "../readingList";
+
+import { bookCount, exportReadingList } from "./YourData/readingList";
 import * as s from "../AccountPage.css";
+import Block from "../components/Block";
 
 type DeleteAccountProps = {
   books: BookEntry[];
   names: Record<string, string>;
 };
 
-// Start over: deleting can't be undone, so it opens a dialog that says what goes, offers a copy first,
-// and asks for the word delete
 const DeleteAccount = ({ books, names }: DeleteAccountProps) => {
   const router = useRouter();
   const dialog = useRef<HTMLDialogElement>(null);
+
   const [word, setWord] = useState("");
   const [kept, setKept] = useState("");
   const [error, setError] = useState<string>();
@@ -30,6 +31,7 @@ const DeleteAccount = ({ books, names }: DeleteAccountProps) => {
     dialog.current?.showModal();
     document.getElementById("ac-delete-word")?.focus();
   };
+
   const close = () => dialog.current?.close();
 
   const submit = async (event: SubmitEvent<HTMLFormElement>) => {
@@ -70,7 +72,7 @@ const DeleteAccount = ({ books, names }: DeleteAccountProps) => {
           aria-labelledby="ac-delete-title"
           aria-describedby="ac-delete-q"
           onClick={(event) => {
-            if (event.target === event.currentTarget) close(); // a click on the backdrop
+            if (event.target === event.currentTarget) close();
           }}
         >
           <form onSubmit={submit} noValidate>

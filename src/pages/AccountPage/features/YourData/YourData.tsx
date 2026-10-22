@@ -1,18 +1,27 @@
-import { useState } from "react";
 import { FileCsvIcon, FileCodeIcon } from "@phosphor-icons/react";
-import Block from "./Block";
-import type { BookEntry } from "../../../types";
-import { bookCount, exportBackup, exportReadingList } from "../readingList";
-import * as s from "../AccountPage.css";
+import { useState } from "react";
+import type { BookEntry } from "../../../../types";
+import { bookCount, exportBackup, exportReadingList } from "./readingList";
+import * as s from "../../AccountPage.css";
+import Block from "../../components/Block";
 
 type YourDataProps = {
   books: BookEntry[];
   names: Record<string, string>;
 };
 
-// the atlas out: a reading list any spreadsheet opens, and a full backup
 const YourData = ({ books, names }: YourDataProps) => {
   const [status, setStatus] = useState("");
+
+  const onExportReadingListClick = () => {
+    exportReadingList(books, names);
+    setStatus(`Exported ${bookCount(books.length)} to a reading list.`);
+  };
+
+  const onExportFullBackup = () => {
+    exportBackup(books);
+    setStatus("Saved a full backup to your downloads.");
+  };
 
   return (
     <Block title="Your data">
@@ -26,12 +35,7 @@ const YourData = ({ books, names }: YourDataProps) => {
           <button
             type="button"
             className={s.quiet}
-            onClick={() => {
-              exportReadingList(books, names);
-              setStatus(
-                `Exported ${bookCount(books.length)} to a reading list.`,
-              );
-            }}
+            onClick={onExportReadingListClick}
           >
             <FileCsvIcon aria-hidden="true" />
             Reading list (CSV)
@@ -39,10 +43,7 @@ const YourData = ({ books, names }: YourDataProps) => {
           <button
             type="button"
             className={s.quiet}
-            onClick={() => {
-              exportBackup(books);
-              setStatus("Saved a full backup to your downloads.");
-            }}
+            onClick={onExportFullBackup}
           >
             <FileCodeIcon aria-hidden="true" />
             Full backup (JSON)

@@ -1,12 +1,13 @@
 import { getRouteApi } from "@tanstack/react-router";
 import { useAuth } from "../../auth/auth-context";
 import { useCountryNames } from "../../hooks/useCountryNames";
-import UserDetails from "./components/UserDetails";
+
+import UserDetails from "./features/UserDetails";
+import ChangePassword from "./features/ChangePassword/ChangePassword";
+import DeleteAccount from "./features/DeleteAccount";
+import YourData from "./features/YourData/YourData";
 
 import * as s from "./AccountPage.css";
-import ChangePassword from "./components/ChangePassword";
-import DeleteAccount from "./components/DeleteAccount";
-import YourData from "./components/YourData";
 
 const app = getRouteApi("/app");
 

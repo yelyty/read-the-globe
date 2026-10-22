@@ -36,7 +36,7 @@ export const since = style({ margin: 0, fontSize: 15, color: vars.color.textSeco
 /* ---------- forms ---------- */
 export const form = style({ maxWidth: 520 });
 
-// the sign-in email: readable and copyable, not editable
+
 globalStyle(`${form} input[readonly]`, {
 	background: vars.color.background,
 	borderColor: vars.color.border,
@@ -129,7 +129,6 @@ export const linkBtn = style({
 });
 globalStyle(`${linkBtn} svg`, { width: 16, height: 16, flex: "none" });
 
-/* ---------- panels: Your data and Start over ---------- */
 export const item = style({
 	marginTop: 16,
 	padding: 24,
@@ -199,7 +198,6 @@ export const close = style({
 });
 globalStyle(`${close} svg`, { width: 18, height: 18 });
 
-// a way out before the loss: the reading list, one click, inside the dialog
 export const keepCopy = style({
 	display: "flex",
 	flexWrap: "wrap",
@@ -213,5 +211,4 @@ export const keepCopy = style({
 });
 globalStyle(`${keepCopy} > p:first-child`, { flexBasis: "100%", margin: 0, color: vars.color.text });
 
-// the way back first, the main action last, on the right
 export const dialogActions = style({ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "flex-end", gap: "12px 24px", marginTop: 24 });

@@ -1,4 +1,4 @@
-import type { BookEntry } from "../../types";
+import type { BookEntry } from "../../../../types";
 
 const today = () => new Date().toISOString().slice(0, 10);
 

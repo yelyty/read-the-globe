@@ -3,7 +3,6 @@ import { getRouteApi, Link, useNavigate } from "@tanstack/react-router";
 import {
   ArrowsInIcon,
   ArrowsOutIcon,
-  GlobeHemisphereWestIcon,
   PushPinIcon,
 } from "@phosphor-icons/react";
 import AtlasMap, { type Show } from "../../components/AtlasMap/AtlasMap.tsx";
@@ -61,10 +60,7 @@ const HomePage = () => {
   return (
     <div className={s.page}>
       <div className={s.viewHead} data-blank={blank || undefined}>
-        <h1 className={s.title}>
-          <GlobeHemisphereWestIcon className={s.titleIcon} aria-hidden="true" />
-          {title}
-        </h1>
+        <h1 className={s.title}>{title}</h1>
       </div>
 
       {blank && (

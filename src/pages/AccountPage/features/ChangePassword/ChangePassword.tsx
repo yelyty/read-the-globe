@@ -1,29 +1,12 @@
-import { useState, type SubmitEvent } from "react";
+import { useState, type ChangeEvent, type SubmitEvent } from "react";
 import { LockKeyIcon } from "@phosphor-icons/react";
-import Block from "./Block";
-import Field from "../../../components/Field/Field";
-import { changePassword } from "../../../auth/session";
-import * as s from "../AccountPage.css";
+import Block from "../../components/Block";
+import Field from "../../../../components/Field/Field";
+import { changePassword } from "../../../../auth/session";
 
-type Errors = { first?: string; second?: string };
+import * as s from "../../AccountPage.css";
+import { validate, type Errors } from "./validate";
 
-const validate = (first: string, second: string): Errors => {
-  if (first.length < 8)
-    return {
-      first: first
-        ? "Your new password needs at least 8 characters."
-        : "Type a new password.",
-    };
-  if (second !== first)
-    return {
-      second: second
-        ? "The two passwords don’t match. Type the same one twice."
-        : "Repeat the new password to confirm it.",
-    };
-  return {};
-};
-
-// a new password, typed twice
 const ChangePassword = ({ email }: { email: string }) => {
   const [first, setFirst] = useState("");
   const [second, setSecond] = useState("");
@@ -52,10 +35,19 @@ const ChangePassword = ({ email }: { email: string }) => {
     setStatus("Password changed.");
   };
 
+  const onNewPasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setFirst(event.target.value);
+    setErrors({});
+  };
+
+  const onRepeatNewPasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setSecond(event.target.value);
+    setErrors({});
+  };
+
   return (
     <Block title="Change password">
       <form className={s.form} onSubmit={submit} noValidate>
-        {/* lets a password manager file the new password under the right account */}
         <input
           type="text"
           name="username"
@@ -73,10 +65,7 @@ const ChangePassword = ({ email }: { email: string }) => {
           aria-describedby="ac-pass1-hint"
           value={first}
           error={errors.first}
-          onChange={(event) => {
-            setFirst(event.target.value);
-            setErrors({});
-          }}
+          onChange={onNewPasswordChange}
         >
           <p className={s.hint} id="ac-pass1-hint">
             At least 8 characters.
@@ -89,10 +78,7 @@ const ChangePassword = ({ email }: { email: string }) => {
           autoComplete="new-password"
           value={second}
           error={errors.second}
-          onChange={(event) => {
-            setSecond(event.target.value);
-            setErrors({});
-          }}
+          onChange={onRepeatNewPasswordChange}
         />
         <div className={s.row}>
           <button type="submit" className={s.primary} disabled={saving}>

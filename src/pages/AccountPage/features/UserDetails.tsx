@@ -1,15 +1,16 @@
-import { useState, type SubmitEvent } from "react";
+import { useState, type ChangeEvent, type SubmitEvent } from "react";
 import { CheckIcon } from "@phosphor-icons/react";
-import Block from "./Block";
+
 import Field from "../../../components/Field/Field";
 import { updateDisplayName, type Reader } from "../../../auth/session";
 import * as s from "../AccountPage.css";
+
+import Block from "../components/Block";
 
 type UserDetailsProps = {
   user: Reader;
 };
 
-// the name the atlas shows, and the email the reader signs in with
 const UserDetails = ({ user }: UserDetailsProps) => {
   const [name, setName] = useState(user.signUpName ?? "");
   const [error, setError] = useState<string>();
@@ -19,16 +20,24 @@ const UserDetails = ({ user }: UserDetailsProps) => {
   const submit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     setStatus("");
+
     if (!name.trim()) {
       setError("Add a name to show on your atlas.");
       document.getElementById("ac-name")?.focus();
       return;
     }
     setSaving(true);
+
     const problem = await updateDisplayName(name.trim());
     setSaving(false);
     setError(problem ?? undefined);
     if (!problem) setStatus("Saved.");
+  };
+
+  const onNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+    setError(undefined);
+    setStatus("");
   };
 
   return (
@@ -41,11 +50,7 @@ const UserDetails = ({ user }: UserDetailsProps) => {
           maxLength={80}
           value={name}
           error={error}
-          onChange={(event) => {
-            setName(event.target.value);
-            setError(undefined);
-            setStatus("");
-          }}
+          onChange={onNameChange}
         />
         <Field
           readOnly
