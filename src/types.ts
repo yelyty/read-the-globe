@@ -1,3 +1,5 @@
+import type { Continent } from "./utils/continents";
+
 export interface Country {
 	name: string;
 	code: string;
@@ -38,11 +40,16 @@ export interface Place {
 	bookId: string;
 }
 
+export type GoalKind = "region" | "countries" | "theme";
+
 export interface Goal {
 	id: number;
+	kind: GoalKind;
 	name: string;
+	continent: Continent | null;
 	countryCodes: string[] | null;
 	target: number | null;
+	reachedOn: string | null;
 }
 
 export interface Profile {

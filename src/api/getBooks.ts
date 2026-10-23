@@ -18,7 +18,8 @@ async function getBooks(userId: string): Promise<BookEntry[]> {
         name,
         code
       ),  
-	  places!places_book_id_fkey ( id, name, lon, lat, countryCode:country_code, bookId:book_id )
+	  places!places_book_id_fkey ( id, name, lon, lat, countryCode:country_code, bookId:book_id ),
+	  goals:book_goals ( goalId:goal_id )
     `)
 		.eq("user_id", userId)
 		.order("created_at", { ascending: false })

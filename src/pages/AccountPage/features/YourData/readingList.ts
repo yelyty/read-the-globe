@@ -1,4 +1,4 @@
-import type { BookEntry } from "../../../../types";
+import type { BookEntry, Goal } from "../../../../types";
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -41,9 +41,9 @@ export function exportReadingList(
 	);
 }
 
-export function exportBackup(books: BookEntry[]) {
+export function exportBackup(books: BookEntry[], goals: Goal[]) {
 	download(
-		JSON.stringify({ exported: new Date().toISOString(), books }, null, 2),
+		JSON.stringify({ exported: new Date().toISOString(), books, goals }, null, 2),
 		`read-the-globe-backup-${today()}.json`,
 		"application/json",
 	);

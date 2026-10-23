@@ -1,6 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import getBooks from "../api/getBooks";
 import AppLayout from "../components/AppLayout/AppLayout";
+import { getGoals } from "../api/goals/goals";
 
 type AppSearch = {
   log?: true;
@@ -17,9 +18,14 @@ export const Route = createFileRoute("/app")({
       throw redirect({ to: "/", search: { redirect: location.href } });
     }
   },
-  loader: async ({ context }) => ({
-    books: await getBooks(context.auth.user!.id),
-  }),
+  loader: async ({ context }) => {
+    const userId = context.auth.user!.id;
+    const [books, goals] = await Promise.all([
+      getBooks(userId),
+      getGoals(userId),
+    ]);
+    return { books, goals };
+  },
   //   TODO: Create error component
   errorComponent: () => <p>Error</p>,
   component: AppLayout,

@@ -13,7 +13,7 @@ const app = getRouteApi("/app");
 
 const AccountPage = () => {
   const { user } = useAuth();
-  const { books } = app.useLoaderData();
+  const { books, goals } = app.useLoaderData();
   const names = useCountryNames();
   if (!user) return null;
 
@@ -24,7 +24,7 @@ const AccountPage = () => {
       </header>
       <UserDetails user={user} />
       <ChangePassword email={user.email ?? ""} />
-      <YourData books={books} names={names} />
+      <YourData books={books} goals={goals} names={names} />
       <DeleteAccount books={books} names={names} />
     </div>
   );
