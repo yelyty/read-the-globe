@@ -58,3 +58,11 @@ export interface Profile {
 	createdAt: string;
 }
 
+export interface NextRead {
+	id: string;
+	title: string;
+	author: string | null;
+	countryCode: string | null;
+	mark: "set" | "author" | null;
+	createdAt: string;
+}

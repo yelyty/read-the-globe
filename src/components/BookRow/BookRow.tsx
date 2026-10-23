@@ -25,7 +25,12 @@ const BookRow = ({ book, names }: BookRowProps) => {
           aria-hidden="true"
         />
         <span className={s.rowTitle}>{book.title}</span>
-        <span className={s.rowAuthor}>{book.author?.name}</span>
+        <span className={s.rowAuthor}>
+          {book.author?.name}
+          {book.createdAt && (
+            <time dateTime={book.createdAt}>{formatDate(book.createdAt)}</time>
+          )}
+        </span>
       </div>
       <div className={s.rowMarks}>
         {places.length ? (
@@ -36,8 +41,8 @@ const BookRow = ({ book, names }: BookRowProps) => {
               {places.map((p, i) => (
                 <Fragment key={p.id}>
                   {i > 0 && ", "}
-                  {p.name}
-                  {p.countryCode && names[p.countryCode] && (
+                  {p.name || (p.countryCode && names[p.countryCode])}
+                  {p.name && p.countryCode && names[p.countryCode] && (
                     <em className={s.markCountry}> · {names[p.countryCode]}</em>
                   )}
                 </Fragment>
@@ -55,11 +60,6 @@ const BookRow = ({ book, names }: BookRowProps) => {
               {names[book.author.country.code] ?? book.author.country.name}
             </span>
           </span>
-        )}
-      </div>
-      <div className={s.rowSide}>
-        {book.createdAt && (
-          <time dateTime={book.createdAt}>{formatDate(book.createdAt)}</time>
         )}
       </div>
     </li>
