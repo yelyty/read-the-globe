@@ -10,7 +10,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "preview": "vite preview",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test": "vitest run"
   },
   "dependencies": {
     "@phosphor-icons/react": "2.1.10",
@@ -40,6 +41,7 @@
     "@vanilla-extract/vite-plugin": "5.2.3",
     "@vitejs/plugin-react": "6.0.1",
     "eslint": "10.13.0",
+    "eslint-plugin-jsx-a11y": "6.10.2",
     "eslint-plugin-react-hooks": "7.1.1",
     "eslint-plugin-react-refresh": "0.5.2",
     "globals": "17.6.0",
@@ -48,7 +50,8 @@
     "prettier": "3.9.10",
     "typescript": "6.0.2",
     "typescript-eslint": "8.59.2",
-    "vite": "8.0.12"
+    "vite": "8.0.12",
+    "vitest": "5.0.5"
   },
   "packageManager": "pnpm@10.34.7",
   "pnpm": {
@@ -58,7 +61,8 @@
     "peerDependencyRules": {
       "allowedVersions": {
         "react-simple-maps>react": "19",
-        "react-simple-maps>react-dom": "19"
+        "react-simple-maps>react-dom": "19",
+        "eslint-plugin-jsx-a11y>eslint": "10"
       }
     }
   }

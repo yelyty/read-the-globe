@@ -1,68 +1,70 @@
 import type { Continent } from "./utils/continents";
 
 export interface Country {
-	name: string;
-	code: string;
+  name: string;
+  code: string;
 }
 
 export interface Author {
-	name: string;
-	country: Country | null;
+  name: string;
+  country: Country | null;
 }
 
 export interface BookEntry {
-	id: string;
-	title: string;
-	createdAt?: string;
-	author: Author | null;
-	places: Place[];
-	goals: {
-		goalId: number
-	}[]
+  id: string;
+  title: string;
+  createdAt?: string;
+  author: Author | null;
+  places: Place[];
+  goals: {
+    goalId: number;
+  }[];
 }
 
 export interface CountryGroup {
-	code: string;
-	name: string;
-	books: BookEntry[];
+  code: string;
+  name: string;
+  books: BookEntry[];
 }
 
 export interface CountryData {
-	[countryCode: string]: CountryGroup;
+  [countryCode: string]: CountryGroup;
 }
 
 export interface Place {
-	id: string;
-	name: string;
-	lon: number;
-	lat: number;
-	countryCode?: string | null;
-	bookId: string;
+  id: string;
+  name: string;
+  lon: number;
+  lat: number;
+  countryCode?: string | null;
+  bookId: string;
 }
 
 export type GoalKind = "region" | "countries" | "theme";
 
 export interface Goal {
-	id: number;
-	kind: GoalKind;
-	name: string;
-	continent: Continent | null;
-	countryCodes: string[] | null;
-	target: number | null;
-	reachedOn: string | null;
+  id: number;
+  kind: GoalKind;
+  name: string;
+  continent: Continent | null;
+  countryCodes: string[] | null;
+  target: number | null;
+  reachedOn: string | null;
 }
 
 export interface Profile {
-	displayName: string;
-	handle: string | null;
-	createdAt: string;
+  displayName: string;
+  handle: string | null;
+  createdAt: string;
 }
 
 export interface NextRead {
-	id: string;
-	title: string;
-	author: string | null;
-	countryCode: string | null;
-	mark: "set" | "author" | null;
-	createdAt: string;
+  id: string;
+  title: string;
+  author: string | null;
+  countryCode: string | null;
+  mark: "set" | "author" | null;
+  createdAt: string;
 }
+
+export type Geo = { id: string; rsmKey: string };

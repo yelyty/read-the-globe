@@ -1,5 +1,6 @@
 import { memo, useEffect, useRef, type ReactNode } from "react";
 import { geoEquirectangular } from "d3-geo";
+import type { Geo } from "../../types";
 import {
   ComposableMap,
   Geographies,
@@ -75,7 +76,7 @@ const AtlasMap = memo(
             </defs>
             <Geographies geography={GEO_URL}>
               {({ geographies }) =>
-                geographies.map((geo) => {
+                geographies.map((geo: Geo) => {
                   const mark = marks[geo.id];
                   const classes = [
                     s.land,
