@@ -8,6 +8,7 @@ import DeleteAccount from './features/DeleteAccount';
 import YourData from './features/YourData/YourData';
 
 import * as s from './AccountPage.css';
+import PageTitle from '../../components/PageTitle/PageTitle';
 
 const app = getRouteApi('/app');
 
@@ -15,13 +16,12 @@ const AccountPage = () => {
   const { user } = useAuth();
   const { books, goals } = app.useLoaderData();
   const names = useCountryNames();
+
   if (!user) return null;
 
   return (
     <div className={s.column}>
-      <header className={s.head}>
-        <h1 className={s.title}>Account</h1>
-      </header>
+      <PageTitle>Account</PageTitle>
       <UserDetails user={user} />
       <ChangePassword email={user.email ?? ''} />
       <YourData books={books} goals={goals} names={names} />

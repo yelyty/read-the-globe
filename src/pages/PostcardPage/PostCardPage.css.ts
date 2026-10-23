@@ -15,16 +15,6 @@ const wide = 'screen and (min-width: 960px)';
 const picked = `color-mix(in srgb, ${vars.color.secondary} 22%, ${vars.color.background})`;
 const pickHover = `color-mix(in srgb, ${vars.color.secondary} 16%, ${vars.color.background})`;
 
-export const title = style({
-  margin: '0 0 24px',
-  fontFamily: vars.font.display,
-  fontWeight: 500,
-  fontSize: 30,
-  lineHeight: 1.1,
-  color: vars.color.text,
-  '@media': { [phone]: { fontSize: 26 } },
-});
-
 /* ---------- empty: no books yet ---------- */
 export const empty = style({
   padding: '24px 0',

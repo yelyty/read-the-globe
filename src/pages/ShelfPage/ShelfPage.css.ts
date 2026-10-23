@@ -11,23 +11,6 @@ import {
   focusRing,
 } from '../../styles/global.css';
 
-export const viewHead = style({
-  display: 'flex',
-  flexWrap: 'wrap',
-  alignItems: 'baseline',
-  gap: '8px 16px',
-  marginBottom: 24,
-});
-export const title = style({
-  margin: 0,
-  fontFamily: vars.font.display,
-  fontWeight: 500,
-  fontSize: 30,
-  lineHeight: 1.1,
-  color: vars.color.text,
-  '@media': { [phone]: { fontSize: 26 } },
-});
-
 export const tabs = style({
   display: 'flex',
   gap: 8,

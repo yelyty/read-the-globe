@@ -8,7 +8,6 @@ import {
 import { useAuth } from '../../auth/auth-context';
 import { useCountryNames } from '../../hooks/useCountryNames';
 import { atlasMarks } from '../../utils/atlasMarks';
-import Logo from '../../components/Logo/Logo';
 import {
   COLORS,
   KINDS,
@@ -21,6 +20,7 @@ import {
   type Options,
 } from './drawPostcard';
 import * as s from './PostCardPage.css';
+import PageTitle from '../../components/PageTitle/PageTitle';
 
 const app = getRouteApi('/app');
 
@@ -162,7 +162,7 @@ const PostcardPage = () => {
   if (!books.length) {
     return (
       <>
-        <h1 className={s.title}>Your postcard</h1>
+        <PageTitle>Your postcard</PageTitle>
         <div className={s.empty}>
           <h2>Your postcard is blank</h2>
           <p>
@@ -185,10 +185,7 @@ const PostcardPage = () => {
 
   return (
     <>
-      <h1 className={s.title}>Your postcard</h1>
-      <div ref={logoRef} hidden>
-        <Logo />
-      </div>
+      <PageTitle>Your Postcard</PageTitle>
 
       <div className={s.layout}>
         <div className={s.stage}>

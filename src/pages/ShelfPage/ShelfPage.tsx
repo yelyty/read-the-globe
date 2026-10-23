@@ -31,6 +31,7 @@ import { goalHas } from '../GoalsPage/goals';
 import * as s from './ShelfPage.css';
 import BookRow from '../../components/BookRow/BookRow';
 import NextToRead from './features/NextToRead';
+import PageTitle from '../../components/PageTitle/PageTitle';
 
 const app = getRouteApi('/app');
 const shelfRoute = getRouteApi('/app/shelf');
@@ -207,9 +208,7 @@ const ShelfPage = () => {
 
   return (
     <>
-      <div className={s.viewHead}>
-        <h1 className={s.title}>Shelf</h1>
-      </div>
+      <PageTitle>Shelf</PageTitle>
 
       {/* folder tabs: the open one is the page colour, so it joins the shelf below */}
       <div className={s.tabs} role="tablist" aria-label="Shelf">

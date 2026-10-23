@@ -21,6 +21,7 @@ import GoalRow from './GoalRow';
 import GoalDialog from './GoalsDialog';
 import BooksDialog from './BooksDialog';
 import * as s from './GoalsPage.css';
+import PageTitle from '../../components/PageTitle/PageTitle';
 
 const app = getRouteApi('/app');
 
@@ -240,9 +241,7 @@ const GoalsPage = () => {
 
   return (
     <>
-      <div className={s.viewHead}>
-        <h1 className={s.title}>Goals</h1>
-      </div>
+      <PageTitle>Goals</PageTitle>
 
       {goals.length ? (
         <>

@@ -26,15 +26,6 @@ const caret = (size: number) => ({
   transition: `rotate .18s ${easeOut}`,
 });
 
-export const viewHead = style({ marginBottom: space.sp6 });
-export const title = style({
-  margin: 0,
-  fontFamily: vars.font.display,
-  fontWeight: 500,
-  fontSize: 'clamp(30px, 3.2vw, 40px)',
-  lineHeight: 1.1,
-  color: vars.color.text,
-});
 export const h2 = style({
   margin: 0,
   fontFamily: vars.font.display,
@@ -44,7 +35,6 @@ export const h2 = style({
   color: vars.color.text,
 });
 
-/* ---------- Your goals, and the suggestions: each folds under its heading ---------- */
 const foldSummary = {
   display: 'flex',
   alignItems: 'center',

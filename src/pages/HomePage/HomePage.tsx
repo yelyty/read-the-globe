@@ -16,6 +16,7 @@ import AtlasCountries from './AtlasCountries.tsx';
 import Cartouche from './Cartouche.tsx';
 import MapKey from './MapKey.tsx';
 import RecentReads from './RecentReads.tsx';
+import PageTitle from '../../components/PageTitle/PageTitle.tsx';
 
 const app = getRouteApi('/app');
 const RECENT = 3;
@@ -60,9 +61,7 @@ const HomePage = () => {
 
   return (
     <>
-      <div className={s.viewHead} data-blank={blank || undefined}>
-        <h1 className={s.title}>{title}</h1>
-      </div>
+      <PageTitle>{title}</PageTitle>
 
       {blank && (
         <div className={s.firstRun}>
