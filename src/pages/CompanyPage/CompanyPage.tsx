@@ -3,7 +3,9 @@ import { useNavigate } from "@tanstack/react-router";
 import { useAuth } from "../../auth/auth-context";
 import Footer from "../LandingPage/components/Footer/Footer";
 import Header from "../LandingPage/components/Header/Header";
-import LoginDialog from "../LandingPage/components/LoginDialog/LoginDialog";
+import LoginDialog, {
+  type AuthMode,
+} from "../LandingPage/components/LoginDialog/LoginDialog";
 import { page } from "../LandingPage/LandingPage.css";
 import * as s from "./CompanyPage.css";
 
@@ -14,13 +16,13 @@ type CompanyPageProps = {
 };
 
 const CompanyPage = ({ title, description, children }: CompanyPageProps) => {
-  const [loginOpen, setLoginOpen] = useState(false);
+  const [auth, setAuth] = useState<AuthMode | null>(null);
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (loginOpen && isAuthenticated) navigate({ to: "/app" });
-  }, [loginOpen, isAuthenticated, navigate]);
+    if (auth && isAuthenticated) navigate({ to: "/app" });
+  }, [auth, isAuthenticated, navigate]);
 
   useEffect(() => {
     document.title = `${title} · Read The Globe`;
@@ -31,11 +33,14 @@ const CompanyPage = ({ title, description, children }: CompanyPageProps) => {
 
   return (
     <div className={page}>
-      <Header onLogIn={() => setLoginOpen(true)} />
+      <Header
+        onLogIn={() => setAuth("login")}
+        onSignUp={() => setAuth("signup")}
+      />
       <main id="main" tabIndex={-1} className={s.main}>
         {children}
       </main>
-      <LoginDialog open={loginOpen} onClose={() => setLoginOpen(false)} />
+      <LoginDialog mode={auth} onMode={setAuth} onClose={() => setAuth(null)} />
       <Footer />
     </div>
   );
