@@ -20,22 +20,23 @@ import RecentReads from "./RecentReads.tsx";
 const app = getRouteApi("/app");
 const RECENT = 3;
 
-// Home, as in the latest app mock: the atlas's title, the map with its count and key (full screen
-// on a button or a click on the map), the three latest books, and the countries by continent.
 const HomePage = () => {
-  const { books } = app.useLoaderData();
-  const { user } = useAuth();
-  const names = useCountryNames();
-  const navigate = useNavigate();
   const [show, setShow] = useState<Show>("all");
   const [full, setFull] = useState(false);
 
-  // Esc closes the full screen map, and the page under it stops scrolling while it is open
+  const { books } = app.useLoaderData();
+  const { user } = useAuth();
+  const names = useCountryNames();
+
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (!full) return;
     const close = (e: KeyboardEvent) => e.key === "Escape" && setFull(false);
+
     document.addEventListener("keydown", close);
     document.documentElement.style.overflow = "hidden";
+
     return () => {
       document.removeEventListener("keydown", close);
       document.documentElement.style.overflow = "";
@@ -127,7 +128,6 @@ const HomePage = () => {
         >
           {!blank && <Cartouche stats={stats} show={show} />}
         </AtlasMap>
-        {/* the key once there's a mark to explain; the filter once there's something to filter */}
         {!blank && (
           <MapKey show={show} onShow={setShow} canFilter={books.length > 1} />
         )}

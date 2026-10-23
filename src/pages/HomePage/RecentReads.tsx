@@ -15,7 +15,7 @@ const RecentReads = ({ books, names }: RecentReadsProps) => (
         Recent reads
       </h2>
       <Link className={s.more} to="/app/shelf">
-        The whole shelf <ArrowRightIcon aria-hidden="true" />
+        Shelf <ArrowRightIcon aria-hidden="true" />
       </Link>
     </div>
     <ul className={list}>

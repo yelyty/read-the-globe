@@ -5,7 +5,6 @@ import type { Mark } from "../../utils/atlasMarks";
 import { worldShapes } from "../../utils/worldShapes";
 import * as s from "./HomePage.css";
 
-// a country spread over islands or territories frames its biggest piece, as the mock's stamps do
 const mainPiece = (f: Feature): Feature => {
   if (f.geometry.type !== "MultiPolygon") return f;
   const pieces = f.geometry.coordinates.map(
