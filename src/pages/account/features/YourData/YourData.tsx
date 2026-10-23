@@ -1,9 +1,9 @@
-import { FileCsvIcon, FileCodeIcon } from "@phosphor-icons/react";
-import { useState } from "react";
-import type { BookEntry, Goal } from "../../../../types";
-import { bookCount, exportBackup, exportReadingList } from "./readingList";
-import * as s from "../../AccountPage.css";
-import Block from "../../components/Block";
+import { FileCsvIcon, FileCodeIcon } from '@phosphor-icons/react';
+import { useState } from 'react';
+import type { BookEntry, Goal } from '../../../../types';
+import { bookCount, exportBackup, exportReadingList } from './readingList';
+import * as s from '../../AccountPage.css';
+import Block from '../../components/Block';
 
 type YourDataProps = {
   books: BookEntry[];
@@ -12,7 +12,7 @@ type YourDataProps = {
 };
 
 const YourData = ({ books, names, goals }: YourDataProps) => {
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState('');
 
   const onExportReadingListClick = () => {
     exportReadingList(books, names);
@@ -21,7 +21,7 @@ const YourData = ({ books, names, goals }: YourDataProps) => {
 
   const onExportFullBackup = () => {
     exportBackup(books, goals);
-    setStatus("Saved a full backup to your downloads.");
+    setStatus('Saved a full backup to your downloads.');
   };
 
   return (

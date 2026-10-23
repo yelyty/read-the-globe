@@ -1,26 +1,26 @@
-import { useState, type ChangeEvent, type SubmitEvent } from "react";
-import { LockKeyIcon } from "@phosphor-icons/react";
-import Block from "../../components/Block";
-import Field from "../../../../components/Field/Field";
-import { changePassword } from "../../../../auth/session";
+import { useState, type ChangeEvent, type SubmitEvent } from 'react';
+import { LockKeyIcon } from '@phosphor-icons/react';
+import Block from '../../components/Block';
+import Field from '../../../../components/Field/Field';
+import { changePassword } from '../../../../auth/session';
 
-import * as s from "../../AccountPage.css";
-import { validate, type Errors } from "./validate";
+import * as s from '../../AccountPage.css';
+import { validate, type Errors } from './validate';
 
 const ChangePassword = ({ email }: { email: string }) => {
-  const [first, setFirst] = useState("");
-  const [second, setSecond] = useState("");
+  const [first, setFirst] = useState('');
+  const [second, setSecond] = useState('');
   const [errors, setErrors] = useState<Errors>({});
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState('');
   const [saving, setSaving] = useState(false);
 
   const submit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setStatus("");
+    setStatus('');
     const found = validate(first, second);
     setErrors(found);
     if (found.first || found.second) {
-      document.getElementById(found.first ? "ac-pass1" : "ac-pass2")?.focus();
+      document.getElementById(found.first ? 'ac-pass1' : 'ac-pass2')?.focus();
       return;
     }
     setSaving(true);
@@ -30,9 +30,9 @@ const ChangePassword = ({ email }: { email: string }) => {
       setErrors({ first: problem });
       return;
     }
-    setFirst("");
-    setSecond("");
-    setStatus("Password changed.");
+    setFirst('');
+    setSecond('');
+    setStatus('Password changed.');
   };
 
   const onNewPasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
