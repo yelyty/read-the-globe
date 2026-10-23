@@ -1,102 +1,107 @@
-import { globalStyle, style } from "@vanilla-extract/css";
-import { vars } from "../../styles/theme.css";
-
+import { globalStyle, style } from '@vanilla-extract/css';
+import { vars } from '../../styles/theme.css';
+import { focusGlow } from '../../styles/global.css';
 
 export const note = {
-	display: "flex",
-	gap: 9,
-	alignItems: "flex-start",
-	fontFamily: vars.font.sans,
-	fontSize: 14,
-	lineHeight: 1.4,
-	borderRadius: 6,
-	padding: "11px 13px",
-	marginBottom: 20,
+  display: 'flex',
+  gap: 9,
+  alignItems: 'flex-start',
+  fontFamily: vars.font.sans,
+  fontSize: 14,
+  lineHeight: 1.4,
+  borderRadius: 6,
+  padding: '11px 13px',
+  marginBottom: 20,
 } as const;
 
 export const formError = style({
-	...note,
-	color: vars.color.error,
-	background: vars.color.rustWash,
-	border: `1px solid ${vars.color.markerAuthor}`,
+  ...note,
+  color: vars.color.error,
+  background: vars.color.rustWash,
+  border: `1px solid ${vars.color.markerAuthor}`,
 });
-globalStyle(`${formError} svg`, { width: 17, height: 17, flex: "none", marginTop: 1 });
+globalStyle(`${formError} svg`, {
+  width: 17,
+  height: 17,
+  flex: 'none',
+  marginTop: 1,
+});
 
 export const formNotice = style({
-	...note,
-	fontWeight: 500,
-	color: vars.color.oliveInk,
-	background: vars.color.oliveWash,
+  ...note,
+  fontWeight: 500,
+  color: vars.color.oliveInk,
+  background: vars.color.oliveWash,
 });
 
 export const field = style({ marginBottom: 16 });
 
 export const fieldLabel = style({
-	display: "block",
-	marginBottom: 8,
-	fontFamily: vars.font.sans,
-	fontSize: 15,
-	fontWeight: 500,
-	lineHeight: 1.2,
-	color: vars.color.textSecondary,
-	selectors: { '[data-invalid="true"] &': { color: vars.color.error } },
+  display: 'block',
+  marginBottom: 8,
+  fontFamily: vars.font.sans,
+  fontSize: 15,
+  fontWeight: 500,
+  lineHeight: 1.2,
+  color: vars.color.textSecondary,
+  selectors: { '[data-invalid="true"] &': { color: vars.color.error } },
 });
 
 export const input = style({
-	width: "100%",
-	height: 48,
-	background: vars.color.background,
-	border: `1.5px solid ${vars.color.fieldLine}`,
-	borderRadius: 12,
-	padding: "0 16px",
-	fontFamily: vars.font.sans,
-	fontSize: 17,
-	fontWeight: 400,
-	color: vars.color.text,
-	transition: "border-color .15s, box-shadow .15s",
-	"::placeholder": { color: vars.color.textMuted, opacity: 1 },
-	":focus": {
-		borderColor: vars.color.primary,
-		boxShadow: "0 0 0 3px rgba(74, 106, 64, 0.18)",
-		outline: "none",
-	},
-	selectors: { '&[aria-invalid="true"]': { borderColor: vars.color.error } },
+  width: '100%',
+  height: 48,
+  background: vars.color.background,
+  border: `1.5px solid ${vars.color.fieldLine}`,
+  borderRadius: 12,
+  padding: '0 16px',
+  fontFamily: vars.font.sans,
+  fontSize: 17,
+  fontWeight: 400,
+  color: vars.color.text,
+  transition: 'border-color .15s, box-shadow .15s',
+  '::placeholder': { color: vars.color.textMuted, opacity: 1 },
+  ':focus': {
+    borderColor: vars.color.primary,
+    boxShadow: focusGlow,
+    outline: 'none',
+  },
+  selectors: { '&[aria-invalid="true"]': { borderColor: vars.color.error } },
 });
 
 export const inputPassword = style({ paddingRight: 72 });
 
-export const pwWrap = style({ position: "relative" });
+export const pwWrap = style({ position: 'relative' });
 
 export const pwToggle = style({
-	position: "absolute",
-	right: 8,
-	top: "50%",
-	transform: "translateY(-50%)",
-	background: "none",
-	border: 0,
-	fontFamily: vars.font.sans,
-	fontSize: 15,
-	fontWeight: 500,
-	color: vars.color.textSecondary,
-	padding: "0 8px",
-	height: 32,
-	borderRadius: 8,
-	cursor: "pointer",
-	":hover": { color: vars.color.text },
+  position: 'absolute',
+  right: 8,
+  top: '50%',
+  transform: 'translateY(-50%)',
+  background: 'none',
+  border: 0,
+  fontFamily: vars.font.sans,
+  fontSize: 15,
+  fontWeight: 500,
+  color: vars.color.textSecondary,
+  padding: '0 8px',
+  height: 32,
+  borderRadius: 8,
+  cursor: 'pointer',
+  ':hover': { color: vars.color.text },
 });
 
 export const fieldError = style({
-	fontFamily: vars.font.sans,
-	fontSize: 15,
-	fontWeight: 500,
-	lineHeight: 1.3,
-	color: vars.color.error,
-	margin: "8px 0 0",
+  fontFamily: vars.font.sans,
+  fontSize: 15,
+  fontWeight: 500,
+  lineHeight: 1.3,
+  color: vars.color.error,
+  margin: '8px 0 0',
 });
 
 export const strength = style({
-	display: "flex",
-	alignItems: "center",
-	gap: 10,
-	marginTop: 10,
+  display: 'flex',
+  alignItems: 'center',
+  gap: 10,
+  marginTop: 10,
 });

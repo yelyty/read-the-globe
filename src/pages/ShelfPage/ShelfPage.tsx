@@ -6,8 +6,8 @@ import {
   useState,
   type ComponentPropsWithoutRef,
   type KeyboardEvent,
-} from "react";
-import { getRouteApi, Link, useNavigate } from "@tanstack/react-router";
+} from 'react';
+import { getRouteApi, Link, useNavigate } from '@tanstack/react-router';
 import {
   ArrowDownIcon,
   BooksIcon,
@@ -16,41 +16,40 @@ import {
   MagnifyingGlassIcon,
   PushPinIcon,
   XIcon,
-} from "@phosphor-icons/react";
-import { useCountryNames } from "../../hooks/useCountryNames";
-import type { BookEntry } from "../../types";
-import { list as bookList } from "../../components/BookRow/BookRow.css";
+} from '@phosphor-icons/react';
+import { useCountryNames } from '../../hooks/useCountryNames';
+import type { BookEntry } from '../../types';
+import { list as bookList } from '../../components/BookRow/BookRow.css';
 import {
   CONTINENT_NAMES,
   CONTINENT_OF,
   type Continent,
-} from "../../utils/continents";
-import { atlasMarks } from "../../utils/atlasMarks";
-import { countryStamp, loadCountries } from "../PostcardPage/drawPostcard";
-import { goalHas } from "../GoalsPage/goals";
-import * as s from "./ShelfPage.css";
-import BookRow from "../../components/BookRow/BookRow";
-import NextToRead from "./features/NextToRead";
+} from '../../utils/continents';
+import { atlasMarks } from '../../utils/atlasMarks';
+import { countryStamp, loadCountries } from '../PostcardPage/drawPostcard';
+import { goalHas } from '../GoalsPage/goals';
+import * as s from './ShelfPage.css';
+import BookRow from '../../components/BookRow/BookRow';
+import NextToRead from './features/NextToRead';
 
-const app = getRouteApi("/app");
-const shelfRoute = getRouteApi("/app/shelf");
+const app = getRouteApi('/app');
+const shelfRoute = getRouteApi('/app/shelf');
 
-type Sort = "new" | "title" | "country";
-type Mark = "" | "set" | "author";
+type Sort = 'new' | 'title' | 'country';
+type Mark = '' | 'set' | 'author';
 const CONTINENTS = (Object.keys(CONTINENT_NAMES) as Continent[]).filter(
-  (c) => c !== "AN",
+  (c) => c !== 'AN'
 );
 const PAGE = 100;
 
 const authorCode = (b: BookEntry) => b.author?.country?.code;
-const yearOf = (b: BookEntry) => (b.createdAt ?? "").slice(0, 4);
+const yearOf = (b: BookEntry) => (b.createdAt ?? '').slice(0, 4);
 const placeCodes = (b: BookEntry) =>
   (b.places ?? []).map((p) => p.countryCode).filter((c): c is string => !!c);
 const count = (n: number, one: string, many: string) =>
   `${n} ${n === 1 ? one : many}`;
 
-// a dropdown as the mock draws it: a filled pill with a chevron
-const Pick = ({ children, ...props }: ComponentPropsWithoutRef<"select">) => (
+const Pick = ({ children, ...props }: ComponentPropsWithoutRef<'select'>) => (
   <span className={s.pick}>
     <select className={s.select} {...props}>
       {children}
@@ -59,10 +58,6 @@ const Pick = ({ children, ...props }: ComponentPropsWithoutRef<"select">) => (
   </span>
 );
 
-// The Shelf, as in the app mock: two folder tabs. Read is every book you have logged: search, filters (continent,
-// set there or author from there, year, goal), three sorts, and year headings when newest first; earlier years fold
-// away. ?country= (a click on the map) opens with that country's page. Next to read (?tab=next) is the list of
-// books saved for later.
 const ShelfPage = () => {
   const { books, goals } = app.useLoaderData();
   const { country, tab } = shelfRoute.useSearch();
@@ -70,38 +65,38 @@ const ShelfPage = () => {
   const [nextItems, setNextItems] = useState(next.items);
   const navigate = useNavigate();
   const names = useCountryNames();
-  const [query, setQuery] = useState("");
-  const [continent, setContinent] = useState<Continent | "">("");
-  const [mark, setMark] = useState<Mark>("");
-  const [year, setYear] = useState("");
-  const [goalId, setGoalId] = useState("");
-  const [sort, setSort] = useState<Sort>("new");
+  const [query, setQuery] = useState('');
+  const [continent, setContinent] = useState<Continent | ''>('');
+  const [mark, setMark] = useState<Mark>('');
+  const [year, setYear] = useState('');
+  const [goalId, setGoalId] = useState('');
+  const [sort, setSort] = useState<Sort>('new');
   const [shown, setShown] = useState(PAGE);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const search = useRef<HTMLInputElement>(null);
-  const name = (code?: string) => (code ? (names[code] ?? "") : "");
+  const name = (code?: string) => (code ? (names[code] ?? '') : '');
 
   const marks = useMemo(() => atlasMarks(books), [books]);
   const years = useMemo(
     () => [...new Set(books.map(yearOf).filter(Boolean))].sort().reverse(),
-    [books],
+    [books]
   );
   // earlier years start folded; this year and the newest logged year stay open
   const [folded, setFolded] = useState(
     () =>
       new Set(
         years.filter(
-          (y) => y !== String(new Date().getFullYear()) && y !== years[0],
-        ),
-      ),
+          (y) => y !== String(new Date().getFullYear()) && y !== years[0]
+        )
+      )
   );
 
   // a place filter can count where the story is set, where the author is from, or either
   const hits = (b: BookEntry, test: (code: string) => boolean) => {
     const a = authorCode(b);
     return (
-      (mark !== "author" && placeCodes(b).some(test)) ||
-      (mark !== "set" && !!a && test(a))
+      (mark !== 'author' && placeCodes(b).some(test)) ||
+      (mark !== 'set' && !!a && test(a))
     );
   };
 
@@ -114,7 +109,7 @@ const ShelfPage = () => {
     if (year && yearOf(b) !== year) return false;
     if (
       goal &&
-      !(goal.kind === "theme"
+      !(goal.kind === 'theme'
         ? b.goals?.some((g) => g.goalId === goal.id)
         : hits(b, (c) => goalHas(goal, c)))
     )
@@ -129,14 +124,14 @@ const ShelfPage = () => {
         name(p.countryCode ?? undefined),
       ]),
     ];
-    return hay.join(" ").toLowerCase().includes(q);
+    return hay.join(' ').toLowerCase().includes(q);
   });
-  if (sort === "title") list.sort((a, b) => a.title.localeCompare(b.title));
-  if (sort === "country")
+  if (sort === 'title') list.sort((a, b) => a.title.localeCompare(b.title));
+  if (sort === 'country')
     list.sort(
       (a, b) =>
         name(authorCode(a)).localeCompare(name(authorCode(b))) ||
-        a.title.localeCompare(b.title),
+        a.title.localeCompare(b.title)
     );
   const unfiltered = list.length === books.length;
 
@@ -151,8 +146,8 @@ const ShelfPage = () => {
     return Object.fromEntries(
       Object.entries(by).map(([y, n]) => [
         y,
-        `${count(n.books, "book", "books")} · ${count(n.codes.size, "country", "countries")}`,
-      ]),
+        `${count(n.books, 'book', 'books')} · ${count(n.codes.size, 'country', 'countries')}`,
+      ])
     );
   }, [books]);
 
@@ -174,17 +169,17 @@ const ShelfPage = () => {
   const here = country ? marks[country] : undefined;
 
   const canClear = Boolean(
-    q || continent || mark || year || goalId || sort !== "new" || country,
+    q || continent || mark || year || goalId || sort !== 'new' || country
   );
   const clear = () => {
-    setQuery("");
-    setContinent("");
-    setMark("");
-    setYear("");
-    setGoalId("");
-    setSort("new");
+    setQuery('');
+    setContinent('');
+    setMark('');
+    setYear('');
+    setGoalId('');
+    setSort('new');
     setShown(PAGE);
-    if (country) navigate({ to: "/app/shelf" });
+    if (country) navigate({ to: '/app/shelf' });
     search.current?.focus();
   };
   const toggleYear = (y: string) =>
@@ -196,18 +191,18 @@ const ShelfPage = () => {
     });
   const reset = () => setShown(PAGE);
 
-  const openTab = (to: "read" | "next") => {
+  const openTab = (to: 'read' | 'next') => {
     navigate({
-      to: "/app/shelf",
-      search: (prev) => ({ ...prev, tab: to === "next" ? "next" : undefined }),
+      to: '/app/shelf',
+      search: (prev) => ({ ...prev, tab: to === 'next' ? 'next' : undefined }),
       replace: true,
     });
     document.getElementById(`tab-${to}`)?.focus();
   };
   // the arrow keys move between the two tabs
   const onTabKey = (e: KeyboardEvent) => {
-    if (e.key === "ArrowRight" || e.key === "ArrowLeft")
-      openTab(tab === "next" ? "read" : "next");
+    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft')
+      openTab(tab === 'next' ? 'read' : 'next');
   };
 
   return (
@@ -223,10 +218,10 @@ const ShelfPage = () => {
           role="tab"
           id="tab-read"
           className={s.tab}
-          aria-selected={tab !== "next"}
+          aria-selected={tab !== 'next'}
           aria-controls="shelf-read"
-          tabIndex={tab !== "next" ? 0 : -1}
-          onClick={() => openTab("read")}
+          tabIndex={tab !== 'next' ? 0 : -1}
+          onClick={() => openTab('read')}
           onKeyDown={onTabKey}
         >
           Read <span className={s.tabN}>{books.length}</span>
@@ -236,17 +231,17 @@ const ShelfPage = () => {
           role="tab"
           id="tab-next"
           className={s.tab}
-          aria-selected={tab === "next"}
+          aria-selected={tab === 'next'}
           aria-controls="shelf-next"
-          tabIndex={tab === "next" ? 0 : -1}
-          onClick={() => openTab("next")}
+          tabIndex={tab === 'next' ? 0 : -1}
+          onClick={() => openTab('next')}
           onKeyDown={onTabKey}
         >
           Next to read <span className={s.tabN}>{nextItems.length}</span>
         </button>
       </div>
 
-      {tab === "next" ? (
+      {tab === 'next' ? (
         <div role="tabpanel" id="shelf-next" aria-labelledby="tab-next">
           <NextToRead
             items={nextItems}
@@ -362,9 +357,9 @@ const ShelfPage = () => {
                     value={continent}
                     aria-label="Filter by continent"
                     onChange={(e) => {
-                      const next = e.target.value as Continent | "";
+                      const next = e.target.value as Continent | '';
                       setContinent(next);
-                      if (!next && !country) setMark("");
+                      if (!next && !country) setMark('');
                       reset();
                     }}
                   >
@@ -483,10 +478,10 @@ const ShelfPage = () => {
                           className={s.shape}
                           data-mark={
                             here.set.length && here.author.length
-                              ? "both"
+                              ? 'both'
                               : here.set.length
-                                ? "set"
-                                : "author"
+                                ? 'set'
+                                : 'author'
                           }
                         />
                       </svg>
@@ -505,13 +500,13 @@ const ShelfPage = () => {
                       {here.set.length > 0 && (
                         <span>
                           <i className={s.dotSet} aria-hidden="true" />
-                          {count(here.set.length, "story", "stories")} set here
+                          {count(here.set.length, 'story', 'stories')} set here
                         </span>
                       )}
                       {here.author.length > 0 && (
                         <span>
                           <i className={s.dotAuthor} aria-hidden="true" />
-                          {count(here.author.length, "author", "authors")} from
+                          {count(here.author.length, 'author', 'authors')} from
                           here
                         </span>
                       )}
@@ -537,7 +532,7 @@ const ShelfPage = () => {
               {list.length ? (
                 <ul className={`${bookList} ${s.shelfList}`}>
                   {list.slice(0, shown).map((book, i) => {
-                    const y = sort === "new" ? yearOf(book) : "";
+                    const y = sort === 'new' ? yearOf(book) : '';
                     const isFolded = !!y && unfiltered && folded.has(y);
                     const heading =
                       y && (i === 0 || yearOf(list[i - 1]) !== y) ? (
@@ -573,7 +568,7 @@ const ShelfPage = () => {
                 <p className={s.emptyNote}>
                   {q
                     ? `No books match “${query.trim()}”. Try a broader word, or clear the filters.`
-                    : "Nothing on your shelf matches that. Try a broader word, or clear the filters."}
+                    : 'Nothing on your shelf matches that. Try a broader word, or clear the filters.'}
                 </p>
               )}
               {list.length > shown && (

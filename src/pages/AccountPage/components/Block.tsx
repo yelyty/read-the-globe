@@ -1,5 +1,6 @@
-import { useId, type ReactNode } from "react";
-import * as s from "./Block.css";
+import { useId, type ReactNode } from 'react';
+
+import * as s from './Block.css';
 
 type BlockProps = {
   title: string;

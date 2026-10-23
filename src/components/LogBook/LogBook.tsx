@@ -1,33 +1,33 @@
-import { useEffect, useMemo, useRef, useState, type SubmitEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type SubmitEvent } from 'react';
 import {
   getRouteApi,
   useNavigate,
   useRouter,
   useRouterState,
-} from "@tanstack/react-router";
-import { PlusIcon, PushPinIcon, TrashIcon, XIcon } from "@phosphor-icons/react";
-import type { BookEntry, Goal, NextRead } from "../../types";
-import { deleteBook, saveBook } from "../../api/books/books";
-import { removeNextRead } from "../../api/nextReads/nextReads";
-import { worldShapes } from "../../utils/worldShapes";
-import * as f from "../Field/Field.css";
-import * as s from "./LogBook.css";
+} from '@tanstack/react-router';
+import { PlusIcon, PushPinIcon, TrashIcon, XIcon } from '@phosphor-icons/react';
+import type { BookEntry, Goal, NextRead } from '../../types';
+import { deleteBook, saveBook } from '../../api/books/books';
+import { removeNextRead } from '../../api/nextReads/nextReads';
+import { worldShapes } from '../../utils/worldShapes';
+import * as f from '../Field/Field.css';
+import * as s from './LogBook.css';
 
-const app = getRouteApi("/app");
+const app = getRouteApi('/app');
 
 const MAX_PLACES = 20;
 const MONTHS = Array.from({ length: 12 }, (_, i) =>
-  new Intl.DateTimeFormat(undefined, { month: "long" }).format(
-    new Date(2000, i, 1),
-  ),
+  new Intl.DateTimeFormat(undefined, { month: 'long' }).format(
+    new Date(2000, i, 1)
+  )
 );
 const YEARS = Array.from({ length: 80 }, (_, i) =>
-  String(new Date().getFullYear() - i),
+  String(new Date().getFullYear() - i)
 );
 
 type Row = { key: number; name: string; country: string };
 let rowKey = 0;
-const row = (name = "", country = ""): Row => ({
+const row = (name = '', country = ''): Row => ({
   key: ++rowKey,
   name,
   country,
@@ -36,11 +36,11 @@ const row = (name = "", country = ""): Row => ({
 const formatDate = (iso?: string) =>
   iso
     ? new Date(iso).toLocaleDateString(undefined, {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
       })
-    : "";
+    : '';
 
 // The log form, as in the app mock: one dialog over any page (a bottom sheet on phones). ?log opens it,
 // ?edit=<book id> opens it on that book, and ?next=<item id> starts it from a Next to read item.
@@ -50,14 +50,14 @@ const LogBook = () => {
   const navigate = useNavigate();
   const router = useRouter();
   const [names, setNames] = useState<Record<string, string>>();
-  const [said, setSaid] = useState("");
+  const [said, setSaid] = useState('');
   const book = edit ? books.find((b) => b.id === edit) : undefined;
   const open = Boolean(log || book);
   // the item "Log it" came from, from the Shelf's loader (the only place it can be pressed)
   const nextItem = useRouterState({
     select: (st) =>
       (
-        st.matches.find((m) => m.routeId === "/app/shelf")?.loaderData as
+        st.matches.find((m) => m.routeId === '/app/shelf')?.loaderData as
           { items: NextRead[] } | undefined
       )?.items.find((it) => it.id === next),
   });
@@ -70,16 +70,16 @@ const LogBook = () => {
         Object.fromEntries(
           Object.entries(shapes).map(([code, shape]) => [
             code,
-            String(shape.properties?.name ?? ""),
-          ]),
-        ),
-      ),
+            String(shape.properties?.name ?? ''),
+          ])
+        )
+      )
     );
   }, [open, names]);
 
   const close = () =>
     navigate({
-      to: ".",
+      to: '.',
       search: (prev) => ({
         ...prev,
         log: undefined,
@@ -90,7 +90,7 @@ const LogBook = () => {
 
   // a new book goes to Home to be seen on the atlas; an edit stays where it was
   const done = async (message: string, home: boolean) => {
-    if (home) await navigate({ to: "/app", search: {} });
+    if (home) await navigate({ to: '/app', search: {} });
     else await close();
     await router.invalidate();
     setSaid(message);
@@ -100,7 +100,7 @@ const LogBook = () => {
     <>
       {open && names && (
         <LogForm
-          key={edit ?? "new"}
+          key={edit ?? 'new'}
           book={book}
           nextItem={nextItem}
           names={names}
@@ -137,13 +137,13 @@ const LogForm = ({
   onDone,
 }: LogFormProps) => {
   const dialog = useRef<HTMLDialogElement>(null);
-  const name = (code?: string | null) => (code ? (names[code] ?? "") : "");
+  const name = (code?: string | null) => (code ? (names[code] ?? '') : '');
   const byName = useMemo(
     () =>
       Object.fromEntries(
-        Object.entries(names).map(([code, n]) => [n.toLowerCase(), code]),
+        Object.entries(names).map(([code, n]) => [n.toLowerCase(), code])
       ),
-    [names],
+    [names]
   );
   const codeOf = (typed: string): string | undefined =>
     byName[typed.trim().toLowerCase()];
@@ -154,28 +154,25 @@ const LogForm = ({
     return m && code ? { name: m[1].trim(), code } : null;
   };
 
-  const startYm = book?.createdAt?.slice(0, 7) ?? "";
-  const themes = goals.filter((g) => g.kind === "theme");
-  const [title, setTitle] = useState(book?.title ?? nextItem?.title ?? "");
+  const startYm = book?.createdAt?.slice(0, 7) ?? '';
+  const themes = goals.filter((g) => g.kind === 'theme');
+  const [title, setTitle] = useState(book?.title ?? nextItem?.title ?? '');
   const [author, setAuthor] = useState(
-    book?.author?.name ?? nextItem?.author ?? "",
+    book?.author?.name ?? nextItem?.author ?? ''
   );
   const [country, setCountry] = useState(
     name(
       book?.author?.country?.code ??
-        (nextItem?.mark === "author" ? nextItem.countryCode : null),
-    ),
+        (nextItem?.mark === 'author' ? nextItem.countryCode : null)
+    )
   );
   const [rows, setRows] = useState<Row[]>(() =>
     book?.places.length
       ? book.places.map((p) =>
           // a place saved as just its country shows as an empty name beside that country
-          row(
-            p.name === name(p.countryCode) ? "" : p.name,
-            name(p.countryCode),
-          ),
+          row(p.name === name(p.countryCode) ? '' : p.name, name(p.countryCode))
         )
-      : [row("", nextItem?.mark === "set" ? name(nextItem.countryCode) : "")],
+      : [row('', nextItem?.mark === 'set' ? name(nextItem.countryCode) : '')]
   );
   const [mon, setMon] = useState(startYm.slice(5, 7));
   const [year, setYear] = useState(startYm.slice(0, 4));
@@ -183,18 +180,18 @@ const LogForm = ({
     () =>
       book?.goals
         ?.map((g) => g.goalId)
-        .filter((id) => themes.some((t) => t.id === id)) ?? [],
+        .filter((id) => themes.some((t) => t.id === id)) ?? []
   );
   // the goal ticks start open only if the book already counts toward one; after that the reader folds them
   const [ticksOpen] = useState(ticks.length > 0);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [formError, setFormError] = useState("");
-  const [dupOk, setDupOk] = useState("");
+  const [formError, setFormError] = useState('');
+  const [dupOk, setDupOk] = useState('');
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     dialog.current?.showModal();
-    document.getElementById("f-title")?.focus();
+    document.getElementById('f-title')?.focus();
   }, []);
 
   const places = rows
@@ -222,12 +219,12 @@ const LogForm = ({
     const rest = { ...errors };
     delete rest[key];
     setErrors(rest);
-    if (!Object.keys(rest).length) setFormError("");
+    if (!Object.keys(rest).length) setFormError('');
   };
   const forgetDup = () => {
     if (!dupOk) return;
-    setDupOk("");
-    setFormError("");
+    setDupOk('');
+    setFormError('');
   };
   const setRow = (key: number, change: Partial<Row>) =>
     setRows((rs) => rs.map((r) => (r.key === key ? { ...r, ...change } : r)));
@@ -236,22 +233,22 @@ const LogForm = ({
     typed
       ? `No country called “${typed}”. Pick one from the list.`
       : place
-        ? "Add the country this place is in."
-        : "Add the country the author is from.";
+        ? 'Add the country this place is in.'
+        : 'Add the country the author is from.';
   const FIELD: Record<string, [id: string, label: string]> = {
-    title: ["f-title", "title"],
-    author: ["f-author", "author"],
-    country: ["f-country", "author’s country"],
+    title: ['f-title', 'title'],
+    author: ['f-author', 'author'],
+    country: ['f-country', 'author’s country'],
   };
   const fieldOf = (key: string) =>
-    FIELD[key] ?? [`pr-country-${key.slice(6)}`, "a place’s country"];
+    FIELD[key] ?? [`pr-country-${key.slice(6)}`, 'a place’s country'];
 
   const submit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (saving) return;
     const errs: Record<string, string> = {};
-    if (!title.trim()) errs.title = "Add the book’s title.";
-    if (!author.trim()) errs.author = "Add the author’s name.";
+    if (!title.trim()) errs.title = 'Add the book’s title.';
+    if (!author.trim()) errs.author = 'Add the author’s name.';
     if (!authorCode) errs.country = countryError(country.trim(), false);
     for (const p of places)
       if (!p.code) errs[`place-${p.key}`] = countryError(p.typed, true);
@@ -261,7 +258,7 @@ const LogForm = ({
       setFormError(
         bad.length === 1
           ? errs[bad[0]]
-          : `${bad.length} fields need a look: ${[...new Set(bad.map((k) => fieldOf(k)[1]))].join(", ")}.`,
+          : `${bad.length} fields need a look: ${[...new Set(bad.map((k) => fieldOf(k)[1]))].join(', ')}.`
       );
       document.getElementById(fieldOf(bad[0])[0])?.focus();
       return;
@@ -272,12 +269,12 @@ const LogForm = ({
     const dup =
       !book &&
       books.find(
-        (b) => `${b.title}|${b.author?.name ?? ""}`.toLowerCase() === key,
+        (b) => `${b.title}|${b.author?.name ?? ''}`.toLowerCase() === key
       );
     if (dup && dupOk !== key) {
       setDupOk(key);
       setFormError(
-        `Already on your shelf since ${formatDate(dup.createdAt)}. Pin it again to add it a second time.`,
+        `Already on your shelf since ${formatDate(dup.createdAt)}. Pin it again to add it a second time.`
       );
       return;
     }
@@ -285,7 +282,7 @@ const LogForm = ({
     // ponytail: the read month is stored as the book's created_at (what Home and the Shelf already sort by);
     // a read_on column if "recently logged" and "read" ever need to differ. Day 1 at noon UTC shows that month in every timezone.
     const now = new Date().toISOString();
-    const ym = mon || year ? `${year || now.slice(0, 4)}-${mon || "01"}` : "";
+    const ym = mon || year ? `${year || now.slice(0, 4)}-${mon || '01'}` : '';
     const readOn =
       !ym || ym === startYm
         ? null
@@ -306,7 +303,7 @@ const LogForm = ({
         })),
         goalIds: ticks,
       },
-      book?.id,
+      book?.id
     );
     if (error) {
       setSaving(false);
@@ -335,13 +332,13 @@ const LogForm = ({
   const preview = Object.entries(marks);
   const label = saving
     ? book
-      ? "Saving…"
-      : "Pinning…"
+      ? 'Saving…'
+      : 'Pinning…'
     : book
-      ? "Save changes"
+      ? 'Save changes'
       : dupOk
-        ? "Pin it again"
-        : "Pin it";
+        ? 'Pin it again'
+        : 'Pin it';
 
   return (
     <dialog
@@ -354,7 +351,7 @@ const LogForm = ({
       <div className={s.head}>
         <div>
           <h2 id="log-title" className={s.title}>
-            {book ? "Editing" : "Log a book"}
+            {book ? 'Editing' : 'Log a book'}
           </h2>
           {book && <p className={s.editing}>{book.title}</p>}
           {!book && !books.length && (
@@ -384,12 +381,12 @@ const LogForm = ({
               />
               {name(code)}
               <span className={s.srOnly}>
-                ,{" "}
+                ,{' '}
                 {m.set && m.author
-                  ? "where it is set and where its author is from"
+                  ? 'where it is set and where its author is from'
                   : m.set
-                    ? "where it is set"
-                    : "where its author is from"}
+                    ? 'where it is set'
+                    : 'where its author is from'}
               </span>
             </span>
           ))}
@@ -409,10 +406,10 @@ const LogForm = ({
             placeholder="What is it called?"
             value={title}
             aria-invalid={errors.title ? true : undefined}
-            aria-describedby={errors.title ? "f-title-err" : undefined}
+            aria-describedby={errors.title ? 'f-title-err' : undefined}
             onChange={(e) => {
               setTitle(e.target.value);
-              fix("title");
+              fix('title');
               forgetDup();
             }}
           />
@@ -435,10 +432,10 @@ const LogForm = ({
             placeholder="Who wrote it?"
             value={author}
             aria-invalid={errors.author ? true : undefined}
-            aria-describedby={errors.author ? "f-author-err" : undefined}
+            aria-describedby={errors.author ? 'f-author-err' : undefined}
             onChange={(e) => {
               setAuthor(e.target.value);
-              fix("author");
+              fix('author');
               forgetDup();
             }}
           />
@@ -463,10 +460,10 @@ const LogForm = ({
             placeholder="Where are they from?"
             value={country}
             aria-invalid={errors.country ? true : undefined}
-            aria-describedby={`${errors.country ? "f-country-err " : ""}f-country-note`}
+            aria-describedby={`${errors.country ? 'f-country-err ' : ''}f-country-note`}
             onChange={(e) => {
               setCountry(e.target.value);
-              fix("country");
+              fix('country');
             }}
           />
           {errors.country && (
@@ -557,7 +554,7 @@ const LogForm = ({
                       setRows((rs) =>
                         rs.length === 1
                           ? [row()]
-                          : rs.filter((x) => x.key !== r.key),
+                          : rs.filter((x) => x.key !== r.key)
                       );
                       document
                         .querySelector<HTMLInputElement>(`.${s.place} input`)
@@ -578,7 +575,7 @@ const LogForm = ({
                 const r = row();
                 setRows((rs) => [...rs, r]);
                 requestAnimationFrame(() =>
-                  document.getElementById(`pr-name-${r.key}`)?.focus(),
+                  document.getElementById(`pr-name-${r.key}`)?.focus()
                 );
               }}
             >
@@ -602,7 +599,7 @@ const LogForm = ({
             >
               <option value="">Month</option>
               {MONTHS.map((m, i) => (
-                <option key={m} value={String(i + 1).padStart(2, "0")}>
+                <option key={m} value={String(i + 1).padStart(2, '0')}>
                   {m}
                 </option>
               ))}
@@ -637,8 +634,8 @@ const LogForm = ({
             <details open={ticksOpen}>
               <summary>
                 {ticks.length
-                  ? `Counts toward ${ticks.length} theme ${ticks.length === 1 ? "goal" : "goals"}`
-                  : "Counts toward a theme goal?"}
+                  ? `Counts toward ${ticks.length} theme ${ticks.length === 1 ? 'goal' : 'goals'}`
+                  : 'Counts toward a theme goal?'}
               </summary>
               <ul>
                 {themes.map((g) => (
@@ -651,7 +648,7 @@ const LogForm = ({
                           setTicks((t) =>
                             e.target.checked
                               ? [...t, g.id]
-                              : t.filter((id) => id !== g.id),
+                              : t.filter((id) => id !== g.id)
                           )
                         }
                       />
