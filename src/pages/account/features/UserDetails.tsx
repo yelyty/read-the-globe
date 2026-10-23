@@ -7,6 +7,7 @@ import * as s from '../AccountPage.css';
 
 import Block from '../components/Block';
 import Hint from '../../../components/Hint/Hint';
+import { Button } from '../../../components/Button/Button';
 
 type UserDetailsProps = {
   user: Reader;
@@ -66,10 +67,10 @@ const UserDetails = ({ user }: UserDetailsProps) => {
           </Hint>
         </Field>
         <div className={s.row}>
-          <button type="submit" className={s.primary} disabled={saving}>
+          <Button type="submit" disabled={saving}>
             <CheckIcon aria-hidden="true" />
             Save
-          </button>
+          </Button>
           <p className={s.status} role="status">
             {status}
           </p>

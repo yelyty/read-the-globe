@@ -1,12 +1,14 @@
 import { useState, type ChangeEvent, type SubmitEvent } from 'react';
 import { LockKeyIcon } from '@phosphor-icons/react';
+import { changePassword } from '../../../../auth/session';
+
 import Block from '../../components/Block';
 import Field from '../../../../components/Field/Field';
-import { changePassword } from '../../../../auth/session';
+import Hint from '../../../../components/Hint/Hint';
+import { Button } from '../../../../components/Button/Button';
 
 import * as s from '../../AccountPage.css';
 import { validate, type Errors } from './validate';
-import Hint from '../../../../components/Hint/Hint';
 
 const ChangePassword = ({ email }: { email: string }) => {
   const [first, setFirst] = useState('');
@@ -80,10 +82,10 @@ const ChangePassword = ({ email }: { email: string }) => {
           onChange={onRepeatNewPasswordChange}
         />
         <div className={s.row}>
-          <button type="submit" className={s.primary} disabled={saving}>
+          <Button type="submit" disabled={saving}>
             <LockKeyIcon aria-hidden="true" />
             Change password
-          </button>
+          </Button>
           <p className={s.status} role="status">
             {status}
           </p>

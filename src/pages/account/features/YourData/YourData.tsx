@@ -1,9 +1,12 @@
-import { FileCsvIcon, FileCodeIcon } from '@phosphor-icons/react';
 import { useState } from 'react';
+import { FileCsvIcon, FileCodeIcon } from '@phosphor-icons/react';
+
 import type { BookEntry, Goal } from '../../../../types';
-import { bookCount, exportBackup, exportReadingList } from './readingList';
 import * as s from '../../AccountPage.css';
 import Block from '../../components/Block';
+import { Button } from '../../../../components/Button/Button';
+
+import { bookCount, exportBackup, exportReadingList } from './readingList';
 
 type YourDataProps = {
   books: BookEntry[];
@@ -33,22 +36,18 @@ const YourData = ({ books, names, goals }: YourDataProps) => {
           the backup keeps everything.
         </p>
         <div className={s.row}>
-          <button
+          <Button
             type="button"
-            className={s.quiet}
+            variant="quiet"
             onClick={onExportReadingListClick}
           >
             <FileCsvIcon aria-hidden="true" />
             Reading list (CSV)
-          </button>
-          <button
-            type="button"
-            className={s.quiet}
-            onClick={onExportFullBackup}
-          >
+          </Button>
+          <Button type="button" variant="quiet" onClick={onExportFullBackup}>
             <FileCodeIcon aria-hidden="true" />
             Full backup (JSON)
-          </button>
+          </Button>
           <p className={s.status} role="status">
             {status}
           </p>

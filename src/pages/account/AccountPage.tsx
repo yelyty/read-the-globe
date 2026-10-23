@@ -4,7 +4,7 @@ import { useCountryNames } from '../../hooks/useCountryNames';
 
 import UserDetails from './features/UserDetails';
 import ChangePassword from './features/ChangePassword/ChangePassword';
-import DeleteAccount from './features/DeleteAccount';
+import DeleteAccount from './features/DeleteAccount/DeleteAccount';
 import YourData from './features/YourData/YourData';
 
 import * as s from './AccountPage.css';

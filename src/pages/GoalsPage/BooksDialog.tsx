@@ -2,9 +2,10 @@ import { useEffect, useRef, useState, type SubmitEvent } from 'react';
 import { CheckIcon, MagnifyingGlassIcon, XIcon } from '@phosphor-icons/react';
 import type { BookEntry, Goal } from '../../types';
 import { setGoalBooks } from '../../api/goals/goals';
-import * as a from '../account/AccountPage.css';
+import * as a from '../account/features/DeleteAccount/DeleteAccount.css';
 import * as s from './GoalsPage.css';
 import Hint from '../../components/Hint/Hint';
+import { Button } from '../../components/Button/Button';
 
 type BooksDialogProps = {
   goal: Goal;
@@ -145,18 +146,18 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
           )}
 
           <div className={a.dialogActions}>
-            <button
+            <Button
               type="button"
-              className={a.linkBtn}
+              variant="text"
               onClick={() => dialog.current?.close()}
             >
               Cancel
-            </button>
+            </Button>
             {books.length > 0 && (
-              <button type="submit" className={a.primary} disabled={saving}>
+              <Button type="submit" disabled={saving}>
                 <CheckIcon aria-hidden="true" />
                 Save
-              </button>
+              </Button>
             )}
           </div>
         </form>

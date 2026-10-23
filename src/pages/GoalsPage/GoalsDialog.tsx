@@ -5,9 +5,10 @@ import type { Goal, GoalKind } from '../../types';
 import { CONTINENT_NAMES, type Continent } from '../../utils/continents';
 import { addGoal, updateGoal } from '../../api/goals/goals';
 import { MAX_GOALS, REGIONS } from './goals';
-import * as a from '../account/AccountPage.css';
+import * as a from '../account/features/DeleteAccount/DeleteAccount.css';
 import * as s from './GoalsPage.css';
 import Hint from '../../components/Hint/Hint';
+import { Button } from '../../components/Button/Button';
 
 const NAME_HINT: Record<GoalKind, string> = {
   region: 'Every corner of Europe',
@@ -250,21 +251,21 @@ const GoalDialog = ({
           )}
 
           <div className={a.dialogActions}>
-            <button
+            <Button
               type="button"
-              className={a.linkBtn}
+              variant="text"
               onClick={() => dialog.current?.close()}
             >
               Cancel
-            </button>
-            <button type="submit" className={a.primary} disabled={saving}>
+            </Button>
+            <Button type="submit" disabled={saving}>
               {goal ? (
                 <CheckIcon aria-hidden="true" />
               ) : (
                 <PlusIcon aria-hidden="true" />
               )}
               {goal ? 'Save changes' : 'Add goal'}
-            </button>
+            </Button>
           </div>
         </form>
       </dialog>
