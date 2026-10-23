@@ -15,8 +15,6 @@ const wide = 'screen and (min-width: 960px)';
 const picked = `color-mix(in srgb, ${vars.color.secondary} 22%, ${vars.color.background})`;
 const pickHover = `color-mix(in srgb, ${vars.color.secondary} 16%, ${vars.color.background})`;
 
-export const page = style({ paddingBlock: '32px 56px' });
-
 export const title = style({
   margin: '0 0 24px',
   fontFamily: vars.font.display,

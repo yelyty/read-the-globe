@@ -18,7 +18,7 @@ const AccountPage = () => {
   if (!user) return null;
 
   return (
-    <div className={s.page}>
+    <div className={s.column}>
       <header className={s.head}>
         <h1 className={s.title}>Account</h1>
       </header>

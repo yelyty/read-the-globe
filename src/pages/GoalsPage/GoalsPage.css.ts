@@ -26,8 +26,6 @@ const caret = (size: number) => ({
   transition: `rotate .18s ${easeOut}`,
 });
 
-export const page = style({ paddingBlock: `${space.sp6} 56px` });
-
 export const viewHead = style({ marginBottom: space.sp6 });
 export const title = style({
   margin: 0,
@@ -275,7 +273,6 @@ globalStyle(`${primary} svg, ${outline} svg`, {
   flex: 'none',
 });
 
-/* ---------- empty: the hilltop sticker over one centred column ---------- */
 export const empty = style({
   display: 'grid',
   justifyItems: 'center',
@@ -311,7 +308,6 @@ export const gsCloth = style({
   strokeWidth: 2,
 });
 
-/* ---------- a goal row ---------- */
 export const goalList = style({
   listStyle: 'none',
   margin: 0,

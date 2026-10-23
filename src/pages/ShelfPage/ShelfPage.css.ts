@@ -11,8 +11,6 @@ import {
   focusRing,
 } from '../../styles/global.css';
 
-export const page = style({ paddingBlock: '32px 56px' });
-
 export const viewHead = style({
   display: 'flex',
   flexWrap: 'wrap',

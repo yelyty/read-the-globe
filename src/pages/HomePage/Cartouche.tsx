@@ -1,12 +1,12 @@
-import { useId } from "react";
-import type { Show } from "../../components/AtlasMap/AtlasMap.tsx";
-import type { atlasStats } from "../../utils/atlasMarks";
-import * as s from "./HomePage.css";
+import { useId } from 'react';
+import type { Show } from '../../components/AtlasMap/AtlasMap.tsx';
+import type { atlasStats } from '../../utils/atlasMarks';
+import * as s from './HomePage.css';
 
 const CAPTION: Record<Show, string> = {
-  all: "countries",
-  set: "countries where stories are set",
-  author: "authors’ countries",
+  all: 'countries',
+  set: 'countries where stories are set',
+  author: 'authors’ countries',
 };
 
 const COUNTRY_TOTAL = 195;
@@ -14,7 +14,7 @@ const COUNTRY_TOTAL = 195;
 const CARTOUCHE_EXPLANATION =
   "195 = the 193 UN member states, plus the Holy See (Vatican City) and Palestine. Territories count toward their country, so Greenland marks Denmark. Places outside the list, such as Taiwan or Kosovo, show on the map but aren't added to the total.";
 
-const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
+const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
 type CartoucheProps = {
   stats: ReturnType<typeof atlasStats>;
@@ -36,6 +36,7 @@ const Cartouche = ({ stats, show }: CartoucheProps) => {
     <div className={s.cartouche}>
       <p className={s.cartBig}>
         <b>{count}</b>
+        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- focusable so keyboard users can open the tooltip */}
         <span className={s.cartOf} tabIndex={0} aria-describedby={tooltipId}>
           / {COUNTRY_TOTAL}
           <span className={s.cartWhy} id={tooltipId} role="tooltip">
@@ -45,7 +46,7 @@ const Cartouche = ({ stats, show }: CartoucheProps) => {
       </p>
       <p className={s.cartCap}>{CAPTION[show]}</p>
       <p className={s.cartMeta}>
-        {plural(stats.books, "book")} · {plural(stats.continents, "continent")}
+        {plural(stats.books, 'book')} · {plural(stats.continents, 'continent')}
       </p>
     </div>
   );

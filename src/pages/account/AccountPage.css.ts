@@ -9,10 +9,9 @@ import {
   reducedMotion,
 } from '../../styles/global.css';
 
-export const page = style({
+export const column = style({
   maxWidth: 760,
   marginInline: 'auto',
-  paddingBlock: '32px 56px',
 });
 
 export const head = style({

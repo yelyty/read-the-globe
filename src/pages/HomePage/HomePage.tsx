@@ -1,27 +1,27 @@
-import { useEffect, useMemo, useState } from "react";
-import { getRouteApi, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from 'react';
+import { getRouteApi, Link, useNavigate } from '@tanstack/react-router';
 import {
   ArrowsInIcon,
   ArrowsOutIcon,
   PushPinIcon,
-} from "@phosphor-icons/react";
-import AtlasMap, { type Show } from "../../components/AtlasMap/AtlasMap.tsx";
-import { marked } from "../../components/AtlasMap/AtlasMap.css";
-import { atlasMarks, atlasStats } from "../../utils/atlasMarks";
+} from '@phosphor-icons/react';
+import AtlasMap, { type Show } from '../../components/AtlasMap/AtlasMap.tsx';
+import { marked } from '../../components/AtlasMap/AtlasMap.css';
+import { atlasMarks, atlasStats } from '../../utils/atlasMarks';
 
-import * as s from "./HomePage.css";
-import { useAuth } from "../../auth/auth-context.ts";
-import { useCountryNames } from "../../hooks/useCountryNames.ts";
-import AtlasCountries from "./AtlasCountries.tsx";
-import Cartouche from "./Cartouche.tsx";
-import MapKey from "./MapKey.tsx";
-import RecentReads from "./RecentReads.tsx";
+import * as s from './HomePage.css';
+import { useAuth } from '../../auth/auth-context.ts';
+import { useCountryNames } from '../../hooks/useCountryNames.ts';
+import AtlasCountries from './AtlasCountries.tsx';
+import Cartouche from './Cartouche.tsx';
+import MapKey from './MapKey.tsx';
+import RecentReads from './RecentReads.tsx';
 
-const app = getRouteApi("/app");
+const app = getRouteApi('/app');
 const RECENT = 3;
 
 const HomePage = () => {
-  const [show, setShow] = useState<Show>("all");
+  const [show, setShow] = useState<Show>('all');
   const [full, setFull] = useState(false);
 
   const { books } = app.useLoaderData();
@@ -32,14 +32,14 @@ const HomePage = () => {
 
   useEffect(() => {
     if (!full) return;
-    const close = (e: KeyboardEvent) => e.key === "Escape" && setFull(false);
+    const close = (e: KeyboardEvent) => e.key === 'Escape' && setFull(false);
 
-    document.addEventListener("keydown", close);
-    document.documentElement.style.overflow = "hidden";
+    document.addEventListener('keydown', close);
+    document.documentElement.style.overflow = 'hidden';
 
     return () => {
-      document.removeEventListener("keydown", close);
-      document.documentElement.style.overflow = "";
+      document.removeEventListener('keydown', close);
+      document.documentElement.style.overflow = '';
     };
   }, [full]);
 
@@ -48,18 +48,18 @@ const HomePage = () => {
   const dots = books
     .flatMap((b) => b.places ?? [])
     .filter((p) => p.lon != null && p.lat != null);
-  const firstName = String(user?.signUpName ?? "")
+  const firstName = String(user?.signUpName ?? '')
     .trim()
     .split(/\s+/)[0];
   const blank = !books.length;
   const title = blank
-    ? "Your atlas is blank, for now."
+    ? 'Your atlas is blank, for now.'
     : firstName
       ? `${firstName}’s atlas`
-      : "Your atlas";
+      : 'Your atlas';
 
   return (
-    <div className={s.page}>
+    <>
       <div className={s.viewHead} data-blank={blank || undefined}>
         <h1 className={s.title}>{title}</h1>
       </div>
@@ -81,14 +81,14 @@ const HomePage = () => {
         </div>
       )}
 
-      {/* a click anywhere on the map but a marked country lays it over the whole window */}
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- mouse shortcut; the full screen button is the keyboard way */}
       <div
         className={s.plate}
         data-full={full || undefined}
         onClick={(e) => {
           if (
             !full &&
-            (e.target as Element).closest(".rsm-svg") &&
+            (e.target as Element).closest('.rsm-svg') &&
             !(e.target as Element).closest(`.${marked}`)
           )
             setFull(true);
@@ -99,9 +99,9 @@ const HomePage = () => {
           className={s.fullBtn}
           aria-pressed={full}
           aria-label={
-            full ? "Close the full screen map" : "Show the map full screen"
+            full ? 'Close the full screen map' : 'Show the map full screen'
           }
-          title={full ? "Close full screen" : "Full screen"}
+          title={full ? 'Close full screen' : 'Full screen'}
           onClick={(e) => {
             e.stopPropagation();
             setFull(!full);
@@ -118,12 +118,12 @@ const HomePage = () => {
           dots={dots}
           show={show}
           onCountryClick={(code) =>
-            navigate({ to: "/app/shelf", search: { country: code } })
+            navigate({ to: '/app/shelf', search: { country: code } })
           }
           caption={
             stats.countries
               ? `Your map: ${stats.countries} of 195 countries marked, ${stats.set} where stories are set and ${stats.authors} where authors are from.`
-              : "Your map: no countries marked yet."
+              : 'Your map: no countries marked yet.'
           }
         >
           {!blank && <Cartouche stats={stats} show={show} />}
@@ -139,7 +139,7 @@ const HomePage = () => {
           <AtlasCountries marks={marks} names={names} />
         </>
       )}
-    </div>
+    </>
   );
 };
 

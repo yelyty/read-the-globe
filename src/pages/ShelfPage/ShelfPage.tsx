@@ -206,7 +206,7 @@ const ShelfPage = () => {
   };
 
   return (
-    <div className={s.page}>
+    <>
       <div className={s.viewHead}>
         <h1 className={s.title}>Shelf</h1>
       </div>
@@ -585,7 +585,7 @@ const ShelfPage = () => {
           )}
         </div>
       )}
-    </div>
+    </>
   );
 };
 

@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
-import { getRouteApi, useRouter } from "@tanstack/react-router";
-import { PlusIcon } from "@phosphor-icons/react";
-import type { Feature } from "geojson";
-import type { Goal, GoalKind } from "../../types";
-import { addGoal, deleteGoal, markReached } from "../../api/goals/goals";
-import { atlasMarks } from "../../utils/atlasMarks";
-import { worldShapes } from "../../utils/worldShapes";
+import { useEffect, useState } from 'react';
+import { getRouteApi, useRouter } from '@tanstack/react-router';
+import { PlusIcon } from '@phosphor-icons/react';
+import type { Feature } from 'geojson';
+import type { Goal, GoalKind } from '../../types';
+import { addGoal, deleteGoal, markReached } from '../../api/goals/goals';
+import { atlasMarks } from '../../utils/atlasMarks';
+import { worldShapes } from '../../utils/worldShapes';
 import {
   CATALOGUE,
   KIND_GROUP,
@@ -15,24 +15,22 @@ import {
   plural,
   today,
   type GoalDraft,
-} from "./goals";
-import { GoalPlate, GoalShelf } from "./GoalPlate";
-import GoalRow from "./GoalRow";
-import GoalDialog from "./GoalsDialog";
-import BooksDialog from "./BooksDialog";
-import * as s from "./GoalsPage.css";
+} from './goals';
+import { GoalPlate, GoalShelf } from './GoalPlate';
+import GoalRow from './GoalRow';
+import GoalDialog from './GoalsDialog';
+import BooksDialog from './BooksDialog';
+import * as s from './GoalsPage.css';
 
-const app = getRouteApi("/app");
+const app = getRouteApi('/app');
 
-// Goals, as in the app mock: your goals (still on the road first, reached ones below), then suggestions
-// to aim somewhere new, Make your own, and the two dialogs. With no goals, the suggestions are the way in.
 const GoalsPage = () => {
   const { books, goals } = app.useLoaderData();
   const router = useRouter();
   const [shapes, setShapes] = useState<Record<string, Feature>>();
-  const [editing, setEditing] = useState<Goal | "new" | null>(null);
+  const [editing, setEditing] = useState<Goal | 'new' | null>(null);
   const [choosing, setChoosing] = useState<Goal | null>(null);
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState('');
 
   useEffect(() => {
     worldShapes().then(setShapes);
@@ -53,18 +51,18 @@ const GoalsPage = () => {
       .filter(({ g, done }) => done !== !!g.reachedOn);
     if (!changes.length) return;
     Promise.all(
-      changes.map(({ g, done }) => markReached(g.id, done ? today() : null)),
+      changes.map(({ g, done }) => markReached(g.id, done ? today() : null))
     ).then((problems) => {
       if (problems.every((p) => !p)) router.invalidate();
     });
   }, [goals, books, shapes, router]);
 
-  if (!shapes) return <div className={s.page} />;
+  if (!shapes) return <div />;
 
   const names = Object.fromEntries(
     Object.entries(shapes)
       .filter(([, f]) => f.properties?.name)
-      .map(([code, f]) => [code, f.properties!.name as string]),
+      .map(([code, f]) => [code, f.properties!.name as string])
   );
   const name = (code: string) => names[code] ?? code;
   const full = goals.length >= MAX_GOALS;
@@ -101,8 +99,8 @@ const GoalsPage = () => {
   const left = CATALOGUE.filter((c) => !have.has(c.name.toLowerCase())).map(
     (c, i) => {
       const p = progress(c);
-      return { c, i, p, score: c.kind === "theme" ? -1 : p.done / p.total };
-    },
+      return { c, i, p, score: c.kind === 'theme' ? -1 : p.done / p.total };
+    }
   );
   const pick = !goals.length
     ? left
@@ -131,10 +129,10 @@ const GoalsPage = () => {
         {pick && (
           <div className={s.pick}>
             <p>
-              Your books already reach{" "}
+              Your books already reach{' '}
               <b>
-                {pick.p.done} of {plural(pick.p.total, "country", "countries")}
-              </b>{" "}
+                {pick.p.done} of {plural(pick.p.total, 'country', 'countries')}
+              </b>{' '}
               in <b>{pick.c.name}</b>. Make it your first goal?
             </p>
             <button
@@ -163,7 +161,7 @@ const GoalsPage = () => {
                   onClick={() => add(c)}
                 >
                   <span className={s.destMap}>
-                    {c.kind === "theme" ? (
+                    {c.kind === 'theme' ? (
                       <GoalShelf done={0} total={c.target!} />
                     ) : (
                       <GoalPlate
@@ -178,9 +176,9 @@ const GoalsPage = () => {
                   <span className={s.destNote}>
                     {p.done
                       ? `${p.done} of ${p.total} already`
-                      : c.kind === "theme"
-                        ? plural(p.total, "book")
-                        : plural(p.total, "country", "countries")}
+                      : c.kind === 'theme'
+                        ? plural(p.total, 'book')
+                        : plural(p.total, 'country', 'countries')}
                   </span>
                   <span className={s.destAdd}>
                     <PlusIcon aria-hidden="true" />
@@ -212,7 +210,7 @@ const GoalsPage = () => {
                         >
                           <PlusIcon aria-hidden="true" />
                           {c.name}
-                          {p.done > 0 && c.kind !== "theme" && (
+                          {p.done > 0 && c.kind !== 'theme' && (
                             <span className={s.chipNote}>
                               {p.done} of {p.total} already
                             </span>
@@ -232,7 +230,7 @@ const GoalsPage = () => {
         className={s.outline}
         aria-haspopup="dialog"
         disabled={full}
-        onClick={() => setEditing("new")}
+        onClick={() => setEditing('new')}
       >
         <PlusIcon aria-hidden="true" />
         Make your own
@@ -241,7 +239,7 @@ const GoalsPage = () => {
   );
 
   return (
-    <div className={s.page}>
+    <>
       <div className={s.viewHead}>
         <h1 className={s.title}>Goals</h1>
       </div>
@@ -252,9 +250,9 @@ const GoalsPage = () => {
             <summary>
               <h2 className={s.h2}>Your goals</h2>
               <span className={s.sum}>
-                {plural(goals.length, "goal")}
+                {plural(goals.length, 'goal')}
                 {nReached > 0 && ` · ${nReached} reached`}
-                {full && " · ten is the most"}
+                {full && ' · ten is the most'}
               </span>
             </summary>
             <ul className={s.goalList}>
@@ -306,10 +304,10 @@ const GoalsPage = () => {
             <h2 className={s.h2}>No goals yet</h2>
             <p>
               A goal gives your reading somewhere to head: a region, a set of
-              countries, or a theme you choose books for.{" "}
+              countries, or a theme you choose books for.{' '}
               {books.length
-                ? "Books already on your atlas count straight away."
-                : "They start counting with your first book."}
+                ? 'Books already on your atlas count straight away.'
+                : 'They start counting with your first book.'}
             </p>
           </div>
           {suggestions}
@@ -322,12 +320,12 @@ const GoalsPage = () => {
 
       {editing && (
         <GoalDialog
-          goal={editing === "new" ? null : editing}
+          goal={editing === 'new' ? null : editing}
           goals={goals}
           names={names}
           onClose={() => setEditing(null)}
           onSaved={(n) =>
-            saved(editing === "new" ? `Goal added: ${n}.` : `Saved ${n}.`)
+            saved(editing === 'new' ? `Goal added: ${n}.` : `Saved ${n}.`)
           }
         />
       )}
@@ -338,12 +336,12 @@ const GoalsPage = () => {
           onClose={() => setChoosing(null)}
           onSaved={(n) =>
             saved(
-              `${plural(n, "book")} ${n === 1 ? "counts" : "count"} toward ${choosing.name}.`,
+              `${plural(n, 'book')} ${n === 1 ? 'counts' : 'count'} toward ${choosing.name}.`
             )
           }
         />
       )}
-    </div>
+    </>
   );
 };
 
