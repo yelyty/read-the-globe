@@ -6,6 +6,7 @@ import { changePassword } from '../../../../auth/session';
 
 import * as s from '../../AccountPage.css';
 import { validate, type Errors } from './validate';
+import Hint from '../../../../components/Hint/Hint';
 
 const ChangePassword = ({ email }: { email: string }) => {
   const [first, setFirst] = useState('');
@@ -67,9 +68,7 @@ const ChangePassword = ({ email }: { email: string }) => {
           error={errors.first}
           onChange={onNewPasswordChange}
         >
-          <p className={s.hint} id="ac-pass1-hint">
-            At least 8 characters.
-          </p>
+          <Hint id="ac-pass1-hint">At least 8 characters.</Hint>
         </Field>
         <Field
           id="ac-pass2"

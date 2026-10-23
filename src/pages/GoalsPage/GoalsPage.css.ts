@@ -625,11 +625,7 @@ export const input = style({
   },
   ':disabled': { color: vars.color.textMuted, cursor: 'not-allowed' },
 });
-export const hint = style({
-  margin: '8px 0 0',
-  fontSize: fontSize.meta,
-  color: vars.color.textSecondary,
-});
+
 export const picked = style({
   listStyle: 'none',
   margin: '8px 0 0',

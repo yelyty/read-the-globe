@@ -12,6 +12,7 @@ import { removeNextRead } from '../../api/nextReads/nextReads';
 import { worldShapes } from '../../utils/worldShapes';
 import * as f from '../Field/Field.css';
 import * as s from './LogBook.css';
+import Hint from '../Hint/Hint';
 
 const app = getRouteApi('/app');
 
@@ -471,10 +472,10 @@ const LogForm = ({
               {errors.country}
             </div>
           )}
-          <p className={s.hint} id="f-country-note">
+          <Hint id="f-country-note">
             Lived in more than one? Choose the country where they lived most of
             their life.
-          </p>
+          </Hint>
         </div>
 
         <fieldset className={s.set}>
@@ -482,10 +483,10 @@ const LogForm = ({
             <i className={s.dotSet} aria-hidden="true" />
             Places in the book
           </legend>
-          <p className={s.hint}>
+          <Hint>
             A city or region, or “City, Country” in one go. Each place marks its
             country.
-          </p>
+          </Hint>
           <div className={s.placesHead} aria-hidden="true">
             <span>City or region</span>
             <span>Country</span>
@@ -621,9 +622,9 @@ const LogForm = ({
               ))}
             </select>
           </div>
-          <p className={s.hint} id="f-month-hint">
+          <Hint id="f-month-hint">
             Month and year. Leave it empty and today’s date is used.
-          </p>
+          </Hint>
         </fieldset>
 
         {themes.length > 0 && (

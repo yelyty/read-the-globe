@@ -4,6 +4,7 @@ import type { BookEntry, Goal } from '../../types';
 import { setGoalBooks } from '../../api/goals/goals';
 import * as a from '../account/AccountPage.css';
 import * as s from './GoalsPage.css';
+import Hint from '../../components/Hint/Hint';
 
 type BooksDialogProps = {
   goal: Goal;
@@ -128,9 +129,7 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
                   </ul>
                 </fieldset>
               ) : (
-                <p className={s.hint} role="status">
-                  No books match “{query.trim()}”.
-                </p>
+                <Hint role="status">No books match “{query.trim()}”.</Hint>
               )}
             </>
           ) : (

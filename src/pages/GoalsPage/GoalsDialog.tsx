@@ -7,6 +7,7 @@ import { addGoal, updateGoal } from '../../api/goals/goals';
 import { MAX_GOALS, REGIONS } from './goals';
 import * as a from '../account/AccountPage.css';
 import * as s from './GoalsPage.css';
+import Hint from '../../components/Hint/Hint';
 
 const NAME_HINT: Record<GoalKind, string> = {
   region: 'Every corner of Europe',
@@ -205,9 +206,9 @@ const GoalDialog = ({
                     <option key={n} value={n} />
                   ))}
               </datalist>
-              <p className={s.hint} id="g-country-hint">
+              <Hint id="g-country-hint">
                 Pick from the list, or press Enter after each country.
-              </p>
+              </Hint>
               {codes.length > 0 && (
                 <ul className={s.picked}>
                   {codes.map((code) => (

@@ -9,7 +9,7 @@ import {
   reducedMotion,
 } from '../../styles/global.css';
 
-export const column = style({
+export const wrapper = style({
   maxWidth: 760,
   marginInline: 'auto',
 });
@@ -20,7 +20,6 @@ export const since = style({
   color: vars.color.textSecondary,
 });
 
-/* ---------- forms ---------- */
 export const form = style({ maxWidth: 520 });
 
 globalStyle(`${form} input[readonly]`, {
@@ -31,13 +30,6 @@ globalStyle(`${form} input[readonly]`, {
   boxShadow: 'none',
 });
 
-export const hint = style({
-  margin: '8px 0 0',
-  fontSize: 15,
-  lineHeight: 1.4,
-  color: vars.color.textSecondary,
-});
-
 export const row = style({
   display: 'flex',
   flexWrap: 'wrap',
@@ -46,7 +38,6 @@ export const row = style({
   marginTop: 8,
 });
 
-// a status, so not green: green is only for what the reader can press
 export const status = style({
   margin: 0,
   fontFamily: vars.font.sans,
@@ -55,7 +46,6 @@ export const status = style({
   color: vars.color.oliveInk,
 });
 
-/* ---------- buttons: a settings page's, one step quieter than the app's main actions ---------- */
 const button = {
   display: 'inline-flex',
   alignItems: 'center',

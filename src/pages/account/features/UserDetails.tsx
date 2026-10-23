@@ -6,6 +6,7 @@ import { updateDisplayName, type Reader } from '../../../auth/session';
 import * as s from '../AccountPage.css';
 
 import Block from '../components/Block';
+import Hint from '../../../components/Hint/Hint';
 
 type UserDetailsProps = {
   user: Reader;
@@ -60,9 +61,9 @@ const UserDetails = ({ user }: UserDetailsProps) => {
           aria-describedby="ac-email-hint"
           value={user.email ?? ''}
         >
-          <p className={s.hint} id="ac-email-hint">
+          <Hint id="ac-email-hint">
             The address you sign in with. It can’t be changed here.
-          </p>
+          </Hint>
         </Field>
         <div className={s.row}>
           <button type="submit" className={s.primary} disabled={saving}>

@@ -20,7 +20,7 @@ const AccountPage = () => {
   if (!user) return null;
 
   return (
-    <div className={s.column}>
+    <div className={s.wrapper}>
       <PageTitle>Account</PageTitle>
       <UserDetails user={user} />
       <ChangePassword email={user.email ?? ''} />

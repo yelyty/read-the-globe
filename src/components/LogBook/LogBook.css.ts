@@ -11,6 +11,7 @@ import {
   focusRing,
   hatch,
 } from '../../styles/global.css';
+import { hint } from '../Hint/Hint.css';
 
 const rise = keyframes({
   from: { opacity: 0, translate: '0 8px', scale: '.98' },
@@ -153,13 +154,6 @@ export const swatch = style({
   background: hatch,
 });
 globalStyle(`${mark} i`, { marginRight: 0 });
-
-export const hint = style({
-  margin: '8px 0 0',
-  fontSize: 15,
-  lineHeight: 1.4,
-  color: vars.color.textSecondary,
-});
 
 /* ---------- places ---------- */
 export const set = style({
