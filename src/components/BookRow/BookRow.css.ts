@@ -16,7 +16,7 @@ export const srOnly = style({
 export const list = style({ listStyle: "none", margin: 0, padding: 0 });
 export const row = style({
 	display: "grid",
-	gridTemplateColumns: "minmax(0, 1.1fr) minmax(0, 1.4fr)",
+	gridTemplateColumns: "minmax(0, 1.1fr) minmax(0, 1.4fr) auto",
 	gap: "8px 24px",
 	alignItems: "start",
 	padding: "12px 0",
@@ -93,3 +93,12 @@ export const markNone = style({
 
 
 globalStyle(`${rowAuthor} time`, { display: "block", marginTop: 2, fontSize: 13, color: vars.color.textMuted, fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" });
+
+export const rowSide = style({ alignSelf: "center", "@media": { [phone]: { alignSelf: "auto" } } });
+export const edit = style({
+	display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 2px", fontSize: 15, fontWeight: 500,
+	color: vars.color.textSecondary, textDecoration: "none",
+	":hover": { color: vars.color.text },
+	":focus-visible": { outline: `2px solid ${vars.color.accent}`, outlineOffset: 2 },
+});
+globalStyle(`${edit} svg`, { width: 16, height: 16 });

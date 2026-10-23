@@ -51,7 +51,7 @@ const NextToRead = ({
   const sorted = Object.entries(names).sort(([, a], [, b]) =>
     a.localeCompare(b),
   );
-  // the typed country, matched to a name in the list
+
   const codeFor = (typed: string) =>
     sorted.find(([, n]) => n.toLowerCase() === typed.trim().toLowerCase())?.[0];
   const code = codeFor(country);
@@ -268,7 +268,7 @@ const NextToRead = ({
                   <Link
                     className={s.linkBtn}
                     to="."
-                    search={(prev) => ({ ...prev, log: true })}
+                    search={(prev) => ({ ...prev, log: true, next: it.id })}
                   >
                     <PushPinIcon aria-hidden="true" />
                     Log it

@@ -6,11 +6,15 @@ import { getGoals } from "../api/goals/goals";
 type AppSearch = {
   log?: true;
   country?: string;
+  edit?: string;
+  next?: string;
 };
 
 export const Route = createFileRoute("/app")({
   validateSearch: (search: Record<string, unknown>): AppSearch => ({
     log: search.log === true ? true : undefined,
+    edit: typeof search.edit === "string" ? search.edit : undefined,
+    next: typeof search.next === "string" ? search.next : undefined,
     country: typeof search.country === "string" ? search.country : undefined,
   }),
   beforeLoad: ({ context, location }) => {

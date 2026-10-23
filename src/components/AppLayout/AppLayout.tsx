@@ -1,10 +1,12 @@
 import { Outlet } from "@tanstack/react-router";
 
 import "../../App.css";
+
 import AppHeader from "../AppHeader/AppHeader";
 import AppFooter from "../AppFooter/AppFooter";
 
 import * as s from "./AppLayout.css";
+import LogBook from "../LogBook/LogBook";
 
 const AppLayout = () => {
   return (
@@ -15,6 +17,7 @@ const AppLayout = () => {
           <Outlet />
         </main>
         <AppFooter />
+        <LogBook />
       </div>
     </>
   );

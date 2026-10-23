@@ -2,6 +2,8 @@ import { Fragment } from "react";
 import type { BookEntry } from "../../types";
 import { coverColor } from "../../utils/coverColors";
 import * as s from "./BookRow.css";
+import { PencilSimpleIcon } from "@phosphor-icons/react";
+import { Link } from "@tanstack/react-router";
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString(undefined, {
@@ -61,6 +63,17 @@ const BookRow = ({ book, names }: BookRowProps) => {
             </span>
           </span>
         )}
+      </div>
+      <div className={s.rowSide}>
+        <Link
+          className={s.edit}
+          to="."
+          search={(prev) => ({ ...prev, edit: book.id })}
+          aria-label={`Edit ${book.title}`}
+        >
+          <PencilSimpleIcon aria-hidden="true" />
+          Edit
+        </Link>
       </div>
     </li>
   );
