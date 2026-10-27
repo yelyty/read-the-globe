@@ -1,9 +1,10 @@
-import { Link } from "@tanstack/react-router";
-import { ArrowRightIcon, MapPinIcon } from "@phosphor-icons/react";
-import BookRow from "../../components/BookRow/BookRow";
-import { list } from "../../components/BookRow/BookRow.css";
-import type { BookEntry } from "../../types";
-import * as s from "./HomePage.css";
+import { Link } from '@tanstack/react-router';
+import { ArrowRightIcon, MapPinIcon } from '@phosphor-icons/react';
+
+import BookRow from '../../../components/BookRow/BookRow';
+import { list } from '../../../components/BookRow/BookRow.css';
+import type { BookEntry } from '../../../types';
+import * as s from '../HomePage.css';
 
 type RecentReadsProps = { books: BookEntry[]; names: Record<string, string> };
 

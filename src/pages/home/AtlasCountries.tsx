@@ -1,41 +1,39 @@
-import { Link } from "@tanstack/react-router";
-import { MapTrifoldIcon } from "@phosphor-icons/react";
-import type { Mark, Marks } from "../../utils/atlasMarks";
+import { Link } from '@tanstack/react-router';
+import { MapTrifoldIcon } from '@phosphor-icons/react';
+import type { Mark, Marks } from '../../utils/atlasMarks';
 import {
   CONTINENT_NAMES,
   CONTINENT_OF,
   type Continent,
-} from "../../utils/continents";
+} from '../../utils/continents';
 
-import * as s from "./HomePage.css";
-import CountryShape from "./CountryShape";
+import * as s from './HomePage.css';
+import CountryShape from './CountryShape';
 
 const PEEK = 6;
 const plural = (n: number, one: string, many: string) =>
   `${n} ${n === 1 ? one : many}`;
 const describe = ({ set, author }: Mark) =>
   [
-    set.length && `${plural(set.length, "story", "stories")} set here`,
-    author.length && `${plural(author.length, "author", "authors")} from here`,
+    set.length && `${plural(set.length, 'story', 'stories')} set here`,
+    author.length && `${plural(author.length, 'author', 'authors')} from here`,
   ]
     .filter(Boolean)
-    .join(", ");
+    .join(', ');
 
 type AtlasCountriesProps = { marks: Marks; names: Record<string, string> };
 
-// Countries by continent, folded: a folded continent peeks at its first shapes, an open one
-// shows each country as a stamp in its mark from the map. The biggest continent starts open.
 const AtlasCountries = ({ marks, names }: AtlasCountriesProps) => {
   const byContinent: Partial<Record<Continent, string[]>> = {};
   for (const code of Object.keys(marks))
     (byContinent[CONTINENT_OF[code]] ??= []).push(code);
   const name = (code: string) => names[code] ?? code;
   const continents = (Object.keys(CONTINENT_NAMES) as Continent[]).filter(
-    (c) => byContinent[c],
+    (c) => byContinent[c]
   );
   const biggest = continents.reduce<Continent | undefined>(
     (a, c) => (!a || byContinent[c]!.length > byContinent[a]!.length ? c : a),
-    undefined,
+    undefined
   );
 
   return (
@@ -52,7 +50,7 @@ const AtlasCountries = ({ marks, names }: AtlasCountriesProps) => {
       <div className={s.cc}>
         {continents.map((continent) => {
           const codes = byContinent[continent]!.sort((a, b) =>
-            name(a).localeCompare(name(b)),
+            name(a).localeCompare(name(b))
           );
           return (
             <details
@@ -62,12 +60,12 @@ const AtlasCountries = ({ marks, names }: AtlasCountriesProps) => {
             >
               <summary className={s.ccSummary}>
                 <h3 className={s.ccTitle}>
-                  {CONTINENT_NAMES[continent]}{" "}
+                  {CONTINENT_NAMES[continent]}{' '}
                   <span className={s.ccN} aria-hidden="true">
                     {codes.length}
                   </span>
                   <span className={s.srOnly}>
-                    , {plural(codes.length, "country", "countries")}
+                    , {plural(codes.length, 'country', 'countries')}
                   </span>
                 </h3>
                 <span className={s.ccPeek} aria-hidden="true">

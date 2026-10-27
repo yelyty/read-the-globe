@@ -1,18 +1,18 @@
-import { useEffect, useId, useState } from "react";
-import { geoArea, geoEquirectangular, geoPath } from "d3-geo";
-import type { Feature, Polygon } from "geojson";
-import type { Mark } from "../../utils/atlasMarks";
-import { worldShapes } from "../../utils/worldShapes";
-import * as s from "./HomePage.css";
+import { useEffect, useId, useState } from 'react';
+import { geoArea, geoEquirectangular, geoPath } from 'd3-geo';
+import type { Feature, Polygon } from 'geojson';
+import type { Mark } from '../../utils/atlasMarks';
+import { worldShapes } from '../../utils/worldShapes';
+import * as s from './HomePage.css';
 
 const mainPiece = (f: Feature): Feature => {
-  if (f.geometry.type !== "MultiPolygon") return f;
+  if (f.geometry.type !== 'MultiPolygon') return f;
   const pieces = f.geometry.coordinates.map(
     (coordinates): Feature<Polygon> => ({
-      type: "Feature",
+      type: 'Feature',
       properties: {},
-      geometry: { type: "Polygon", coordinates },
-    }),
+      geometry: { type: 'Polygon', coordinates },
+    })
   );
   return pieces.reduce((a, b) => (geoArea(b) > geoArea(a) ? b : a));
 };
@@ -28,7 +28,7 @@ type CountryShapeProps = {
 const CountryShape = ({ code, mark, width, height }: CountryShapeProps) => {
   const [shape, setShape] = useState<Feature>();
   // useId gives «r0»-style ids; an SVG url() wants plain letters
-  const hatch = "hatch-" + useId().replace(/[^\w-]/g, "");
+  const hatch = 'hatch-' + useId().replace(/[^\w-]/g, '');
   useEffect(() => {
     worldShapes().then((all) => setShape(all[code]));
   }, [code]);
@@ -40,7 +40,7 @@ const CountryShape = ({ code, mark, width, height }: CountryShapeProps) => {
       [pad, pad],
       [width - pad, height - pad],
     ],
-    mainPiece(shape),
+    mainPiece(shape)
   );
   const both = mark.set.length > 0 && mark.author.length > 0;
   const fill = both
@@ -71,7 +71,7 @@ const CountryShape = ({ code, mark, width, height }: CountryShapeProps) => {
         </defs>
       )}
       <path
-        d={geoPath(projection)(shape) ?? ""}
+        d={geoPath(projection)(shape) ?? ''}
         className={both ? undefined : fill}
         style={both ? { fill } : undefined}
       />

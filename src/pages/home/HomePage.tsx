@@ -13,9 +13,9 @@ import * as s from './HomePage.css';
 import { useAuth } from '../../auth/auth-context.ts';
 import { useCountryNames } from '../../hooks/useCountryNames.ts';
 import AtlasCountries from './AtlasCountries.tsx';
-import Cartouche from './Cartouche.tsx';
+import Cartouche from './features/Cartouche.tsx';
 import MapKey from './MapKey.tsx';
-import RecentReads from './RecentReads.tsx';
+import RecentReads from './features/RecentReads.tsx';
 import PageTitle from '../../components/PageTitle/PageTitle.tsx';
 
 const app = getRouteApi('/app');
@@ -58,6 +58,14 @@ const HomePage = () => {
     : firstName
       ? `${firstName}’s atlas`
       : 'Your atlas';
+
+  const onCountryClick = (code: string) => {
+    navigate({ to: '/app/shelf', search: { country: code } });
+  };
+
+  const caption = stats.countries
+    ? `Your map: ${stats.countries} of 195 countries marked, ${stats.set} where stories are set and ${stats.authors} where authors are from.`
+    : 'Your map: no countries marked yet.';
 
   return (
     <>
@@ -116,14 +124,8 @@ const HomePage = () => {
           marks={marks}
           dots={dots}
           show={show}
-          onCountryClick={(code) =>
-            navigate({ to: '/app/shelf', search: { country: code } })
-          }
-          caption={
-            stats.countries
-              ? `Your map: ${stats.countries} of 195 countries marked, ${stats.set} where stories are set and ${stats.authors} where authors are from.`
-              : 'Your map: no countries marked yet.'
-          }
+          onCountryClick={onCountryClick}
+          caption={caption}
         >
           {!blank && <Cartouche stats={stats} show={show} />}
         </AtlasMap>

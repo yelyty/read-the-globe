@@ -1,10 +1,10 @@
-import type { Show } from "../../components/AtlasMap/AtlasMap.tsx";
-import * as s from "./HomePage.css";
+import type { Show } from '../../components/AtlasMap/AtlasMap.tsx';
+import * as s from './HomePage.css';
 
 const SHOW: [Show, string, string?][] = [
-  ["all", "Both"],
-  ["set", "Where set"],
-  ["author", "Authors", "Authors: where authors are from"],
+  ['all', 'Both'],
+  ['set', 'Where set'],
+  ['author', 'Authors', 'Authors: where authors are from'],
 ];
 
 type MapKeyProps = {
