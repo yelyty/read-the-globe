@@ -8,14 +8,14 @@ let shapes: Promise<Record<string, Feature>> | undefined;
 
 export function worldShapes() {
   shapes ??= fetch(GEO_URL)
-    .then((r) => r.json() as Promise<Topology>)
+    .then((response) => response.json() as Promise<Topology>)
     .then((topo) => {
       const all = feature(topo, topo.objects[Object.keys(topo.objects)[0]]);
       const byCode: Record<string, Feature> = {};
 
       if (all.type === 'FeatureCollection')
-        for (const f of all.features)
-          if (f.id != null) byCode[String(f.id)] = f;
+        for (const shape of all.features)
+          if (shape.id != null) byCode[String(shape.id)] = shape;
 
       return byCode;
     });
@@ -24,10 +24,10 @@ export function worldShapes() {
 }
 
 // a country's biggest landmass, so islands far away don't shrink the frame
-export const mainPiece = (f: Feature): Feature => {
-  if (f.geometry.type !== 'MultiPolygon') return f;
+export const mainPiece = (shape: Feature): Feature => {
+  if (shape.geometry.type !== 'MultiPolygon') return shape;
 
-  const pieces = f.geometry.coordinates.map(
+  const pieces = shape.geometry.coordinates.map(
     (coordinates): Feature<Polygon> => ({
       type: 'Feature',
       properties: {},
@@ -35,5 +35,7 @@ export const mainPiece = (f: Feature): Feature => {
     })
   );
 
-  return pieces.reduce((a, b) => (geoArea(b) > geoArea(a) ? b : a));
+  return pieces.reduce((largest, piece) =>
+    geoArea(piece) > geoArea(largest) ? piece : largest
+  );
 };

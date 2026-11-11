@@ -3,7 +3,7 @@ import { getLocale, locales, type Locale } from '../../paraglide/runtime.js';
 import { m } from '../../paraglide/messages.js';
 import { LANG_NAMES, pickLang } from '../../utils/lang';
 import { srOnly } from '../../styles/global.css';
-import * as s from './LanguagePicker.css';
+import * as styles from './LanguagePicker.css';
 
 type LanguagePickerProps = {
   /** the visible label; without one the select is named "Language" for screen readers only */
@@ -18,7 +18,7 @@ const LanguagePicker = ({
   label,
   className,
   labelClassName,
-  selectClassName = s.select,
+  selectClassName = styles.select,
 }: LanguagePickerProps) => {
   const id = useId();
 
@@ -31,11 +31,13 @@ const LanguagePicker = ({
         id={id}
         className={selectClassName}
         value={getLocale()}
-        onChange={(e) => void pickLang(e.target.value as Locale)}
+        onChange={(changeEvent) =>
+          void pickLang(changeEvent.target.value as Locale)
+        }
       >
-        {locales.map((l) => (
-          <option key={l} value={l} lang={l}>
-            {LANG_NAMES[l]}
+        {locales.map((option) => (
+          <option key={option} value={option} lang={option}>
+            {LANG_NAMES[option]}
           </option>
         ))}
       </select>

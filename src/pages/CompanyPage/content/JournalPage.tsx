@@ -1,4 +1,4 @@
-import * as s from '../CompanyPage.css';
+import * as styles from '../CompanyPage.css';
 import CompanyPage from '../CompanyPage';
 
 const POSTS = [
@@ -30,13 +30,13 @@ const JournalPage = () => (
     draft
   >
     <h1>Journal</h1>
-    <p className={s.lede}>
+    <p className={styles.lede}>
       Notes on reading the world: what’s new in the atlas, and ideas for where
       to read next.
     </p>
-    <ul className={s.posts}>
+    <ul className={styles.posts}>
       {POSTS.map((post) => (
-        <li key={post.date} className={s.post}>
+        <li key={post.date} className={styles.post}>
           <time dateTime={post.date}>{post.shown}</time>
           <h2>{post.title}</h2>
           <p>{post.text}</p>

@@ -6,11 +6,11 @@ import { readDate } from './readDate';
    date (YYYY-MM-DD, or just YYYY-MM). The export writes these columns and the import reads them, so it round-trips. */
 export const CSV_HEAD = ['title', 'author', 'author_country', 'places', 'date'];
 
-const cell = (v: string) =>
-  /[",\n\r]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
+const cell = (value: string) =>
+  /[",\n\r]/.test(value) ? `"${value.replace(/"/g, '""')}"` : value;
 
 export const toCsv = (rows: string[][]) =>
-  rows.map((r) => r.map(cell).join(',')).join('\n') + '\n';
+  rows.map((csvRow) => csvRow.map(cell).join(',')).join('\n') + '\n';
 
 // quoted cells may hold commas, line breaks and "" for a quote; blank lines are dropped
 export function parseCsv(text: string): string[][] {
@@ -47,7 +47,7 @@ export function parseCsv(text: string): string[][] {
     rows.push(row);
   }
 
-  return rows.filter((r) => r.some((c) => c.trim()));
+  return rows.filter((csvRow) => csvRow.some((field) => field.trim()));
 }
 
 // the shelf as rows; an imagined place is written "Middle-earth (imagined)"
@@ -55,26 +55,29 @@ export function readingListRows(
   books: BookEntry[],
   names: Record<string, string>
 ): string[][] {
-  const place = (p: BookEntry['places'][number]) => {
-    if (p.imagined) return `${p.name} (imagined)`;
-    const country = p.countryCode ? (names[p.countryCode] ?? '') : '';
+  const place = (bookPlace: BookEntry['places'][number]) => {
+    if (bookPlace.imagined) return `${bookPlace.name} (imagined)`;
 
-    return p.name && p.name !== country
-      ? [p.name, country].filter(Boolean).join(', ')
+    const country = bookPlace.countryCode
+      ? (names[bookPlace.countryCode] ?? '')
+      : '';
+
+    return bookPlace.name && bookPlace.name !== country
+      ? [bookPlace.name, country].filter(Boolean).join(', ')
       : country;
   };
 
   return [
     CSV_HEAD,
-    ...books.map((b) => [
-      b.title,
-      b.author?.name ?? '',
+    ...books.map((book) => [
+      book.title,
+      book.author?.name ?? '',
       // the map's name, which the import reads back; the database's for a country too small for the map
-      (b.author?.country && names[b.author.country.code]) ??
-        b.author?.country?.name ??
+      (book.author?.country && names[book.author.country.code]) ??
+        book.author?.country?.name ??
         '',
-      (b.places ?? []).map(place).filter(Boolean).join('; '),
-      readDate(b),
+      (book.places ?? []).map(place).filter(Boolean).join('; '),
+      readDate(book),
     ]),
   ];
 }
@@ -108,9 +111,9 @@ export function booksFromCsv(
     places = '',
     date = '',
   ] of rows) {
-    const c = countryFrom(country, names);
+    const match = countryFrom(country, names);
 
-    if (!title.trim() || !author.trim() || !c) {
+    if (!title.trim() || !author.trim() || !match) {
       problems++;
       continue;
     }
@@ -120,7 +123,7 @@ export function booksFromCsv(
     books.push({
       title: title.trim(),
       author: author.trim(),
-      authorCountry: c.code,
+      authorCountry: match.code,
       readOn: /^\d{4}-\d{2}-\d{2}$/.test(day)
         ? day
         : /^\d{4}-\d{2}$/.test(day)
@@ -128,23 +131,23 @@ export function booksFromCsv(
           : null,
       places: places
         .split(';')
-        .map((p) => p.trim())
+        .map((part) => part.trim())
         .filter(Boolean)
-        .flatMap((p): ImportedBook['places'] => {
-          const world = p.match(/^(.+?)\s*\(imagined\)$/i);
+        .flatMap((part): ImportedBook['places'] => {
+          const world = part.match(/^(.+?)\s*\(imagined\)$/i);
 
           if (world) return [{ name: world[1], country: null, imagined: true }];
-          const split = p.match(/^(.*),\s*([^,]+)$/);
+          const split = part.match(/^(.*),\s*([^,]+)$/);
           const inCountry = split && countryFrom(split[2], names);
 
           if (split && inCountry)
             return [{ name: split[1].trim(), country: inCountry.code }];
-          const bare = countryFrom(p, names);
+          const bare = countryFrom(part, names);
 
           return bare
             ? [
                 {
-                  name: bare.as ?? bare.then ?? names[bare.code] ?? p,
+                  name: bare.as ?? bare.then ?? names[bare.code] ?? part,
                   country: bare.code,
                 },
               ]

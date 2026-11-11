@@ -66,7 +66,7 @@ export const atlasAfter = (count: number) => {
 
   for (const [, , from, places] of BOOKS.slice(0, count)) {
     author.add(toNumeric(from)!);
-    for (const p of places) set.add(toNumeric(p)!);
+    for (const place of places) set.add(toNumeric(place)!);
   }
 
   return { set, author, countries: new Set([...set, ...author]).size };

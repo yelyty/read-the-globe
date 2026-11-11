@@ -3,7 +3,7 @@ import { CheckIcon } from '@phosphor-icons/react';
 
 import Field from '../../../components/Field/Field';
 import { updateDisplayName, type Reader } from '../../../auth/session';
-import * as s from '../AccountPage.css';
+import * as styles from '../AccountPage.css';
 
 import Block from '../components/Block';
 import Hint from '../../../components/Hint/Hint';
@@ -48,7 +48,7 @@ const UserDetails = ({ user }: UserDetailsProps) => {
 
   return (
     <Block title={m.account_details_title()}>
-      <form className={s.form} onSubmit={submit} noValidate>
+      <form className={styles.form} onSubmit={submit} noValidate>
         <Field
           id="ac-name"
           label={m.account_name_label()}
@@ -68,12 +68,12 @@ const UserDetails = ({ user }: UserDetailsProps) => {
         >
           <Hint id="ac-email-hint">{m.account_email_hint()}</Hint>
         </Field>
-        <div className={s.row}>
+        <div className={styles.row}>
           <Button type="submit" disabled={saving}>
             <CheckIcon aria-hidden="true" />
             {m.common_save()}
           </Button>
-          <p className={s.status} role="status">
+          <p className={styles.status} role="status">
             {status}
           </p>
         </div>

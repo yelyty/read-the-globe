@@ -18,7 +18,7 @@ import {
 } from 'react-simple-maps';
 import type { Marks } from '../../utils/atlasMarks';
 import { m } from '../../paraglide/messages.js';
-import * as s from './AtlasMap.css';
+import * as styles from './AtlasMap.css';
 
 // 50m, not 110m: the low-detail map leaves out small countries, which then could never be marked
 export const GEO_URL =
@@ -54,16 +54,16 @@ type AtlasMapProps = {
 const SLID = 'rtg-map-slid';
 
 const store = {
-  get: (k: string) => {
+  get: (key: string) => {
     try {
-      return localStorage.getItem(k);
+      return localStorage.getItem(key);
     } catch {
       return null;
     }
   },
-  set: (k: string, v: string) => {
+  set: (key: string, value: string) => {
     try {
-      localStorage.setItem(k, v);
+      localStorage.setItem(key, value);
     } catch {
       /* private mode: the hint just shows again */
     }
@@ -116,20 +116,22 @@ const AtlasMap = memo(
       framed.current = true;
       const box = el.getBoundingClientRect();
 
-      const xs = [...el.querySelectorAll(`.${s.marked}`)]
-        .map((p) => p.getBoundingClientRect())
-        .filter((r) => r.width)
-        .map((r) => r.left + r.width / 2)
-        .sort((a, b) => a - b);
+      const xs = [...el.querySelectorAll(`.${styles.marked}`)]
+        .map((shape) => shape.getBoundingClientRect())
+        .filter((rect) => rect.width)
+        .map((rect) => rect.left + rect.width / 2)
+        .sort((first, second) => first - second);
 
       auto.current = Date.now();
       if (xs.length) {
         let best = [xs[0]];
 
-        xs.forEach((x, i) => {
-          const g = xs.slice(i).filter((y) => y - x <= box.width * 0.8);
+        xs.forEach((start, i) => {
+          const group = xs
+            .slice(i)
+            .filter((other) => other - start <= box.width * 0.8);
 
-          if (g.length > best.length) best = g;
+          if (group.length > best.length) best = group;
         });
 
         el.scrollLeft +=
@@ -155,16 +157,16 @@ const AtlasMap = memo(
     };
 
     return (
-      <figure className={s.plate} data-show={show}>
+      <figure className={styles.plate} data-show={show}>
         <div
-          className={s.scroll}
+          className={styles.scroll}
           ref={scroll}
           onScroll={onScroll}
           data-more-left={edges.left || undefined}
           data-more-right={edges.right || undefined}
         >
           <ComposableMap
-            className={s.map}
+            className={styles.map}
             projection={projectionProp}
             width={WIDTH}
             height={HEIGHT}
@@ -178,8 +180,8 @@ const AtlasMap = memo(
                 height="4"
                 patternTransform="rotate(45)"
               >
-                <rect width="4" height="4" className={s.hatchSet} />
-                <rect width="2" height="4" className={s.hatchAuthor} />
+                <rect width="4" height="4" className={styles.hatchSet} />
+                <rect width="2" height="4" className={styles.hatchAuthor} />
               </pattern>
             </defs>
             <Geographies geography={GEO_URL}>
@@ -189,12 +191,12 @@ const AtlasMap = memo(
                     const mark = marks[geo.id];
 
                     const classes = [
-                      s.land,
-                      mark?.set.length && s.set,
-                      mark?.author.length && s.author,
-                      mark && s.marked,
-                      !mark && open && geo.id !== ANTARCTICA && s.open,
-                      landed?.has(geo.id) && s.landed,
+                      styles.land,
+                      mark?.set.length && styles.set,
+                      mark?.author.length && styles.author,
+                      mark && styles.marked,
+                      !mark && open && geo.id !== ANTARCTICA && styles.open,
+                      landed?.has(geo.id) && styles.landed,
                     ];
 
                     return (
@@ -211,23 +213,23 @@ const AtlasMap = memo(
                 </>
               )}
             </Geographies>
-            <g className={s.dots}>
-              {dots.map((d) => (
-                <Marker key={d.id} coordinates={[d.lon, d.lat]}>
-                  <circle r={2.6} className={s.dot} />
+            <g className={styles.dots}>
+              {dots.map((dot) => (
+                <Marker key={dot.id} coordinates={[dot.lon, dot.lat]}>
+                  <circle r={2.6} className={styles.dot} />
                 </Marker>
               ))}
             </g>
           </ComposableMap>
         </div>
         {hint && (
-          <p className={s.hint} aria-hidden="true">
+          <p className={styles.hint} aria-hidden="true">
             <ArrowLeftIcon />
             {m.map_slide_hint()}
             <ArrowRightIcon />
           </p>
         )}
-        <figcaption className={s.srOnly}>{caption}</figcaption>
+        <figcaption className={styles.srOnly}>{caption}</figcaption>
         {children}
       </figure>
     );

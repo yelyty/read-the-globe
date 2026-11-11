@@ -1,6 +1,6 @@
 import { XIcon } from '@phosphor-icons/react';
 import { useEffect, type ReactNode } from 'react';
-import * as s from './Dialog.css';
+import * as styles from './Dialog.css';
 import { m } from '../../paraglide/messages.js';
 
 type DialogProps = {
@@ -18,7 +18,9 @@ const Dialog = ({
 }: DialogProps) => {
   useEffect(() => {
     if (!isOpen || !canClose) return;
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+
+    const onKey = (keyEvent: KeyboardEvent) =>
+      keyEvent.key === 'Escape' && onClose();
 
     document.addEventListener('keydown', onKey);
 
@@ -27,18 +29,22 @@ const Dialog = ({
 
   if (!isOpen) return null;
 
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
+  const handleOverlayClick = (clickEvent: React.MouseEvent) => {
+    if (clickEvent.target === clickEvent.currentTarget) {
       onClose();
     }
   };
 
   return (
-    <div className={s.overlay} role="presentation" onClick={handleOverlayClick}>
-      <div className={s.dialog}>
+    <div
+      className={styles.overlay}
+      role="presentation"
+      onClick={handleOverlayClick}
+    >
+      <div className={styles.dialog}>
         {canClose && (
           <button
-            className={s.closeButton}
+            className={styles.closeButton}
             onClick={onClose}
             aria-label={m.dialog_close()}
           >
@@ -57,7 +63,7 @@ type DialogTitleProps = {
 
 export const DialogTitle = ({ children }: DialogTitleProps) => {
   return (
-    <div className={s.header}>
+    <div className={styles.header}>
       <h2 className="title">{children}</h2>
     </div>
   );
@@ -68,7 +74,7 @@ type DialogContentProps = {
 };
 
 export const DialogContent = ({ children }: DialogContentProps) => {
-  return <div className={s.content}>{children}</div>;
+  return <div className={styles.content}>{children}</div>;
 };
 
 export default Dialog;

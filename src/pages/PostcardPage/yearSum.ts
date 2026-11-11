@@ -5,21 +5,23 @@ import { m } from '../../paraglide/messages.js';
 import { getLocale } from '../../paraglide/runtime.js';
 
 // when a book was read; rows saved before read_on fall back to the day they were logged
-export const readDate = (b: BookEntry) =>
-  b.readOn ?? b.createdAt?.slice(0, 10) ?? '';
+export const readDate = (book: BookEntry) =>
+  book.readOn ?? book.createdAt?.slice(0, 10) ?? '';
 
 // a book's countries, both marks: its author's, then its story's
-export const bookCodes = (b: BookEntry) =>
+export const bookCodes = (book: BookEntry) =>
   [
-    b.author?.country?.code,
-    ...(b.places ?? []).map((p) => p.countryCode),
-  ].filter((c): c is string => !!c);
+    book.author?.country?.code,
+    ...(book.places ?? []).map((place) => place.countryCode),
+  ].filter((code): code is string => !!code);
 
 // the years that have books, newest first: one year-end card each
 export const bookYears = (books: BookEntry[]) =>
   [
     ...new Set(
-      books.map((b) => readDate(b).slice(0, 4)).filter((y) => /^\d{4}$/.test(y))
+      books
+        .map((book) => readDate(book).slice(0, 4))
+        .filter((year) => /^\d{4}$/.test(year))
     ),
   ]
     .sort()
@@ -28,29 +30,37 @@ export const bookYears = (books: BookEntry[]) =>
 /* The year-end card's one sentence: "2026: 14 countries, 3 continents, 1 Arctic story." The detail is the theme goal the
    year fed most (on a tie a "Stories set in…" theme, then the goal added first), else how many countries were new. */
 export function yearSum(year: string, books: BookEntry[], goals: Goal[]) {
-  const yb = books.filter((b) => readDate(b).startsWith(year));
+  const yb = books.filter((book) => readDate(book).startsWith(year));
   const codes = [...new Set(yb.flatMap(bookCodes))];
 
-  const continents = new Set(codes.map((c) => CONTINENT_OF[c]).filter(Boolean))
-    .size;
+  const continents = new Set(
+    codes.map((code) => CONTINENT_OF[code]).filter(Boolean)
+  ).size;
 
-  const reads = (g: Goal) => (/^stories set in /i.test(g.name) ? 0 : 1);
+  const reads = (goal: Goal) => (/^stories set in /i.test(goal.name) ? 0 : 1);
 
   const themed = goals
-    .filter((g) => g.kind === 'theme')
-    .map((g, i) => ({
-      g,
+    .filter((goal) => goal.kind === 'theme')
+    .map((goal, i) => ({
+      g: goal,
       i,
-      n: yb.filter((b) => b.goals?.some((x) => x.goalId === g.id)).length,
+      n: yb.filter((book) =>
+        book.goals?.some((bookGoal) => bookGoal.goalId === goal.id)
+      ).length,
     }))
-    .filter((x) => x.n)
-    .sort((a, b) => b.n - a.n || reads(a.g) - reads(b.g) || a.i - b.i)[0];
+    .filter((entry) => entry.n)
+    .sort(
+      (first, second) =>
+        second.n - first.n ||
+        reads(first.g) - reads(second.g) ||
+        first.i - second.i
+    )[0];
 
   const before = new Set(
-    books.filter((b) => readDate(b) < year).flatMap(bookCodes)
+    books.filter((book) => readDate(book) < year).flatMap(bookCodes)
   );
 
-  const fresh = codes.filter((c) => !before.has(c)).length;
+  const fresh = codes.filter((code) => !before.has(code)).length;
   let extra = '';
 
   if (themed) {

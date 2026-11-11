@@ -5,7 +5,7 @@ import Field from '../../../../components/Field/Field';
 import { getLocale } from '../../../../paraglide/runtime.js';
 import { deleteAccount } from '../../../../api/Profile/deleteAccount';
 
-import * as s from './DeleteAccount.css';
+import * as styles from './DeleteAccount.css';
 import type { BookEntry } from '../../../../types';
 import { Button } from '../../../../components/Button/Button';
 import KeepCopy from './KeepCopy';
@@ -30,7 +30,7 @@ const ConfirmationDialog = ({ books, names, ref }: ConfirmationDialogProps) => {
 
   const reset = () => {
     setWord('');
-    setRound((r) => r + 1);
+    setRound((prev) => prev + 1);
     setError(undefined);
   };
 
@@ -69,7 +69,7 @@ const ConfirmationDialog = ({ books, names, ref }: ConfirmationDialogProps) => {
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- backdrop click; Esc closes it from the keyboard */}
       <dialog
         ref={ref}
-        className={s.dialog}
+        className={styles.dialog}
         aria-labelledby="ac-delete-title"
         aria-describedby="ac-delete-q"
         onClose={reset}
@@ -78,20 +78,20 @@ const ConfirmationDialog = ({ books, names, ref }: ConfirmationDialogProps) => {
         }}
       >
         <form onSubmit={submit} noValidate>
-          <div className={s.dialogHead}>
-            <h2 className={s.dialogTitle} id="ac-delete-title">
+          <div className={styles.dialogHead}>
+            <h2 className={styles.dialogTitle} id="ac-delete-title">
               {m.account_delete_question()}
             </h2>
             <button
               type="button"
-              className={s.close}
+              className={styles.close}
               aria-label={m.common_close()}
               onClick={close}
             >
               <XIcon aria-hidden="true" />
             </button>
           </div>
-          <p className={s.dialogText} id="ac-delete-q">
+          <p className={styles.dialogText} id="ac-delete-q">
             {m.account_delete_dialog({ what })}
           </p>
           <KeepCopy key={round} books={books} names={names} />
@@ -105,7 +105,7 @@ const ConfirmationDialog = ({ books, names, ref }: ConfirmationDialogProps) => {
             error={error}
             onChange={(event) => setWord(event.target.value)}
           />
-          <div className={s.dialogActions}>
+          <div className={styles.dialogActions}>
             <Button type="button" variant="text" onClick={close}>
               {m.account_keep_account()}
             </Button>

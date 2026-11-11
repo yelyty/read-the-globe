@@ -2,8 +2,8 @@ import { useEffect, useRef, useState, type SubmitEvent } from 'react';
 import { CheckIcon, MagnifyingGlassIcon, XIcon } from '@phosphor-icons/react';
 import type { BookEntry, Goal } from '../../types';
 import { setGoalBooks } from '../../api/goals/goals';
-import * as a from '../account/features/DeleteAccount/DeleteAccount.css';
-import * as s from './GoalsPage.css';
+import * as accountStyles from '../account/features/DeleteAccount/DeleteAccount.css';
+import * as styles from './GoalsPage.css';
 import Hint from '../../components/Hint/Hint';
 import { Button } from '../../components/Button/Button';
 import { goalName, withBold } from './goals';
@@ -16,8 +16,8 @@ type BooksDialogProps = {
   onSaved: (count: number) => void;
 };
 
-const fold = (t: string) =>
-  t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const fold = (text: string) =>
+  text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
 // A theme goal's books: search, tick, Save. Ticks are held until Save, so Cancel leaves the goal as it was.
 const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
@@ -28,8 +28,10 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
     () =>
       new Set(
         books
-          .filter((b) => b.goals?.some((g) => g.goalId === goal.id))
-          .map((b) => b.id)
+          .filter((book) =>
+            book.goals?.some((goalLink) => goalLink.goalId === goal.id)
+          )
+          .map((book) => book.id)
       )
   );
 
@@ -42,10 +44,12 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
     document.getElementById('books-q')?.focus();
   }, []);
 
-  const q = fold(query.trim());
+  const needle = fold(query.trim());
 
   const shown = books.filter(
-    (b) => !q || fold(`${b.title} ${b.author?.name ?? ''}`).includes(q)
+    (book) =>
+      !needle ||
+      fold(`${book.title} ${book.author?.name ?? ''}`).includes(needle)
   );
 
   const toggle = (id: string) => {
@@ -71,7 +75,7 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- backdrop click; Esc closes it from the keyboard */}
       <dialog
         ref={dialog}
-        className={a.dialog}
+        className={accountStyles.dialog}
         aria-labelledby="books-dialog-title"
         onClose={onClose}
         onClick={(event) =>
@@ -79,13 +83,13 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
         }
       >
         <form onSubmit={submit} noValidate>
-          <div className={a.dialogHead}>
-            <h2 className={a.dialogTitle} id="books-dialog-title">
+          <div className={accountStyles.dialogHead}>
+            <h2 className={accountStyles.dialogTitle} id="books-dialog-title">
               {m.goals_books_title({ goal: title })}
             </h2>
             <button
               type="button"
-              className={a.close}
+              className={accountStyles.close}
               aria-label={m.common_close()}
               onClick={() => dialog.current?.close()}
             >
@@ -95,7 +99,7 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
 
           {books.length ? (
             <>
-              <p className={a.dialogText}>
+              <p className={accountStyles.dialogText}>
                 {withBold(
                   m.goals_books_chosen({
                     picked: picked.size,
@@ -104,37 +108,39 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
                   })
                 )}
               </p>
-              <div className={s.search}>
-                <label className={s.label} htmlFor="books-q">
+              <div className={styles.search}>
+                <label className={styles.label} htmlFor="books-q">
                   {m.goals_books_search()}
                 </label>
                 <MagnifyingGlassIcon aria-hidden="true" />
                 <input
                   id="books-q"
-                  className={s.input}
+                  className={styles.input}
                   type="search"
                   placeholder={m.goals_books_placeholder()}
                   autoComplete="off"
                   value={query}
-                  onChange={(e) => setQuery(e.target.value)}
+                  onChange={(changeEvent) => setQuery(changeEvent.target.value)}
                 />
               </div>
               {shown.length ? (
-                <fieldset className={s.picker}>
-                  <legend className={s.srOnly}>
+                <fieldset className={styles.picker}>
+                  <legend className={styles.srOnly}>
                     {m.goals_books_legend({ goal: title })}
                   </legend>
                   <ul>
-                    {shown.map((b) => (
-                      <li key={b.id}>
+                    {shown.map((book) => (
+                      <li key={book.id}>
                         <label>
                           <input
                             type="checkbox"
-                            checked={picked.has(b.id)}
-                            onChange={() => toggle(b.id)}
+                            checked={picked.has(book.id)}
+                            onChange={() => toggle(book.id)}
                           />
-                          <span className={s.pickTitle}>{b.title}</span>
-                          <span className={s.pickAuthor}>{b.author?.name}</span>
+                          <span className={styles.pickTitle}>{book.title}</span>
+                          <span className={styles.pickAuthor}>
+                            {book.author?.name}
+                          </span>
                         </label>
                       </li>
                     ))}
@@ -147,16 +153,18 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
               )}
             </>
           ) : (
-            <p className={a.dialogText}>{m.goals_books_log_first()}</p>
+            <p className={accountStyles.dialogText}>
+              {m.goals_books_log_first()}
+            </p>
           )}
 
           {error && (
-            <p className={s.formError} role="alert">
+            <p className={styles.formError} role="alert">
               {error}
             </p>
           )}
 
-          <div className={a.dialogActions}>
+          <div className={accountStyles.dialogActions}>
             <Button
               type="button"
               variant="text"

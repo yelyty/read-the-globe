@@ -3,7 +3,7 @@ import { CaretDownIcon } from '@phosphor-icons/react';
 import { Link, useMatchRoute } from '@tanstack/react-router';
 
 import { useSignOut } from '../../hooks/useSignOut';
-import * as s from './AccountMenu.css';
+import * as styles from './AccountMenu.css';
 import { m } from '../../paraglide/messages.js';
 import LanguagePicker from '../LanguagePicker/LanguagePicker';
 import { menuRow } from '../LanguagePicker/LanguagePicker.css';
@@ -58,7 +58,7 @@ const AccountMenu = () => {
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions -- keys and focus-out bubble up from the button and items
     <div
       ref={root}
-      className={s.menu}
+      className={styles.menu}
       onKeyDown={onKeyDown}
       onBlur={(event) => {
         if (!root.current?.contains(event.relatedTarget)) setOpen(false);
@@ -67,7 +67,7 @@ const AccountMenu = () => {
       <button
         ref={button}
         type="button"
-        className={s.button}
+        className={styles.button}
         data-current={onAccount || undefined}
         aria-haspopup="true"
         aria-expanded={open}
@@ -75,12 +75,12 @@ const AccountMenu = () => {
         onClick={() => setOpen((current) => !current)}
       >
         {m.nav_account()}{' '}
-        <CaretDownIcon className={s.caret} aria-hidden="true" />
+        <CaretDownIcon className={styles.caret} aria-hidden="true" />
       </button>
-      <ul ref={list} id="account-menu" className={s.list} hidden={!open}>
+      <ul ref={list} id="account-menu" className={styles.list} hidden={!open}>
         <li>
           <Link
-            className={s.item}
+            className={styles.item}
             to="/app/account"
             onClick={() => setOpen(false)}
           >
@@ -93,7 +93,7 @@ const AccountMenu = () => {
         <li>
           <button
             type="button"
-            className={s.item}
+            className={styles.item}
             onClick={async () => {
               setOpen(false);
               await signOut();

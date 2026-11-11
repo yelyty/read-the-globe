@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 import type { BookEntry } from '../../types';
 import { coverColor } from '../../utils/coverColors';
-import * as s from './BookRow.css';
+import * as styles from './BookRow.css';
 import { PencilSimpleIcon } from '@phosphor-icons/react';
 import { Link } from '@tanstack/react-router';
 import { readDate } from '../../utils/readDate';
@@ -18,23 +18,25 @@ type BookRowProps = { book: BookEntry; names: Record<string, string> };
 
 const BookRow = ({ book, names }: BookRowProps) => {
   const places = (book.places ?? []).filter(
-    (p) => !p.imagined && (p.name || p.countryCode)
+    (place) => !place.imagined && (place.name || place.countryCode)
   );
 
-  const worlds = (book.places ?? []).filter((p) => p.imagined && p.name);
+  const worlds = (book.places ?? []).filter(
+    (place) => place.imagined && place.name
+  );
 
   return (
-    <li className={s.row}>
-      <div className={s.rowMain}>
+    <li className={styles.row}>
+      <div className={styles.rowMain}>
         <i
-          className={s.cover}
+          className={styles.cover}
           style={{
             background: coverColor(book.title + (book.author?.name ?? '')),
           }}
           aria-hidden="true"
         />
-        <span className={s.rowTitle}>{book.title}</span>
-        <span className={s.rowAuthor}>
+        <span className={styles.rowTitle}>{book.title}</span>
+        <span className={styles.rowAuthor}>
           {book.author?.name}
           {readDate(book) && (
             <time dateTime={readDate(book).slice(0, 7)}>
@@ -43,51 +45,57 @@ const BookRow = ({ book, names }: BookRowProps) => {
           )}
         </span>
       </div>
-      <div className={s.rowMarks}>
+      <div className={styles.rowMarks}>
         {places.length ? (
-          <span className={s.mark}>
-            <i className={s.dotSet} aria-hidden="true" />
+          <span className={styles.mark}>
+            <i className={styles.dotSet} aria-hidden="true" />
             <span>
-              <span className={s.srOnly}>{m.book_set_in()} </span>
-              {places.map((p, i) => (
-                <Fragment key={p.id}>
+              <span className={styles.srOnly}>{m.book_set_in()} </span>
+              {places.map((place, i) => (
+                <Fragment key={place.id}>
                   {i > 0 && ', '}
-                  {p.name || (p.countryCode && names[p.countryCode])}
-                  {p.name && p.countryCode && names[p.countryCode] && (
-                    <em className={s.markCountry}> · {names[p.countryCode]}</em>
-                  )}
+                  {place.name ||
+                    (place.countryCode && names[place.countryCode])}
+                  {place.name &&
+                    place.countryCode &&
+                    names[place.countryCode] && (
+                      <em className={styles.markCountry}>
+                        {' '}
+                        · {names[place.countryCode]}
+                      </em>
+                    )}
                 </Fragment>
               ))}
             </span>
           </span>
         ) : (
           !worlds.length && (
-            <span className={s.markNone}>{m.book_no_places()}</span>
+            <span className={styles.markNone}>{m.book_no_places()}</span>
           )
         )}
         {worlds.length > 0 && (
-          <span className={s.mark}>
-            <i className={s.dotImagined} aria-hidden="true" />
+          <span className={styles.mark}>
+            <i className={styles.dotImagined} aria-hidden="true" />
             <span>
-              <span className={s.srOnly}>{m.book_set_in_world()} </span>
-              {worlds.map((p) => p.name).join(', ')}
-              <em className={s.markCountry}> · {m.book_imagined()}</em>
+              <span className={styles.srOnly}>{m.book_set_in_world()} </span>
+              {worlds.map((world) => world.name).join(', ')}
+              <em className={styles.markCountry}> · {m.book_imagined()}</em>
             </span>
           </span>
         )}
         {book.author?.country && (
-          <span className={s.mark}>
-            <i className={s.dotAuthor} aria-hidden="true" />
+          <span className={styles.mark}>
+            <i className={styles.dotAuthor} aria-hidden="true" />
             <span>
-              <span className={s.srOnly}>{m.book_author_from()} </span>
+              <span className={styles.srOnly}>{m.book_author_from()} </span>
               {names[book.author.country.code] ?? book.author.country.name}
             </span>
           </span>
         )}
       </div>
-      <div className={s.rowSide}>
+      <div className={styles.rowSide}>
         <Link
-          className={s.edit}
+          className={styles.edit}
           to="."
           search={(prev) => ({ ...prev, edit: book.id })}
           aria-label={m.book_edit({ title: book.title })}

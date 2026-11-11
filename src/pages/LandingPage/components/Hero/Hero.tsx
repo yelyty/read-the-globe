@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 import { PushPinIcon } from '@phosphor-icons/react';
-import * as s from './Hero.css';
+import * as styles from './Hero.css';
 import { btnPrimary } from '../LoginDialog/LoginDialog.css';
 import { m } from '../../../../paraglide/messages.js';
 
@@ -9,11 +9,11 @@ const sticker = (props: Record<string, string>) => props as CSSProperties;
 
 const Hero = ({ onSignUp }: { onSignUp: () => void }) => {
   return (
-    <section className={s.hero} id="top" aria-labelledby="hero-h">
+    <section className={styles.hero} id="top" aria-labelledby="hero-h">
       {/* the first mock's stickers, loose on the page like things on a desk */}
 
       <svg
-        className={`${s.sticker} ${s.k1}`}
+        className={`${styles.sticker} ${styles.k1}`}
         viewBox="0 0 100 100"
         aria-hidden="true"
         style={sticker({
@@ -69,7 +69,7 @@ const Hero = ({ onSignUp }: { onSignUp: () => void }) => {
         </g>
       </svg>
       <svg
-        className={`${s.sticker} ${s.k2}`}
+        className={`${styles.sticker} ${styles.k2}`}
         viewBox="0 0 100 100"
         aria-hidden="true"
         style={sticker({
@@ -123,7 +123,7 @@ const Hero = ({ onSignUp }: { onSignUp: () => void }) => {
         </g>
       </svg>
       <svg
-        className={`${s.sticker} ${s.k3}`}
+        className={`${styles.sticker} ${styles.k3}`}
         viewBox="0 0 100 100"
         aria-hidden="true"
         style={sticker({
@@ -168,7 +168,7 @@ const Hero = ({ onSignUp }: { onSignUp: () => void }) => {
         </g>
       </svg>
       <svg
-        className={`${s.sticker} ${s.k4}`}
+        className={`${styles.sticker} ${styles.k4}`}
         viewBox="0 0 100 100"
         aria-hidden="true"
         style={sticker({
@@ -212,7 +212,7 @@ const Hero = ({ onSignUp }: { onSignUp: () => void }) => {
         </g>
       </svg>
       <svg
-        className={`${s.sticker} ${s.k5}`}
+        className={`${styles.sticker} ${styles.k5}`}
         viewBox="0 0 100 100"
         aria-hidden="true"
         style={sticker({
@@ -265,7 +265,7 @@ const Hero = ({ onSignUp }: { onSignUp: () => void }) => {
         </g>
       </svg>
       <svg
-        className={`${s.sticker} ${s.k6}`}
+        className={`${styles.sticker} ${styles.k6}`}
         viewBox="0 0 100 100"
         aria-hidden="true"
         style={sticker({
@@ -302,18 +302,18 @@ const Hero = ({ onSignUp }: { onSignUp: () => void }) => {
           />
         </g>
       </svg>
-      <div className={s.heroInner}>
-        <h1 className={s.heroTitle} id="hero-h">
-          <span className={s.line1}>{m.landing_hero_line1()}</span>{' '}
-          <span className={s.line2}>{m.landing_hero_line2()}</span>
+      <div className={styles.heroInner}>
+        <h1 className={styles.heroTitle} id="hero-h">
+          <span className={styles.line1}>{m.landing_hero_line1()}</span>{' '}
+          <span className={styles.line2}>{m.landing_hero_line2()}</span>
         </h1>
-        <p className={s.heroSub}>{m.landing_hero_sub()}</p>
-        <div className={s.heroCta}>
+        <p className={styles.heroSub}>{m.landing_hero_sub()}</p>
+        <div className={styles.heroCta}>
           <button type="button" className={btnPrimary} onClick={onSignUp}>
             <PushPinIcon weight="fill" aria-hidden="true" />
             {m.landing_start()}
           </button>
-          <span className={s.note}>{m.landing_hero_note()}</span>
+          <span className={styles.note}>{m.landing_hero_note()}</span>
         </div>
       </div>
     </section>

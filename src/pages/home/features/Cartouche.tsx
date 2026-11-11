@@ -1,7 +1,7 @@
 import { useId } from 'react';
 import type { Show } from '../../../components/AtlasMap/AtlasMap.tsx';
 import type { atlasStats } from '../../../utils/atlasMarks';
-import * as s from '../HomePage.css';
+import * as styles from '../HomePage.css';
 import { m } from '../../../paraglide/messages.js';
 
 const CAPTION: Record<Show, () => string> = {
@@ -33,21 +33,25 @@ const Cartouche = ({ stats, show, worlds, tick }: CartoucheProps) => {
   const count = countByShow[show];
 
   return (
-    <div className={s.cartouche}>
-      <p className={s.cartBig}>
-        <b key={tick} className={tick ? s.ticked : undefined}>
+    <div className={styles.cartouche}>
+      <p className={styles.cartBig}>
+        <b key={tick} className={tick ? styles.ticked : undefined}>
           {count}
         </b>
-        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- focusable so keyboard users can open the tooltip */}
-        <span className={s.cartOf} tabIndex={0} aria-describedby={tooltipId}>
+        <span
+          className={styles.cartOf}
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- focusable so keyboard users can open the tooltip
+          tabIndex={0}
+          aria-describedby={tooltipId}
+        >
           / {COUNTRY_TOTAL}
-          <span className={s.cartWhy} id={tooltipId} role="tooltip">
+          <span className={styles.cartWhy} id={tooltipId} role="tooltip">
             {m.home_cart_why()}
           </span>
         </span>
       </p>
-      <p className={s.cartCap}>{CAPTION[show]()}</p>
-      <p className={s.cartMeta}>
+      <p className={styles.cartCap}>{CAPTION[show]()}</p>
+      <p className={styles.cartMeta}>
         {m.count_book({ count: stats.books })} ·{' '}
         {m.count_continent({ count: stats.continents })}
         {worlds > 0 && ` · ${m.count_imagined_world({ count: worlds })}`}

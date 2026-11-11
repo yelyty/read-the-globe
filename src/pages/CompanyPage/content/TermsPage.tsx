@@ -1,4 +1,4 @@
-import * as s from '../CompanyPage.css';
+import * as styles from '../CompanyPage.css';
 import CompanyPage from '../CompanyPage';
 
 const TermsPage = () => (
@@ -8,8 +8,8 @@ const TermsPage = () => (
     draft
   >
     <h1>Terms of use</h1>
-    <p className={s.lede}>Plain rules for a free reading atlas.</p>
-    <p className={s.meta}>
+    <p className={styles.lede}>Plain rules for a free reading atlas.</p>
+    <p className={styles.meta}>
       Last updated 22 October 2026 · draft, to be reviewed before launch
     </p>
     <h2>Using Read The Globe</h2>

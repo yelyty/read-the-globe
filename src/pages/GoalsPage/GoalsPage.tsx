@@ -30,7 +30,7 @@ import { GoalPlate, GoalShelf } from './GoalPlate';
 import GoalRow from './GoalRow';
 import GoalDialog from './GoalsDialog';
 import BooksDialog from './BooksDialog';
-import * as s from './GoalsPage.css';
+import * as styles from './GoalsPage.css';
 import PageTitle from '../../components/PageTitle/PageTitle';
 
 const app = getRouteApi('/app');
@@ -64,17 +64,17 @@ const GoalsPage = () => {
 
   const marks = atlasMarks(books);
 
-  const progress = (g: GoalDraft & { id?: number }) =>
-    goalProgress(g, marks, books, shapes ?? {});
+  const progress = (draft: GoalDraft & { id?: number }) =>
+    goalProgress(draft, marks, books, shapes ?? {});
 
   // a goal is stamped reached the first time it is seen full, and loses the stamp if a book is removed
   useEffect(() => {
     if (!shapes) return;
 
     const changes = goals
-      .map((g) => ({
-        g,
-        done: isDone(goalProgress(g, atlasMarks(books), books, shapes)),
+      .map((goal) => ({
+        g: goal,
+        done: isDone(goalProgress(goal, atlasMarks(books), books, shapes)),
       }))
       .filter(({ g, done }) => done !== !!g.reachedOn);
 
@@ -83,31 +83,36 @@ const GoalsPage = () => {
     Promise.all(
       changes.map(({ g, done }) => markReached(g.id, done ? today() : null))
     ).then((problems) => {
-      if (!problems.every((p) => !p)) return;
+      if (!problems.every((problem) => !problem)) return;
       if (!matchMedia(reducedMotion).matches)
-        setArriving((a) => [
-          ...a,
-          ...changes.filter((c) => c.done).map((c) => c.g.id),
+        setArriving((prev) => [
+          ...prev,
+          ...changes
+            .filter((change) => change.done)
+            .map((change) => change.g.id),
         ]);
       router.invalidate();
     });
   }, [goals, books, shapes, router]);
 
   useEffect(() => {
-    const g = goals.find((x) => x.name.toLowerCase() === focusName.current);
+    const focused = goals.find(
+      (goal) => goal.name.toLowerCase() === focusName.current
+    );
 
-    const h =
-      g && document.querySelector<HTMLElement>(`[data-goal="${g.id}"] h3`);
+    const heading =
+      focused &&
+      document.querySelector<HTMLElement>(`[data-goal="${focused.id}"] h3`);
 
-    if (!h) return;
+    if (!heading) return;
     focusName.current = null;
 
-    h.scrollIntoView({
+    heading.scrollIntoView({
       block: 'center',
       behavior: matchMedia(reducedMotion).matches ? 'auto' : 'smooth',
     });
 
-    h.focus({ preventScroll: true });
+    heading.focus({ preventScroll: true });
   }, [goals, shapes]);
 
   // ?add=<slug>: a Journal article's "Add this goal" lands here and adds it once, or shows it if it's already there
@@ -117,12 +122,12 @@ const GoalsPage = () => {
     if (!addSlug || added.current === addSlug) return;
     added.current = addSlug;
     navigate({ to: '/app/goals', search: {}, replace: true });
-    const c = CATALOGUE.find((x) => x.slug === addSlug);
+    const entry = CATALOGUE.find((item) => item.slug === addSlug);
 
-    if (!c) return;
-    const name = c.name.toLowerCase();
+    if (!entry) return;
+    const name = entry.name.toLowerCase();
 
-    if (goals.some((g) => g.name.toLowerCase() === name)) {
+    if (goals.some((goal) => goal.name.toLowerCase() === name)) {
       focusName.current = name;
 
       return;
@@ -130,9 +135,9 @@ const GoalsPage = () => {
 
     if (goals.length >= MAX_GOALS) return;
 
-    addGoal(c).then((problem) => {
+    addGoal(entry).then((problem) => {
       if (problem) return say(problem);
-      saved(m.goals_added({ goal: goalName(c.name) }), c.name);
+      saved(m.goals_added({ goal: goalName(entry.name) }), entry.name);
     });
   });
 
@@ -142,8 +147,8 @@ const GoalsPage = () => {
   const names: Record<string, string> = {
     ...Object.fromEntries(
       Object.entries(shapes)
-        .filter(([, f]) => f.properties?.name)
-        .map(([code, f]) => [code, f.properties!.name as string])
+        .filter(([, feature]) => feature.properties?.name)
+        .map(([code, feature]) => [code, feature.properties!.name as string])
     ),
     ...localNames,
   };
@@ -152,12 +157,12 @@ const GoalsPage = () => {
   const full = goals.length >= MAX_GOALS;
 
   const sorted = [
-    ...goals.filter((g) => !isDone(progress(g))),
-    ...goals.filter((g) => isDone(progress(g))),
+    ...goals.filter((goal) => !isDone(progress(goal))),
+    ...goals.filter((goal) => isDone(progress(goal))),
   ];
 
   const nReached =
-    goals.length - goals.filter((g) => !isDone(progress(g))).length;
+    goals.length - goals.filter((goal) => !isDone(progress(goal))).length;
 
   const add = async (draft: GoalDraft) => {
     if (full) return;
@@ -169,8 +174,8 @@ const GoalsPage = () => {
 
   const remove = async (goal: Goal) => {
     const ticked = books
-      .filter((b) => b.goals.some((g) => g.goalId === goal.id))
-      .map((b) => b.id);
+      .filter((book) => book.goals.some((link) => link.goalId === goal.id))
+      .map((book) => book.id);
 
     const at = sorted.indexOf(goal);
     const problem = await deleteGoal(goal.id);
@@ -182,7 +187,7 @@ const GoalsPage = () => {
 
     (
       left[Math.min(at, left.length - 1)] ??
-      document.querySelector<HTMLElement>(`.${s.sugg} > summary`)
+      document.querySelector<HTMLElement>(`.${styles.sugg} > summary`)
     )?.focus();
 
     status.show({
@@ -207,47 +212,61 @@ const GoalsPage = () => {
 
   // the suggestions: the ones your books already go furthest into lead as destinations (four, one row),
   // topped up with one of each kind; the rest fold under More goals
-  const have = new Set(goals.map((g) => g.name.toLowerCase()));
+  const have = new Set(goals.map((goal) => goal.name.toLowerCase()));
 
-  const left = CATALOGUE.filter((c) => !have.has(c.name.toLowerCase())).map(
-    (c, i) => {
-      const p = progress(c);
+  const left = CATALOGUE.filter(
+    (entry) => !have.has(entry.name.toLowerCase())
+  ).map((entry, i) => {
+    const prog = progress(entry);
 
-      return { c, i, p, score: c.kind === 'theme' ? -1 : p.done / p.total };
-    }
-  );
+    return {
+      c: entry,
+      i,
+      p: prog,
+      score: entry.kind === 'theme' ? -1 : prog.done / prog.total,
+    };
+  });
 
   const pick = !goals.length
     ? left
-        .filter((x) => x.score > 0 && x.score < 1)
-        .sort((a, b) => b.score - a.score || a.i - b.i)[0]
+        .filter((option) => option.score > 0 && option.score < 1)
+        .sort(
+          (first, second) => second.score - first.score || first.i - second.i
+        )[0]
     : undefined;
 
-  const offered = left.filter((x) => x !== pick);
+  const offered = left.filter((option) => option !== pick);
 
   const top = offered
-    .filter((x) => x.score > 0 && x.score < 1)
-    .sort((a, b) => b.score - a.score || a.i - b.i)
+    .filter((option) => option.score > 0 && option.score < 1)
+    .sort((first, second) => second.score - first.score || first.i - second.i)
     .slice(0, 4);
 
   for (const kind of Object.keys(KIND_GROUP) as GoalKind[]) {
-    const x = offered.find((y) => y.c.kind === kind && !top.includes(y));
+    const extra = offered.find(
+      (option) => option.c.kind === kind && !top.includes(option)
+    );
 
-    if (x && top.length < 4 && !top.some((y) => y.c.kind === kind)) top.push(x);
+    if (
+      extra &&
+      top.length < 4 &&
+      !top.some((option) => option.c.kind === kind)
+    )
+      top.push(extra);
   }
 
-  const rest = offered.filter((x) => !top.includes(x));
+  const rest = offered.filter((option) => !top.includes(option));
 
   const suggestions = (
-    <section className={s.addGoal} aria-labelledby="add-goal-title">
-      <details className={s.sugg} open={!goals.length || undefined}>
+    <section className={styles.addGoal} aria-labelledby="add-goal-title">
+      <details className={styles.sugg} open={!goals.length || undefined}>
         <summary>
-          <h2 id="add-goal-title" className={s.h2}>
+          <h2 id="add-goal-title" className={styles.h2}>
             {m.goals_aim()}
           </h2>
         </summary>
         {pick && (
-          <div className={s.pick}>
+          <div className={styles.pick}>
             <p>
               {withBold(
                 m.goals_pick({
@@ -259,7 +278,7 @@ const GoalsPage = () => {
             </p>
             <button
               type="button"
-              className={s.primary}
+              className={styles.primary}
               onClick={() => add(pick.c)}
             >
               <PlusIcon aria-hidden="true" />
@@ -267,18 +286,18 @@ const GoalsPage = () => {
             </button>
           </div>
         )}
-        {full && <p className={s.full}>{m.goals_full()}</p>}
+        {full && <p className={styles.full}>{m.goals_full()}</p>}
         {top.length > 0 && (
-          <ul className={s.dests}>
+          <ul className={styles.dests}>
             {top.map(({ c, p }) => (
               <li key={c.name}>
                 <button
                   type="button"
-                  className={s.dest}
+                  className={styles.dest}
                   disabled={full}
                   onClick={() => add(c)}
                 >
-                  <span className={s.destMap}>
+                  <span className={styles.destMap}>
                     {c.kind === 'theme' ? (
                       <GoalShelf done={0} total={c.target!} />
                     ) : (
@@ -290,15 +309,15 @@ const GoalsPage = () => {
                       />
                     )}
                   </span>
-                  <span className={s.destName}>{goalName(c.name)}</span>
-                  <span className={s.destNote}>
+                  <span className={styles.destName}>{goalName(c.name)}</span>
+                  <span className={styles.destNote}>
                     {p.done
                       ? m.goals_already({ done: p.done, total: p.total })
                       : c.kind === 'theme'
                         ? m.count_book({ count: p.total })
                         : m.count_country({ count: p.total })}
                   </span>
-                  <span className={s.destAdd}>
+                  <span className={styles.destAdd}>
                     <PlusIcon aria-hidden="true" />
                     {m.goals_add_goal()}
                   </span>
@@ -308,29 +327,30 @@ const GoalsPage = () => {
           </ul>
         )}
         {rest.length > 0 && (
-          <details className={s.more}>
+          <details className={styles.more}>
             <summary>
-              {m.goals_more()} <span className={s.moreN}>· {rest.length}</span>
+              {m.goals_more()}{' '}
+              <span className={styles.moreN}>· {rest.length}</span>
             </summary>
             {(Object.keys(KIND_GROUP) as GoalKind[]).map((kind) => {
-              const items = rest.filter((x) => x.c.kind === kind);
+              const items = rest.filter((option) => option.c.kind === kind);
 
               return items.length ? (
-                <div key={kind} className={s.group}>
+                <div key={kind} className={styles.group}>
                   <h3>{KIND_GROUP[kind]()}</h3>
-                  <ul className={s.chips}>
+                  <ul className={styles.chips}>
                     {items.map(({ c, p }) => (
                       <li key={c.name}>
                         <button
                           type="button"
-                          className={s.chip}
+                          className={styles.chip}
                           disabled={full}
                           onClick={() => add(c)}
                         >
                           <PlusIcon aria-hidden="true" />
                           {goalName(c.name)}
                           {p.done > 0 && c.kind !== 'theme' && (
-                            <span className={s.chipNote}>
+                            <span className={styles.chipNote}>
                               {m.goals_already({
                                 done: p.done,
                                 total: p.total,
@@ -349,7 +369,7 @@ const GoalsPage = () => {
       </details>
       <button
         type="button"
-        className={s.outline}
+        className={styles.outline}
         aria-haspopup="dialog"
         disabled={full}
         onClick={() => setEditing('new')}
@@ -367,29 +387,29 @@ const GoalsPage = () => {
       {suggestions}
       {goals.length ? (
         <>
-          <details className={s.yours} open>
+          <details className={styles.yours} open>
             <summary>
-              <h2 className={s.h2}>{m.goals_yours()}</h2>
-              <span className={s.sum}>
+              <h2 className={styles.h2}>{m.goals_yours()}</h2>
+              <span className={styles.sum}>
                 {m.count_goal({ count: goals.length })}
                 {nReached > 0 &&
                   ` · ${m.goals_sum_reached({ count: nReached })}`}
                 {full && ` · ${m.goals_sum_full()}`}
               </span>
             </summary>
-            <ul className={s.goalList}>
-              {sorted.map((g) => (
+            <ul className={styles.goalList}>
+              {sorted.map((goal) => (
                 <GoalRow
-                  key={g.id}
-                  goal={g}
-                  progress={progress(g)}
+                  key={goal.id}
+                  goal={goal}
+                  progress={progress(goal)}
                   marks={marks}
                   shapes={shapes}
                   name={name}
-                  onEdit={() => setEditing(g)}
-                  onRemove={() => remove(g)}
-                  onChooseBooks={() => setChoosing(g)}
-                  arriving={arriving.includes(g.id)}
+                  onEdit={() => setEditing(goal)}
+                  onRemove={() => remove(goal)}
+                  onChooseBooks={() => setChoosing(goal)}
+                  arriving={arriving.includes(goal.id)}
                 />
               ))}
             </ul>
@@ -397,10 +417,10 @@ const GoalsPage = () => {
         </>
       ) : (
         <>
-          <div className={s.empty}>
+          <div className={styles.empty}>
             {/* a pennant planted on a hilltop at the end of a dashed path, in the landing's sticker style */}
             <svg
-              className={s.sticker}
+              className={styles.sticker}
               viewBox="0 0 120 100"
               aria-hidden="true"
               focusable="false"
@@ -409,21 +429,21 @@ const GoalsPage = () => {
               strokeLinejoin="round"
             >
               <path
-                className={s.gsHill}
+                className={styles.gsHill}
                 d="M6 88 C 26 70, 44 58, 64 52 C 82 47, 100 56, 114 88 Z"
               />
               <path
-                className={s.gsPath}
+                className={styles.gsPath}
                 d="M14 86 C 30 80, 34 74, 46 70 C 58 66, 56 60, 66 56"
               />
-              <circle className={s.gsStart} cx="14" cy="86" r="3" />
-              <path className={s.gsPole} d="M66 56 V 18" />
+              <circle className={styles.gsStart} cx="14" cy="86" r="3" />
+              <path className={styles.gsPole} d="M66 56 V 18" />
               <path
-                className={s.gsCloth}
+                className={styles.gsCloth}
                 d="M66 19 H 92 L 84 28 L 92 37 H 66 Z"
               />
             </svg>
-            <h2 className={s.h2}>{m.goals_empty_title()}</h2>
+            <h2 className={styles.h2}>{m.goals_empty_title()}</h2>
             <p>
               {m.goals_empty_text()}{' '}
               {books.length
@@ -440,12 +460,12 @@ const GoalsPage = () => {
           goals={goals}
           names={names}
           onClose={() => setEditing(null)}
-          onSaved={(n) =>
+          onSaved={(savedName) =>
             saved(
               (editing === 'new' ? m.goals_added : m.goals_saved)({
-                goal: goalName(n),
+                goal: goalName(savedName),
               }),
-              n
+              savedName
             )
           }
         />
@@ -455,10 +475,10 @@ const GoalsPage = () => {
           goal={choosing}
           books={books}
           onClose={() => setChoosing(null)}
-          onSaved={(n) =>
+          onSaved={(count) =>
             saved(
               m.goals_books_counted({
-                count: n,
+                count: count,
                 goal: goalName(choosing.name),
               })
             )

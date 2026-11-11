@@ -1,5 +1,5 @@
 import { useTheme } from '../../../../hooks/useTheme';
-import * as s from './Features.css';
+import * as styles from './Features.css';
 import { m } from '../../../../paraglide/messages.js';
 
 const PANELS = [
@@ -31,9 +31,9 @@ const Features = () => {
   const night = useTheme() === 'dark' ? '-night' : '';
 
   return (
-    <section className={s.band} id="features" aria-labelledby="band-h">
+    <section className={styles.band} id="features" aria-labelledby="band-h">
       <svg
-        className={s.wave}
+        className={styles.wave}
         viewBox="0 0 1440 72"
         preserveAspectRatio="none"
         aria-hidden="true"
@@ -43,19 +43,19 @@ const Features = () => {
           fill="currentColor"
         />
       </svg>
-      <div className={s.bandIn}>
-        <h2 className={s.title} id="band-h">
+      <div className={styles.bandIn}>
+        <h2 className={styles.title} id="band-h">
           {m.landing_band_title()}
         </h2>
-        <p className={s.sub}>{m.landing_band_sub()}</p>
-        <div className={s.panels}>
+        <p className={styles.sub}>{m.landing_band_sub()}</p>
+        <div className={styles.panels}>
           {PANELS.map((panel) => (
-            <article key={panel.shot} className={s.panel[panel.tone]}>
-              <div className={s.panelText}>
+            <article key={panel.shot} className={styles.panel[panel.tone]}>
+              <div className={styles.panelText}>
                 <h3>{panel.title()}</h3>
                 <p>{panel.text()}</p>
               </div>
-              <div className={s.shot}>
+              <div className={styles.shot}>
                 <picture>
                   <source
                     srcSet={`/landing/app-${panel.shot}-phone${night}.webp`}

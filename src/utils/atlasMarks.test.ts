@@ -27,9 +27,9 @@ describe('atlasMarks', () => {
   it('marks set-in and author countries separately', () => {
     const marks = atlasMarks([book('b1', '250', ['392'])]);
 
-    expect(marks['392'].set.map((b) => b.id)).toEqual(['b1']);
+    expect(marks['392'].set.map((entry) => entry.id)).toEqual(['b1']);
     expect(marks['392'].author).toEqual([]);
-    expect(marks['250'].author.map((b) => b.id)).toEqual(['b1']);
+    expect(marks['250'].author.map((entry) => entry.id)).toEqual(['b1']);
   });
 
   it('counts a book once per country even with several places there', () => {

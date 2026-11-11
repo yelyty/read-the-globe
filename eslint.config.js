@@ -26,6 +26,11 @@ export default defineConfig([
       },
     },
     rules: {
+      // names are 2+ characters; only the loop index `i` may be shorter
+      'id-length': [
+        'error',
+        { min: 2, exceptions: ['i'], properties: 'never' },
+      ],
       '@typescript-eslint/no-floating-promises': 'off',
       // async event handlers in JSX are fine; React ignores the returned promise
       '@typescript-eslint/no-misused-promises': [

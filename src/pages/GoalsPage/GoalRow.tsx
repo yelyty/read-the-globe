@@ -22,7 +22,7 @@ import {
 } from './goals';
 import { Compass, GoalPlate, GoalShelf } from './GoalPlate';
 import { GoalRoute } from './GoalsRoute';
-import * as s from './GoalsPage.css';
+import * as styles from './GoalsPage.css';
 
 type GoalRowProps = {
   goal: Goal;
@@ -40,13 +40,13 @@ type GoalRowProps = {
 const byName = (codes: string[], name: (code: string) => string) =>
   codes
     .map(name)
-    .sort((a, b) => a.localeCompare(b, getLocale()))
+    .sort((first, second) => first.localeCompare(second, getLocale()))
     .join(', ');
 
 /* The reached stamp, inked like a real postmark: wavy cancellation lines trailing over the plate, a double ring with
    "GOAL REACHED" running round it, a little pennant over the date, and a rough edge from an SVG turbulence filter. */
 const Postmark = ({ id, date }: { id: number; date: string }) => (
-  <svg className={s.stamp} viewBox="0 0 120 80" aria-hidden="true">
+  <svg className={styles.stamp} viewBox="0 0 120 80" aria-hidden="true">
     <defs>
       <filter id={`ink-${id}`} x="-5%" y="-5%" width="110%" height="110%">
         <feTurbulence
@@ -64,21 +64,26 @@ const Postmark = ({ id, date }: { id: number; date: string }) => (
     </defs>
     <g filter={`url(#ink-${id})`}>
       <path
-        className={s.pmWave}
+        className={styles.pmWave}
         d="M2 27q6.5-5 13 0t13 0 13 0 13 0M2 35q6.5-5 13 0t13 0 13 0 13 0M2 43q6.5-5 13 0t13 0 13 0 13 0M2 51q6.5-5 13 0t13 0 13 0 13 0"
       />
-      <circle className={`${s.pmRing} ${s.pmRingOut}`} cx="84" cy="40" r="31" />
-      <circle className={s.pmRing} cx="84" cy="40" r="18.5" />
-      <text className={s.pmArc}>
+      <circle
+        className={`${styles.pmRing} ${styles.pmRingOut}`}
+        cx="84"
+        cy="40"
+        r="31"
+      />
+      <circle className={styles.pmRing} cx="84" cy="40" r="18.5" />
+      <text className={styles.pmArc}>
         <textPath href={`#arc-${id}`} textLength="146" lengthAdjust="spacing">
           {`${m.goals_postmark()} ✦ ${m.goals_postmark()} ✦`}
         </textPath>
       </text>
       <path
-        className={s.pmFlag}
+        className={styles.pmFlag}
         d="M80 26.5v11M80 27h8.5l-2.6 2.8 2.6 2.9H80"
       />
-      <text className={s.pmDate} x="84" y="49" textAnchor="middle">
+      <text className={styles.pmDate} x="84" y="49" textAnchor="middle">
         {date}
       </text>
     </g>
@@ -88,7 +93,7 @@ const Postmark = ({ id, date }: { id: number; date: string }) => (
 // One goal, as in the app mock: its plate (or shelf), name, kind, count, the road to the flag, and actions
 const GoalRow = ({
   goal,
-  progress: p,
+  progress: progress,
   marks,
   shapes,
   name,
@@ -98,10 +103,10 @@ const GoalRow = ({
   arriving,
 }: GoalRowProps) => {
   const theme = goal.kind === 'theme';
-  const done = isDone(p);
-  const over = p.done - p.total;
-  const left = p.all.filter((c) => !p.reached.includes(c));
-  const journal = CATALOGUE.find((c) => c.name === goal.name)?.journal;
+  const done = isDone(progress);
+  const over = progress.done - progress.total;
+  const left = progress.all.filter((code) => !progress.reached.includes(code));
+  const journal = CATALOGUE.find((entry) => entry.name === goal.name)?.journal;
   const title = goalName(goal.name);
 
   const meta =
@@ -113,18 +118,22 @@ const GoalRow = ({
 
   return (
     <li
-      className={[s.goal, done && s.goalDone, arriving && s.goalArriving]
+      className={[
+        styles.goal,
+        done && styles.goalDone,
+        arriving && styles.goalArriving,
+      ]
         .filter(Boolean)
         .join(' ')}
       data-goal={goal.id}
     >
-      <div className={s.goalMap}>
+      <div className={styles.goalMap}>
         {theme ? (
-          <GoalShelf done={p.done} total={p.total} />
+          <GoalShelf done={progress.done} total={progress.total} />
         ) : (
           <>
             <GoalPlate
-              codes={p.all}
+              codes={progress.all}
               marks={marks}
               shapes={shapes}
               continent={goal.continent}
@@ -136,34 +145,36 @@ const GoalRow = ({
           <Postmark id={goal.id} date={romanDate(goal.reachedOn)} />
         )}
       </div>
-      <div className={s.goalBody}>
-        <div className={s.goalHead}>
+      <div className={styles.goalBody}>
+        <div className={styles.goalHead}>
           <div>
-            <h3 className={s.goalName} tabIndex={-1}>
+            <h3 className={styles.goalName} tabIndex={-1}>
               {title}
             </h3>
-            <p className={s.goalMeta}>{meta}</p>
+            <p className={styles.goalMeta}>{meta}</p>
           </div>
-          <div className={s.goalCount}>
+          <div className={styles.goalCount}>
             <span aria-hidden="true">
-              {withBold(m.goals_of({ done: p.done, total: p.total }))}
-              {p.total > 30 && !done && (
-                <span className={s.goalPct}>
+              {withBold(
+                m.goals_of({ done: progress.done, total: progress.total })
+              )}
+              {progress.total > 30 && !done && (
+                <span className={styles.goalPct}>
                   {' '}
-                  · {Math.round((100 * p.done) / p.total)}%
+                  · {Math.round((100 * progress.done) / progress.total)}%
                 </span>
               )}
             </span>
-            <span className={s.srOnly}>
+            <span className={styles.srOnly}>
               {(theme ? m.goals_of_books : m.goals_of_countries)({
-                done: p.done,
-                count: p.total,
+                done: progress.done,
+                count: progress.total,
               })}
             </span>
             {done && (
-              <span className={s.goalReached}>
+              <span className={styles.goalReached}>
                 {goal.reachedOn ? (
-                  <span className={s.srOnly}>
+                  <span className={styles.srOnly}>
                     {m.goals_reached_on({
                       date: new Date(
                         `${goal.reachedOn}T00:00`
@@ -178,7 +189,7 @@ const GoalRow = ({
                   m.goals_reached()
                 )}
                 {over > 0 && (
-                  <span className={s.goalPast}>
+                  <span className={styles.goalPast}>
                     {m.goals_past_flag({ count: over })}
                   </span>
                 )}
@@ -186,14 +197,14 @@ const GoalRow = ({
             )}
           </div>
         </div>
-        <GoalRoute done={p.done} total={p.total} theme={theme} />
-        <div className={s.goalFoot}>
+        <GoalRoute done={progress.done} total={progress.total} theme={theme} />
+        <div className={styles.goalFoot}>
           {!theme && (
-            <details className={s.goalTodo}>
+            <details className={styles.goalTodo}>
               <summary>{m.goals_show_countries()}</summary>
-              {p.reached.length > 0 && (
+              {progress.reached.length > 0 && (
                 <p>
-                  <b>{m.goals_on_atlas()}</b> {byName(p.reached, name)}.
+                  <b>{m.goals_on_atlas()}</b> {byName(progress.reached, name)}.
                 </p>
               )}
               {left.length > 0 && (
@@ -203,11 +214,11 @@ const GoalRow = ({
               )}
             </details>
           )}
-          <div className={s.goalActions}>
+          <div className={styles.goalActions}>
             {theme && (
               <button
                 type="button"
-                className={`${s.linkBtn} ${s.chooseBtn}`}
+                className={`${styles.linkBtn} ${styles.chooseBtn}`}
                 aria-haspopup="dialog"
                 onClick={onChooseBooks}
               >
@@ -216,14 +227,14 @@ const GoalRow = ({
               </button>
             )}
             {journal && (
-              <Link className={s.linkBtn} to="/journal">
+              <Link className={styles.linkBtn} to="/journal">
                 <BooksIcon aria-hidden="true" />
                 {m.goals_reading_ideas()}
               </Link>
             )}
             {done && goal.reachedOn && (
               <Link
-                className={s.linkBtn}
+                className={styles.linkBtn}
                 to="/app/postcard"
                 search={{ goal: goal.id }}
                 aria-label={m.goals_postcard_for({ goal: title })}
@@ -234,7 +245,7 @@ const GoalRow = ({
             )}
             <button
               type="button"
-              className={s.linkBtn}
+              className={styles.linkBtn}
               aria-haspopup="dialog"
               aria-label={m.goals_edit_label({ goal: title })}
               onClick={onEdit}
@@ -244,7 +255,7 @@ const GoalRow = ({
             </button>
             <button
               type="button"
-              className={s.linkBtn}
+              className={styles.linkBtn}
               data-remove-goal
               aria-label={m.goals_remove_label({ goal: title })}
               onClick={onRemove}

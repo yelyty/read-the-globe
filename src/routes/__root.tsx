@@ -38,7 +38,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
   beforeLoad: () => {
     const prefix = window.location.pathname.split('/')[1];
 
-    if (!locales.some((l) => l === prefix)) {
+    if (!locales.some((locale) => locale === prefix)) {
       const wanted = wantedLocale();
 
       if (wanted && wanted !== baseLocale)

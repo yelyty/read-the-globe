@@ -1,5 +1,5 @@
 import { useState, type ComponentPropsWithoutRef, type ReactNode } from 'react';
-import * as s from './Field.css';
+import * as styles from './Field.css';
 import { m } from '../../paraglide/messages.js';
 
 type FieldProps = Omit<
@@ -36,7 +36,9 @@ const Field = ({
     <input
       {...inputProps}
       id={id}
-      className={password ? `${s.input} ${s.inputPassword}` : s.input}
+      className={
+        password ? `${styles.input} ${styles.inputPassword}` : styles.input
+      }
       type={password ? (visible ? 'text' : 'password') : inputProps.type}
       aria-invalid={error ? true : undefined}
       aria-describedby={describedBy}
@@ -44,18 +46,18 @@ const Field = ({
   );
 
   return (
-    <div className={s.field} data-invalid={Boolean(error)}>
-      <label htmlFor={id} className={s.fieldLabel}>
+    <div className={styles.field} data-invalid={Boolean(error)}>
+      <label htmlFor={id} className={styles.fieldLabel}>
         {label}
       </label>
       {password ? (
-        <div className={s.pwWrap}>
+        <div className={styles.pwWrap}>
           {input}
           <button
             type="button"
-            className={s.pwToggle}
+            className={styles.pwToggle}
             aria-controls={id}
-            onClick={() => setVisible((v) => !v)}
+            onClick={() => setVisible((shown) => !shown)}
           >
             {visible ? m.field_hide() : m.field_show()}
           </button>
@@ -65,7 +67,7 @@ const Field = ({
       )}
       {children}
       {error && (
-        <div id={errorId} className={s.fieldError}>
+        <div id={errorId} className={styles.fieldError}>
           {error}
         </div>
       )}

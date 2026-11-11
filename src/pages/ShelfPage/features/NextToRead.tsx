@@ -19,7 +19,7 @@ import { goalHas, goalName } from '../../GoalsPage/goals';
 import { getLocale } from '../../../paraglide/runtime.js';
 import { m } from '../../../paraglide/messages.js';
 import { useStatus } from '../../../hooks/useStatus';
-import * as s from '../ShelfPage.css';
+import * as styles from '../ShelfPage.css';
 
 type NextToReadProps = {
   items: NextRead[];
@@ -53,21 +53,24 @@ const NextToRead = ({
     loadCountries().then(setCountries);
   }, []);
 
-  const sorted = Object.entries(names).sort(([, a], [, b]) =>
-    a.localeCompare(b, getLocale())
+  const sorted = Object.entries(names).sort(([, left], [, right]) =>
+    left.localeCompare(right, getLocale())
   );
 
   const codeFor = (typed: string) =>
-    sorted.find(([, n]) => n.toLowerCase() === typed.trim().toLowerCase())?.[0];
+    sorted.find(
+      ([, countryName]) =>
+        countryName.toLowerCase() === typed.trim().toLowerCase()
+    )?.[0];
 
   const code = codeFor(country);
 
   const submit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSaid('');
-    const t = title.trim();
+    const trimmed = title.trim();
 
-    if (!t) {
+    if (!trimmed) {
       setError(m.next_err_title());
       titleRef.current?.focus();
 
@@ -83,7 +86,7 @@ const NextToRead = ({
 
     const dup = items.find(
       (it) =>
-        it.title.toLowerCase() === t.toLowerCase() &&
+        it.title.toLowerCase() === trimmed.toLowerCase() &&
         it.countryCode === (code ?? null)
     );
 
@@ -108,7 +111,7 @@ const NextToRead = ({
     setSaving(true);
 
     const saved = await addNextRead({
-      title: t,
+      title: trimmed,
       author: author.trim() || null,
       countryCode: code ?? null,
       mark: code ? mark : null,
@@ -167,74 +170,76 @@ const NextToRead = ({
 
   return (
     <div>
-      <form className={s.nextForm} onSubmit={submit} noValidate>
+      <form className={styles.nextForm} onSubmit={submit} noValidate>
         <div>
-          <label className={s.fieldLabel} htmlFor="n-title">
+          <label className={styles.fieldLabel} htmlFor="n-title">
             {m.next_label_title()}
           </label>
           <input
             ref={titleRef}
             id="n-title"
-            className={s.input}
+            className={styles.input}
             maxLength={200}
             placeholder={m.next_placeholder_title()}
             value={title}
             aria-invalid={error && !title.trim() ? true : undefined}
-            onChange={(e) => {
-              setTitle(e.target.value);
+            onChange={(changeEvent) => {
+              setTitle(changeEvent.target.value);
               setError('');
             }}
           />
         </div>
         <div>
-          <label className={s.fieldLabel} htmlFor="n-author">
+          <label className={styles.fieldLabel} htmlFor="n-author">
             {m.next_label_author()}{' '}
-            <span className={s.optional}>{m.common_optional()}</span>
+            <span className={styles.optional}>{m.common_optional()}</span>
           </label>
           <input
             id="n-author"
-            className={s.input}
+            className={styles.input}
             maxLength={120}
             placeholder={m.next_placeholder_author()}
             value={author}
-            onChange={(e) => setAuthor(e.target.value)}
+            onChange={(changeEvent) => setAuthor(changeEvent.target.value)}
           />
         </div>
         <div>
-          <label className={s.fieldLabel} htmlFor="n-country">
+          <label className={styles.fieldLabel} htmlFor="n-country">
             {m.next_label_country()}{' '}
-            <span className={s.optional}>{m.common_optional()}</span>
+            <span className={styles.optional}>{m.common_optional()}</span>
           </label>
           <input
             id="n-country"
-            className={s.input}
+            className={styles.input}
             list="n-countries"
             maxLength={60}
             placeholder={m.next_placeholder_country()}
             autoComplete="off"
             value={country}
-            onChange={(e) => {
-              setCountry(e.target.value);
+            onChange={(changeEvent) => {
+              setCountry(changeEvent.target.value);
               setError('');
             }}
           />
           <datalist id="n-countries">
-            {sorted.map(([c, n]) => (
-              <option key={c} value={n} />
+            {sorted.map(([countryCode, countryName]) => (
+              <option key={countryCode} value={countryName} />
             ))}
           </datalist>
         </div>
         {code && (
-          <div className={s.nextWide}>
-            <label className={s.fieldLabel} htmlFor="n-mark">
+          <div className={styles.nextWide}>
+            <label className={styles.fieldLabel} htmlFor="n-mark">
               {m.next_mark_label()}
             </label>
-            <span className={s.pick}>
+            <span className={styles.pick}>
               <select
                 id="n-mark"
-                className={s.select}
+                className={styles.select}
                 value={mark}
-                onChange={(e) => setMark(e.target.value as 'set' | 'author')}
+                onChange={(changeEvent) =>
+                  setMark(changeEvent.target.value as 'set' | 'author')
+                }
               >
                 <option value="author">{m.next_mark_author()}</option>
                 <option value="set">{m.next_mark_set()}</option>
@@ -244,27 +249,29 @@ const NextToRead = ({
           </div>
         )}
         {error && (
-          <p className={`${s.nextWide} ${s.error}`} role="alert">
+          <p className={`${styles.nextWide} ${styles.error}`} role="alert">
             {error}
           </p>
         )}
-        <div className={`${s.nextWide} ${s.formRow}`}>
-          <button type="submit" className={s.primary} disabled={saving}>
+        <div className={`${styles.nextWide} ${styles.formRow}`}>
+          <button type="submit" className={styles.primary} disabled={saving}>
             <BookmarkSimpleIcon aria-hidden="true" />
             {m.next_save()}
           </button>
-          <p className={s.status} role="status">
+          <p className={styles.status} role="status">
             {said}
           </p>
         </div>
       </form>
 
-      {failed && <p className={s.emptyNote}>{m.next_load_failed()}</p>}
+      {failed && <p className={styles.emptyNote}>{m.next_load_failed()}</p>}
       {items.length > 0 ? (
-        <ul className={s.nextList}>
+        <ul className={styles.nextList}>
           {items.map((it) => {
-            const c = it.countryCode && countries?.get(it.countryCode);
-            const stamp = c ? countryStamp(c) : null;
+            const countryInfo =
+              it.countryCode && countries?.get(it.countryCode);
+
+            const stamp = countryInfo ? countryStamp(countryInfo) : null;
             const place = it.countryCode ? (names[it.countryCode] ?? '') : '';
 
             return (
@@ -272,32 +279,34 @@ const NextToRead = ({
                 key={it.id}
                 id={`next-${it.id}`}
                 tabIndex={-1}
-                className={s.nextItem}
+                className={styles.nextItem}
               >
                 {/* the country it would mark, still pale: it isn't on the atlas until it's read */}
-                <span className={s.nextStamp} aria-hidden="true">
+                <span className={styles.nextStamp} aria-hidden="true">
                   {stamp ? (
                     <svg viewBox={stamp.viewBox} focusable="false">
                       <path
-                        className={s.nextShape}
+                        className={styles.nextShape}
                         d={stamp.d}
                         data-mark={it.mark}
                       />
                     </svg>
                   ) : (
-                    <BookmarkSimpleIcon className={s.nextMark} />
+                    <BookmarkSimpleIcon className={styles.nextMark} />
                   )}
                 </span>
-                <div className={s.nextBody}>
-                  <span className={s.nextTitle}>{it.title}</span>
+                <div className={styles.nextBody}>
+                  <span className={styles.nextTitle}>{it.title}</span>
                   {it.author && (
-                    <span className={s.nextAuthor}>{it.author}</span>
+                    <span className={styles.nextAuthor}>{it.author}</span>
                   )}
                   {it.countryCode && (
-                    <div className={s.nextMeta}>
+                    <div className={styles.nextMeta}>
                       <span>
                         <i
-                          className={it.mark === 'set' ? s.dotSet : s.dotAuthor}
+                          className={
+                            it.mark === 'set' ? styles.dotSet : styles.dotAuthor
+                          }
                           aria-hidden="true"
                         />
                         {it.mark === 'set'
@@ -305,24 +314,24 @@ const NextToRead = ({
                           : m.next_author_from({ country: place })}
                       </span>
                       {!marks[it.countryCode] && (
-                        <span className={s.fresh}>
+                        <span className={styles.fresh}>
                           {m.next_new_ground({ country: place })}
                         </span>
                       )}
                       {/* the goals this book would move along */}
                       {goals
-                        .filter((g) => goalHas(g, it.countryCode!))
-                        .map((g) => (
-                          <span key={g.id} className={s.nextGoal}>
-                            {goalName(g.name)}
+                        .filter((goal) => goalHas(goal, it.countryCode!))
+                        .map((goal) => (
+                          <span key={goal.id} className={styles.nextGoal}>
+                            {goalName(goal.name)}
                           </span>
                         ))}
                     </div>
                   )}
                 </div>
-                <div className={s.nextActs}>
+                <div className={styles.nextActs}>
                   <Link
-                    className={s.linkBtn}
+                    className={styles.linkBtn}
                     to="."
                     search={(prev) => ({ ...prev, log: true, next: it.id })}
                   >
@@ -331,7 +340,7 @@ const NextToRead = ({
                   </Link>
                   <button
                     type="button"
-                    className={s.linkBtn}
+                    className={styles.linkBtn}
                     aria-label={m.next_remove_label({ title: it.title })}
                     onClick={() => remove(it)}
                   >
@@ -345,10 +354,10 @@ const NextToRead = ({
         </ul>
       ) : (
         !failed && (
-          <div className={s.nextEmpty}>
+          <div className={styles.nextEmpty}>
             {/* a closed book with a ribbon marking where you'll start, its dotted road running to a pin not yet placed */}
             <svg
-              className={s.sticker}
+              className={styles.sticker}
               viewBox="0 0 120 100"
               aria-hidden="true"
               focusable="false"
@@ -357,27 +366,27 @@ const NextToRead = ({
               strokeLinejoin="round"
             >
               <path
-                className={s.nsRoad}
+                className={styles.nsRoad}
                 d="M50 74 C 64 80, 76 74, 84 64 C 90 56, 94 50, 98 44"
               />
               <rect
-                className={s.nsBook}
+                className={styles.nsBook}
                 x="14"
                 y="30"
                 width="44"
                 height="50"
                 rx="3"
               />
-              <path className={s.nsSpine} d="M22 30 V 80" />
+              <path className={styles.nsSpine} d="M22 30 V 80" />
               <path
-                className={s.nsRibbon}
+                className={styles.nsRibbon}
                 d="M44 26 V 92 L 40 88 L 36 92 V 26 Z"
               />
               <path
-                className={s.nsPin}
+                className={styles.nsPin}
                 d="M101 18c-6 0-10.5 4.6-10.5 10.4 0 7.6 10.5 17.6 10.5 17.6s10.5-10 10.5-17.6C111.5 22.6 107 18 101 18Z"
               />
-              <circle className={s.nsPinEye} cx="101" cy="28.6" r="3.4" />
+              <circle className={styles.nsPinEye} cx="101" cy="28.6" r="3.4" />
             </svg>
             <p>{m.next_empty()}</p>
           </div>

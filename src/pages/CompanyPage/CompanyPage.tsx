@@ -7,7 +7,7 @@ import LoginDialog, {
   type AuthMode,
 } from '../LandingPage/components/LoginDialog/LoginDialog';
 import { page } from '../LandingPage/LandingPage.css';
-import * as s from './CompanyPage.css';
+import * as styles from './CompanyPage.css';
 
 type CompanyPageProps = {
   title: string;
@@ -50,7 +50,7 @@ const CompanyPage = ({
       <main
         id="main"
         tabIndex={-1}
-        className={s.main}
+        className={styles.main}
         lang={translated ? undefined : 'en'}
       >
         {children}

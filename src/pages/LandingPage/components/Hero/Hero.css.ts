@@ -97,11 +97,11 @@ export const sticker = style({
 // narrow screens keep two stickers, tucked above the headline (!important beats the inline placement)
 const hide = { '@media': { [narrow]: { display: 'none' } } };
 
-const corner = (x: string) => ({
+const corner = (left: string) => ({
   '@media': {
     [narrow]: {
       vars: {
-        '--x': `${x} !important`,
+        '--x': `${left} !important`,
         '--y': '24px !important',
         '--s': '64px !important',
       },

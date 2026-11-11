@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import * as s from '../CompanyPage.css';
+import * as styles from '../CompanyPage.css';
 import CompanyPage from '../CompanyPage';
 
 const AboutPage = () => (
@@ -9,7 +9,7 @@ const AboutPage = () => (
     draft
   >
     <h1>A map for the books you’ve read</h1>
-    <p className={s.lede}>
+    <p className={styles.lede}>
       Read The Globe is a reading atlas. Every book you log marks the map twice:
       where its story is set, and where its author comes from. Over the years it
       becomes a picture of how far your reading has travelled.
@@ -33,7 +33,7 @@ const AboutPage = () => (
       ads. Your reading list is yours to export at any time, as a spreadsheet or
       a full backup.
     </p>
-    <p className={s.meta}>
+    <p className={styles.meta}>
       Questions or ideas? <Link to="/contact">Write to us</Link>.
     </p>
   </CompanyPage>

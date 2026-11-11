@@ -15,12 +15,12 @@ const COVER_COLORS = [
 ];
 
 export function coverColor(seed: string): string {
-  let h = 0;
+  let hash = 0;
 
   for (let i = 0; i < seed.length; i++) {
-    h = (h << 5) - h + seed.charCodeAt(i);
-    h |= 0;
+    hash = (hash << 5) - hash + seed.charCodeAt(i);
+    hash |= 0;
   }
 
-  return COVER_COLORS[Math.abs(h) % COVER_COLORS.length];
+  return COVER_COLORS[Math.abs(hash) % COVER_COLORS.length];
 }

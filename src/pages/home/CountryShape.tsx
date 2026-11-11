@@ -3,12 +3,12 @@ import { geoArea, geoEquirectangular, geoPath } from 'd3-geo';
 import type { Feature, Polygon } from 'geojson';
 import type { Mark } from '../../utils/atlasMarks';
 import { worldShapes } from '../../utils/worldShapes';
-import * as s from './HomePage.css';
+import * as styles from './HomePage.css';
 
-const mainPiece = (f: Feature): Feature => {
-  if (f.geometry.type !== 'MultiPolygon') return f;
+const mainPiece = (feature: Feature): Feature => {
+  if (feature.geometry.type !== 'MultiPolygon') return feature;
 
-  const pieces = f.geometry.coordinates.map(
+  const pieces = feature.geometry.coordinates.map(
     (coordinates): Feature<Polygon> => ({
       type: 'Feature',
       properties: {},
@@ -16,7 +16,9 @@ const mainPiece = (f: Feature): Feature => {
     })
   );
 
-  return pieces.reduce((a, b) => (geoArea(b) > geoArea(a) ? b : a));
+  return pieces.reduce((biggest, piece) =>
+    geoArea(piece) > geoArea(biggest) ? piece : biggest
+  );
 };
 
 type CountryShapeProps = {
@@ -53,8 +55,8 @@ const CountryShape = ({ code, mark, width, height }: CountryShapeProps) => {
   const fill = both
     ? `url(#${hatch})`
     : mark.set.length
-      ? s.shapeSet
-      : s.shapeAuthor;
+      ? styles.shapeSet
+      : styles.shapeAuthor;
 
   return (
     <svg
@@ -73,8 +75,8 @@ const CountryShape = ({ code, mark, width, height }: CountryShapeProps) => {
             height="6"
             patternTransform="rotate(45)"
           >
-            <rect width="6" height="6" className={s.shapeSet} />
-            <rect width="3" height="6" className={s.shapeAuthor} />
+            <rect width="6" height="6" className={styles.shapeSet} />
+            <rect width="3" height="6" className={styles.shapeAuthor} />
           </pattern>
         </defs>
       )}

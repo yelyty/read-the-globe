@@ -26,8 +26,8 @@ const book = (id: string, author: string, places: string[]): BookEntry => ({
   goals: [],
 });
 
-const moment = (shelf: BookEntry[], b: BookEntry) =>
-  pinMoment(b, atlasMarks(shelf), atlasMarks([...shelf, b]), names);
+const moment = (shelf: BookEntry[], pinned: BookEntry) =>
+  pinMoment(pinned, atlasMarks(shelf), atlasMarks([...shelf, pinned]), names);
 
 describe('pinMoment', () => {
   it('begins the atlas with the first book', () => {
@@ -39,25 +39,34 @@ describe('pinMoment', () => {
   });
 
   it('names a new country and the first stop on its continent', () => {
-    const m = moment([book('a', '392', ['392'])], book('b', '392', ['076']));
+    const result = moment(
+      [book('a', '392', ['392'])],
+      book('b', '392', ['076'])
+    );
 
-    expect(m.line).toBe(
+    expect(result.line).toBe(
       'Pinned b. First stop in South America. Brazil is new on your atlas.'
     );
 
-    expect(m.targets).toEqual(['076']);
+    expect(result.targets).toEqual(['076']);
   });
 
   it('says when a country gains its other mark', () => {
-    const m = moment([book('a', '250', ['392'])], book('b', '392', ['392']));
+    const result = moment(
+      [book('a', '250', ['392'])],
+      book('b', '392', ['392'])
+    );
 
-    expect(m.line).toBe('Pinned b. Japan now has an author from there.');
+    expect(result.line).toBe('Pinned b. Japan now has an author from there.');
   });
 
   it('counts a return visit', () => {
-    const m = moment([book('a', '392', ['392'])], book('b', '392', ['392']));
+    const result = moment(
+      [book('a', '392', ['392'])],
+      book('b', '392', ['392'])
+    );
 
-    expect(m).toEqual({
+    expect(result).toEqual({
       targets: ['392'],
       line: 'Pinned b. Back in Japan: the second story set there.',
       returning: true,
@@ -65,9 +74,12 @@ describe('pinMoment', () => {
   });
 
   it('counts a territory under its country', () => {
-    const m = moment([book('a', '392', ['392'])], book('b', '392', ['304']));
+    const result = moment(
+      [book('a', '392', ['392'])],
+      book('b', '392', ['304'])
+    );
 
-    expect(m.line).toBe(
+    expect(result.line).toBe(
       'Pinned b. First stop in Europe. Denmark is new on your atlas.'
     );
   });

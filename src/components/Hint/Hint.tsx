@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import * as s from './Hint.css';
+import * as styles from './Hint.css';
 
 type HintProp = {
   children: string | ReactNode;
@@ -9,7 +9,7 @@ type HintProp = {
 
 const Hint = ({ id, role, children }: HintProp) => {
   return (
-    <p className={s.hint} id={id} role={role}>
+    <p className={styles.hint} id={id} role={role}>
       {children}
     </p>
   );

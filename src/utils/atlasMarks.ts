@@ -21,8 +21,8 @@ export function atlasMarks(books: BookEntry[]): Marks {
       for (const code of withParent(authorCountry)) at(code).author.push(book);
 
     const setIn = new Set(
-      (book.places ?? []).flatMap((p) =>
-        p.countryCode ? withParent(p.countryCode) : []
+      (book.places ?? []).flatMap((place) =>
+        place.countryCode ? withParent(place.countryCode) : []
       )
     );
 
@@ -34,7 +34,7 @@ export function atlasMarks(books: BookEntry[]): Marks {
 
 // a territory's own shape is painted but not counted: its country is
 export const counted = (marks: Marks) =>
-  Object.keys(marks).filter((c) => !PARENT[c]);
+  Object.keys(marks).filter((code) => !PARENT[code]);
 
 export function atlasStats(books: BookEntry[], marks: Marks) {
   const codes = counted(marks);
@@ -42,8 +42,9 @@ export function atlasStats(books: BookEntry[], marks: Marks) {
   return {
     books: books.length,
     countries: codes.length,
-    set: codes.filter((c) => marks[c].set.length).length,
-    authors: codes.filter((c) => marks[c].author.length).length,
-    continents: new Set(codes.map((c) => CONTINENT_OF[c]).filter(Boolean)).size,
+    set: codes.filter((code) => marks[code].set.length).length,
+    authors: codes.filter((code) => marks[code].author.length).length,
+    continents: new Set(codes.map((code) => CONTINENT_OF[code]).filter(Boolean))
+      .size,
   };
 }

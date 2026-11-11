@@ -1,4 +1,4 @@
-import * as s from './LoginDialog.css';
+import * as styles from './LoginDialog.css';
 import { passwordStrength, STRENGTH_LABELS } from '../../../../auth/forms';
 
 type PasswordStrengthProps = {
@@ -12,14 +12,14 @@ const PasswordStrength = ({ id, password }: PasswordStrengthProps) => {
   const strength = passwordStrength(password);
 
   return (
-    <div className={s.strength} hidden={!password}>
-      <div className={s.strengthBar} aria-hidden="true">
+    <div className={styles.strength} hidden={!password}>
+      <div className={styles.strengthBar} aria-hidden="true">
         <div
-          className={s.strengthFill[strength]}
+          className={styles.strengthFill[strength]}
           style={{ transform: `scaleX(${Math.max(0.04, strength / 4)})` }}
         />
       </div>
-      <span id={id} className={s.strengthLabel} aria-live="polite">
+      <span id={id} className={styles.strengthLabel} aria-live="polite">
         {password ? STRENGTH_LABELS[strength]() : ''}
       </span>
     </div>

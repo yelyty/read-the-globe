@@ -5,7 +5,7 @@ import { Button } from '../../../../components/Button/Button';
 import { exportReadingList } from '../YourData/readingList';
 import { m } from '../../../../paraglide/messages.js';
 
-import * as s from './DeleteAccount.css';
+import * as styles from './DeleteAccount.css';
 
 type KeepCopyProps = {
   books: BookEntry[];
@@ -19,7 +19,7 @@ const KeepCopy = ({ books, names }: KeepCopyProps) => {
   if (!books.length) return null;
 
   return (
-    <div className={s.keepCopy}>
+    <div className={styles.keepCopy}>
       <p>{m.account_keep_copy()}</p>
       <Button
         type="button"
@@ -37,7 +37,7 @@ const KeepCopy = ({ books, names }: KeepCopyProps) => {
         <DownloadSimpleIcon aria-hidden="true" />
         {m.account_download_list()}
       </Button>
-      <span className={s.status} role="status">
+      <span className={styles.status} role="status">
         {kept}
       </span>
     </div>

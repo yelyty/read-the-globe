@@ -7,8 +7,8 @@ import { addGoal, updateGoal } from '../../api/goals/goals';
 import { MAX_GOALS, REGIONS, goalName } from './goals';
 import { getLocale } from '../../paraglide/runtime.js';
 import { m } from '../../paraglide/messages.js';
-import * as a from '../account/features/DeleteAccount/DeleteAccount.css';
-import * as s from './GoalsPage.css';
+import * as accountStyles from '../account/features/DeleteAccount/DeleteAccount.css';
+import * as styles from './GoalsPage.css';
 import Hint from '../../components/Hint/Hint';
 import { Button } from '../../components/Button/Button';
 
@@ -55,7 +55,10 @@ const GoalDialog = ({
   }, [goal]);
 
   const byName = Object.fromEntries(
-    Object.entries(names).map(([code, n]) => [n.toLowerCase(), code])
+    Object.entries(names).map(([code, countryName]) => [
+      countryName.toLowerCase(),
+      code,
+    ])
   );
 
   const addCountry = (value: string) => {
@@ -74,10 +77,10 @@ const GoalDialog = ({
     if (!trimmed) return setError(m.goals_err_name());
     if (
       goals.some(
-        (g) =>
-          g.id !== goal?.id &&
-          [g.name, goalName(g.name)].some(
-            (n) => n.toLowerCase() === trimmed.toLowerCase()
+        (existing) =>
+          existing.id !== goal?.id &&
+          [existing.name, goalName(existing.name)].some(
+            (countryName) => countryName.toLowerCase() === trimmed.toLowerCase()
           )
       )
     )
@@ -114,7 +117,7 @@ const GoalDialog = ({
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- backdrop click; Esc closes it from the keyboard */}
       <dialog
         ref={dialog}
-        className={a.dialog}
+        className={accountStyles.dialog}
         aria-labelledby="goal-dialog-title"
         onClose={onClose}
         onClick={(event) =>
@@ -122,13 +125,13 @@ const GoalDialog = ({
         }
       >
         <form onSubmit={submit} noValidate>
-          <div className={a.dialogHead}>
-            <h2 className={a.dialogTitle} id="goal-dialog-title">
+          <div className={accountStyles.dialogHead}>
+            <h2 className={accountStyles.dialogTitle} id="goal-dialog-title">
               {goal ? m.goals_dialog_edit() : m.goals_dialog_new()}
             </h2>
             <button
               type="button"
-              className={a.close}
+              className={accountStyles.close}
               aria-label={m.common_close()}
               onClick={() => dialog.current?.close()}
             >
@@ -136,16 +139,18 @@ const GoalDialog = ({
             </button>
           </div>
 
-          <div className={s.field}>
-            <label className={s.label} htmlFor="g-kind">
+          <div className={styles.field}>
+            <label className={styles.label} htmlFor="g-kind">
               {m.goals_kind_label()}
             </label>
             <select
               id="g-kind"
-              className={s.input}
+              className={styles.input}
               value={kind}
               disabled={!!goal}
-              onChange={(e) => setKind(e.target.value as GoalKind)}
+              onChange={(changeEvent) =>
+                setKind(changeEvent.target.value as GoalKind)
+              }
             >
               <option value="region">{m.goals_kind_region()}</option>
               <option value="countries">{m.goals_kind_countries()}</option>
@@ -160,26 +165,28 @@ const GoalDialog = ({
             placeholder={NAME_HINT[kind]()}
             autoComplete="off"
             value={name}
-            onChange={(e) => {
-              setName(e.target.value);
+            onChange={(changeEvent) => {
+              setName(changeEvent.target.value);
               setError(undefined);
             }}
           />
 
           {kind === 'region' && (
-            <div className={s.field}>
-              <label className={s.label} htmlFor="g-region">
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="g-region">
                 {m.goals_region()}
               </label>
               <select
                 id="g-region"
-                className={s.input}
+                className={styles.input}
                 value={continent}
-                onChange={(e) => setContinent(e.target.value as Continent)}
+                onChange={(changeEvent) =>
+                  setContinent(changeEvent.target.value as Continent)
+                }
               >
-                {REGIONS.map((c) => (
-                  <option key={c} value={c}>
-                    {continentName(c)}
+                {REGIONS.map((region) => (
+                  <option key={region} value={region}>
+                    {continentName(region)}
                   </option>
                 ))}
               </select>
@@ -187,41 +194,44 @@ const GoalDialog = ({
           )}
 
           {kind === 'countries' && (
-            <div className={s.field}>
-              <label className={s.label} htmlFor="g-country">
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="g-country">
                 {m.goals_countries()}
               </label>
               <input
                 id="g-country"
-                className={s.input}
+                className={styles.input}
                 list="g-countries"
                 placeholder={m.goals_country_placeholder()}
                 autoComplete="off"
                 aria-describedby="g-country-hint"
                 value={country}
-                onChange={(e) => {
-                  setCountry(e.target.value);
+                onChange={(changeEvent) => {
+                  setCountry(changeEvent.target.value);
                   // picking from the list fills in a whole name at once (not typed): add it straight away
-                  if ((e.nativeEvent as InputEvent).inputType !== 'insertText')
-                    addCountry(e.target.value);
+                  if (
+                    (changeEvent.nativeEvent as InputEvent).inputType !==
+                    'insertText'
+                  )
+                    addCountry(changeEvent.target.value);
                 }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
+                onKeyDown={(keyEvent) => {
+                  if (keyEvent.key === 'Enter') {
+                    keyEvent.preventDefault();
                     addCountry(country);
                   }
                 }}
               />
               <datalist id="g-countries">
                 {Object.values(names)
-                  .sort((x, y) => x.localeCompare(y, getLocale()))
-                  .map((n) => (
-                    <option key={n} value={n} />
+                  .sort((left, right) => left.localeCompare(right, getLocale()))
+                  .map((countryName) => (
+                    <option key={countryName} value={countryName} />
                   ))}
               </datalist>
               <Hint id="g-country-hint">{m.goals_country_hint()}</Hint>
               {codes.length > 0 && (
-                <ul className={s.picked}>
+                <ul className={styles.picked}>
                   {codes.map((code) => (
                     <li key={code}>
                       {names[code] ?? code}
@@ -231,7 +241,7 @@ const GoalDialog = ({
                           country: names[code] ?? code,
                         })}
                         onClick={() =>
-                          setCodes(codes.filter((c) => c !== code))
+                          setCodes(codes.filter((other) => other !== code))
                         }
                       >
                         <XIcon aria-hidden="true" />
@@ -252,17 +262,17 @@ const GoalDialog = ({
               max={200}
               inputMode="numeric"
               value={target}
-              onChange={(e) => setTarget(e.target.value)}
+              onChange={(changeEvent) => setTarget(changeEvent.target.value)}
             />
           )}
 
           {error && (
-            <p className={s.formError} role="alert">
+            <p className={styles.formError} role="alert">
               {error}
             </p>
           )}
 
-          <div className={a.dialogActions}>
+          <div className={accountStyles.dialogActions}>
             <Button
               type="button"
               variant="text"

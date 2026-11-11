@@ -28,7 +28,7 @@ import { bookYears, yearSum } from './yearSum';
 import { goalName, goalProgress } from '../GoalsPage/goals';
 import { m } from '../../paraglide/messages.js';
 import { getLocale } from '../../paraglide/runtime.js';
-import * as s from './PostCardPage.css';
+import * as styles from './PostCardPage.css';
 import PageTitle from '../../components/PageTitle/PageTitle';
 import Logo from '../../components/Logo/Logo';
 import Hint from '../../components/Hint/Hint';
@@ -50,10 +50,10 @@ const DEFAULTS: CardOptions = {
 };
 
 // the reader's saved set-up, field by field: an unknown or older value falls back to the default
-const oneOf = <T,>(values: readonly T[], v: unknown, fallback: T) =>
-  values.find((x) => x === v) ?? fallback;
+const oneOf = <T,>(values: readonly T[], value: unknown, fallback: T) =>
+  values.find((item) => item === value) ?? fallback;
 
-const keys = <T extends object>(o: T) => Object.keys(o) as (keyof T)[];
+const keys = <T extends object>(obj: T) => Object.keys(obj) as (keyof T)[];
 
 const readOptions = (saved: SavedPostcard): CardOptions => ({
   kind: oneOf(keys(KINDS), saved?.kind, DEFAULTS.kind),
@@ -69,8 +69,8 @@ const readOptions = (saved: SavedPostcard): CardOptions => ({
   year: typeof saved?.year === 'string' ? saved.year : null,
 });
 
-const countLabel = (n: number) =>
-  n ? m.postcard_top({ n }) : m.postcard_all();
+const countLabel = (count: number) =>
+  count ? m.postcard_top({ n: count }) : m.postcard_all();
 
 const COUNTS = [3, 6, 0] as const;
 
@@ -80,7 +80,7 @@ const FRAMES = {
   plain: m.postcard_frame_plain,
 } as const;
 
-const lower = (t: string) => t.toLocaleLowerCase(getLocale());
+const lower = (text: string) => text.toLocaleLowerCase(getLocale());
 
 // the logo as a picture the canvas can draw: the same SVG the header shows, given its own size
 const logoImage = (svg: SVGSVGElement) =>
@@ -136,24 +136,26 @@ const PostcardPage = () => {
   // the cards there are: the atlas, one per year with books, one per reached goal.
   // ponytail: "reached" is the date GoalsPage stamps, not a fresh count, so a card waits for a visit to Goals
   const years = bookYears(books);
-  const reached = goals.filter((g) => g.reachedOn);
-  const goal = reached.find((g) => g.id === options.goal) ?? null;
+  const reached = goals.filter((candidate) => candidate.reachedOn);
+  const goal = reached.find((item) => item.id === options.goal) ?? null;
 
   const year =
     !goal && options.year && years.includes(options.year) ? options.year : null;
 
-  const Y = useMemo(
+  const yearSummary = useMemo(
     () => (year ? yearSum(year, books, goals) : null),
     [year, books, goals]
   );
 
   const shapes = useMemo(
     () =>
-      Object.fromEntries([...(countries ?? [])].map(([k, v]) => [k, v.shape])),
+      Object.fromEntries(
+        [...(countries ?? [])].map(([code, country]) => [code, country.shape])
+      ),
     [countries]
   );
 
-  const progress = (g: Goal) => goalProgress(g, marks, books, shapes);
+  const progress = (target: Goal) => goalProgress(target, marks, books, shapes);
 
   const title = year
     ? firstName
@@ -168,7 +170,7 @@ const PostcardPage = () => {
 
   const set = (change: Partial<CardOptions>) => {
     setStatus('');
-    setOptions((o) => ({ ...o, ...change }));
+    setOptions((prev) => ({ ...prev, ...change }));
   };
 
   useEffect(() => {
@@ -189,7 +191,7 @@ const PostcardPage = () => {
 
     if (json === savedJson.current || !user) return;
 
-    const t = setTimeout(() => {
+    const timer = setTimeout(() => {
       savedJson.current = json;
 
       updateProfile(user.id, { postcard: options }).then(
@@ -197,7 +199,7 @@ const PostcardPage = () => {
       );
     }, 600);
 
-    return () => clearTimeout(t);
+    return () => clearTimeout(timer);
   }, [options, user]);
 
   useEffect(() => {
@@ -232,7 +234,7 @@ const PostcardPage = () => {
           options,
           title,
           logo,
-          year: Y,
+          year: yearSummary,
         });
     });
 
@@ -248,7 +250,7 @@ const PostcardPage = () => {
     countries,
     shapes,
     goal,
-    Y,
+    yearSummary,
     firstName,
   ]);
 
@@ -267,12 +269,12 @@ const PostcardPage = () => {
         : `read-the-globe-postcard-${new Date().toISOString().slice(0, 10)}.png`;
 
   const save = (blob: Blob) => {
-    const a = document.createElement('a');
+    const link = document.createElement('a');
 
-    a.href = URL.createObjectURL(blob);
-    a.download = fileName();
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 0);
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName();
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(link.href), 0);
   };
 
   const onSave = async () => {
@@ -309,8 +311,8 @@ const PostcardPage = () => {
           : m.postcard_share_title(),
         text: goal
           ? m.postcard_share_goal({ goal: goalName(goal.name) })
-          : Y
-            ? m.postcard_my({ what: Y.line })
+          : yearSummary
+            ? m.postcard_my({ what: yearSummary.line })
             : KINDS[options.kind].share(stats.countries),
       });
     } catch (error) {
@@ -323,11 +325,11 @@ const PostcardPage = () => {
     return (
       <>
         <PageTitle>{m.title_postcard()}</PageTitle>
-        <div className={s.empty}>
+        <div className={styles.empty}>
           <h2>{m.postcard_blank_title()}</h2>
           <p>{m.postcard_blank_text()}</p>
           <Link
-            className={s.primary}
+            className={styles.primary}
             to="."
             search={(prev) => ({ ...prev, log: true })}
           >
@@ -341,21 +343,21 @@ const PostcardPage = () => {
 
   const label = () => {
     if (goal) {
-      const p = progress(goal);
+      const goalStats = progress(goal);
 
       const of =
         goal.kind === 'theme' ? m.postcard_of_books : m.postcard_of_countries;
 
       return m.postcard_label_goal({
         goal: goalName(goal.name),
-        progress: of({ done: p.done, count: p.total }),
+        progress: of({ done: goalStats.done, count: goalStats.total }),
       });
     }
 
-    if (Y)
+    if (yearSummary)
       return m.postcard_label_year({
-        line: Y.line,
-        books: m.count_book({ count: Y.books.length }),
+        line: yearSummary.line,
+        books: m.count_book({ count: yearSummary.books.length }),
       });
 
     return m.postcard_label_atlas({
@@ -374,57 +376,62 @@ const PostcardPage = () => {
         <Logo />
       </div>
 
-      <div className={s.layout}>
-        <div className={s.stage}>
-          <div className={s.card}>
+      <div className={styles.layout}>
+        <div className={styles.stage}>
+          <div className={styles.card}>
             <canvas
               ref={canvas}
-              className={s.canvas}
+              className={styles.canvas}
               width={goal ? GOAL_W : SIZE}
               height={goal ? GOAL_H : SIZE}
               role="img"
               aria-label={label()}
             />
           </div>
-          <p className={s.foot}>
+          <p className={styles.foot}>
             {goal ? m.postcard_size_wide() : m.postcard_size_square()}
           </p>
         </div>
 
         <div>
           <section aria-labelledby="pc-setup-title">
-            <h2 className={s.h2} id="pc-setup-title">
+            <h2 className={styles.h2} id="pc-setup-title">
               {m.postcard_setup()}
             </h2>
-            <div className={s.fields}>
+            <div className={styles.fields}>
               <div>
-                <label className={s.label} htmlFor="pc-card">
+                <label className={styles.label} htmlFor="pc-card">
                   {m.nav_postcard()}
                 </label>
                 <select
                   id="pc-card"
-                  className={s.select}
+                  className={styles.select}
                   value={which}
-                  onChange={(e) => {
-                    const [card, v] = e.target.value.split(':');
+                  onChange={(changeEvent) => {
+                    const [card, value] = changeEvent.target.value.split(':');
 
                     set({
-                      goal: card === 'goal' ? Number(v) : null,
-                      year: card === 'year' ? v : null,
+                      goal: card === 'goal' ? Number(value) : null,
+                      year: card === 'year' ? value : null,
                     });
                   }}
                 >
                   <option value="atlas">
                     {m.postcard_your_reading_atlas()}
                   </option>
-                  {years.map((y) => (
-                    <option key={y} value={`year:${y}`}>
-                      {m.postcard_in_books({ year: y })}
+                  {years.map((yearOption) => (
+                    <option key={yearOption} value={`year:${yearOption}`}>
+                      {m.postcard_in_books({ year: yearOption })}
                     </option>
                   ))}
-                  {reached.map((g) => (
-                    <option key={g.id} value={`goal:${g.id}`}>
-                      {m.postcard_goal_option({ goal: goalName(g.name) })}
+                  {reached.map((reachedGoal) => (
+                    <option
+                      key={reachedGoal.id}
+                      value={`goal:${reachedGoal.id}`}
+                    >
+                      {m.postcard_goal_option({
+                        goal: goalName(reachedGoal.name),
+                      })}
                     </option>
                   ))}
                 </select>
@@ -433,11 +440,11 @@ const PostcardPage = () => {
               {/* a year card takes both kinds of country; a goal's card has none */}
               {!year && !goal && (
                 <div>
-                  <span className={s.label} id="pc-kind-label">
+                  <span className={styles.label} id="pc-kind-label">
                     {m.postcard_countries()}
                   </span>
                   <div
-                    className={s.kinds}
+                    className={styles.kinds}
                     role="group"
                     aria-labelledby="pc-kind-label"
                   >
@@ -445,14 +452,16 @@ const PostcardPage = () => {
                       <button
                         key={kind}
                         type="button"
-                        className={s.kind}
+                        className={styles.kind}
                         data-kind={kind}
                         aria-pressed={options.kind === kind}
                         onClick={() => set({ kind })}
                       >
-                        <span className={s.kindStamp} aria-hidden="true" />
-                        <b className={s.kindN}>{counts[kind]}</b>
-                        <span className={s.kindName}>{KINDS[kind].name()}</span>
+                        <span className={styles.kindStamp} aria-hidden="true" />
+                        <b className={styles.kindN}>{counts[kind]}</b>
+                        <span className={styles.kindName}>
+                          {KINDS[kind].name()}
+                        </span>
                       </button>
                     ))}
                   </div>
@@ -460,11 +469,11 @@ const PostcardPage = () => {
               )}
 
               <div>
-                <span className={s.label} id="pc-paper-label">
+                <span className={styles.label} id="pc-paper-label">
                   {m.postcard_background()}
                 </span>
                 <div
-                  className={s.papers}
+                  className={styles.papers}
                   role="group"
                   aria-labelledby="pc-paper-label"
                 >
@@ -472,12 +481,12 @@ const PostcardPage = () => {
                     <button
                       key={paper}
                       type="button"
-                      className={s.paper}
+                      className={styles.paper}
                       aria-pressed={options.paper === paper}
                       onClick={() => set({ paper })}
                     >
                       <span
-                        className={s.paperChip}
+                        className={styles.paperChip}
                         style={{ background: PAPERS[paper].fill }}
                         aria-hidden="true"
                       />
@@ -489,10 +498,10 @@ const PostcardPage = () => {
             </div>
 
             {!goal && (
-              <details className={s.options}>
-                <summary className={s.summary}>
+              <details className={styles.options}>
+                <summary className={styles.summary}>
                   {m.postcard_style()}{' '}
-                  <span className={s.summaryNote}>
+                  <span className={styles.summaryNote}>
                     {m.postcard_style_note({
                       count: countLabel(options.count),
                       frame: lower(FRAMES[options.frame]()),
@@ -501,64 +510,66 @@ const PostcardPage = () => {
                   </span>
                 </summary>
                 <div
-                  className={s.row}
+                  className={styles.row}
                   role="group"
                   aria-labelledby="pc-count-label"
                 >
-                  <span className={s.rowLabel} id="pc-count-label">
+                  <span className={styles.rowLabel} id="pc-count-label">
                     {m.postcard_stamps()}
                   </span>
-                  <div className={s.pills}>
-                    {COUNTS.map((c) => (
+                  <div className={styles.pills}>
+                    {COUNTS.map((count) => (
                       <button
-                        key={c}
+                        key={count}
                         type="button"
-                        className={s.pill}
-                        aria-pressed={options.count === c}
-                        onClick={() => set({ count: c })}
+                        className={styles.pill}
+                        aria-pressed={options.count === count}
+                        onClick={() => set({ count: count })}
                       >
-                        {countLabel(c)}
+                        {countLabel(count)}
                       </button>
                     ))}
                   </div>
                 </div>
                 <div
-                  className={s.row}
+                  className={styles.row}
                   role="group"
                   aria-labelledby="pc-frame-label"
                 >
-                  <span className={s.rowLabel} id="pc-frame-label">
+                  <span className={styles.rowLabel} id="pc-frame-label">
                     {m.postcard_frame()}
                   </span>
-                  <div className={s.pills}>
-                    {(Object.keys(FRAMES) as Options['frame'][]).map((f) => (
-                      <button
-                        key={f}
-                        type="button"
-                        className={s.pill}
-                        aria-pressed={options.frame === f}
-                        onClick={() => set({ frame: f })}
-                      >
-                        {FRAMES[f]()}
-                      </button>
-                    ))}
+                  <div className={styles.pills}>
+                    {(Object.keys(FRAMES) as Options['frame'][]).map(
+                      (frame) => (
+                        <button
+                          key={frame}
+                          type="button"
+                          className={styles.pill}
+                          aria-pressed={options.frame === frame}
+                          onClick={() => set({ frame: frame })}
+                        >
+                          {FRAMES[frame]()}
+                        </button>
+                      )
+                    )}
                   </div>
                 </div>
                 <div
-                  className={s.row}
+                  className={styles.row}
                   role="group"
                   aria-labelledby="pc-color-label"
                 >
-                  <span className={s.rowLabel} id="pc-color-label">
+                  <span className={styles.rowLabel} id="pc-color-label">
                     {m.postcard_colour()}
                   </span>
-                  <div className={s.swatches}>
+                  <div className={styles.swatches}>
                     {(Object.keys(COLORS) as (keyof typeof COLORS)[]).map(
                       (key) => (
                         <button
                           key={key}
                           type="button"
-                          className={s.swatch}
+                          className={styles.swatch}
                           style={{ background: COLORS[key].fill }}
                           aria-pressed={color === key}
                           aria-label={COLORS[key].name()}
@@ -568,7 +579,7 @@ const PostcardPage = () => {
                       )
                     )}
                   </div>
-                  <span className={s.colorName} aria-hidden="true">
+                  <span className={styles.colorName} aria-hidden="true">
                     {COLORS[color].name()}
                   </span>
                 </div>
@@ -576,11 +587,11 @@ const PostcardPage = () => {
             )}
           </section>
 
-          <section className={s.send} aria-label={m.postcard_send()}>
-            <div className={s.actions}>
+          <section className={styles.send} aria-label={m.postcard_send()}>
+            <div className={styles.actions}>
               <button
                 type="button"
-                className={s.primary}
+                className={styles.primary}
                 onClick={onSave}
                 disabled={!!busy}
                 aria-busy={busy === 'save' || undefined}
@@ -590,7 +601,7 @@ const PostcardPage = () => {
               </button>
               <button
                 type="button"
-                className={s.quiet}
+                className={styles.quiet}
                 onClick={onShare}
                 disabled={!!busy}
                 aria-busy={busy === 'share' || undefined}
@@ -599,7 +610,7 @@ const PostcardPage = () => {
                 {busy === 'share' ? m.postcard_drawing() : m.postcard_share()}
               </button>
             </div>
-            <p className={s.status} role="status">
+            <p className={styles.status} role="status">
               {status}
             </p>
           </section>

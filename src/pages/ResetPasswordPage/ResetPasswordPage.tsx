@@ -9,7 +9,7 @@ import { formError, formNotice } from '../../components/Field/Field.css';
 import { useAuth } from '../../auth/auth-context';
 import { changePassword } from '../../auth/session';
 import { newPasswordProblem } from '../../auth/forms';
-import * as s from '../CompanyPage/CompanyPage.css';
+import * as styles from '../CompanyPage/CompanyPage.css';
 import { m } from '../../paraglide/messages.js';
 
 // Where the "Forgot your password?" email lands: Supabase signs the reader in from the link, then they pick a new one.
@@ -51,7 +51,7 @@ const ResetPasswordPage = () => {
     >
       <h1>{m.reset_title()}</h1>
       {!isAuthenticated ? (
-        <p className={s.lede}>{m.reset_expired()}</p>
+        <p className={styles.lede}>{m.reset_expired()}</p>
       ) : done ? (
         <>
           <p className={formNotice} role="status">
@@ -63,7 +63,7 @@ const ResetPasswordPage = () => {
           </Link>
         </>
       ) : (
-        <form className={s.form} onSubmit={submit} noValidate>
+        <form className={styles.form} onSubmit={submit} noValidate>
           {problem && (
             <p className={formError} role="alert">
               <WarningCircleIcon aria-hidden="true" />
@@ -86,7 +86,7 @@ const ResetPasswordPage = () => {
           </Field>
           <button
             type="submit"
-            className={`${btnPrimary} ${s.send}`}
+            className={`${btnPrimary} ${styles.send}`}
             disabled={pending}
           >
             {pending ? m.auth_pending() : m.reset_save()}

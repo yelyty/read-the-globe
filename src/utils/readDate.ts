@@ -1,16 +1,16 @@
 import type { BookEntry } from '../types';
 
 // when a book was read (read_on); a book without one falls back to the day it was logged
-export const readDate = (b: BookEntry) =>
-  b.readOn ?? (b.createdAt ?? '').slice(0, 10);
+export const readDate = (book: BookEntry) =>
+  book.readOn ?? (book.createdAt ?? '').slice(0, 10);
 
 // newest read first; ties keep the order they came in
-export const byReadDate = (a: BookEntry, b: BookEntry) =>
-  readDate(b).localeCompare(readDate(a));
+export const byReadDate = (left: BookEntry, right: BookEntry) =>
+  readDate(right).localeCompare(readDate(left));
 
 // most recently logged first, whenever the books were read
-export const byLogged = (a: BookEntry, b: BookEntry) =>
-  (b.createdAt ?? '').localeCompare(a.createdAt ?? '');
+export const byLogged = (left: BookEntry, right: BookEntry) =>
+  (right.createdAt ?? '').localeCompare(left.createdAt ?? '');
 
 // the log form's month and year as a read_on date: null when untouched or unchanged (save_book keeps the date,
 // today for a new book), today when it is this month, otherwise the 1st of that month
@@ -29,5 +29,5 @@ export function readOnFor(
 }
 
 // the reader's own today, YYYY-MM-DD
-export const localToday = (d = new Date()) =>
-  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+export const localToday = (date = new Date()) =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;

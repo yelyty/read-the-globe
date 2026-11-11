@@ -13,7 +13,7 @@ import AtlasMap, {
 import { atlasMarks, atlasStats } from '../../utils/atlasMarks';
 import { worldsOf } from '../../utils/worlds';
 
-import * as s from './HomePage.css';
+import * as styles from './HomePage.css';
 import { useAuth } from '../../auth/auth-context.ts';
 import { useCountryNames } from '../../hooks/useCountryNames.ts';
 import { useLanding } from '../../hooks/useLanding.ts';
@@ -36,13 +36,13 @@ const PIN =
   '<svg viewBox="0 0 24 24"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"/><circle cx="12" cy="9" r="2.8"/></svg>';
 
 // a country too small to see fill gets a gold ring where the pin landed
-const ringAt = (b: DOMRect) => {
+const ringAt = (rect: DOMRect) => {
   const ring = document.createElement('div');
 
-  ring.className = s.landRing;
+  ring.className = styles.landRing;
   ring.setAttribute('aria-hidden', 'true');
-  ring.style.left = `${b.left + b.width / 2}px`;
-  ring.style.top = `${b.top + b.height / 2}px`;
+  ring.style.left = `${rect.left + rect.width / 2}px`;
+  ring.style.top = `${rect.top + rect.height / 2}px`;
   document.body.appendChild(ring);
 
   ring.animate(
@@ -78,10 +78,10 @@ const plateInView = (plate: Element) =>
 // the map's countries are drawn once its shapes arrive: wait for them (two seconds at most)
 const drawn = (plate: Element) =>
   new Promise<void>((done) => {
-    let n = 0;
+    let tries = 0;
 
     const look = () =>
-      plate.querySelector('[data-code]') || ++n > 120
+      plate.querySelector('[data-code]') || ++tries > 120
         ? done()
         : requestAnimationFrame(look);
 
@@ -107,7 +107,9 @@ const HomePage = () => {
 
   useEffect(() => {
     if (!full) return;
-    const close = (e: KeyboardEvent) => e.key === 'Escape' && setFull(false);
+
+    const close = (keyEvent: KeyboardEvent) =>
+      keyEvent.key === 'Escape' && setFull(false);
 
     document.addEventListener('keydown', close);
     document.documentElement.style.overflow = 'hidden';
@@ -122,10 +124,11 @@ const HomePage = () => {
   useEffect(() => {
     if (!tip) return;
 
-    const away = (e: Event) =>
-      (e instanceof KeyboardEvent
-        ? e.key === 'Escape'
-        : !(e.target as Element).closest('[data-tips]')) && setTip(null);
+    const away = (dismissEvent: Event) =>
+      (dismissEvent instanceof KeyboardEvent
+        ? dismissEvent.key === 'Escape'
+        : !(dismissEvent.target as Element).closest('[data-tips]')) &&
+      setTip(null);
 
     document.addEventListener('pointerdown', away);
     document.addEventListener('keydown', away);
@@ -139,21 +142,23 @@ const HomePage = () => {
   // the line said when the pins land stays a few seconds
   useEffect(() => {
     if (!said) return;
-    const t = setTimeout(() => setSaid(''), 6000);
+    const timer = setTimeout(() => setSaid(''), 6000);
 
-    return () => clearTimeout(t);
+    return () => clearTimeout(timer);
   }, [said]);
 
   /* A book just pinned: until its pins land, Home draws the atlas as it was (map, count, rows), and each country
      takes its mark as its pin arrives. ponytail: leaving Home mid-flight keeps the landing, so it flies again
      on the next visit; clear it on unmount if that ever matters. */
   const flying =
-    landing && books.some((b) => b.id === landing.bookId) ? landing : null;
+    landing && books.some((book) => book.id === landing.bookId)
+      ? landing
+      : null;
 
   const marks = useMemo(() => atlasMarks(books), [books]);
 
   const shown = useMemo(
-    () => (flying ? books.filter((b) => b.id !== flying.bookId) : books),
+    () => (flying ? books.filter((book) => book.id !== flying.bookId) : books),
     [books, flying]
   );
 
@@ -168,7 +173,9 @@ const HomePage = () => {
         ? {
             ...held,
             ...Object.fromEntries(
-              [...landed].filter((c) => marks[c]).map((c) => [c, marks[c]])
+              [...landed]
+                .filter((code) => marks[code])
+                .map((code) => [code, marks[code]])
             ),
           }
         : marks,
@@ -178,8 +185,8 @@ const HomePage = () => {
   const dots = useMemo(
     () =>
       shown
-        .flatMap((b) => b.places ?? [])
-        .filter((p) => p.lon != null && p.lat != null),
+        .flatMap((book) => book.places ?? [])
+        .filter((place) => place.lon != null && place.lat != null),
     [shown]
   );
 
@@ -204,7 +211,7 @@ const HomePage = () => {
       if (!live) return;
       setLanded(new Set(flying.targets));
       setLanding(null);
-      setTick((t) => t + 1);
+      setTick((prev) => prev + 1);
       setSaid(flying.line);
       // the bigger news, a beat after the pin: a goal crossed its flag with this book
       const reached = flying.reached;
@@ -231,18 +238,24 @@ const HomePage = () => {
       if (!live) return;
 
       const paths = flying.targets
-        .map((c) => box.querySelector<SVGPathElement>(`[data-code="${c}"]`))
-        .filter((p): p is SVGPathElement => !!p);
+        .map((code) =>
+          box.querySelector<SVGPathElement>(`[data-code="${code}"]`)
+        )
+        .filter((path): path is SVGPathElement => !!path);
 
       if (reduced() || !paths.length) return land();
       // phones: bring the first country into view before anything lands on it
       const scroller = paths[0].ownerSVGElement?.parentElement;
 
       if (scroller && scroller.scrollWidth > scroller.clientWidth + 1) {
-        const a = scroller.getBoundingClientRect();
-        const b = paths[0].getBoundingClientRect();
+        const scrollerRect = scroller.getBoundingClientRect();
+        const targetRect = paths[0].getBoundingClientRect();
 
-        scroller.scrollLeft += b.left + b.width / 2 - (a.left + a.width / 2);
+        scroller.scrollLeft +=
+          targetRect.left +
+          targetRect.width / 2 -
+          (scrollerRect.left + scrollerRect.width / 2);
+
         await new Promise(requestAnimationFrame);
       }
 
@@ -255,9 +268,9 @@ const HomePage = () => {
 
       const launch =
         [...document.querySelectorAll('[data-log-toggle]')].find(
-          (t) =>
-            t.getClientRects().length &&
-            getComputedStyle(t).visibility !== 'hidden'
+          (toggle) =>
+            toggle.getClientRects().length &&
+            getComputedStyle(toggle).visibility !== 'hidden'
         ) ?? document.querySelector('header');
 
       const from = launch!.getBoundingClientRect();
@@ -265,14 +278,14 @@ const HomePage = () => {
       const y0 = from.top + from.height / 2;
       let count = 0;
 
-      paths.forEach((p, n) => {
-        const b = p.getBoundingClientRect();
-        const dx = b.left + b.width / 2 - x0;
-        const dy = b.top + b.height / 2 - y0;
+      paths.forEach((path, index) => {
+        const rect = path.getBoundingClientRect();
+        const dx = rect.left + rect.width / 2 - x0;
+        const dy = rect.top + rect.height / 2 - y0;
         const lift = Math.min(160, Math.abs(dx) * 0.25 + 60);
         const pin = document.createElement('div');
 
-        pin.className = s.flyPin;
+        pin.className = styles.flyPin;
         pin.setAttribute('aria-hidden', 'true');
         pin.innerHTML = PIN;
         pin.style.left = `${x0}px`;
@@ -304,17 +317,17 @@ const HomePage = () => {
           ],
           {
             duration: 820,
-            delay: 120 + n * 110,
+            delay: 120 + index * 110,
             easing: 'cubic-bezier(.45,.05,.3,1)',
             fill: 'forwards',
           }
         ).onfinish = () => {
           pin.remove();
           if (!live) return;
-          const code = p.dataset.code!;
+          const code = path.dataset.code!;
 
-          setLanded((l) => new Set(l).add(code));
-          if (b.width < 24 && b.height < 24) ringAt(b);
+          setLanded((prev) => new Set(prev).add(code));
+          if (rect.width < 24 && rect.height < 24) ringAt(rect);
           if (++count === paths.length) setTimeout(land, 260);
         };
       });
@@ -322,7 +335,7 @@ const HomePage = () => {
 
     return () => {
       live = false;
-      pins.forEach((p) => p.remove());
+      pins.forEach((pin) => pin.remove());
     };
   }, [flying, setLanding, say, navigate]);
 
@@ -348,12 +361,18 @@ const HomePage = () => {
   };
 
   const tipAt = (code: string, el: Element, by: Tip['by']) => {
-    const r = el.getBoundingClientRect();
+    const rect = el.getBoundingClientRect();
 
-    setTip({ code, x: r.left + r.width / 2, y: r.top, bottom: r.bottom, by });
+    setTip({
+      code,
+      x: rect.left + rect.width / 2,
+      y: rect.top,
+      bottom: rect.bottom,
+      by,
+    });
   };
 
-  const imagined = worlds.filter((w) => w.books.length).length;
+  const imagined = worlds.filter((world) => world.books.length).length;
 
   // laid over the map; kept as one element so the map itself doesn't redraw while a tip follows the pointer
   const overlay = useMemo(
@@ -362,7 +381,7 @@ const HomePage = () => {
         {!blank && (
           <Cartouche stats={stats} show={show} worlds={imagined} tick={tick} />
         )}
-        <p className={s.atlasStatus} role="status" hidden={!said}>
+        <p className={styles.atlasStatus} role="status" hidden={!said}>
           {said}
         </p>
       </>
@@ -383,10 +402,10 @@ const HomePage = () => {
       <PageTitle>{title}</PageTitle>
 
       {blank && (
-        <div className={s.firstRun}>
+        <div className={styles.firstRun}>
           <p>{m.home_first_run()}</p>
           <Link
-            className={s.primary}
+            className={styles.primary}
             to="."
             search={(prev) => ({ ...prev, log: true })}
           >
@@ -399,42 +418,43 @@ const HomePage = () => {
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- mouse shortcuts; the country list and the full screen button are the keyboard way */}
       <div
         ref={plate}
-        className={s.plate}
+        className={styles.plate}
         data-full={full || undefined}
         data-tips
-        onPointerDown={(e) => {
+        onPointerDown={(pointerEvent) => {
           pointer.current =
-            e.pointerType === 'touch' || e.pointerType === 'pen'
+            pointerEvent.pointerType === 'touch' ||
+            pointerEvent.pointerType === 'pen'
               ? 'touch'
               : 'mouse';
         }}
-        onMouseMove={(e) => {
+        onMouseMove={(mouseEvent) => {
           if (pointer.current === 'touch') return;
-          const at = codeAt(e.target);
+          const at = codeAt(mouseEvent.target);
 
           setTip(
             at
               ? {
                   code: at.code,
-                  x: e.clientX,
-                  y: e.clientY,
-                  bottom: e.clientY,
+                  x: mouseEvent.clientX,
+                  y: mouseEvent.clientY,
+                  bottom: mouseEvent.clientY,
                   by: 'mouse',
                 }
               : null
           );
         }}
         onMouseLeave={() => pointer.current !== 'touch' && setTip(null)}
-        onClick={(e) => {
-          const at = codeAt(e.target);
+        onClick={(clickEvent) => {
+          const at = codeAt(clickEvent.target);
 
           if (!at) {
             setTip(null);
             // anywhere but a country opens the full screen map
             if (
               !full &&
-              (e.target as Element).closest('.rsm-svg') &&
-              !(e.target as Element).closest('[data-code]')
+              (clickEvent.target as Element).closest('.rsm-svg') &&
+              !(clickEvent.target as Element).closest('[data-code]')
             )
               setFull(true);
 
@@ -461,14 +481,14 @@ const HomePage = () => {
       >
         <button
           type="button"
-          className={s.fullBtn}
+          className={styles.fullBtn}
           aria-pressed={full}
           aria-label={
             full ? m.home_full_close_label() : m.home_full_open_label()
           }
           title={full ? m.home_full_close() : m.home_full_open()}
-          onClick={(e) => {
-            e.stopPropagation();
+          onClick={(clickEvent) => {
+            clickEvent.stopPropagation();
             setFull(!full);
           }}
         >

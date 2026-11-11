@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import * as s from './AppFooter.css';
+import * as styles from './AppFooter.css';
 import { m } from '../../paraglide/messages.js';
 
 const LINKS = [
@@ -12,20 +12,20 @@ const LINKS = [
 
 const AppFooter = () => {
   return (
-    <footer className={s.footer}>
-      <div className={s.row}>
+    <footer className={styles.footer}>
+      <div className={styles.row}>
         <p>{m.footer_copyright({ year: 2026 })}</p>
-        <nav className={s.links} aria-label={m.footer_nav()}>
+        <nav className={styles.links} aria-label={m.footer_nav()}>
           {LINKS.map((link) => (
-            <Link key={link.to} className={s.link} to={link.to}>
+            <Link key={link.to} className={styles.link} to={link.to}>
               {link.label()}
             </Link>
           ))}
         </nav>
-        <p className={s.credit}>
+        <p className={styles.credit}>
           {m.footer_map_before()}{' '}
           <a
-            className={s.link}
+            className={styles.link}
             href="https://www.naturalearthdata.com/"
             rel="noopener"
           >

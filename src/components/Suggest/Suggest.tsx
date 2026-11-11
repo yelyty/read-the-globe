@@ -8,11 +8,11 @@ import {
   type ComponentPropsWithoutRef,
   type KeyboardEvent,
 } from 'react';
-import * as s from './Suggest.css';
+import * as styles from './Suggest.css';
 
 // "hoeg" finds Høeg: accents don't block a match
-const fold = (t: string) =>
-  t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const fold = (text: string) =>
+  text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
 const MAX = 60;
 
@@ -41,63 +41,64 @@ const Suggest = ({
   const menu = useRef<HTMLUListElement>(null);
   const [open, setOpen] = useState(false);
   const [at, setAt] = useState(-1);
-  const q = fold(value).trim();
+  const needle = fold(value).trim();
 
   const hits = useMemo(
     () =>
       options
-        .filter((v) => !q || fold(v).includes(q))
+        .filter((option) => !needle || fold(option).includes(needle))
         // starts-with first
         .sort(
-          (a, b) =>
-            Number(fold(b).startsWith(q)) - Number(fold(a).startsWith(q))
+          (first, second) =>
+            Number(fold(second).startsWith(needle)) -
+            Number(fold(first).startsWith(needle))
         )
         .slice(0, MAX),
-    [options, q]
+    [options, needle]
   );
 
   // nothing to offer, or already exact: no menu
   const shown =
-    open && hits.length > 0 && !(hits.length === 1 && fold(hits[0]) === q);
+    open && hits.length > 0 && !(hits.length === 1 && fold(hits[0]) === needle);
 
   // under the field, or over it when there's more room above
   const place = () => {
-    const m = menu.current;
-    const r = field.current?.getBoundingClientRect();
+    const list = menu.current;
+    const rect = field.current?.getBoundingClientRect();
 
-    if (!m || !r) return;
-    const below = innerHeight - r.bottom - 16;
-    const up = below < 200 && r.top > below;
+    if (!list || !rect) return;
+    const below = innerHeight - rect.bottom - 16;
+    const up = below < 200 && rect.top > below;
 
-    m.style.left = `${r.left}px`;
-    m.style.width = `${r.width}px`;
-    m.style.maxHeight = `${Math.min(280, (up ? r.top : below) - 16)}px`;
-    m.style.top = up ? '' : `${r.bottom + 8}px`;
-    m.style.bottom = up ? `${innerHeight - r.top + 8}px` : '';
+    list.style.left = `${rect.left}px`;
+    list.style.width = `${rect.width}px`;
+    list.style.maxHeight = `${Math.min(280, (up ? rect.top : below) - 16)}px`;
+    list.style.top = up ? '' : `${rect.bottom + 8}px`;
+    list.style.bottom = up ? `${innerHeight - rect.top + 8}px` : '';
   };
 
   useLayoutEffect(() => {
-    const m = menu.current;
+    const list = menu.current;
 
-    if (!m) return;
+    if (!list) return;
 
     if (!shown) {
-      if (m.matches(':popover-open')) m.hidePopover();
+      if (list.matches(':popover-open')) list.hidePopover();
 
       return;
     }
 
     place();
-    if (!m.matches(':popover-open')) m.showPopover();
-    if (at > -1) m.children[at]?.scrollIntoView({ block: 'nearest' });
+    if (!list.matches(':popover-open')) list.showPopover();
+    if (at > -1) list.children[at]?.scrollIntoView({ block: 'nearest' });
   });
 
   // the dialog scrolling under it moves the menu along; a resize closes it
   useEffect(() => {
     if (!shown) return;
 
-    const onScroll = (e: Event) =>
-      !menu.current?.contains(e.target as Node) && place();
+    const onScroll = (scrollEvent: Event) =>
+      !menu.current?.contains(scrollEvent.target as Node) && place();
 
     const close = () => setOpen(false);
 
@@ -110,28 +111,35 @@ const Suggest = ({
     };
   }, [shown]);
 
-  const pick = (v: string) => {
+  const pick = (option: string) => {
     setOpen(false);
     setAt(-1);
-    onValue(v);
+    onValue(option);
   };
 
-  const keys = (e: KeyboardEvent<HTMLInputElement>) => {
-    onKeyDown?.(e);
-    const n = hits.length;
+  const keys = (keyEvent: KeyboardEvent<HTMLInputElement>) => {
+    onKeyDown?.(keyEvent);
+    const count = hits.length;
 
-    if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && n) {
-      e.preventDefault();
-      const d = e.key === 'ArrowDown' ? 1 : -1;
+    if ((keyEvent.key === 'ArrowDown' || keyEvent.key === 'ArrowUp') && count) {
+      keyEvent.preventDefault();
+      const step = keyEvent.key === 'ArrowDown' ? 1 : -1;
 
-      setAt((i) => (!shown || i < 0 ? (d > 0 ? 0 : n - 1) : (i + d + n) % n));
+      setAt((i) =>
+        !shown || i < 0
+          ? step > 0
+            ? 0
+            : count - 1
+          : (i + step + count) % count
+      );
+
       setOpen(true);
-    } else if (e.key === 'Enter' && shown && at > -1) {
-      e.preventDefault();
+    } else if (keyEvent.key === 'Enter' && shown && at > -1) {
+      keyEvent.preventDefault();
       pick(hits[at]);
-    } else if (e.key === 'Escape' && shown) {
-      e.preventDefault();
-      e.stopPropagation();
+    } else if (keyEvent.key === 'Escape' && shown) {
+      keyEvent.preventDefault();
+      keyEvent.stopPropagation();
       setOpen(false);
     }
   };
@@ -142,7 +150,7 @@ const Suggest = ({
       <input
         {...input}
         value={value}
-        onChange={(e) => onValue(e.target.value)}
+        onChange={(changeEvent) => onValue(changeEvent.target.value)}
         onKeyDown={onKeyDown}
       />
     );
@@ -158,27 +166,27 @@ const Suggest = ({
         aria-controls={id}
         aria-expanded={shown}
         aria-activedescendant={shown && at > -1 ? `${id}-${at}` : undefined}
-        onChange={(e) => {
-          onValue(e.target.value);
+        onChange={(changeEvent) => {
+          onValue(changeEvent.target.value);
           setOpen(true);
           setAt(-1);
         }}
         onKeyDown={keys}
-        onBlur={(e) => {
+        onBlur={(blurEvent) => {
           setOpen(false);
-          input.onBlur?.(e);
+          input.onBlur?.(blurEvent);
         }}
       />
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events -- the field's arrow keys and Enter pick from the keyboard */}
       <ul
         ref={menu}
         id={id}
-        className={s.menu}
+        className={styles.menu}
         role="listbox"
         popover="manual"
-        onMouseDown={(e) => e.preventDefault()} // keep focus in the field
-        onClick={(e) => {
-          const li = (e.target as Element).closest<HTMLElement>(
+        onMouseDown={(mouseEvent) => mouseEvent.preventDefault()} // keep focus in the field
+        onClick={(clickEvent) => {
+          const li = (clickEvent.target as Element).closest<HTMLElement>(
             '[role="option"]'
           );
 
@@ -186,16 +194,16 @@ const Suggest = ({
         }}
       >
         {shown &&
-          hits.map((v, i) => (
+          hits.map((option, i) => (
             <li
-              key={v}
+              key={option}
               id={`${id}-${i}`}
               data-i={i}
-              className={s.option}
+              className={styles.option}
               role="option"
               aria-selected={i === at}
             >
-              {v}
+              {option}
             </li>
           ))}
       </ul>

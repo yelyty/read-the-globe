@@ -7,7 +7,7 @@ import Field from '../../../../components/Field/Field';
 import Hint from '../../../../components/Hint/Hint';
 import { Button } from '../../../../components/Button/Button';
 
-import * as s from '../../AccountPage.css';
+import * as styles from '../../AccountPage.css';
 import { validate, type Errors } from './validate';
 import { m } from '../../../../paraglide/messages.js';
 
@@ -59,7 +59,7 @@ const ChangePassword = ({ email }: { email: string }) => {
 
   return (
     <Block title={m.account_password_title()}>
-      <form className={s.form} onSubmit={submit} noValidate>
+      <form className={styles.form} onSubmit={submit} noValidate>
         <input
           type="text"
           name="username"
@@ -90,12 +90,12 @@ const ChangePassword = ({ email }: { email: string }) => {
           error={errors.second}
           onChange={onRepeatNewPasswordChange}
         />
-        <div className={s.row}>
+        <div className={styles.row}>
           <Button type="submit" disabled={saving}>
             <LockKeyIcon aria-hidden="true" />
             {m.account_password_title()}
           </Button>
-          <p className={s.status} role="status">
+          <p className={styles.status} role="status">
             {status}
           </p>
         </div>

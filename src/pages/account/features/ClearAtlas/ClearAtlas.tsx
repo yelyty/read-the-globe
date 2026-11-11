@@ -16,7 +16,7 @@ import { useStatus } from '../../../../hooks/useStatus';
 import { Button } from '../../../../components/Button/Button';
 import { atlasWords } from '../YourData/readingList';
 import KeepCopy from '../DeleteAccount/KeepCopy';
-import * as s from '../DeleteAccount/DeleteAccount.css';
+import * as styles from '../DeleteAccount/DeleteAccount.css';
 import { m } from '../../../../paraglide/messages.js';
 
 type ClearAtlasProps = {
@@ -71,7 +71,10 @@ const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
         run: async () => {
           // anything logged since the clear stays, beside the atlas as it was
           const since = await getBackup(userId).catch(() => null);
-          const taken = new Set(was.goals.map((g) => g.name.toLowerCase()));
+
+          const taken = new Set(
+            was.goals.map((goal) => goal.name.toLowerCase())
+          );
 
           const problem = since
             ? await restoreBackup({
@@ -80,7 +83,7 @@ const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
                 goals: [
                   ...was.goals,
                   ...since.goals.filter(
-                    (g) => !taken.has(g.name.toLowerCase())
+                    (goal) => !taken.has(goal.name.toLowerCase())
                   ),
                 ],
                 nextReads: [
@@ -100,9 +103,9 @@ const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
   };
 
   return (
-    <div className={s.dangerItem}>
-      <h3 className={s.itemTitle}>{m.account_clear()}</h3>
-      <p className={s.itemText} id="ac-clear-desc">
+    <div className={styles.dangerItem}>
+      <h3 className={styles.itemTitle}>{m.account_clear()}</h3>
+      <p className={styles.itemText} id="ac-clear-desc">
         {blank ? m.account_clear_blank() : m.account_clear_text()}
       </p>
       <Button
@@ -120,32 +123,32 @@ const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- backdrop click; Esc closes it from the keyboard */}
       <dialog
         ref={dialog}
-        className={s.dialog}
+        className={styles.dialog}
         aria-labelledby="ac-clear-title"
         aria-describedby="ac-clear-q"
-        onClose={() => setRound((r) => r + 1)}
+        onClose={() => setRound((current) => current + 1)}
         onClick={(event) => {
           if (event.target === event.currentTarget) close();
         }}
       >
-        <div className={s.dialogHead}>
-          <h2 className={s.dialogTitle} id="ac-clear-title">
+        <div className={styles.dialogHead}>
+          <h2 className={styles.dialogTitle} id="ac-clear-title">
             {m.account_clear_question()}
           </h2>
           <button
             type="button"
-            className={s.close}
+            className={styles.close}
             aria-label={m.common_close()}
             onClick={close}
           >
             <XIcon aria-hidden="true" />
           </button>
         </div>
-        <p className={s.dialogText} id="ac-clear-q">
+        <p className={styles.dialogText} id="ac-clear-q">
           {m.account_clear_dialog({ what: lost })}
         </p>
         <KeepCopy key={round} books={books} names={names} />
-        <div className={s.dialogActions}>
+        <div className={styles.dialogActions}>
           <Button
             id="ac-clear-keep"
             type="button"

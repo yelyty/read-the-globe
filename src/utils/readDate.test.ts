@@ -22,15 +22,13 @@ describe('read date', () => {
   const legacy = book('legacy', null, '2026-01-05T10:00:00Z'); // no read_on yet: its logged day stands in
 
   it('sorts newest read first, falling back to the logged day', () => {
-    expect([old, mid, legacy].sort(byReadDate).map((b) => b.id)).toEqual([
-      'legacy',
-      'mid',
-      'old',
-    ]);
+    expect(
+      [old, mid, legacy].sort(byReadDate).map((entry) => entry.id)
+    ).toEqual(['legacy', 'mid', 'old']);
   });
 
   it('sorts most recently logged first', () => {
-    expect([mid, legacy, old].sort(byLogged).map((b) => b.id)).toEqual([
+    expect([mid, legacy, old].sort(byLogged).map((entry) => entry.id)).toEqual([
       'old',
       'legacy',
       'mid',

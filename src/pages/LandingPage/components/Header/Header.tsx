@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { ListIcon, PushPinIcon } from '@phosphor-icons/react';
-import * as s from './Header.css';
+import * as styles from './Header.css';
 import { skip } from '../../LandingPage.css';
 import { useAuth } from '../../../../auth/auth-context';
 import { SECTIONS } from '../../sections';
@@ -23,7 +23,10 @@ const useCurrentSection = () => {
 
     const io = new IntersectionObserver(
       (entries) => {
-        entries.forEach((e) => seen.set(e.target, e.isIntersecting));
+        entries.forEach((entry) =>
+          seen.set(entry.target, entry.isIntersecting)
+        );
+
         setCurrent(sections.filter((el) => seen.get(el)).pop()?.id ?? null);
       },
       { rootMargin: '-45% 0px -50% 0px' }
@@ -91,18 +94,18 @@ const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
       <a className={skip} href="#main">
         {m.landing_skip()}
       </a>
-      <header className={s.header}>
-        <div className={s.topRow}>
-          <a href="/#top" className={s.brand} aria-label={m.brand_home()}>
-            <Logo className={s.logo} />
-            <span className={s.brandWord}>Read The Globe</span>
+      <header className={styles.header}>
+        <div className={styles.topRow}>
+          <a href="/#top" className={styles.brand} aria-label={m.brand_home()}>
+            <Logo className={styles.logo} />
+            <span className={styles.brandWord}>Read The Globe</span>
           </a>
 
-          <nav className={s.track} aria-label={m.landing_sections()}>
+          <nav className={styles.track} aria-label={m.landing_sections()}>
             {SECTIONS.map((section) => (
               <a
                 key={section.hash}
-                className={s.trackLink}
+                className={styles.trackLink}
                 href={`/#${section.hash}`}
                 aria-current={current === section.hash ? 'true' : undefined}
               >
@@ -110,19 +113,19 @@ const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
               </a>
             ))}
           </nav>
-          <div className={s.tools}>
+          <div className={styles.tools}>
             <ThemeButton />
           </div>
           {isAuthenticated ? (
-            <Link to="/app" className={s.login}>
+            <Link to="/app" className={styles.login}>
               {m.landing_your_atlas()}
             </Link>
           ) : (
-            <button type="button" className={s.login} onClick={onLogIn}>
+            <button type="button" className={styles.login} onClick={onLogIn}>
               {m.landing_log_in()}
             </button>
           )}
-          <button type="button" className={s.start} onClick={onSignUp}>
+          <button type="button" className={styles.start} onClick={onSignUp}>
             <PushPinIcon weight="fill" aria-hidden="true" />
             <span>{m.landing_start()}</span>
           </button>
@@ -130,7 +133,7 @@ const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
           <button
             ref={menuBtnRef}
             type="button"
-            className={s.menuBtn}
+            className={styles.menuBtn}
             aria-expanded={menuOpen}
             aria-controls="header-menu"
             aria-label={m.landing_menu()}
@@ -141,14 +144,14 @@ const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
           <nav
             ref={menuRef}
             id="header-menu"
-            className={s.menu}
+            className={styles.menu}
             aria-label={m.landing_menu()}
             hidden={!menuOpen}
           >
             {SECTIONS.map((section) => (
               <a
                 key={section.hash}
-                className={s.menuItem}
+                className={styles.menuItem}
                 href={`/#${section.hash}`}
                 onClick={() => setMenuOpen(false)}
               >
@@ -156,13 +159,16 @@ const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
               </a>
             ))}
             {isAuthenticated ? (
-              <Link to="/app" className={`${s.menuItem} ${s.menuLogin}`}>
+              <Link
+                to="/app"
+                className={`${styles.menuItem} ${styles.menuLogin}`}
+              >
                 {m.landing_your_atlas()}
               </Link>
             ) : (
               <button
                 type="button"
-                className={`${s.menuItem} ${s.menuLogin}`}
+                className={`${styles.menuItem} ${styles.menuLogin}`}
                 onClick={() => {
                   setMenuOpen(false);
                   onLogIn();

@@ -1,4 +1,4 @@
-import * as s from './LandingPage.css';
+import * as styles from './LandingPage.css';
 import Hero from './components/Hero/Hero';
 import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../../auth/auth-context';
@@ -29,9 +29,9 @@ const LandingPage = () => {
   }, [isAuthenticated, navigate]);
 
   return (
-    <div className={s.page}>
+    <div className={styles.page}>
       <Header onLogIn={openLogIn} onSignUp={openSignUp} />
-      <main id="main" tabIndex={-1} className={s.main}>
+      <main id="main" tabIndex={-1} className={styles.main}>
         <Hero onSignUp={openSignUp} />
         <LiveAtlas />
         <Features />

@@ -87,7 +87,9 @@ describe('worldsOf', () => {
       { id: 'x', name: 'EARTHSEA' },
     ]);
 
-    expect(rows.map((r) => [r.name, r.books.length, r.saved?.id])).toEqual([
+    expect(
+      rows.map((row) => [row.name, row.books.length, row.saved?.id])
+    ).toEqual([
       ['Earthsea', 2, 'x'],
       ['Narnia', 0, 'w'],
     ]);

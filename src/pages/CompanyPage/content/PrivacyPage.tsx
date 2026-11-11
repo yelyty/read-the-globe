@@ -1,4 +1,4 @@
-import * as s from '../CompanyPage.css';
+import * as styles from '../CompanyPage.css';
 import CompanyPage from '../CompanyPage';
 
 const PrivacyPage = () => (
@@ -8,11 +8,11 @@ const PrivacyPage = () => (
     draft
   >
     <h1>Privacy</h1>
-    <p className={s.lede}>
+    <p className={styles.lede}>
       The short version: we keep what the atlas needs to work, nothing more, and
       you can take it all with you or delete it whenever you like.
     </p>
-    <p className={s.meta}>
+    <p className={styles.meta}>
       Last updated 22 October 2026 · draft, to be reviewed before launch
     </p>
     <h2>What we keep</h2>

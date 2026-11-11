@@ -20,12 +20,12 @@ const ORD = [
   'tenth',
 ];
 
-const ord = (n: number) =>
-  ORD[n] ??
-  `${n}${n % 100 > 10 && n % 100 < 14 ? 'th' : (['th', 'st', 'nd', 'rd'][n % 10] ?? 'th')}`;
+const ord = (num: number) =>
+  ORD[num] ??
+  `${num}${num % 100 > 10 && num % 100 < 14 ? 'th' : (['th', 'st', 'nd', 'rd'][num % 10] ?? 'th')}`;
 
-const list = (a: string[]) =>
-  new Intl.ListFormat(getLocale(), { type: 'conjunction' }).format(a);
+const list = (items: string[]) =>
+  new Intl.ListFormat(getLocale(), { type: 'conjunction' }).format(items);
 
 export type PinMoment = {
   /** the countries the pin flies to: the ones this book adds or gives a new mark, else where it went back to */
@@ -44,18 +44,22 @@ export function pinMoment(
   after: Marks,
   names: Record<string, string>
 ): PinMoment {
-  const name = (c: string) => names[c] ?? c;
+  const name = (code: string) => names[code] ?? code;
   const was = new Set(counted(before));
-  const fresh = counted(after).filter((c) => !was.has(c));
-  const had = (c: string, kind: 'set' | 'author') => !!before[c]?.[kind].length;
+  const fresh = counted(after).filter((code) => !was.has(code));
+
+  const had = (code: string, kind: 'set' | 'author') =>
+    !!before[code]?.[kind].length;
+
   // a territory speaks for its country
-  const country = (c?: string | null) => (c ? (PARENT[c] ?? c) : undefined);
+  const country = (code?: string | null) =>
+    code ? (PARENT[code] ?? code) : undefined;
 
   const placeCodes = [
     ...new Set(
       book.places
-        .map((p) => country(p.countryCode))
-        .filter((c): c is string => !!c)
+        .map((place) => country(place.countryCode))
+        .filter((code): code is string => !!code)
     ),
   ];
 
@@ -63,10 +67,12 @@ export function pinMoment(
 
   // a country already on the atlas can still gain its other mark
   const gainedCodes = placeCodes.filter(
-    (c) => !fresh.includes(c) && !had(c, 'set')
+    (code) => !fresh.includes(code) && !had(code, 'set')
   );
 
-  const gained = gainedCodes.map((c) => m.pin_gained_set({ country: name(c) }));
+  const gained = gainedCodes.map((code) =>
+    m.pin_gained_set({ country: name(code) })
+  );
 
   if (authorCode && !fresh.includes(authorCode) && !had(authorCode, 'author')) {
     gained.push(m.pin_gained_author({ country: name(authorCode) }));
@@ -104,12 +110,12 @@ export function pinMoment(
 
   // the first country on a continent is a stop worth naming
   const conts = [
-    ...new Set(fresh.map((c) => CONTINENT_OF[c]).filter(Boolean)),
-  ].filter((cont) => [...was].every((c) => CONTINENT_OF[c] !== cont));
+    ...new Set(fresh.map((code) => CONTINENT_OF[code]).filter(Boolean)),
+  ].filter((cont) => [...was].every((code) => CONTINENT_OF[code] !== cont));
 
   const stop =
     !first && conts.length
-      ? `${(conts.length === 1 ? m.pin_first_stop : m.pin_first_stops)({ continents: list(conts.map((c) => continentName(c))) })} `
+      ? `${(conts.length === 1 ? m.pin_first_stop : m.pin_first_stops)({ continents: list(conts.map((cont) => continentName(cont))) })} `
       : '';
 
   const moved = [...fresh, ...gainedCodes];
@@ -117,7 +123,7 @@ export function pinMoment(
   return {
     targets: (moved.length
       ? [...new Set(moved)]
-      : [back ?? authorCode].filter((c): c is string => !!c)
+      : [back ?? authorCode].filter((code): code is string => !!code)
     ).slice(0, 5),
     line: first
       ? m.pin_begun({ where })

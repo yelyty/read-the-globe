@@ -13,9 +13,9 @@ import { useStatus } from '../../hooks/useStatus';
 import { coverColor } from '../../utils/coverColors';
 import { byReadDate, readDate } from '../../utils/readDate';
 import { sameWorld, type WorldRow } from '../../utils/worlds';
-import * as a from '../account/features/DeleteAccount/DeleteAccount.css';
+import * as accountStyles from '../account/features/DeleteAccount/DeleteAccount.css';
 import { Button } from '../../components/Button/Button';
-import * as s from './HomePage.css';
+import * as styles from './HomePage.css';
 import { m } from '../../paraglide/messages.js';
 import { getLocale } from '../../paraglide/runtime.js';
 
@@ -46,14 +46,14 @@ const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
   const [name, setName] = useState('');
   const [shown, setShown] = useState<WorldRow | null>(null);
   const input = useRef<HTMLInputElement>(null);
-  const books = worlds.reduce((n, w) => n + w.books.length, 0);
+  const books = worlds.reduce((total, world) => total + world.books.length, 0);
 
   const add = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     const typed = name.trim().replace(/\s+/g, ' ');
 
     if (!typed) return input.current?.focus();
-    const had = worlds.find((w) => sameWorld(w.name, typed));
+    const had = worlds.find((world) => sameWorld(world.name, typed));
 
     if (had) {
       status.show({ text: m.world_already({ name: had.name }) });
@@ -94,10 +94,10 @@ const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
   return (
     <>
       <details
-        className={s.beyond}
+        className={styles.beyond}
         open={open}
-        onToggle={(e) => {
-          const now = e.currentTarget.open;
+        onToggle={(toggleEvent) => {
+          const now = toggleEvent.currentTarget.open;
 
           setOpen(now);
 
@@ -108,45 +108,45 @@ const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
           }
         }}
       >
-        <summary className={s.beyondLabel}>
+        <summary className={styles.beyondLabel}>
           {m.world_beyond()}{' '}
           {worlds.length > 0 && (
-            <span className={s.beyondSum}>
+            <span className={styles.beyondSum}>
               · {m.count_world({ count: worlds.length })}
               {books > 0 && `, ${m.count_book({ count: books })}`}
             </span>
           )}
         </summary>
-        <div className={s.beyondBody}>
+        <div className={styles.beyondBody}>
           {worlds.length > 0 && (
-            <ul className={s.beyondList}>
-              {worlds.map((w) => (
-                <li key={w.name} className={s.worldRow}>
+            <ul className={styles.beyondList}>
+              {worlds.map((world) => (
+                <li key={world.name} className={styles.worldRow}>
                   <button
                     type="button"
-                    className={s.worldOpen}
+                    className={styles.worldOpen}
                     aria-haspopup="dialog"
-                    onClick={() => setShown(w)}
+                    onClick={() => setShown(world)}
                   >
-                    <i className={s.dotImagined} aria-hidden="true" />
+                    <i className={styles.dotImagined} aria-hidden="true" />
                     <span
-                      className={s.worldName}
-                      data-saved={!w.books.length || undefined}
+                      className={styles.worldName}
+                      data-saved={!world.books.length || undefined}
                     >
-                      {w.name}
+                      {world.name}
                     </span>
-                    <span className={s.beyondN}>
-                      {w.books.length
-                        ? m.count_book({ count: w.books.length })
+                    <span className={styles.beyondN}>
+                      {world.books.length
+                        ? m.count_book({ count: world.books.length })
                         : m.world_no_books_short()}
                     </span>
                   </button>
-                  {!w.books.length && w.saved && (
+                  {!world.books.length && world.saved && (
                     <button
                       type="button"
-                      className={s.beyondRm}
-                      aria-label={m.world_remove({ name: w.name })}
-                      onClick={() => remove(w.saved!)}
+                      className={styles.beyondRm}
+                      aria-label={m.world_remove({ name: world.name })}
+                      onClick={() => remove(world.saved!)}
                     >
                       <XIcon aria-hidden="true" />
                     </button>
@@ -155,8 +155,8 @@ const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
               ))}
             </ul>
           )}
-          <form className={s.beyondAdd} onSubmit={add} noValidate>
-            <label className={s.srOnly} htmlFor="w-name">
+          <form className={styles.beyondAdd} onSubmit={add} noValidate>
+            <label className={styles.srOnly} htmlFor="w-name">
               {m.world_to_save()}
             </label>
             <input
@@ -166,9 +166,9 @@ const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
               placeholder={m.world_placeholder()}
               autoComplete="off"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(changeEvent) => setName(changeEvent.target.value)}
             />
-            <button type="submit" className={s.beyondBtn}>
+            <button type="submit" className={styles.beyondBtn}>
               <PlusIcon aria-hidden="true" />
               {m.world_add()}
             </button>
@@ -201,17 +201,20 @@ const WorldDialog = ({
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- backdrop click; Esc closes it from the keyboard
     <dialog
       ref={dialog}
-      className={a.dialog}
+      className={accountStyles.dialog}
       aria-labelledby="world-title"
       onClose={onClose}
-      onClick={(e) => e.target === e.currentTarget && dialog.current?.close()}
+      onClick={(clickEvent) =>
+        clickEvent.target === clickEvent.currentTarget &&
+        dialog.current?.close()
+      }
     >
-      <div className={a.dialogHead}>
+      <div className={accountStyles.dialogHead}>
         <div>
-          <h2 className={a.dialogTitle} id="world-title">
+          <h2 className={accountStyles.dialogTitle} id="world-title">
             {world.name}
           </h2>
-          <p className={s.worldSub}>
+          <p className={styles.worldSub}>
             {m.world_beyond()} ·{' '}
             {books.length
               ? m.count_book({ count: books.length })
@@ -220,7 +223,7 @@ const WorldDialog = ({
         </div>
         <button
           type="button"
-          className={a.close}
+          className={accountStyles.close}
           aria-label={m.common_close()}
           onClick={() => dialog.current?.close()}
         >
@@ -228,28 +231,32 @@ const WorldDialog = ({
         </button>
       </div>
       {books.length ? (
-        <ul className={s.worldBooks}>
-          {books.map((b) => (
-            <li key={b.id}>
+        <ul className={styles.worldBooks}>
+          {books.map((book) => (
+            <li key={book.id}>
               <i
-                className={s.tipCover}
+                className={styles.tipCover}
                 style={{
-                  background: coverColor(b.title + (b.author?.name ?? '')),
+                  background: coverColor(
+                    book.title + (book.author?.name ?? '')
+                  ),
                 }}
                 aria-hidden="true"
               />
               <div>
-                <span className={s.tipTitle}>{b.title}</span>
-                <span>{b.author?.name}</span>
-                {readDate(b) && (
-                  <time dateTime={readDate(b)}>{formatDay(readDate(b))}</time>
+                <span className={styles.tipTitle}>{book.title}</span>
+                <span>{book.author?.name}</span>
+                {readDate(book) && (
+                  <time dateTime={readDate(book)}>
+                    {formatDay(readDate(book))}
+                  </time>
                 )}
               </div>
               <Link
-                className={s.more}
+                className={styles.more}
                 to="."
-                search={(prev) => ({ ...prev, edit: b.id })}
-                aria-label={m.book_edit({ title: b.title })}
+                search={(prev) => ({ ...prev, edit: book.id })}
+                aria-label={m.book_edit({ title: book.title })}
                 onClick={() => dialog.current?.close()}
               >
                 <PencilSimpleIcon aria-hidden="true" />
@@ -259,9 +266,9 @@ const WorldDialog = ({
           ))}
         </ul>
       ) : (
-        <p className={a.dialogText}>{m.world_no_books()}</p>
+        <p className={accountStyles.dialogText}>{m.world_no_books()}</p>
       )}
-      <div className={a.dialogActions}>
+      <div className={accountStyles.dialogActions}>
         <Button
           type="button"
           variant="text"

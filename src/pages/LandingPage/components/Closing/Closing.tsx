@@ -5,7 +5,7 @@ import { PushPinIcon } from '@phosphor-icons/react';
 import { useReveal } from '../../../../hooks/useReveal';
 import { mainPiece, worldShapes } from '../../../../utils/worldShapes';
 import { btnPrimary } from '../LoginDialog/LoginDialog.css';
-import * as s from './Closing.css';
+import * as styles from './Closing.css';
 import { m } from '../../../../paraglide/messages.js';
 import { getLocale } from '../../../../paraglide/runtime.js';
 import { toAlpha2 } from '../../../../utils/toIsoNumeric';
@@ -116,10 +116,10 @@ const Closing = ({ onSignUp }: { onSignUp: () => void }) => {
   return (
     <section
       ref={ref}
-      className={revealed ? `${s.close} ${s.stamped}` : s.close}
+      className={revealed ? `${styles.close} ${styles.stamped}` : styles.close}
       aria-labelledby="close-h"
     >
-      <svg width="0" height="0" aria-hidden="true" className={s.defs}>
+      <svg width="0" height="0" aria-hidden="true" className={styles.defs}>
         <pattern
           id="close-hatch"
           width="6"
@@ -141,7 +141,7 @@ const Closing = ({ onSignUp }: { onSignUp: () => void }) => {
         return (
           <svg
             key={stamp.code}
-            className={`${s.stamp} ${s.onPhone[i % 2 ? 'hide' : i % 4 ? 'low' : 'high']}`}
+            className={`${styles.stamp} ${styles.onPhone[i % 2 ? 'hide' : i % 4 ? 'low' : 'high']}`}
             style={{ ...stamp.place, '--n': String(stamp.n) } as CSSProperties}
             viewBox="0 0 100 100"
             role="img"
@@ -153,13 +153,13 @@ const Closing = ({ onSignUp }: { onSignUp: () => void }) => {
           </svg>
         );
       })}
-      <div className={s.inner}>
-        <h2 className={s.title} id="close-h">
+      <div className={styles.inner}>
+        <h2 className={styles.title} id="close-h">
           {m.landing_close_title()}
         </h2>
         <button
           type="button"
-          className={`${btnPrimary} ${s.cta}`}
+          className={`${btnPrimary} ${styles.cta}`}
           onClick={onSignUp}
         >
           <PushPinIcon weight="fill" aria-hidden="true" />

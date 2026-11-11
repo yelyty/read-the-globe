@@ -18,52 +18,53 @@ export const projection = geoEquirectangular()
   .scale(1000 / (2 * Math.PI))
   .translate([500, 250]);
 
-export const C = light.color;
+export const PALETTE = light.color;
 export const SERIF = light.font.display;
 export const SANS = light.font.sans;
 
 export const PAPERS = {
-  paper: { name: m.postcard_paper_paper, fill: C.surface },
-  parchment: { name: m.postcard_paper_parchment, fill: C.backgroundDeep },
-  sage: { name: m.postcard_paper_sage, fill: C.oliveWash },
-  rose: { name: m.postcard_paper_rose, fill: C.rustWash },
+  paper: { name: m.postcard_paper_paper, fill: PALETTE.surface },
+  parchment: { name: m.postcard_paper_parchment, fill: PALETTE.backgroundDeep },
+  sage: { name: m.postcard_paper_sage, fill: PALETTE.oliveWash },
+  rose: { name: m.postcard_paper_rose, fill: PALETTE.rustWash },
 } as const;
 
 export const COLORS = {
-  rust: { name: m.postcard_color_rust, fill: C.markerAuthor },
-  olive: { name: m.postcard_color_olive, fill: C.markerSetting },
-  green: { name: m.postcard_color_green, fill: C.accent },
-  gold: { name: m.postcard_color_gold, fill: C.secondary },
-  ink: { name: m.postcard_color_ink, fill: C.text },
+  rust: { name: m.postcard_color_rust, fill: PALETTE.markerAuthor },
+  olive: { name: m.postcard_color_olive, fill: PALETTE.markerSetting },
+  green: { name: m.postcard_color_green, fill: PALETTE.accent },
+  gold: { name: m.postcard_color_gold, fill: PALETTE.secondary },
+  ink: { name: m.postcard_color_ink, fill: PALETTE.text },
 } as const;
 
 /* A postcard collects one kind of country, never both: where the authors come from, or where the stories are set.
    Its words, colour and numbers all follow that choice. */
 export const KINDS = {
   authors: {
-    codes: (b: BookEntry) => [b.author?.country?.code],
-    count: (m: Marks[string]) => m.author.length,
+    codes: (book: BookEntry) => [book.author?.country?.code],
+    count: (mark: Marks[string]) => mark.author.length,
     color: 'rust',
     caption: m.postcard_caption_authors,
     stat: m.label_authors_country,
     name: m.postcard_kind_authors,
-    share: (n: number) => m.postcard_share_authors({ n }),
+    share: (count: number) => m.postcard_share_authors({ n: count }),
   },
   settings: {
-    codes: (b: BookEntry) => (b.places ?? []).map((p) => p.countryCode),
-    count: (m: Marks[string]) => m.set.length,
+    codes: (book: BookEntry) =>
+      (book.places ?? []).map((place) => place.countryCode),
+    count: (mark: Marks[string]) => mark.set.length,
     color: 'olive',
     caption: m.postcard_caption_settings,
     stat: m.label_story_country,
     name: m.postcard_kind_settings,
-    share: (n: number) => m.postcard_share_settings({ n }),
+    share: (count: number) => m.postcard_share_settings({ n: count }),
   },
 } as const;
 
 // a year-end card counts every country of that year's books, both marks, in the goal Green unless a colour is chosen
 export const YEAR = {
   codes: bookCodes,
-  count: (m: Marks[string]) => new Set([...m.set, ...m.author]).size,
+  count: (mark: Marks[string]) => new Set([...mark.set, ...mark.author]).size,
   color: 'green',
   stat: m.label_country,
 } as const;
@@ -87,21 +88,22 @@ export type Options = {
 };
 
 // the kind's countries, newest book first, and the numbers under the stamps
-export function postcardStats(books: BookEntry[], marks: Marks, K: Spec) {
-  const known = (c: string | null | undefined): c is string =>
-    !!c && !!marks[c] && K.count(marks[c]) > 0;
+export function postcardStats(books: BookEntry[], marks: Marks, spec: Spec) {
+  const known = (code: string | null | undefined): code is string =>
+    !!code && !!marks[code] && spec.count(marks[code]) > 0;
 
   const order: string[] = [];
 
-  for (const b of books)
-    for (const c of K.codes(b))
-      if (known(c) && !order.includes(c)) order.push(c);
+  for (const book of books)
+    for (const code of spec.codes(book))
+      if (known(code) && !order.includes(code)) order.push(code);
 
   return {
     order,
     countries: order.length,
-    continents: new Set(order.map((c) => CONTINENT_OF[c]).filter(Boolean)).size,
-    books: books.filter((b) => K.codes(b).some(known)).length,
+    continents: new Set(order.map((code) => CONTINENT_OF[code]).filter(Boolean))
+      .size,
+    books: books.filter((book) => spec.codes(book).some(known)).length,
   };
 }
 
@@ -126,46 +128,48 @@ let world: Promise<Map<string, Country>> | null = null;
 // ponytail: a 20-line TopoJSON reader instead of topojson-client; world-atlas is always quantized, so only that case is handled
 export function loadCountries() {
   world ??= fetch(GEO_URL)
-    .then((r) => r.json() as Promise<Topology>)
+    .then((response) => response.json() as Promise<Topology>)
     .then((topo) => {
       const [sx, sy] = topo.transform.scale;
       const [tx, ty] = topo.transform.translate;
 
       const arcs = topo.arcs.map((arc) => {
-        let x = 0;
-        let y = 0;
+        let arcX = 0;
+        let arcY = 0;
 
         return arc.map(([dx, dy]): Position => [
-          (x += dx) * sx + tx,
-          (y += dy) * sy + ty,
+          (arcX += dx) * sx + tx,
+          (arcY += dy) * sy + ty,
         ]);
       });
 
       const ring = (ids: number[]) =>
-        ids.flatMap((i, n) => {
-          const a = i < 0 ? [...arcs[~i]].reverse() : arcs[i];
+        ids.flatMap((i, position) => {
+          const arc = i < 0 ? [...arcs[~i]].reverse() : arcs[i];
 
-          return n ? a.slice(1) : a;
+          return position ? arc.slice(1) : arc;
         });
 
       const countries = new Map<string, Country>();
 
-      for (const g of topo.objects.countries.geometries) {
-        if (!g.id || !g.arcs) continue;
+      for (const geometry of topo.objects.countries.geometries) {
+        if (!geometry.id || !geometry.arcs) continue;
 
         const polygons =
-          g.type === 'Polygon'
-            ? [g.arcs as number[][]]
-            : (g.arcs as number[][][]);
+          geometry.type === 'Polygon'
+            ? [geometry.arcs as number[][]]
+            : (geometry.arcs as number[][][]);
 
-        const coordinates = polygons.map((p) => p.map(ring));
+        const coordinates = polygons.map((polygon) => polygon.map(ring));
 
         // a stamp frames the country's main landmass, not the islands far out at sea
         const main = coordinates
           .map(flatBox)
-          .reduce((a, b) => (b.area > a.area ? b : a)).box;
+          .reduce((largest, candidate) =>
+            candidate.area > largest.area ? candidate : largest
+          ).box;
 
-        countries.set(g.id, {
+        countries.set(geometry.id, {
           shape: {
             type: 'Feature',
             properties: {},
@@ -185,7 +189,7 @@ export function loadCountries() {
 // a ring that wraps the date line (Russia's mainland) as nearly the whole globe. A ring that runs on past 180°
 // (into Chukotka) is unwrapped first, so its frame sits on the mainland and the far end is clipped by the stamp.
 function flatBox([outer]: Position[][]) {
-  const lons = outer.map((p) => p[0]);
+  const lons = outer.map((point) => point[0]);
   const wraps = Math.max(...lons) - Math.min(...lons) > 180;
 
   // the projection's own arithmetic: 1000 / 360 units a degree, centred on [500, 250]
@@ -196,14 +200,14 @@ function flatBox([outer]: Position[][]) {
 
   let area = 0;
 
-  pts.forEach(([x, y], i) => {
+  pts.forEach(([px, py], i) => {
     const [nx, ny] = pts[(i + 1) % pts.length];
 
-    area += x * ny - nx * y;
+    area += px * ny - nx * py;
   });
 
-  const xs = pts.map((p) => p[0]);
-  const ys = pts.map((p) => p[1]);
+  const xs = pts.map((point) => point[0]);
+  const ys = pts.map((point) => point[1]);
 
   const box: Box = [
     [Math.min(...xs), Math.min(...ys)],
@@ -218,7 +222,7 @@ export function countryStamp({ shape, main: [[x0, y0], [x1, y1]] }: Country) {
   const pad = Math.max(x1 - x0, y1 - y0) * 0.06;
 
   const viewBox = [x0 - pad, y0 - pad, x1 - x0 + pad * 2, y1 - y0 + pad * 2]
-    .map((n) => n.toFixed(1))
+    .map((value) => value.toFixed(1))
     .join(' ');
 
   return {
@@ -230,32 +234,32 @@ export function countryStamp({ shape, main: [[x0, y0], [x1, y1]] }: Country) {
 
 /* ---------- the card ---------- */
 // the canvas's two text tools, shared with the goal card
-export const pen = (c: CanvasRenderingContext2D) => ({
+export const pen = (ctx: CanvasRenderingContext2D) => ({
   text: (
     str: string,
-    x: number,
-    y: number,
+    posX: number,
+    posY: number,
     font: string,
     color: string,
-    o: { align?: CanvasTextAlign; ls?: string } = {}
+    opts: { align?: CanvasTextAlign; ls?: string } = {}
   ) => {
-    c.font = font;
-    c.fillStyle = color;
-    c.textAlign = o.align ?? 'left';
-    c.textBaseline = 'alphabetic';
-    c.letterSpacing = o.ls ?? '0px';
-    c.fillText(str, x, y);
-    const w = c.measureText(str).width;
+    ctx.font = font;
+    ctx.fillStyle = color;
+    ctx.textAlign = opts.align ?? 'left';
+    ctx.textBaseline = 'alphabetic';
+    ctx.letterSpacing = opts.ls ?? '0px';
+    ctx.fillText(str, posX, posY);
+    const width = ctx.measureText(str).width;
 
-    c.letterSpacing = '0px';
+    ctx.letterSpacing = '0px';
 
-    return w;
+    return width;
   },
   // the largest size, in 2px steps, at which the line still fits
   fit: (str: string, font: string, max: number, px: number, min: number) => {
     while (px > min) {
-      c.font = font.replace('{s}', String(px));
-      if (c.measureText(str).width <= max) break;
+      ctx.font = font.replace('{s}', String(px));
+      if (ctx.measureText(str).width <= max) break;
       px -= 2;
     }
 
@@ -288,80 +292,80 @@ export async function drawPostcard({
 }: Draw) {
   await Promise.all(
     [`400 60px ${SERIF}`, `italic 400 60px ${SERIF}`, `500 20px ${SANS}`].map(
-      (f) => document.fonts.load(f).catch(() => {})
+      (font) => document.fonts.load(font).catch(() => {})
     )
   );
 
   canvas.width = SIZE;
   canvas.height = SIZE;
-  const c = canvas.getContext('2d');
+  const ctx = canvas.getContext('2d');
 
-  if (!c) return;
-  const K: Spec = year ? YEAR : KINDS[opt.kind];
+  if (!ctx) return;
+  const spec: Spec = year ? YEAR : KINDS[opt.kind];
   const books = year ? year.books : all.books;
   const marks = year ? atlasMarks(year.books) : all.marks;
-  const s = postcardStats(books, marks, K);
+  const stats = postcardStats(books, marks, spec);
   const paper = PAPERS[opt.paper].fill;
-  const ink = COLORS[opt.color ?? K.color].fill;
+  const ink = COLORS[opt.color ?? spec.color].fill;
 
-  const { text, fit } = pen(c);
+  const { text, fit } = pen(ctx);
 
-  const rule = (y: number) => {
-    c.strokeStyle = C.textMuted;
-    c.lineWidth = 2;
-    c.beginPath();
-    c.moveTo(0, y);
-    c.lineTo(SIZE, y);
-    c.stroke();
+  const rule = (lineY: number) => {
+    ctx.strokeStyle = PALETTE.textMuted;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, lineY);
+    ctx.lineTo(SIZE, lineY);
+    ctx.stroke();
   };
 
   // one postage stamp: perforated paper, the country's own shape in the card's colour, its name beneath
   const stamp = (
     code: string,
-    x: number,
-    y: number,
+    posX: number,
+    posY: number,
     sw: number,
     sh: number,
     sub: string
   ) => {
-    c.save();
-    c.translate(x, y);
-    c.fillStyle = C.field;
-    c.fillRect(0, 0, sw, sh);
+    ctx.save();
+    ctx.translate(posX, posY);
+    ctx.fillStyle = PALETTE.field;
+    ctx.fillRect(0, 0, sw, sh);
 
     if (opt.frame === 'framed') {
       // a picture frame: a Line band between two Mark rules
       const bw = sw * 0.045;
 
-      c.strokeStyle = C.border;
-      c.lineWidth = bw;
-      c.strokeRect(bw / 2, bw / 2, sw - bw, sh - bw);
-      c.strokeStyle = C.mark;
-      c.lineWidth = 2;
-      c.strokeRect(1, 1, sw - 2, sh - 2);
-      c.strokeRect(bw, bw, sw - bw * 2, sh - bw * 2);
+      ctx.strokeStyle = PALETTE.border;
+      ctx.lineWidth = bw;
+      ctx.strokeRect(bw / 2, bw / 2, sw - bw, sh - bw);
+      ctx.strokeStyle = PALETTE.mark;
+      ctx.lineWidth = 2;
+      ctx.strokeRect(1, 1, sw - 2, sh - 2);
+      ctx.strokeRect(bw, bw, sw - bw * 2, sh - bw * 2);
     } else if (opt.frame === 'plain') {
-      c.strokeStyle = C.border;
-      c.lineWidth = 2;
-      c.strokeRect(1, 1, sw - 2, sh - 2);
+      ctx.strokeStyle = PALETTE.border;
+      ctx.lineWidth = 2;
+      ctx.strokeRect(1, 1, sw - 2, sh - 2);
     } else {
       // perforated: the card's colour punched round the edge
-      c.fillStyle = paper;
-      const r = sw * 0.032;
+      ctx.fillStyle = paper;
+      const radius = sw * 0.032;
       const step = sw * 0.1;
 
-      for (let p = step / 2; p < sw; p += step) {
-        c.beginPath();
-        c.arc(p, 0, r, 0, Math.PI * 2);
-        c.arc(p, sh, r, 0, Math.PI * 2);
-        c.fill();
+      for (let pos = step / 2; pos < sw; pos += step) {
+        ctx.beginPath();
+        ctx.arc(pos, 0, radius, 0, Math.PI * 2);
+        ctx.arc(pos, sh, radius, 0, Math.PI * 2);
+        ctx.fill();
       }
 
-      for (let p = step / 2; p < sh; p += step) {
-        c.beginPath();
-        c.arc(0, p, r, 0, Math.PI * 2);
-        c.arc(sw, p, r, 0, Math.PI * 2);
-        c.fill();
+      for (let pos = step / 2; pos < sh; pos += step) {
+        ctx.beginPath();
+        ctx.arc(0, pos, radius, 0, Math.PI * 2);
+        ctx.arc(sw, pos, radius, 0, Math.PI * 2);
+        ctx.fill();
       }
     }
 
@@ -369,41 +373,41 @@ export async function drawPostcard({
     const iw = sw - ip * 2;
     const ih = sh - ip - sw * 0.3;
 
-    c.fillStyle = C.background;
-    c.fillRect(ip, ip, iw, ih);
-    c.strokeStyle = C.border;
-    c.lineWidth = 1.5;
-    c.strokeRect(ip, ip, iw, ih);
+    ctx.fillStyle = PALETTE.background;
+    ctx.fillRect(ip, ip, iw, ih);
+    ctx.strokeStyle = PALETTE.border;
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(ip, ip, iw, ih);
 
     const country = countries.get(code);
 
     if (country) {
       const [[x0, y0], [x1, y1]] = country.main;
 
-      const k = Math.min(
+      const scale = Math.min(
         (iw - sw * 0.1) / (x1 - x0 || 1),
         (ih - sw * 0.1) / (y1 - y0 || 1)
       );
 
-      c.save();
-      c.beginPath();
-      c.rect(ip, ip, iw, ih);
-      c.clip();
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(ip, ip, iw, ih);
+      ctx.clip();
 
-      c.translate(
-        ip + iw / 2 - ((x0 + x1) / 2) * k,
-        ip + ih / 2 - ((y0 + y1) / 2) * k
+      ctx.translate(
+        ip + iw / 2 - ((x0 + x1) / 2) * scale,
+        ip + ih / 2 - ((y0 + y1) / 2) * scale
       );
 
-      c.scale(k, k);
-      c.beginPath();
-      geoPath(projection, c)(country.shape);
-      c.fillStyle = ink;
-      c.fill();
-      c.strokeStyle = C.text;
-      c.lineWidth = 1 / k;
-      c.stroke();
-      c.restore();
+      ctx.scale(scale, scale);
+      ctx.beginPath();
+      geoPath(projection, ctx)(country.shape);
+      ctx.fillStyle = ink;
+      ctx.fill();
+      ctx.strokeStyle = PALETTE.text;
+      ctx.lineWidth = 1 / scale;
+      ctx.stroke();
+      ctx.restore();
     }
 
     const fb = opt.frame === 'framed' ? sw * 0.045 : 0; // names sit above the frame's band
@@ -414,7 +418,7 @@ export async function drawPostcard({
         sw / 2,
         sh - fb - sw * 0.05,
         `500 ${Math.min(32, Math.round(sw * 0.1))}px ${SANS}`,
-        C.text,
+        PALETTE.text,
         { align: 'center' }
       );
     const name = names[code] ?? '';
@@ -430,52 +434,59 @@ export async function drawPostcard({
         Math.min(40, Math.round(sw * 0.13)),
         12
       ),
-      C.text,
+      PALETTE.text,
       { align: 'center' }
     );
 
-    c.restore();
+    ctx.restore();
   };
 
   // a big number with its label under it; the label clears the serif's descending 3, 5, 7, 9
   const stat = (
-    n: number,
+    value: number,
     label: string,
-    x: number,
-    y: number,
+    posX: number,
+    posY: number,
     px: number,
     lab: number,
-    o: { align?: CanvasTextAlign; of?: boolean } = {}
+    opts: { align?: CanvasTextAlign; of?: boolean } = {}
   ) => {
-    const nw = text(String(n), x, y, `400 ${px}px ${SERIF}`, C.text, o);
+    const nw = text(
+      String(value),
+      posX,
+      posY,
+      `400 ${px}px ${SERIF}`,
+      PALETTE.text,
+      opts
+    );
 
-    if (o.of)
+    if (opts.of)
       text(
         '/ 195',
-        x + nw + px * 0.1,
-        y,
+        posX + nw + px * 0.1,
+        posY,
         `400 ${Math.round(px * 0.3)}px ${SANS}`,
-        C.textSecondary
+        PALETTE.textSecondary
       );
 
     text(
       label,
-      x + (o.align === 'right' ? 0 : 3),
-      y + Math.round(Math.max(lab * 1.5, px * 0.33)),
+      posX + (opts.align === 'right' ? 0 : 3),
+      posY + Math.round(Math.max(lab * 1.5, px * 0.33)),
       `500 ${lab}px ${SANS}`,
-      C.textSecondary,
-      { ls: '3px', align: o.align }
+      PALETTE.textSecondary,
+      { ls: '3px', align: opts.align }
     );
   };
 
   // the page: the header band, the stamp sheet, the numbers
-  c.fillStyle = paper;
-  c.fillRect(0, 0, SIZE, SIZE);
+  ctx.fillStyle = paper;
+  ctx.fillRect(0, 0, SIZE, SIZE);
   const mg = 52;
   const headH = 156;
   const markW = logo ? 62 : 0;
 
-  if (logo) c.drawImage(logo, mg, 46, markW, Math.round((markW * 610) / 604)); // the logo's own proportions
+  if (logo) ctx.drawImage(logo, mg, 46, markW, Math.round((markW * 610) / 604)); // the logo's own proportions
   const tx = mg + (logo ? markW + 18 : 0);
 
   text(
@@ -483,7 +494,7 @@ export async function drawPostcard({
     tx,
     100,
     fit(title, `italic 400 {s}px ${SERIF}`, SIZE - tx - mg, 62, 36),
-    C.text
+    PALETTE.text
   );
 
   rule(headH);
@@ -493,40 +504,51 @@ export async function drawPostcard({
       SIZE / 2,
       headH + 56,
       fit(year.line, `italic 400 {s}px ${SERIF}`, SIZE - mg * 2, 40, 26),
-      C.text,
+      PALETTE.text,
       { align: 'center' }
     ); // the year in one sentence
   else
     text(
-      K.caption?.() ?? '',
+      spec.caption?.() ?? '',
       SIZE / 2,
       headH + 52,
       `500 28px ${SANS}`,
-      C.textSecondary,
+      PALETTE.textSecondary,
       { align: 'center', ls: '5px' }
     );
 
   // all: up to 18 stamps in rows of six, bigger when there are few; top 3 or 6: the most-read countries
   const top = headH + 82;
   const sheetB = 752;
-  const booksIn = (code: string) => K.count(marks[code]);
+  const booksIn = (code: string) => spec.count(marks[code]);
 
   const list = opt.count
-    ? [...s.order]
+    ? [...stats.order]
         .sort(
-          (a, b) =>
-            booksIn(b) - booksIn(a) || s.order.indexOf(a) - s.order.indexOf(b)
+          (first, second) =>
+            booksIn(second) - booksIn(first) ||
+            stats.order.indexOf(first) - stats.order.indexOf(second)
         )
         .slice(0, opt.count)
-    : s.order;
+    : stats.order;
 
-  const n = list.length;
-  const cols = opt.count ? 3 : n <= 2 ? 2 : n <= 6 ? 3 : n <= 12 ? 4 : 6;
-  const rows = Math.min(3, Math.max(1, Math.ceil(n / cols)));
+  const count = list.length;
+
+  const cols = opt.count
+    ? 3
+    : count <= 2
+      ? 2
+      : count <= 6
+        ? 3
+        : count <= 12
+          ? 4
+          : 6;
+
+  const rows = Math.min(3, Math.max(1, Math.ceil(count / cols)));
   const gap = cols === 6 ? 14 : 22;
   let sw = (SIZE - mg * 2 - gap * (cols - 1)) / cols;
   let sh = sw * 1.12;
-  const room = sheetB - top - (n > cols * rows ? 34 : 0);
+  const room = sheetB - top - (count > cols * rows ? 34 : 0);
 
   if (rows * sh + (rows - 1) * gap > room) {
     sh = (room - (rows - 1) * gap) / rows;
@@ -538,25 +560,25 @@ export async function drawPostcard({
   const gx = (SIZE - gridW) / 2;
   const gy = top + (room - (rows * sh + (rows - 1) * gap)) / 2;
 
-  if (!n) {
+  if (!count) {
     // an empty sheet: one dashed space waiting for the first stamp
     const ew = 460;
     const eh = 360;
     const ex = (SIZE - ew) / 2;
     const ey = top + (sheetB - top - eh) / 2;
 
-    c.setLineDash([10, 8]);
-    c.strokeStyle = C.textMuted;
-    c.lineWidth = 2.5;
-    c.strokeRect(ex, ey, ew, eh);
-    c.setLineDash([]);
+    ctx.setLineDash([10, 8]);
+    ctx.strokeStyle = PALETTE.textMuted;
+    ctx.lineWidth = 2.5;
+    ctx.strokeRect(ex, ey, ew, eh);
+    ctx.setLineDash([]);
 
     text(
       m.postcard_first_stamp(),
       SIZE / 2,
       ey + eh / 2 - 6,
       `italic 400 38px ${SERIF}`,
-      C.textSecondary,
+      PALETTE.textSecondary,
       { align: 'center' }
     );
 
@@ -565,7 +587,7 @@ export async function drawPostcard({
       SIZE / 2,
       ey + eh / 2 + 40,
       `500 26px ${SANS}`,
-      C.textMuted,
+      PALETTE.textMuted,
       { align: 'center' }
     );
   }
@@ -577,7 +599,7 @@ export async function drawPostcard({
     const ox =
       Math.floor(i / cols) === lastRow ? ((cols - inLast) * (sw + gap)) / 2 : 0; // the last row centres
 
-    const k = booksIn(code);
+    const bookCount = booksIn(code);
 
     stamp(
       code,
@@ -585,17 +607,17 @@ export async function drawPostcard({
       gy + Math.floor(i / cols) * (sh + gap),
       sw,
       sh,
-      opt.count ? m.count_book({ count: k }) : ''
+      opt.count ? m.count_book({ count: bookCount }) : ''
     );
   });
 
-  if (!opt.count && n > shown.length)
+  if (!opt.count && count > shown.length)
     text(
-      m.postcard_more({ n: n - shown.length }),
+      m.postcard_more({ n: count - shown.length }),
       gx + gridW,
       gy + rows * sh + (rows - 1) * gap + 34,
       `italic 400 28px ${SERIF}`,
-      C.textSecondary,
+      PALETTE.textSecondary,
       { align: 'right' }
     );
   rule(sheetB + 20);
@@ -603,16 +625,24 @@ export async function drawPostcard({
   const footY = SIZE - 44;
   const base = Math.round(sheetB + 20 + (footY - 28 - sheetB - 20) * 0.62);
 
-  stat(s.countries, K.stat({ count: s.countries }), mg - 6, base, 230, 32, {
-    of: true,
-  });
+  stat(
+    stats.countries,
+    spec.stat({ count: stats.countries }),
+    mg - 6,
+    base,
+    230,
+    32,
+    {
+      of: true,
+    }
+  );
 
-  c.font = `400 132px ${SERIF}`;
-  const cw = Math.max(c.measureText(String(s.continents)).width, 220);
+  ctx.font = `400 132px ${SERIF}`;
+  const cw = Math.max(ctx.measureText(String(stats.continents)).width, 220);
 
   stat(
-    s.continents,
-    m.label_continent({ count: s.continents }),
+    stats.continents,
+    m.label_continent({ count: stats.continents }),
     SIZE - mg,
     base,
     132,
@@ -621,8 +651,8 @@ export async function drawPostcard({
   );
 
   stat(
-    s.books,
-    m.label_book({ count: s.books }),
+    stats.books,
+    m.label_book({ count: stats.books }),
     SIZE - mg - cw - 44,
     base,
     132,
@@ -630,7 +660,7 @@ export async function drawPostcard({
     { align: 'right' }
   );
 
-  text('readtheglobe.app', SIZE - mg, footY, `500 34px ${SANS}`, C.text, {
+  text('readtheglobe.app', SIZE - mg, footY, `500 34px ${SANS}`, PALETTE.text, {
     align: 'right',
   }); // full Ink: it has to survive the card being shrunk in a feed
 }

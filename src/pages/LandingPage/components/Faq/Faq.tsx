@@ -1,5 +1,5 @@
 import { PlusIcon } from '@phosphor-icons/react';
-import * as s from './Faq.css';
+import * as styles from './Faq.css';
 import { m } from '../../../../paraglide/messages.js';
 
 const QUESTIONS = [
@@ -13,19 +13,19 @@ const QUESTIONS = [
 
 // A big heading on the left, the questions as rows on the grey band, each opening in place.
 const Faq = () => (
-  <section className={s.faq} id="faq" aria-labelledby="faq-h">
-    <div className={s.inner}>
-      <h2 className={s.title} id="faq-h">
+  <section className={styles.faq} id="faq" aria-labelledby="faq-h">
+    <div className={styles.inner}>
+      <h2 className={styles.title} id="faq-h">
         {m.landing_faq_title()}
       </h2>
-      <div className={s.list}>
+      <div className={styles.list}>
         {QUESTIONS.map(({ q, a }, i) => (
-          <details key={i} className={s.item}>
-            <summary className={s.summary}>
+          <details key={i} className={styles.item}>
+            <summary className={styles.summary}>
               {q()}
-              <PlusIcon className={s.plus} aria-hidden="true" />
+              <PlusIcon className={styles.plus} aria-hidden="true" />
             </summary>
-            <p className={s.answer}>{a()}</p>
+            <p className={styles.answer}>{a()}</p>
           </details>
         ))}
       </div>

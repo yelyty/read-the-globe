@@ -8,7 +8,7 @@ import {
 
 import type { BookEntry, Goal } from '../../../../types';
 import { getBackup } from '../../../../api/data/data';
-import * as s from '../../AccountPage.css';
+import * as styles from '../../AccountPage.css';
 import Block from '../../components/Block';
 import { Button } from '../../../../components/Button/Button';
 import { button } from '../../../../components/Button/Button.css';
@@ -56,10 +56,10 @@ const YourData = ({ userId, books, names, goals }: YourDataProps) => {
 
   return (
     <Block title={m.account_data_title()}>
-      <div className={s.item}>
-        <h3 className={s.itemTitle}>{m.account_export()}</h3>
-        <p className={s.itemText}>{m.account_export_text()}</p>
-        <div className={s.row}>
+      <div className={styles.item}>
+        <h3 className={styles.itemTitle}>{m.account_export()}</h3>
+        <p className={styles.itemText}>{m.account_export_text()}</p>
+        <div className={styles.row}>
           <Button
             type="button"
             variant="quiet"
@@ -72,21 +72,21 @@ const YourData = ({ userId, books, names, goals }: YourDataProps) => {
             <FileCodeIcon aria-hidden="true" />
             {m.account_full_backup()}
           </Button>
-          <p className={s.status} role="status">
+          <p className={styles.status} role="status">
             {status}
           </p>
         </div>
       </div>
-      <div className={s.item}>
-        <h3 className={s.itemTitle}>{m.account_import()}</h3>
-        <p className={s.itemText}>{m.account_import_text()}</p>
-        <p className={s.example}>
+      <div className={styles.item}>
+        <h3 className={styles.itemTitle}>{m.account_import()}</h3>
+        <p className={styles.itemText}>{m.account_import_text()}</p>
+        <p className={styles.example}>
           <Button type="button" variant="text" onClick={exportExample}>
             <DownloadSimpleIcon aria-hidden="true" />
             {m.account_example_csv()}
           </Button>
         </p>
-        <div className={s.row}>
+        <div className={styles.row}>
           <ImportCsv
             className={button({ variant: 'quiet' })}
             onDone={setImported}
@@ -100,7 +100,7 @@ const YourData = ({ userId, books, names, goals }: YourDataProps) => {
             goals={goals}
             onFail={setImported}
           />
-          <p className={s.status} role="status">
+          <p className={styles.status} role="status">
             {imported}
           </p>
         </div>

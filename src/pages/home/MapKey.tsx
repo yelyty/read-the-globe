@@ -1,5 +1,5 @@
 import type { Show } from '../../components/AtlasMap/AtlasMap.tsx';
-import * as s from './HomePage.css';
+import * as styles from './HomePage.css';
 import { m } from '../../paraglide/messages.js';
 
 const SHOW: [Show, () => string, (() => string)?][] = [
@@ -16,31 +16,35 @@ type MapKeyProps = {
 
 // What the colours mean, and a filter once there is more than one book to filter.
 const MapKey = ({ show, onShow, canFilter }: MapKeyProps) => (
-  <div className={s.legend}>
-    <ul className={s.key} aria-label={m.map_key()}>
+  <div className={styles.legend}>
+    <ul className={styles.key} aria-label={m.map_key()}>
       <li>
-        <i className={s.swatchSet} aria-hidden="true" />
+        <i className={styles.swatchSet} aria-hidden="true" />
         {m.map_key_set()}
       </li>
       <li>
-        <i className={s.swatchAuthor} aria-hidden="true" />
+        <i className={styles.swatchAuthor} aria-hidden="true" />
         {m.map_key_author()}
       </li>
       <li>
-        <i className={s.swatchBoth} aria-hidden="true" />
+        <i className={styles.swatchBoth} aria-hidden="true" />
         {m.map_key_both()}
       </li>
     </ul>
     {canFilter && (
-      <div className={s.showGroup} role="group" aria-label={m.map_show_label()}>
-        <span className={s.capsLabel} aria-hidden="true">
+      <div
+        className={styles.showGroup}
+        role="group"
+        aria-label={m.map_show_label()}
+      >
+        <span className={styles.capsLabel} aria-hidden="true">
           {m.map_show()}
         </span>
         {SHOW.map(([value, label, long]) => (
           <button
             key={value}
             type="button"
-            className={s.showBtn}
+            className={styles.showBtn}
             aria-pressed={show === value}
             aria-label={long?.()}
             onClick={() => onShow(value)}

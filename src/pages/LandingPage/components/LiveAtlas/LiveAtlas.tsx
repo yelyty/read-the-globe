@@ -5,7 +5,7 @@ import { mainPiece, worldShapes } from '../../../../utils/worldShapes';
 import { toNumeric } from '../../../../utils/toIsoNumeric';
 import { atlasAfter, BOOKS } from './miraAtlas';
 import { srOnly } from '../../../../styles/global.css';
-import * as s from './LiveAtlas.css';
+import * as styles from './LiveAtlas.css';
 import { m } from '../../../../paraglide/messages.js';
 
 // the app's own flat map (AtlasMap): 360° across, 83°N to 57°S down, no Antarctica
@@ -68,13 +68,13 @@ const LiveAtlas = () => {
       const top = el.getBoundingClientRect().top;
 
       // the window: 80% and tilted back as it enters, full size and flat once its top nears the top of the screen
-      const p = Math.min(
+      const progress = Math.min(
         1,
         Math.max(0, (innerHeight - top) / (innerHeight * 0.85))
       );
 
-      el.style.setProperty('--z', (0.8 + 0.2 * p).toFixed(4));
-      el.style.setProperty('--tilt', `${(18 * (1 - p)).toFixed(2)}deg`);
+      el.style.setProperty('--z', (0.8 + 0.2 * progress).toFixed(4));
+      el.style.setProperty('--tilt', `${(18 * (1 - progress)).toFixed(2)}deg`);
       // the books: none at the top of the page, all of them once the window's top is near the top of the screen
       const end = Math.max(1, top + scrollY - innerHeight * 0.12);
 
@@ -120,9 +120,9 @@ const LiveAtlas = () => {
             const shape = shapes[toNumeric(iso) ?? ''];
 
             if (!shape) return [];
-            const [x, y] = path.centroid(mainPiece(shape));
+            const [centerX, centerY] = path.centroid(mainPiece(shape));
 
-            return [{ key: `${shown}-${iso}`, x, y }];
+            return [{ key: `${shown}-${iso}`, x: centerX, y: centerY }];
           }
         )
       : [];
@@ -137,14 +137,14 @@ const LiveAtlas = () => {
       : m.landing_atlas_latest({ title: latest[0], author: latest[1] });
 
   return (
-    <figure className={s.frame} id="atlas" ref={figure}>
-      <div className={s.sheet}>
-        <div className={s.head}>
-          <span className={s.title}>{m.landing_atlas_title()}</span>
-          <span className={s.tag}>{m.landing_atlas_tag()}</span>
+    <figure className={styles.frame} id="atlas" ref={figure}>
+      <div className={styles.sheet}>
+        <div className={styles.head}>
+          <span className={styles.title}>{m.landing_atlas_title()}</span>
+          <span className={styles.tag}>{m.landing_atlas_tag()}</span>
         </div>
         <svg
-          className={s.map}
+          className={styles.map}
           viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
           role="img"
           aria-labelledby="al-desc"
@@ -158,8 +158,8 @@ const LiveAtlas = () => {
               patternUnits="userSpaceOnUse"
               patternTransform="rotate(45)"
             >
-              <rect width="3" height="6" className={s.hatchSet} />
-              <rect x="3" width="3" height="6" className={s.hatchAuthor} />
+              <rect width="3" height="6" className={styles.hatchSet} />
+              <rect x="3" width="3" height="6" className={styles.hatchAuthor} />
             </pattern>
           </defs>
           <g>
@@ -173,12 +173,12 @@ const LiveAtlas = () => {
                   d={d}
                   className={
                     set && author
-                      ? s.both
+                      ? styles.both
                       : set
-                        ? s.set
+                        ? styles.set
                         : author
-                          ? s.author
-                          : s.land
+                          ? styles.author
+                          : styles.land
                   }
                 />
               );
@@ -188,7 +188,7 @@ const LiveAtlas = () => {
             {pings.map((ping) => (
               <circle
                 key={ping.key}
-                className={s.ping}
+                className={styles.ping}
                 cx={ping.x}
                 cy={ping.y}
                 r={14}
@@ -199,28 +199,28 @@ const LiveAtlas = () => {
         <p className={srOnly} id="al-desc">
           {m.landing_atlas_desc()}
         </p>
-        <div className={s.foot} aria-hidden="true">
-          <p className={s.count}>
+        <div className={styles.foot} aria-hidden="true">
+          <p className={styles.count}>
             <b>{atlas.countries}</b>
             <span>/ 195</span>
             <em>{m.landing_atlas_countries()}</em>
           </p>
-          <p className={s.now}>{now}</p>
-          <p className={s.books}>
+          <p className={styles.now}>{now}</p>
+          <p className={styles.books}>
             <b>{shown}</b> {m.landing_atlas_of_books({ total: BOOKS.length })}
           </p>
         </div>
-        <ul className={s.key} aria-hidden="true">
+        <ul className={styles.key} aria-hidden="true">
           <li>
-            <i className={s.keySet} />
+            <i className={styles.keySet} />
             {m.landing_key_set()}
           </li>
           <li>
-            <i className={s.keyAuthor} />
+            <i className={styles.keyAuthor} />
             {m.landing_key_author()}
           </li>
           <li>
-            <i className={s.keyBoth} />
+            <i className={styles.keyBoth} />
             {m.landing_key_both()}
           </li>
         </ul>

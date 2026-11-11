@@ -6,7 +6,7 @@ import {
   type ReactNode,
 } from 'react';
 import { StatusContext, type Status } from '../../hooks/useStatus';
-import * as s from './StatusBar.css';
+import * as styles from './StatusBar.css';
 
 const SHORT = 4500;
 const LONG = 10000; // a line with Undo or See it stays long enough to press it
@@ -44,7 +44,7 @@ const StatusBar = ({ children }: { children: ReactNode }) => {
         {status && (
           <div
             key={status.text}
-            className={s.bar}
+            className={styles.bar}
             onPointerEnter={pause}
             onPointerLeave={arm}
             onFocus={pause}
@@ -54,7 +54,7 @@ const StatusBar = ({ children }: { children: ReactNode }) => {
             {action && (
               <button
                 type="button"
-                className={s.action}
+                className={styles.action}
                 onClick={() => {
                   setStatus(null);
                   void action.run();

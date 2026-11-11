@@ -9,7 +9,7 @@ import AppFooter from '../AppFooter/AppFooter';
 import StatusBar from '../StatusBar/StatusBar';
 import { LandingContext, type Landing } from '../../hooks/useLanding';
 
-import * as s from './AppLayout.css';
+import * as styles from './AppLayout.css';
 import LogBook from '../LogBook/LogBook';
 import { m } from '../../paraglide/messages.js';
 
@@ -30,16 +30,17 @@ const LogPill = () => {
     let lastY = window.scrollY;
 
     const onScroll = () => {
-      const y = window.scrollY;
-      const dy = y - lastY;
+      const currentY = window.scrollY;
+      const dy = currentY - lastY;
 
       if (Math.abs(dy) < 6) return;
-      lastY = y;
+      lastY = currentY;
 
       const atEnd =
-        window.innerHeight + y >= document.documentElement.scrollHeight - 8;
+        window.innerHeight + currentY >=
+        document.documentElement.scrollHeight - 8;
 
-      setAway(dy > 0 && y > 120 && !atEnd);
+      setAway(dy > 0 && currentY > 120 && !atEnd);
     };
 
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -49,7 +50,7 @@ const LogPill = () => {
 
   return (
     <Link
-      className={s.pill}
+      className={styles.pill}
       data-away={away || undefined}
       data-log-toggle // the pinned book's pin leaves from here
       to="."
@@ -81,9 +82,9 @@ const AppLayout = () => {
   return (
     <StatusBar>
       <LandingContext value={landing}>
-        <div className={s.shell}>
+        <div className={styles.shell}>
           <AppHeader />
-          <main className={`wrapper ${s.main}`}>
+          <main className={`wrapper ${styles.main}`}>
             <Outlet />
           </main>
           <AppFooter />

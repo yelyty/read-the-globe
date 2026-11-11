@@ -23,7 +23,7 @@ const LABEL: Record<Continent, () => string> = {
   AN: m.continent_an,
 };
 
-export const continentName = (c: Continent) => LABEL[c]();
+export const continentName = (continent: Continent) => LABEL[continent]();
 
 // prettier-ignore
 export const CONTINENT_OF: Record<string, Continent> = {

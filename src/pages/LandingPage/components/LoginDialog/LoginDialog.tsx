@@ -8,7 +8,7 @@ import {
 } from 'react';
 import { PushPinIcon, WarningCircleIcon, XIcon } from '@phosphor-icons/react';
 
-import * as s from './LoginDialog.css';
+import * as styles from './LoginDialog.css';
 import Field from '../../../../components/Field/Field';
 import PasswordStrength from './PasswordStrength';
 import { sendPasswordReset, signIn, signUp } from '../../../../auth/session';
@@ -180,21 +180,21 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
   return (
     <dialog
       ref={dialogRef}
-      className={s.dialog}
+      className={styles.dialog}
       aria-labelledby="au-title"
       onClose={close}
     >
-      <form className={s.dialogForm} onSubmit={submit} noValidate>
-        <div className={s.dialogHead}>
+      <form className={styles.dialogForm} onSubmit={submit} noValidate>
+        <div className={styles.dialogHead}>
           <div>
-            <h2 className={s.dialogTitle} id="au-title">
+            <h2 className={styles.dialogTitle} id="au-title">
               {COPY[view].title()}
             </h2>
-            <p className={s.dialogSub}>{COPY[view].sub()}</p>
+            <p className={styles.dialogSub}>{COPY[view].sub()}</p>
           </div>
           <button
             type="button"
-            className={s.closeBtn}
+            className={styles.closeBtn}
             onClick={close}
             aria-label={m.common_close()}
           >
@@ -203,13 +203,13 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
         </div>
 
         {formError && (
-          <p className={s.formError} role="alert">
+          <p className={styles.formError} role="alert">
             <WarningCircleIcon aria-hidden="true" />
             <span>{formError}</span>
           </p>
         )}
         {notice && (
-          <p className={s.formNotice} role="status">
+          <p className={styles.formNotice} role="status">
             {notice}
           </p>
         )}
@@ -267,41 +267,41 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
           </Field>
         )}
         {view === 'signup' && (
-          <label className={s.example}>
+          <label className={styles.example}>
             <input
               type="checkbox"
               checked={example}
               onChange={(event) => setExample(event.target.checked)}
             />
             {m.auth_example()}
-            <span className={s.exampleHint}>{m.auth_example_hint()}</span>
+            <span className={styles.exampleHint}>{m.auth_example_hint()}</span>
           </label>
         )}
 
         <button
           type="submit"
-          className={`${s.btnPrimary} ${s.btnBlock}`}
+          className={`${styles.btnPrimary} ${styles.btnBlock}`}
           disabled={pending}
         >
           <PushPinIcon weight="fill" aria-hidden="true" />
           {pending ? m.auth_pending() : COPY[view].go()}
         </button>
-        <div className={s.links}>
-          <p className={s.altAction}>
+        <div className={styles.links}>
+          <p className={styles.altAction}>
             {view === 'signup' ? m.auth_have_account() : m.auth_new_here()}{' '}
             <button
               type="button"
-              className={s.altLink}
+              className={styles.altLink}
               onClick={() => switchTo(view === 'signup' ? 'login' : 'signup')}
             >
               {view === 'signup' ? m.landing_log_in() : m.auth_create_account()}
             </button>
           </p>
           {view !== 'signup' && (
-            <p className={s.altAction}>
+            <p className={styles.altAction}>
               <button
                 type="button"
-                className={s.altLink}
+                className={styles.altLink}
                 onClick={() => switchTo(view === 'login' ? 'reset' : 'login')}
               >
                 {view === 'login' ? m.auth_forgot() : m.auth_back_to_login()}

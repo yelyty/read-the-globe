@@ -2,14 +2,14 @@ import { useRef, useState, type ChangeEvent, type SubmitEvent } from 'react';
 import { WarningCircleIcon } from '@phosphor-icons/react';
 import CompanyPage from '../CompanyPage';
 import Field from '../../../components/Field/Field';
-import * as f from '../../../components/Field/Field.css';
+import * as fieldStyles from '../../../components/Field/Field.css';
 import { btnPrimary } from '../../LandingPage/components/LoginDialog/LoginDialog.css';
 import { isEmail } from '../../../auth/forms';
 import {
   sendContactMessage,
   type ContactMessage,
 } from '../../../api/contact/contact';
-import * as s from '../CompanyPage.css';
+import * as styles from '../CompanyPage.css';
 import { m } from '../../../paraglide/messages.js';
 import { getLocale } from '../../../paraglide/runtime.js';
 
@@ -80,13 +80,13 @@ const ContactPage = () => {
       draft
     >
       <h1>Write to us</h1>
-      <p className={s.lede}>
+      <p className={styles.lede}>
         A question, a bug, a book we should suggest? Send it here, or email{' '}
         <a href="mailto:hello@readtheglobe.app">hello@readtheglobe.app</a>.
       </p>
       {sent ? (
         <p
-          className={s.sent}
+          className={styles.sent}
           role="status"
           tabIndex={-1}
           ref={sentRef}
@@ -96,13 +96,13 @@ const ContactPage = () => {
         </p>
       ) : (
         <form
-          className={s.form}
+          className={styles.form}
           onSubmit={submit}
           noValidate
           lang={getLocale()}
         >
           {formError && (
-            <p className={f.formError} role="alert">
+            <p className={fieldStyles.formError} role="alert">
               <WarningCircleIcon aria-hidden="true" />
               <span>{formError}</span>
             </p>
@@ -126,13 +126,16 @@ const ContactPage = () => {
             onChange={update('email')}
             error={errors.email}
           />
-          <div className={f.field} data-invalid={Boolean(errors.message)}>
-            <label htmlFor="c-message" className={f.fieldLabel}>
+          <div
+            className={fieldStyles.field}
+            data-invalid={Boolean(errors.message)}
+          >
+            <label htmlFor="c-message" className={fieldStyles.fieldLabel}>
               {m.contact_message()}
             </label>
             <textarea
               id="c-message"
-              className={`${f.input} ${s.textarea}`}
+              className={`${fieldStyles.input} ${styles.textarea}`}
               maxLength={4000}
               value={values.message}
               onChange={update('message')}
@@ -140,14 +143,14 @@ const ContactPage = () => {
               aria-describedby={errors.message ? 'c-message-err' : undefined}
             />
             {errors.message && (
-              <div id="c-message-err" className={f.fieldError}>
+              <div id="c-message-err" className={fieldStyles.fieldError}>
                 {errors.message}
               </div>
             )}
           </div>
           <button
             type="submit"
-            className={`${btnPrimary} ${s.send}`}
+            className={`${btnPrimary} ${styles.send}`}
             disabled={pending}
           >
             {pending ? m.auth_pending() : m.contact_send()}

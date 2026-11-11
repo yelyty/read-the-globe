@@ -178,30 +178,32 @@ const ALIASES_A2: Record<string, string> = {
   'central african republic': 'cf',
 };
 
-const codes = (a2: string) => a2.split(' ').map((c) => toNumeric(c)!);
+const codes = (a2: string) => a2.split(' ').map((code) => toNumeric(code)!);
 const HIST: Record<string, string[]> = {};
 
-for (const [k, v] of Object.entries(HIST_A2)) HIST[k] = codes(v);
+for (const [oldName, alpha2s] of Object.entries(HIST_A2))
+  HIST[oldName] = codes(alpha2s);
 const TERR: Record<string, [area: string, parent: string]> = {};
 
-for (const [k, v] of Object.entries(TERR_A2))
-  TERR[k] = codes(v) as [string, string];
+for (const [territory, alpha2s] of Object.entries(TERR_A2))
+  TERR[territory] = codes(alpha2s) as [string, string];
 
-for (const [k, en] of Object.entries(SAME)) {
-  if (HIST[en]) HIST[k] = HIST[en];
-  if (TERR[en]) TERR[k] = TERR[en];
+for (const [alias, en] of Object.entries(SAME)) {
+  if (HIST[en]) HIST[alias] = HIST[en];
+  if (TERR[en]) TERR[alias] = TERR[en];
 }
 
 const ALIASES: Record<string, string> = {};
 
-for (const [k, v] of Object.entries(ALIASES_A2)) ALIASES[k] = toNumeric(v)!;
+for (const [alias, alpha2] of Object.entries(ALIASES_A2))
+  ALIASES[alias] = toNumeric(alpha2)!;
 
 /** a territory's own shape → the country it counts toward: the map fills both, the count takes only the country */
 export const PARENT: Record<string, string> = Object.fromEntries(
   Object.values(TERR)
 );
 
-export const tidy = (v: string) => v.trim().replace(/\s+/g, ' ');
+export const tidy = (text: string) => text.trim().replace(/\s+/g, ' ');
 
 export type CountryMatch = {
   /** the code saved: the country, or a territory's own shape */
@@ -215,9 +217,9 @@ export type CountryMatch = {
 
 /** a state that split: the countries there today, for the reader to choose from */
 export const splitStates = (typed: string) => {
-  const h = HIST[tidy(typed).toLowerCase()];
+  const successors = HIST[tidy(typed).toLowerCase()];
 
-  return h && h.length > 1 ? h : null;
+  return successors && successors.length > 1 ? successors : null;
 };
 
 /* What a typed country counts as. names is the map's own list (code → name), in the reader's language; the English name matches too; pick is the reader's choice for a
@@ -228,24 +230,37 @@ export function countryFrom(
   pick?: string
 ): CountryMatch | null {
   const raw = tidy(typed);
-  const k = raw.toLowerCase();
+  const key = raw.toLowerCase();
 
-  if (!k) return null;
-  const t = TERR[k];
+  if (!key) return null;
+  const territory = TERR[key];
 
   // a territory too small for the map's list is saved as its country
-  if (t) return { code: names[t[0]] ? t[0] : t[1], as: raw, under: t[1] };
+  if (territory)
+    return {
+      code: names[territory[0]] ? territory[0] : territory[1],
+      as: raw,
+      under: territory[1],
+    };
 
   const code =
     Object.keys(names).find(
-      (c) => names[c].toLowerCase() === k || englishName(c)?.toLowerCase() === k
-    ) ?? ALIASES[k];
+      (candidate) =>
+        names[candidate].toLowerCase() === key ||
+        englishName(candidate)?.toLowerCase() === key
+    ) ?? ALIASES[key];
 
   if (code) return { code };
-  const h = HIST[k];
+  const successors = HIST[key];
 
-  if (!h) return null;
-  const to = h.length === 1 ? h[0] : pick && h.includes(pick) ? pick : null;
+  if (!successors) return null;
+
+  const to =
+    successors.length === 1
+      ? successors[0]
+      : pick && successors.includes(pick)
+        ? pick
+        : null;
 
   return to ? { code: to, then: raw } : null;
 }

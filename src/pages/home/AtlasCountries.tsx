@@ -8,7 +8,7 @@ import {
   type Continent,
 } from '../../utils/continents';
 
-import * as s from './HomePage.css';
+import * as styles from './HomePage.css';
 import CountryShape from './CountryShape';
 import { m } from '../../paraglide/messages.js';
 import { getLocale } from '../../paraglide/runtime.js';
@@ -45,46 +45,49 @@ const AtlasCountries = ({
   const name = (code: string) => names[code] ?? code;
 
   const continents = (Object.keys(CONTINENT_NAMES) as Continent[]).filter(
-    (c) => byContinent[c]
+    (continent) => byContinent[continent]
   );
 
   const biggest = continents.reduce<Continent | undefined>(
-    (a, c) => (!a || byContinent[c]!.length > byContinent[a]!.length ? c : a),
+    (most, continent) =>
+      !most || byContinent[continent]!.length > byContinent[most]!.length
+        ? continent
+        : most,
     undefined
   );
 
   return (
-    <section className={s.section} aria-labelledby="countries-title">
-      <div className={s.subHead}>
-        <h2 id="countries-title" className={s.h2}>
-          <MapTrifoldIcon className={s.h2Icon} aria-hidden="true" />
+    <section className={styles.section} aria-labelledby="countries-title">
+      <div className={styles.subHead}>
+        <h2 id="countries-title" className={styles.h2}>
+          <MapTrifoldIcon className={styles.h2Icon} aria-hidden="true" />
           {m.home_countries_title()}
         </h2>
-        <p className={s.subNote}>{m.home_countries_note()}</p>
+        <p className={styles.subNote}>{m.home_countries_note()}</p>
       </div>
-      <div className={s.cc} data-tips>
+      <div className={styles.cc} data-tips>
         {continents.map((continent) => {
-          const codes = byContinent[continent]!.sort((a, b) =>
-            name(a).localeCompare(name(b), getLocale())
+          const codes = byContinent[continent]!.sort((first, second) =>
+            name(first).localeCompare(name(second), getLocale())
           );
 
           return (
             <details
               key={continent}
-              className={s.ccRow}
+              className={styles.ccRow}
               open={continent === biggest}
             >
-              <summary className={s.ccSummary}>
-                <h3 className={s.ccTitle}>
+              <summary className={styles.ccSummary}>
+                <h3 className={styles.ccTitle}>
                   {continentName(continent)}{' '}
-                  <span className={s.ccN} aria-hidden="true">
+                  <span className={styles.ccN} aria-hidden="true">
                     {codes.length}
                   </span>
-                  <span className={s.srOnly}>
+                  <span className={styles.srOnly}>
                     , {m.count_country({ count: codes.length })}
                   </span>
                 </h3>
-                <span className={s.ccPeek} aria-hidden="true">
+                <span className={styles.ccPeek} aria-hidden="true">
                   {codes.slice(0, PEEK).map((code) => (
                     <CountryShape
                       key={code}
@@ -95,24 +98,26 @@ const AtlasCountries = ({
                     />
                   ))}
                   {codes.length > PEEK && (
-                    <span className={s.ccMore}>+{codes.length - PEEK}</span>
+                    <span className={styles.ccMore}>
+                      +{codes.length - PEEK}
+                    </span>
                   )}
                 </span>
               </summary>
-              <ul className={s.ccStamps}>
+              <ul className={styles.ccStamps}>
                 {codes.map((code) => (
                   <li key={code}>
                     <Link
-                      className={s.ccStamp}
+                      className={styles.ccStamp}
                       to="/app/shelf"
                       search={{ country: code }}
-                      onFocus={(e) =>
-                        e.currentTarget.matches(':focus-visible') &&
-                        onFocusCountry?.(code, e.currentTarget)
+                      onFocus={(focusEvent) =>
+                        focusEvent.currentTarget.matches(':focus-visible') &&
+                        onFocusCountry?.(code, focusEvent.currentTarget)
                       }
                       onBlur={() => onFocusCountry?.(code, null)}
                     >
-                      <span className={s.ccShape}>
+                      <span className={styles.ccShape}>
                         <CountryShape
                           code={code}
                           mark={marks[code]}
@@ -120,8 +125,10 @@ const AtlasCountries = ({
                           height={80}
                         />
                       </span>
-                      <span className={s.ccName}>{name(code)}</span>
-                      <span className={s.ccWhat}>{describe(marks[code])}</span>
+                      <span className={styles.ccName}>{name(code)}</span>
+                      <span className={styles.ccWhat}>
+                        {describe(marks[code])}
+                      </span>
                     </Link>
                   </li>
                 ))}

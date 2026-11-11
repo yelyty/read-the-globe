@@ -1,4 +1,4 @@
-import * as s from './PageTitle.css';
+import * as styles from './PageTitle.css';
 
 type PageTitleProps = {
   children: string;
@@ -6,8 +6,8 @@ type PageTitleProps = {
 
 const PageTitle = ({ children }: PageTitleProps) => {
   return (
-    <header className={s.header}>
-      <h1 className={s.title}>{children}</h1>
+    <header className={styles.header}>
+      <h1 className={styles.title}>{children}</h1>
     </header>
   );
 };

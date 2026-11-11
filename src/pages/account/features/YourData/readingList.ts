@@ -10,12 +10,12 @@ import { m } from '../../../../paraglide/messages.js';
 const today = () => new Date().toISOString().slice(0, 10);
 
 const download = (text: string, name: string, type: string) => {
-  const a = document.createElement('a');
+  const link = document.createElement('a');
 
-  a.href = URL.createObjectURL(new Blob([text], { type }));
-  a.download = name;
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(a.href), 0);
+  link.href = URL.createObjectURL(new Blob([text], { type }));
+  link.download = name;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(link.href), 0);
 };
 
 // in the importer's own columns, so it round-trips
@@ -79,8 +79,8 @@ export const exportExample = () =>
     'text/csv'
   );
 
-export const bookCount = (n: number) => m.count_book({ count: n });
-export const goalCount = (n: number) => m.count_goal({ count: n });
+export const bookCount = (count: number) => m.count_book({ count: count });
+export const goalCount = (count: number) => m.count_goal({ count: count });
 
 // what clearing or replacing the atlas takes away, without a "0 goals"
 export const atlasWords = (books: number, goals: number) =>

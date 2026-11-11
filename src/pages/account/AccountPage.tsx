@@ -9,10 +9,10 @@ import YourData from './features/YourData/YourData';
 import ClearAtlas from './features/ClearAtlas/ClearAtlas';
 import Block from './components/Block';
 import LanguagePicker from '../../components/LanguagePicker/LanguagePicker';
-import * as f from '../../components/Field/Field.css';
+import * as fieldStyles from '../../components/Field/Field.css';
 import { m } from '../../paraglide/messages.js';
 
-import * as s from './AccountPage.css';
+import * as styles from './AccountPage.css';
 import PageTitle from '../../components/PageTitle/PageTitle';
 
 const app = getRouteApi('/app');
@@ -25,15 +25,15 @@ const AccountPage = () => {
   if (!user) return null;
 
   return (
-    <div className={s.wrapper}>
+    <div className={styles.wrapper}>
       <PageTitle>{m.nav_account()}</PageTitle>
       <UserDetails user={user} />
       <Block title={m.language()}>
         <LanguagePicker
           label={m.language_app()}
-          className={f.field}
-          labelClassName={f.fieldLabel}
-          selectClassName={f.input}
+          className={fieldStyles.field}
+          labelClassName={fieldStyles.fieldLabel}
+          selectClassName={fieldStyles.input}
         />
       </Block>
       <ChangePassword email={user.email ?? ''} />

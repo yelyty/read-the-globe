@@ -256,7 +256,7 @@ export const toNumeric = (alpha2: string | null | undefined) =>
   (alpha2 && NUMERIC[alpha2.toUpperCase()]) || null;
 
 const ALPHA2 = Object.fromEntries(
-  Object.entries(NUMERIC).map(([a2, n]) => [n, a2])
+  Object.entries(NUMERIC).map(([a2, numeric]) => [numeric, a2])
 );
 
 // "620" → "PT"

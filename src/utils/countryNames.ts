@@ -14,7 +14,7 @@ export const englishName = (code: string) => english?.[code];
 export async function getCountryNames(): Promise<Record<string, string>> {
   if (cache) return cache;
 
-  const topo = (await fetch(GEO_URL).then((r) => r.json())) as {
+  const topo = (await fetch(GEO_URL).then((response) => response.json())) as {
     objects: {
       countries: {
         geometries: Array<{ id: string; properties: { name: string } }>;
@@ -25,7 +25,9 @@ export async function getCountryNames(): Promise<Record<string, string>> {
   const geometries = topo.objects.countries.geometries;
 
   english = Object.fromEntries(
-    geometries.filter((g) => g.id).map((g) => [g.id, g.properties.name])
+    geometries
+      .filter((geometry) => geometry.id)
+      .map((geometry) => [geometry.id, geometry.properties.name])
   );
 
   const locale = getLocale();

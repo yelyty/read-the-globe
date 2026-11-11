@@ -13,7 +13,7 @@ import { m } from '../../paraglide/messages.js';
 export const MAX_GOALS = 10;
 
 export const REGIONS = (Object.keys(CONTINENT_NAMES) as Continent[]).filter(
-  (c) => c !== 'AN'
+  (continent) => continent !== 'AN'
 );
 
 export type GoalDraft = Pick<
@@ -37,7 +37,8 @@ const draft = (
   ...extra,
 });
 
-const codes = (alpha2: string) => alpha2.split(' ').map((c) => toNumeric(c)!);
+const codes = (alpha2: string) =>
+  alpha2.split(' ').map((code) => toNumeric(code)!);
 
 export const CATALOGUE: CatalogueGoal[] = [
   draft('region', 'Around South America', { continent: 'SA' }),
@@ -108,8 +109,8 @@ export function goalProgress(
   shapes: Record<string, Feature>
 ): Progress {
   if (goal.kind === 'theme') {
-    const done = books.filter((b) =>
-      b.goals?.some((g) => g.goalId === goal.id)
+    const done = books.filter((book) =>
+      book.goals?.some((link) => link.goalId === goal.id)
     ).length;
 
     return { done, total: goal.target ?? 1, all: [], reached: [] };
@@ -117,18 +118,21 @@ export function goalProgress(
 
   const all =
     goal.kind === 'region'
-      ? Object.keys(shapes).filter((c) => CONTINENT_OF[c] === goal.continent)
+      ? Object.keys(shapes).filter(
+          (code) => CONTINENT_OF[code] === goal.continent
+        )
       : (goal.countryCodes ?? []);
 
-  const reached = all.filter((c) => marks[c]);
+  const reached = all.filter((code) => marks[code]);
 
   return { done: reached.length, total: all.length, all, reached };
 }
 
-export const isDone = (p: Progress) => p.total > 0 && p.done >= p.total;
+export const isDone = (progress: Progress) =>
+  progress.total > 0 && progress.done >= progress.total;
 
-export const plural = (n: number, one: string, many = `${one}s`) =>
-  `${n} ${n === 1 ? one : many}`;
+export const plural = (count: number, one: string, many = `${one}s`) =>
+  `${count} ${count === 1 ? one : many}`;
 
 export const today = () => new Date().toISOString().slice(0, 10);
 
@@ -139,7 +143,7 @@ export const goalHas = (goal: Goal, code: string) =>
 
 // the postmark's date, for a reached goal's stamp: "4 X 26"
 export const romanDate = (iso: string) => {
-  const d = new Date(`${iso}T12:00:00`);
+  const date = new Date(`${iso}T12:00:00`);
 
   const months = [
     'I',
@@ -156,5 +160,5 @@ export const romanDate = (iso: string) => {
     'XII',
   ];
 
-  return `${d.getDate()} ${months[d.getMonth()]} ${String(d.getFullYear()).slice(2)}`;
+  return `${date.getDate()} ${months[date.getMonth()]} ${String(date.getFullYear()).slice(2)}`;
 };

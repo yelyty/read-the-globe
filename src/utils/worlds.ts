@@ -11,26 +11,31 @@ export function worldsOf(books: BookEntry[], saved: World[]): WorldRow[] {
   const by = new Map<string, WorldRow>();
 
   for (const book of books)
-    for (const p of book.places ?? []) {
-      if (!p.imagined || !p.name.trim()) continue;
-      const w = by.get(key(p.name)) ?? { name: p.name.trim(), books: [] };
+    for (const place of book.places ?? []) {
+      if (!place.imagined || !place.name.trim()) continue;
 
-      if (!w.books.includes(book)) w.books.push(book);
-      by.set(key(p.name), w);
+      const world = by.get(key(place.name)) ?? {
+        name: place.name.trim(),
+        books: [],
+      };
+
+      if (!world.books.includes(book)) world.books.push(book);
+      by.set(key(place.name), world);
     }
 
-  for (const w of saved) {
-    const row = by.get(key(w.name));
+  for (const world of saved) {
+    const row = by.get(key(world.name));
 
-    if (row) row.saved = w;
-    else by.set(key(w.name), { name: w.name, books: [], saved: w });
+    if (row) row.saved = world;
+    else by.set(key(world.name), { name: world.name, books: [], saved: world });
   }
 
   return [...by.values()].sort(
-    (a, b) =>
-      b.books.length - a.books.length ||
-      a.name.localeCompare(b.name, getLocale())
+    (first, second) =>
+      second.books.length - first.books.length ||
+      first.name.localeCompare(second.name, getLocale())
   );
 }
 
-export const sameWorld = (a: string, b: string) => key(a) === key(b);
+export const sameWorld = (first: string, second: string) =>
+  key(first) === key(second);

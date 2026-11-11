@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef } from 'react';
 import type { Marks } from '../../utils/atlasMarks';
 import { coverColor } from '../../utils/coverColors';
-import * as s from './HomePage.css';
+import * as styles from './HomePage.css';
 import { m } from '../../paraglide/messages.js';
 
 export type Tip = {
@@ -40,12 +40,12 @@ const MapTip = ({ tip, marks, names }: MapTipProps) => {
 
   if (!mark)
     return (
-      <div ref={ref} className={s.tip} role="tooltip">
-        <p className={s.tipHead}>
+      <div ref={ref} className={styles.tip} role="tooltip">
+        <p className={styles.tipHead}>
           <b>{name}</b>
           <span>{m.tip_no_books()}</span>
         </p>
-        <p className={s.tipFoot}>
+        <p className={styles.tipFoot}>
           {tip.by === 'touch' ? m.tip_tap_log() : m.tip_click_log()}
         </p>
       </div>
@@ -61,36 +61,38 @@ const MapTip = ({ tip, marks, names }: MapTipProps) => {
   }[tip.by]();
 
   return (
-    <div ref={ref} className={s.tip} role="tooltip">
-      <p className={`${s.tipHead} ${s.tipHeadBooks}`}>
+    <div ref={ref} className={styles.tip} role="tooltip">
+      <p className={`${styles.tipHead} ${styles.tipHeadBooks}`}>
         <b>{name}</b>
         <span>{m.count_book({ count: books.length })}</span>
       </p>
-      <ul className={s.tipList}>
-        {books.slice(0, SHOWN).map((b) => {
-          const set = mark.set.includes(b);
-          const author = mark.author.includes(b);
+      <ul className={styles.tipList}>
+        {books.slice(0, SHOWN).map((book) => {
+          const set = mark.set.includes(book);
+          const author = mark.author.includes(book);
 
           return (
-            <li key={b.id}>
+            <li key={book.id}>
               <i
-                className={s.tipCover}
+                className={styles.tipCover}
                 style={{
-                  background: coverColor(b.title + (b.author?.name ?? '')),
+                  background: coverColor(
+                    book.title + (book.author?.name ?? '')
+                  ),
                 }}
                 aria-hidden="true"
               />
-              <span className={s.tipBook}>
-                <span className={s.tipTitle}>{b.title}</span>
-                <span>{b.author?.name}</span>
-                <span className={s.tipWhy}>
+              <span className={styles.tipBook}>
+                <span className={styles.tipTitle}>{book.title}</span>
+                <span>{book.author?.name}</span>
+                <span className={styles.tipWhy}>
                   <i
                     className={
                       set && author
-                        ? s.swatchBoth
+                        ? styles.swatchBoth
                         : set
-                          ? s.swatchSet
-                          : s.swatchAuthor
+                          ? styles.swatchSet
+                          : styles.swatchAuthor
                     }
                     aria-hidden="true"
                   />
@@ -105,7 +107,7 @@ const MapTip = ({ tip, marks, names }: MapTipProps) => {
           );
         })}
       </ul>
-      <p className={`${s.tipFoot} ${s.tipFootRule}`}>
+      <p className={`${styles.tipFoot} ${styles.tipFootRule}`}>
         {books.length > SHOWN &&
           `${m.tip_more({ count: books.length - SHOWN })} · `}
         {foot}
