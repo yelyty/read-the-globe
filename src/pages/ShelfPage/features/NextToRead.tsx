@@ -1,21 +1,23 @@
-import { useEffect, useRef, useState, type SubmitEvent } from "react";
-import { Link } from "@tanstack/react-router";
+import { useEffect, useRef, useState, type SubmitEvent } from 'react';
+import { Link } from '@tanstack/react-router';
 import {
+  ArrowCounterClockwiseIcon,
   BookmarkSimpleIcon,
   CaretDownIcon,
   PushPinIcon,
   TrashIcon,
-} from "@phosphor-icons/react";
-import type { Goal, NextRead } from "../../../types";
-import type { Marks } from "../../../utils/atlasMarks";
-import { addNextRead, removeNextRead } from "../../../api/nextReads/nextReads";
+} from '@phosphor-icons/react';
+import type { Goal, NextRead } from '../../../types';
+import type { Marks } from '../../../utils/atlasMarks';
+import { addNextRead, removeNextRead } from '../../../api/nextReads/nextReads';
 import {
   countryStamp,
   loadCountries,
   type Country,
-} from "../../PostcardPage/drawPostcard";
-import { goalHas } from "../../GoalsPage/goals";
-import * as s from "../ShelfPage.css";
+} from '../../PostcardPage/drawPostcard';
+import { goalHas } from '../../GoalsPage/goals';
+import { useStatus } from '../../../hooks/useStatus';
+import * as s from '../ShelfPage.css';
 
 type NextToReadProps = {
   items: NextRead[];
@@ -34,12 +36,13 @@ const NextToRead = ({
   marks,
   goals,
 }: NextToReadProps) => {
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [country, setCountry] = useState("");
-  const [mark, setMark] = useState<"set" | "author">("author");
-  const [error, setError] = useState("");
-  const [status, setStatus] = useState("");
+  const [title, setTitle] = useState('');
+  const [author, setAuthor] = useState('');
+  const [country, setCountry] = useState('');
+  const [mark, setMark] = useState<'set' | 'author'>('author');
+  const [error, setError] = useState('');
+  const [said, setSaid] = useState('');
+  const status = useStatus();
   const [saving, setSaving] = useState(false);
   const [countries, setCountries] = useState<Map<string, Country>>();
   const titleRef = useRef<HTMLInputElement>(null);
@@ -49,7 +52,7 @@ const NextToRead = ({
   }, []);
 
   const sorted = Object.entries(names).sort(([, a], [, b]) =>
-    a.localeCompare(b),
+    a.localeCompare(b)
   );
 
   const codeFor = (typed: string) =>
@@ -58,27 +61,38 @@ const NextToRead = ({
 
   const submit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setStatus("");
+    setSaid('');
     const t = title.trim();
     if (!t) {
-      setError("Add a title, or an idea like “a novel set in Chile”.");
+      setError('Add a title, or an idea like “a novel set in Chile”.');
       titleRef.current?.focus();
       return;
     }
     if (country.trim() && !code) {
       setError(
-        `No country called “${country.trim()}”. Pick one from the list, or leave it empty.`,
+        `No country called “${country.trim()}”. Pick one from the list, or leave it empty.`
       );
-      document.getElementById("n-country")?.focus();
+      document.getElementById('n-country')?.focus();
       return;
     }
     const dup = items.find(
       (it) =>
         it.title.toLowerCase() === t.toLowerCase() &&
-        it.countryCode === (code ?? null),
+        it.countryCode === (code ?? null)
     );
     if (dup) {
-      setError(`“${dup.title}” is already on Next to read.`);
+      status.show({
+        text: `“${dup.title}” is already on Next to read.`,
+        action: {
+          label: 'See it',
+          icon: <BookmarkSimpleIcon aria-hidden="true" />,
+          run: () => {
+            const row = document.getElementById(`next-${dup.id}`);
+            row?.scrollIntoView({ block: 'center' });
+            row?.focus({ preventScroll: true });
+          },
+        },
+      });
       return;
     }
     setSaving(true);
@@ -90,26 +104,41 @@ const NextToRead = ({
     });
     setSaving(false);
     if (!saved) {
-      setError("That couldn’t be saved. Try again.");
+      setError('That couldn’t be saved. Try again.');
       return;
     }
     setItems((list) => [saved, ...list]);
-    setTitle("");
-    setAuthor("");
-    setCountry("");
-    setMark("author");
-    setError("");
-    setStatus(`Saved ${saved.title} to Next to read.`);
+    setTitle('');
+    setAuthor('');
+    setCountry('');
+    setMark('author');
+    setError('');
+    setSaid(`Saved ${saved.title} to Next to read.`);
     titleRef.current?.focus();
   };
 
   const remove = async (item: NextRead) => {
     if (!(await removeNextRead(item.id))) {
-      setStatus(`“${item.title}” couldn’t be removed. Try again.`);
+      status.show({ text: `“${item.title}” couldn’t be removed. Try again.` });
       return;
     }
+    const at = items.indexOf(item);
     setItems((list) => list.filter((it) => it.id !== item.id));
-    setStatus(`Removed ${item.title} from Next to read.`);
+    status.show({
+      text: `Removed ${item.title} from Next to read.`,
+      action: {
+        label: 'Undo',
+        icon: <ArrowCounterClockwiseIcon aria-hidden="true" />,
+        run: async () => {
+          const back = await addNextRead(item);
+          if (!back) {
+            status.show({ text: 'That couldn’t be saved. Try again.' });
+            return;
+          }
+          setItems((list) => [...list.slice(0, at), back, ...list.slice(at)]);
+        },
+      },
+    });
     titleRef.current?.focus();
   };
 
@@ -130,7 +159,7 @@ const NextToRead = ({
             aria-invalid={error && !title.trim() ? true : undefined}
             onChange={(e) => {
               setTitle(e.target.value);
-              setError("");
+              setError('');
             }}
           />
         </div>
@@ -161,7 +190,7 @@ const NextToRead = ({
             value={country}
             onChange={(e) => {
               setCountry(e.target.value);
-              setError("");
+              setError('');
             }}
           />
           <datalist id="n-countries">
@@ -180,7 +209,7 @@ const NextToRead = ({
                 id="n-mark"
                 className={s.select}
                 value={mark}
-                onChange={(e) => setMark(e.target.value as "set" | "author")}
+                onChange={(e) => setMark(e.target.value as 'set' | 'author')}
               >
                 <option value="author">where the author is from</option>
                 <option value="set">where the story is set</option>
@@ -200,7 +229,7 @@ const NextToRead = ({
             Save for later
           </button>
           <p className={s.status} role="status">
-            {status}
+            {said}
           </p>
         </div>
       </form>
@@ -215,9 +244,14 @@ const NextToRead = ({
           {items.map((it) => {
             const c = it.countryCode && countries?.get(it.countryCode);
             const stamp = c ? countryStamp(c) : null;
-            const place = it.countryCode ? (names[it.countryCode] ?? "") : "";
+            const place = it.countryCode ? (names[it.countryCode] ?? '') : '';
             return (
-              <li key={it.id} className={s.nextItem}>
+              <li
+                key={it.id}
+                id={`next-${it.id}`}
+                tabIndex={-1}
+                className={s.nextItem}
+              >
                 {/* the country it would mark, still pale: it isn't on the atlas until it's read */}
                 <span className={s.nextStamp} aria-hidden="true">
                   {stamp ? (
@@ -241,10 +275,10 @@ const NextToRead = ({
                     <div className={s.nextMeta}>
                       <span>
                         <i
-                          className={it.mark === "set" ? s.dotSet : s.dotAuthor}
+                          className={it.mark === 'set' ? s.dotSet : s.dotAuthor}
                           aria-hidden="true"
                         />
-                        {it.mark === "set"
+                        {it.mark === 'set'
                           ? `Set in ${place}`
                           : `Author from ${place}`}
                       </span>

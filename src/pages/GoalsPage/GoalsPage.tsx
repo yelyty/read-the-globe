@@ -1,11 +1,17 @@
 import { useEffect, useState } from 'react';
 import { getRouteApi, useRouter } from '@tanstack/react-router';
-import { PlusIcon } from '@phosphor-icons/react';
 import type { Feature } from 'geojson';
 import type { Goal, GoalKind } from '../../types';
-import { addGoal, deleteGoal, markReached } from '../../api/goals/goals';
+import { ArrowCounterClockwiseIcon, PlusIcon } from '@phosphor-icons/react';
 import { atlasMarks } from '../../utils/atlasMarks';
 import { worldShapes } from '../../utils/worldShapes';
+import {
+  addGoal,
+  deleteGoal,
+  markReached,
+  restoreGoal,
+} from '../../api/goals/goals';
+import { useStatus } from '../../hooks/useStatus';
 import {
   CATALOGUE,
   KIND_GROUP,
@@ -31,7 +37,8 @@ const GoalsPage = () => {
   const [shapes, setShapes] = useState<Record<string, Feature>>();
   const [editing, setEditing] = useState<Goal | 'new' | null>(null);
   const [choosing, setChoosing] = useState<Goal | null>(null);
-  const [status, setStatus] = useState('');
+  const status = useStatus();
+  const say = (text: string) => status.show({ text });
 
   useEffect(() => {
     worldShapes().then(setShapes);
@@ -75,22 +82,45 @@ const GoalsPage = () => {
     goals.length - goals.filter((g) => !isDone(progress(g))).length;
 
   const saved = async (message: string) => {
-    setStatus(message);
+    say(message);
     await router.invalidate();
   };
 
   const add = async (draft: GoalDraft) => {
     if (full) return;
     const problem = await addGoal(draft);
-    if (problem) return setStatus(problem);
+    if (problem) return say(problem);
     saved(`Goal added: ${draft.name}.`);
   };
 
   const remove = async (goal: Goal) => {
-    // ponytail: confirm() until the app has a status line with Undo (REACT-TODO 5.1)
-    if (!window.confirm(`Remove the goal “${goal.name}”?`)) return;
+    const ticked = books
+      .filter((b) => b.goals.some((g) => g.goalId === goal.id))
+      .map((b) => b.id);
+    const at = sorted.indexOf(goal);
     const problem = await deleteGoal(goal.id);
-    if (problem) return setStatus(problem);
+    if (problem) return say(problem);
+    await router.invalidate();
+    // focus goes to the row now in its place, or to the suggestions when it was the last one
+    const left = document.querySelectorAll<HTMLElement>('[data-remove-goal]');
+    (
+      left[Math.min(at, left.length - 1)] ??
+      document.querySelector<HTMLElement>(`.${s.sugg} > summary`)
+    )?.focus();
+    status.show({
+      text: ticked.length
+        ? `Removed ${goal.name}, and unticked ${plural(ticked.length, 'book')}.`
+        : `Removed ${goal.name}.`,
+      action: {
+        label: 'Undo',
+        icon: <ArrowCounterClockwiseIcon aria-hidden="true" />,
+        run: async () => {
+          const problem = await restoreGoal(goal, ticked);
+          if (problem) return say(problem);
+          saved(`${goal.name} is back.`);
+        },
+      },
+    });
     saved(`Removed ${goal.name}.`);
   };
 
@@ -312,10 +342,6 @@ const GoalsPage = () => {
           {suggestions}
         </>
       )}
-
-      <p className={s.status} role="status">
-        {status}
-      </p>
 
       {editing && (
         <GoalDialog

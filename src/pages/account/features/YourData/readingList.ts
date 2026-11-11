@@ -1,4 +1,5 @@
 import type { BookEntry, Goal } from '../../../../types';
+import { readDate } from '../../../../utils/readDate';
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -31,7 +32,7 @@ export function exportReadingList(
       b.author?.name ?? '',
       b.author?.country?.name ?? '',
       (b.places ?? []).map(place).filter(Boolean).join('; '),
-      (b.createdAt ?? '').slice(0, 10),
+      readDate(b),
     ]),
   ];
   download(

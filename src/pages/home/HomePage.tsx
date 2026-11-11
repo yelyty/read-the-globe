@@ -17,6 +17,7 @@ import Cartouche from './features/Cartouche.tsx';
 import MapKey from './MapKey.tsx';
 import RecentReads from './features/RecentReads.tsx';
 import PageTitle from '../../components/PageTitle/PageTitle.tsx';
+import { byLogged } from '../../utils/readDate';
 
 const app = getRouteApi('/app');
 const RECENT = 3;
@@ -136,7 +137,10 @@ const HomePage = () => {
 
       {!blank && (
         <>
-          <RecentReads books={books.slice(0, RECENT)} names={names} />
+          <RecentReads
+            books={[...books].sort(byLogged).slice(0, RECENT)}
+            names={names}
+          />
           <AtlasCountries marks={marks} names={names} />
         </>
       )}

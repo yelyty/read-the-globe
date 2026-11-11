@@ -1,6 +1,6 @@
-import { XIcon } from "@phosphor-icons/react";
-import { useEffect, type ReactNode } from "react";
-import * as s from "./Dialog.css";
+import { XIcon } from '@phosphor-icons/react';
+import { useEffect, type ReactNode } from 'react';
+import * as s from './Dialog.css';
 
 type DialogProps = {
   isOpen: boolean;
@@ -17,9 +17,9 @@ const Dialog = ({
 }: DialogProps) => {
   useEffect(() => {
     if (!isOpen || !canClose) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
   }, [isOpen, canClose, onClose]);
 
   if (!isOpen) return null;
@@ -31,7 +31,7 @@ const Dialog = ({
   };
 
   return (
-    <div className={s.overlay} onClick={handleOverlayClick}>
+    <div className={s.overlay} role="presentation" onClick={handleOverlayClick}>
       <div className={s.dialog}>
         {canClose && (
           <button

@@ -64,7 +64,7 @@ const PostcardPage = () => {
     paper: 'paper',
   });
   const [status, setStatus] = useState('');
-  const [busy, setBusy] = useState(false);
+  const [busy, setBusy] = useState<'save' | 'share' | null>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
 
@@ -125,7 +125,9 @@ const PostcardPage = () => {
   };
 
   const onSave = async () => {
+    setBusy('save');
     const blob = await toBlob();
+    setBusy(null);
     if (!blob) return;
     save(blob);
     setStatus('Postcard saved to your downloads.');
@@ -133,9 +135,9 @@ const PostcardPage = () => {
 
   // the device's own share sheet, which lists every app the reader has; without one, the card saves instead
   const onShare = async () => {
-    setBusy(true);
+    setBusy('share');
     const blob = await toBlob();
-    setBusy(false);
+    setBusy(null);
     if (!blob) return;
     const file = new File([blob], fileName(), { type: 'image/png' });
     if (!navigator.canShare?.({ files: [file] })) {
@@ -348,18 +350,25 @@ const PostcardPage = () => {
 
           <section className={s.send} aria-label="Send your postcard">
             <div className={s.actions}>
-              <button type="button" className={s.primary} onClick={onSave}>
+              <button
+                type="button"
+                className={s.primary}
+                onClick={onSave}
+                disabled={!!busy}
+                aria-busy={busy === 'save' || undefined}
+              >
                 <DownloadSimpleIcon aria-hidden="true" />
-                Save postcard
+                {busy === 'save' ? 'Drawing…' : 'Save postcard'}
               </button>
               <button
                 type="button"
                 className={s.quiet}
                 onClick={onShare}
-                disabled={busy}
+                disabled={!!busy}
+                aria-busy={busy === 'share' || undefined}
               >
                 <ShareFatIcon aria-hidden="true" />
-                Share postcard
+                {busy === 'share' ? 'Drawing…' : 'Share postcard'}
               </button>
             </div>
             <p className={s.status} role="status">

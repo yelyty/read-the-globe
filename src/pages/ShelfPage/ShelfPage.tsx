@@ -20,6 +20,7 @@ import {
 import { useCountryNames } from '../../hooks/useCountryNames';
 import type { BookEntry } from '../../types';
 import { list as bookList } from '../../components/BookRow/BookRow.css';
+import { byReadDate, readDate } from '../../utils/readDate';
 import {
   CONTINENT_NAMES,
   CONTINENT_OF,
@@ -44,7 +45,7 @@ const CONTINENTS = (Object.keys(CONTINENT_NAMES) as Continent[]).filter(
 const PAGE = 100;
 
 const authorCode = (b: BookEntry) => b.author?.country?.code;
-const yearOf = (b: BookEntry) => (b.createdAt ?? '').slice(0, 4);
+const yearOf = (b: BookEntry) => readDate(b).slice(0, 4);
 const placeCodes = (b: BookEntry) =>
   (b.places ?? []).map((p) => p.countryCode).filter((c): c is string => !!c);
 const count = (n: number, one: string, many: string) =>
@@ -127,6 +128,7 @@ const ShelfPage = () => {
     ];
     return hay.join(' ').toLowerCase().includes(q);
   });
+  if (sort === 'new') list.sort(byReadDate);
   if (sort === 'title') list.sort((a, b) => a.title.localeCompare(b.title));
   if (sort === 'country')
     list.sort(

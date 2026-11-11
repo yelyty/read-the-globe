@@ -1,4 +1,4 @@
-import type { Continent } from "./utils/continents";
+import type { Continent } from './utils/continents';
 
 export interface Country {
   name: string;
@@ -13,7 +13,10 @@ export interface Author {
 export interface BookEntry {
   id: string;
   title: string;
+  /** when it was logged */
   createdAt?: string;
+  /** when it was read, YYYY-MM-DD; null on rows saved before read_on existed */
+  readOn?: string | null;
   author: Author | null;
   places: Place[];
   goals: {
@@ -40,7 +43,7 @@ export interface Place {
   bookId: string;
 }
 
-export type GoalKind = "region" | "countries" | "theme";
+export type GoalKind = 'region' | 'countries' | 'theme';
 
 export interface Goal {
   id: number;
@@ -63,7 +66,7 @@ export interface NextRead {
   title: string;
   author: string | null;
   countryCode: string | null;
-  mark: "set" | "author" | null;
+  mark: 'set' | 'author' | null;
   createdAt: string;
 }
 

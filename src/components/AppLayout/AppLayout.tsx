@@ -1,16 +1,69 @@
-import { Outlet } from "@tanstack/react-router";
+import { useEffect, useState } from 'react';
+import { Link, Outlet, useRouterState } from '@tanstack/react-router';
+import { PushPinIcon } from '@phosphor-icons/react';
 
-import "../../App.css";
+import '../../App.css';
 
-import AppHeader from "../AppHeader/AppHeader";
-import AppFooter from "../AppFooter/AppFooter";
+import AppHeader from '../AppHeader/AppHeader';
+import AppFooter from '../AppFooter/AppFooter';
+import StatusBar from '../StatusBar/StatusBar';
 
-import * as s from "./AppLayout.css";
-import LogBook from "../LogBook/LogBook";
+import * as s from './AppLayout.css';
+import LogBook from '../LogBook/LogBook';
+
+const TITLES: Record<string, string> = {
+  '/app': 'Home',
+  '/app/shelf': 'Shelf',
+  '/app/goals': 'Goals',
+  '/app/account': 'Account',
+  '/app/postcard': 'Your postcard',
+};
+
+// phones: the floating Log a book pill steps aside while the reader scrolls down, so it never sits on the row
+// being read, and comes back on the way up or at the end of the page
+const LogPill = () => {
+  const [away, setAway] = useState(false);
+  useEffect(() => {
+    let lastY = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      const dy = y - lastY;
+      if (Math.abs(dy) < 6) return;
+      lastY = y;
+      const atEnd =
+        window.innerHeight + y >= document.documentElement.scrollHeight - 8;
+      setAway(dy > 0 && y > 120 && !atEnd);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+  return (
+    <Link
+      className={s.pill}
+      data-away={away || undefined}
+      to="."
+      search={(prev) => ({ ...prev, log: true })}
+    >
+      <PushPinIcon weight="fill" aria-hidden="true" />
+      <span>Log a book</span>
+    </Link>
+  );
+};
 
 const AppLayout = () => {
+  const path = useRouterState({
+    select: (st) => st.location.pathname.replace(/\/$/, ''),
+  });
+
+  useEffect(() => {
+    const was = document.title;
+    document.title = `${TITLES[path] ?? 'Home'} — Read The Globe`;
+    return () => {
+      document.title = was;
+    };
+  }, [path]);
   return (
-    <>
+    <StatusBar>
       <div className={s.shell}>
         <AppHeader />
         <main className={`wrapper ${s.main}`}>
@@ -18,8 +71,9 @@ const AppLayout = () => {
         </main>
         <AppFooter />
         <LogBook />
+        <LogPill />
       </div>
-    </>
+    </StatusBar>
   );
 };
 

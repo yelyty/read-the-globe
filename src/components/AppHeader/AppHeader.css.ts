@@ -100,3 +100,5 @@ export const tools = style({
   },
 });
 globalStyle(`${tools} > a`, { textDecoration: 'none' });
+
+export const logBtn = style({ '@media': { [phone]: { display: 'none' } } });

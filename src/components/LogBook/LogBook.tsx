@@ -5,7 +5,14 @@ import {
   useRouter,
   useRouterState,
 } from '@tanstack/react-router';
-import { PlusIcon, PushPinIcon, TrashIcon, XIcon } from '@phosphor-icons/react';
+import {
+  ArrowCounterClockwiseIcon,
+  PlusIcon,
+  PushPinIcon,
+  TrashIcon,
+  XIcon,
+} from '@phosphor-icons/react';
+import { useStatus } from '../../hooks/useStatus';
 import type { BookEntry, Goal, NextRead } from '../../types';
 import { deleteBook, saveBook } from '../../api/books/books';
 import { removeNextRead } from '../../api/nextReads/nextReads';
@@ -13,6 +20,7 @@ import { worldShapes } from '../../utils/worldShapes';
 import * as f from '../Field/Field.css';
 import * as s from './LogBook.css';
 import Hint from '../Hint/Hint';
+import { localToday, readDate, readOnFor } from '../../utils/readDate';
 
 const app = getRouteApi('/app');
 
@@ -34,18 +42,17 @@ const row = (name = '', country = ''): Row => ({
   country,
 });
 
-const formatDate = (iso?: string) =>
-  iso
-    ? new Date(iso).toLocaleDateString(undefined, {
+const formatMonth = (day: string) =>
+  day
+    ? new Date(`${day}T12:00:00`).toLocaleDateString(undefined, {
         day: 'numeric',
         month: 'short',
         year: 'numeric',
       })
     : '';
 
-// The log form, as in the app mock: one dialog over any page (a bottom sheet on phones). ?log opens it,
-// ?edit=<book id> opens it on that book, and ?next=<item id> starts it from a Next to read item.
 const LogBook = () => {
+  const status = useStatus();
   const { log, edit, next } = app.useSearch();
   const { books, goals } = app.useLoaderData();
   const navigate = useNavigate();
@@ -97,6 +104,36 @@ const LogBook = () => {
     setSaid(message);
   };
 
+  // Undo puts the book back through the same save as the form: a new row with the same title, author, places,
+  // read date and goal ticks. ponytail: it counts as logged again, so it returns to the top of Recent reads
+  const removed = async (gone: BookEntry) => {
+    await close();
+    await router.invalidate();
+    status.show({
+      text: `Removed ${gone.title} from your atlas.`,
+      action: {
+        label: 'Undo',
+        icon: <ArrowCounterClockwiseIcon aria-hidden="true" />,
+        run: async () => {
+          const error = await saveBook({
+            title: gone.title,
+            author: gone.author?.name ?? '',
+            authorCountry: gone.author?.country?.code ?? '',
+            readOn: readDate(gone),
+            places: gone.places.map((p) => ({
+              name: p.name,
+              country: p.countryCode ?? '',
+            })),
+            goalIds: gone.goals.map((g) => g.goalId),
+          });
+          if (error) return status.show({ text: error });
+          await router.invalidate();
+          status.show({ text: `${gone.title} is back on your atlas.` });
+        },
+      },
+    });
+  };
+
   return (
     <>
       {open && names && (
@@ -109,6 +146,7 @@ const LogBook = () => {
           goals={goals}
           onClose={close}
           onDone={done}
+          onRemoved={removed}
         />
       )}
       <p className={s.srOnly} role="status">
@@ -126,6 +164,7 @@ type LogFormProps = {
   goals: Goal[];
   onClose: () => void;
   onDone: (message: string, home: boolean) => void;
+  onRemoved: (book: BookEntry) => void;
 };
 
 const LogForm = ({
@@ -136,6 +175,7 @@ const LogForm = ({
   goals,
   onClose,
   onDone,
+  onRemoved,
 }: LogFormProps) => {
   const dialog = useRef<HTMLDialogElement>(null);
   const name = (code?: string | null) => (code ? (names[code] ?? '') : '');
@@ -155,7 +195,7 @@ const LogForm = ({
     return m && code ? { name: m[1].trim(), code } : null;
   };
 
-  const startYm = book?.createdAt?.slice(0, 7) ?? '';
+  const startYm = book ? readDate(book).slice(0, 7) : '';
   const themes = goals.filter((g) => g.kind === 'theme');
   const [title, setTitle] = useState(book?.title ?? nextItem?.title ?? '');
   const [author, setAuthor] = useState(
@@ -275,22 +315,13 @@ const LogForm = ({
     if (dup && dupOk !== key) {
       setDupOk(key);
       setFormError(
-        `Already on your shelf since ${formatDate(dup.createdAt)}. Pin it again to add it a second time.`
+        `Already on your shelf since ${formatMonth(readDate(dup))}. Pin it again to add it a second time.`
       );
       return;
     }
 
-    // ponytail: the read month is stored as the book's created_at (what Home and the Shelf already sort by);
-    // a read_on column if "recently logged" and "read" ever need to differ. Day 1 at noon UTC shows that month in every timezone.
-    const now = new Date().toISOString();
-    const ym = mon || year ? `${year || now.slice(0, 4)}-${mon || '01'}` : '';
-    const readOn =
-      !ym || ym === startYm
-        ? null
-        : ym === now.slice(0, 7)
-          ? new Date().toISOString()
-          : `${ym}-01T12:00:00Z`;
-
+    // the read month goes to read_on; created_at stays the day it was logged (Home's Recent reads)
+    const readOn = readOnFor(mon, year, startYm, localToday());
     setSaving(true);
     const error = await saveBook(
       {
@@ -311,15 +342,12 @@ const LogForm = ({
       setFormError(error);
       return;
     }
-    // ponytail: if this fails the item just stays on Next to read; the book is saved either way
     if (!book && nextItem) await removeNextRead(nextItem.id);
     onDone(book ? `Saved ${title.trim()}.` : `Pinned ${title.trim()}.`, !book);
   };
 
-  // ponytail: a confirm until there's a toast with Undo (REACT-TODO 12.12)
   const remove = async () => {
-    if (!book || !window.confirm(`Remove “${book.title}” from your atlas?`))
-      return;
+    if (!book) return;
     setSaving(true);
     const error = await deleteBook(book.id);
     if (error) {
@@ -327,7 +355,7 @@ const LogForm = ({
       setFormError(error);
       return;
     }
-    onDone(`Removed ${book.title} from your atlas.`, false);
+    onRemoved(book);
   };
 
   const preview = Object.entries(marks);

@@ -1,8 +1,8 @@
-import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
-import type { AuthContextValue } from "../auth/auth-context";
-import CompanyPage from "../pages/CompanyPage/CompanyPage";
+import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
+import type { AuthContextValue } from '../auth/auth-context';
+import CompanyPage from '../pages/CompanyPage/CompanyPage';
 
-interface RouterContext {
+export interface RouterContext {
   auth: AuthContextValue;
 }
 

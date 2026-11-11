@@ -714,11 +714,4 @@ export const pickAuthor = style({
   color: vars.color.textSecondary,
 });
 
-export const status = style({
-  minHeight: 24,
-  margin: `${space.sp5} 0 0`,
-  fontSize: fontSize.body,
-  color: vars.color.textSecondary,
-});
-
 export { srOnly } from '../../styles/global.css';

@@ -1,15 +1,16 @@
-import { Fragment } from "react";
-import type { BookEntry } from "../../types";
-import { coverColor } from "../../utils/coverColors";
-import * as s from "./BookRow.css";
-import { PencilSimpleIcon } from "@phosphor-icons/react";
-import { Link } from "@tanstack/react-router";
+import { Fragment } from 'react';
+import type { BookEntry } from '../../types';
+import { coverColor } from '../../utils/coverColors';
+import * as s from './BookRow.css';
+import { PencilSimpleIcon } from '@phosphor-icons/react';
+import { Link } from '@tanstack/react-router';
+import { readDate } from '../../utils/readDate';
 
-const formatDate = (iso: string) =>
-  new Date(iso).toLocaleDateString(undefined, {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
+const formatMonth = (day: string) =>
+  +new Date(`${day}T12:00:00`).toLocaleDateString(undefined, {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
   });
 
 type BookRowProps = { book: BookEntry; names: Record<string, string> };
@@ -22,16 +23,19 @@ const BookRow = ({ book, names }: BookRowProps) => {
         <i
           className={s.cover}
           style={{
-            background: coverColor(book.title + (book.author?.name ?? "")),
+            background: coverColor(book.title + (book.author?.name ?? '')),
           }}
           aria-hidden="true"
         />
         <span className={s.rowTitle}>{book.title}</span>
         <span className={s.rowAuthor}>
           {book.author?.name}
-          {book.createdAt && (
-            <time dateTime={book.createdAt}>{formatDate(book.createdAt)}</time>
-          )}
+          {readDate(book) &&
+            +(
+              <time dateTime={readDate(book).slice(0, 7)}>
+                + {formatMonth(readDate(book))}+{' '}
+              </time>
+            )}
         </span>
       </div>
       <div className={s.rowMarks}>
@@ -42,7 +46,7 @@ const BookRow = ({ book, names }: BookRowProps) => {
               <span className={s.srOnly}>Set in </span>
               {places.map((p, i) => (
                 <Fragment key={p.id}>
-                  {i > 0 && ", "}
+                  {i > 0 && ', '}
                   {p.name || (p.countryCode && names[p.countryCode])}
                   {p.name && p.countryCode && names[p.countryCode] && (
                     <em className={s.markCountry}> · {names[p.countryCode]}</em>

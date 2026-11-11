@@ -2,15 +2,15 @@ import {
   CheckSquareIcon,
   PencilSimpleIcon,
   TrashIcon,
-} from "@phosphor-icons/react";
-import type { Feature } from "geojson";
-import type { Goal } from "../../types";
-import type { Marks } from "../../utils/atlasMarks";
-import { CONTINENT_NAMES } from "../../utils/continents";
-import { isDone, plural, type Progress } from "./goals";
-import { Compass, GoalPlate, GoalShelf } from "./GoalPlate";
-import { GoalRoute } from "./GoalsRoute";
-import * as s from "./GoalsPage.css";
+} from '@phosphor-icons/react';
+import type { Feature } from 'geojson';
+import type { Goal } from '../../types';
+import type { Marks } from '../../utils/atlasMarks';
+import { CONTINENT_NAMES } from '../../utils/continents';
+import { isDone, plural, type Progress } from './goals';
+import { Compass, GoalPlate, GoalShelf } from './GoalPlate';
+import { GoalRoute } from './GoalsRoute';
+import * as s from './GoalsPage.css';
 
 type GoalRowProps = {
   goal: Goal;
@@ -27,7 +27,7 @@ const byName = (codes: string[], name: (code: string) => string) =>
   codes
     .map(name)
     .sort((a, b) => a.localeCompare(b))
-    .join(", ");
+    .join(', ');
 
 // One goal, as in the app mock: its plate (or shelf), name, kind, count, the road to the flag, and actions
 const GoalRow = ({
@@ -40,16 +40,16 @@ const GoalRow = ({
   onRemove,
   onChooseBooks,
 }: GoalRowProps) => {
-  const theme = goal.kind === "theme";
+  const theme = goal.kind === 'theme';
   const done = isDone(p);
   const over = p.done - p.total;
   const left = p.all.filter((c) => !p.reached.includes(c));
   const meta =
-    goal.kind === "region"
+    goal.kind === 'region'
       ? `Region · ${CONTINENT_NAMES[goal.continent!]}`
-      : goal.kind === "countries"
-        ? "Countries you chose"
-        : "Theme · you tick the books that count";
+      : goal.kind === 'countries'
+        ? 'Countries you chose'
+        : 'Theme · you tick the books that count';
 
   return (
     <li className={done ? `${s.goal} ${s.goalDone}` : s.goal}>
@@ -79,19 +79,19 @@ const GoalRow = ({
               <b>{p.done}</b> of {p.total}
               {p.total > 30 && !done && (
                 <span className={s.goalPct}>
-                  {" "}
+                  {' '}
                   · {Math.round((100 * p.done) / p.total)}%
                 </span>
               )}
             </span>
             <span
               className={s.srOnly}
-            >{`${p.done} of ${plural(p.total, theme ? "book" : "country", theme ? "books" : "countries")}`}</span>
+            >{`${p.done} of ${plural(p.total, theme ? 'book' : 'country', theme ? 'books' : 'countries')}`}</span>
             {done && (
               <span className={s.goalReached}>
                 {goal.reachedOn
-                  ? `Reached ${new Date(`${goal.reachedOn}T00:00`).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" })}`
-                  : "Reached"}
+                  ? `Reached ${new Date(`${goal.reachedOn}T00:00`).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}`
+                  : 'Reached'}
                 {over > 0 && (
                   <span className={s.goalPast}>{over} past the flag</span>
                 )}
@@ -141,6 +141,7 @@ const GoalRow = ({
             <button
               type="button"
               className={s.linkBtn}
+              data-remove-goal
               aria-label={`Remove goal: ${goal.name}`}
               onClick={onRemove}
             >

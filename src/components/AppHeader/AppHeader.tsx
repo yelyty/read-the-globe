@@ -1,10 +1,10 @@
-import { Link } from "@tanstack/react-router";
-import { PushPinIcon } from "@phosphor-icons/react";
-import * as h from "../../pages/LandingPage/components/Header/Header.css";
-import * as s from "./AppHeader.css";
-import ThemeButton from "../ThemeButton/ThemeButton";
-import Logo from "../Logo/Logo";
-import AccountMenu from "../AccountMenu/AccountMenu";
+import { Link } from '@tanstack/react-router';
+import { PushPinIcon } from '@phosphor-icons/react';
+import * as h from '../../pages/LandingPage/components/Header/Header.css';
+import * as s from './AppHeader.css';
+import ThemeButton from '../ThemeButton/ThemeButton';
+import Logo from '../Logo/Logo';
+import AccountMenu from '../AccountMenu/AccountMenu';
 
 const AppHeader = () => {
   return (
@@ -37,7 +37,7 @@ const AppHeader = () => {
         <div className={s.tools}>
           <ThemeButton />
           <Link
-            className={h.start}
+            className={`${h.start} ${s.logBtn}`}
             to="."
             search={(prev) => ({ ...prev, log: true })}
           >
