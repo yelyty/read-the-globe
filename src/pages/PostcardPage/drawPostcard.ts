@@ -5,6 +5,7 @@ import { atlasMarks, type Marks } from '../../utils/atlasMarks';
 import { CONTINENT_OF } from '../../utils/continents';
 import { light } from '../../styles/theme.css';
 import { bookCodes } from './yearSum';
+import { m } from '../../paraglide/messages.js';
 
 export const SIZE = 1080;
 
@@ -20,18 +21,18 @@ export const SERIF = light.font.display;
 export const SANS = light.font.sans;
 
 export const PAPERS = {
-  paper: { name: 'Paper', fill: C.surface },
-  parchment: { name: 'Parchment', fill: C.backgroundDeep },
-  sage: { name: 'Sage', fill: C.oliveWash },
-  rose: { name: 'Rose', fill: C.rustWash },
+  paper: { name: m.postcard_paper_paper, fill: C.surface },
+  parchment: { name: m.postcard_paper_parchment, fill: C.backgroundDeep },
+  sage: { name: m.postcard_paper_sage, fill: C.oliveWash },
+  rose: { name: m.postcard_paper_rose, fill: C.rustWash },
 } as const;
 
 export const COLORS = {
-  rust: { name: 'Rust', fill: C.markerAuthor },
-  olive: { name: 'Olive', fill: C.markerSetting },
-  green: { name: 'Green', fill: C.accent },
-  gold: { name: 'Gold', fill: C.secondary },
-  ink: { name: 'Ink', fill: C.text },
+  rust: { name: m.postcard_color_rust, fill: C.markerAuthor },
+  olive: { name: m.postcard_color_olive, fill: C.markerSetting },
+  green: { name: m.postcard_color_green, fill: C.accent },
+  gold: { name: m.postcard_color_gold, fill: C.secondary },
+  ink: { name: m.postcard_color_ink, fill: C.text },
 } as const;
 
 /* A postcard collects one kind of country, never both: where the authors come from, or where the stories are set.
@@ -41,21 +42,19 @@ export const KINDS = {
     codes: (b: BookEntry) => [b.author?.country?.code],
     count: (m: Marks[string]) => m.author.length,
     color: 'rust',
-    caption: 'WHERE MY AUTHORS COME FROM',
-    stat: ['AUTHOR’S COUNTRY', 'AUTHORS’ COUNTRIES'],
-    name: 'Where your authors are from',
-    share: (n: number) =>
-      `Authors from ${n} of 195 countries so far, on my reading atlas.`,
+    caption: m.postcard_caption_authors,
+    stat: m.label_authors_country,
+    name: m.postcard_kind_authors,
+    share: (n: number) => m.postcard_share_authors({ n }),
   },
   settings: {
     codes: (b: BookEntry) => (b.places ?? []).map((p) => p.countryCode),
     count: (m: Marks[string]) => m.set.length,
     color: 'olive',
-    caption: 'WHERE MY BOOKS ARE SET',
-    stat: ['STORY COUNTRY', 'STORY COUNTRIES'],
-    name: 'Where your books are set',
-    share: (n: number) =>
-      `Stories set in ${n} of 195 countries so far, on my reading atlas.`,
+    caption: m.postcard_caption_settings,
+    stat: m.label_story_country,
+    name: m.postcard_kind_settings,
+    share: (n: number) => m.postcard_share_settings({ n }),
   },
 } as const;
 
@@ -64,15 +63,16 @@ export const YEAR = {
   codes: bookCodes,
   count: (m: Marks[string]) => new Set([...m.set, ...m.author]).size,
   color: 'green',
-  stat: ['COUNTRY', 'COUNTRIES'],
+  stat: m.label_country,
 } as const;
 // what a card collects: the countries of each book, how many books a country has, its colour and its numbers' noun
 type Spec = {
   codes: (b: BookEntry) => (string | null | undefined)[];
   count: (m: Marks[string]) => number;
   color: keyof typeof COLORS;
-  stat: readonly [string, string];
-  caption?: string;
+  /** the noun under the countries' big number, for a count */
+  stat: (i: { count: number }) => string;
+  caption?: () => string;
 };
 
 export type Kind = keyof typeof KINDS;
@@ -83,9 +83,6 @@ export type Options = {
   color: keyof typeof COLORS | null; // null: the kind's own mark, rust for authors, olive for settings
   paper: keyof typeof PAPERS;
 };
-
-const plural = (n: number, [one, many]: readonly [string, string]) =>
-  n === 1 ? one : many;
 
 // the kind's countries, newest book first, and the numbers under the stamps
 export function postcardStats(books: BookEntry[], marks: Marks, K: Spec) {
@@ -449,7 +446,7 @@ export async function drawPostcard({
     ); // the year in one sentence
   else
     text(
-      K.caption ?? '',
+      K.caption?.() ?? '',
       SIZE / 2,
       headH + 52,
       `500 28px ${SANS}`,
@@ -496,7 +493,7 @@ export async function drawPostcard({
     c.strokeRect(ex, ey, ew, eh);
     c.setLineDash([]);
     text(
-      'Your first stamp',
+      m.postcard_first_stamp(),
       SIZE / 2,
       ey + eh / 2 - 6,
       `italic 400 38px ${SERIF}`,
@@ -504,7 +501,7 @@ export async function drawPostcard({
       { align: 'center' }
     );
     text(
-      'lands here with your first book',
+      m.postcard_first_stamp_sub(),
       SIZE / 2,
       ey + eh / 2 + 40,
       `500 26px ${SANS}`,
@@ -524,12 +521,12 @@ export async function drawPostcard({
       gy + Math.floor(i / cols) * (sh + gap),
       sw,
       sh,
-      opt.count ? `${k} ${plural(k, ['book', 'books'])}` : ''
+      opt.count ? m.count_book({ count: k }) : ''
     );
   });
   if (!opt.count && n > shown.length)
     text(
-      `and ${n - shown.length} more`,
+      m.postcard_more({ n: n - shown.length }),
       gx + gridW,
       gy + rows * sh + (rows - 1) * gap + 34,
       `italic 400 28px ${SERIF}`,
@@ -540,14 +537,14 @@ export async function drawPostcard({
 
   const footY = SIZE - 44;
   const base = Math.round(sheetB + 20 + (footY - 28 - sheetB - 20) * 0.62);
-  stat(s.countries, plural(s.countries, K.stat), mg - 6, base, 230, 32, {
+  stat(s.countries, K.stat({ count: s.countries }), mg - 6, base, 230, 32, {
     of: true,
   });
   c.font = `400 132px ${SERIF}`;
   const cw = Math.max(c.measureText(String(s.continents)).width, 220);
   stat(
     s.continents,
-    plural(s.continents, ['CONTINENT', 'CONTINENTS']),
+    m.label_continent({ count: s.continents }),
     SIZE - mg,
     base,
     132,
@@ -556,7 +553,7 @@ export async function drawPostcard({
   );
   stat(
     s.books,
-    plural(s.books, ['BOOK', 'BOOKS']),
+    m.label_book({ count: s.books }),
     SIZE - mg - cw - 44,
     base,
     132,

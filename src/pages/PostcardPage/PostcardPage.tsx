@@ -25,7 +25,9 @@ import {
 } from './drawPostcard';
 import { GOAL_H, GOAL_W, drawGoalCard, goalCardName } from './drawGoalCard';
 import { bookYears, yearSum } from './yearSum';
-import { goalProgress, plural } from '../GoalsPage/goals';
+import { goalName, goalProgress } from '../GoalsPage/goals';
+import { m } from '../../paraglide/messages.js';
+import { getLocale } from '../../paraglide/runtime.js';
 import * as s from './PostCardPage.css';
 import PageTitle from '../../components/PageTitle/PageTitle';
 import Logo from '../../components/Logo/Logo';
@@ -65,16 +67,15 @@ const readOptions = (saved: SavedPostcard): CardOptions => ({
   year: typeof saved?.year === 'string' ? saved.year : null,
 });
 
-const COUNTS = [
-  { value: 3, label: 'Top 3' },
-  { value: 6, label: 'Top 6' },
-  { value: 0, label: 'All' },
-] as const;
-const FRAMES = [
-  { value: 'perforated', label: 'Perforated' },
-  { value: 'framed', label: 'Framed' },
-  { value: 'plain', label: 'Plain' },
-] as const;
+const countLabel = (n: number) =>
+  n ? m.postcard_top({ n }) : m.postcard_all();
+const COUNTS = [3, 6, 0] as const;
+const FRAMES = {
+  perforated: m.postcard_frame_perforated,
+  framed: m.postcard_frame_framed,
+  plain: m.postcard_frame_plain,
+} as const;
+const lower = (t: string) => t.toLocaleLowerCase(getLocale());
 
 // the logo as a picture the canvas can draw: the same SVG the header shows, given its own size
 const logoImage = (svg: SVGSVGElement) =>
@@ -138,11 +139,11 @@ const PostcardPage = () => {
   const progress = (g: Goal) => goalProgress(g, marks, books, shapes);
   const title = year
     ? firstName
-      ? `${firstName}’s ${year}`
-      : `My ${year}`
+      ? m.postcard_year_named({ name: firstName, year })
+      : m.postcard_my({ what: year })
     : firstName
-      ? `${firstName}’s Reading Atlas`
-      : 'My Reading Atlas';
+      ? m.postcard_atlas_named({ name: firstName })
+      : m.postcard_atlas_mine();
   const color = options.color ?? (year ? 'green' : KINDS[options.kind].color);
   const which = goal ? `goal:${goal.id}` : year ? `year:${year}` : 'atlas';
 
@@ -250,7 +251,7 @@ const PostcardPage = () => {
     setBusy(null);
     if (!blob) return;
     save(blob);
-    setStatus('Postcard saved to your downloads.');
+    setStatus(m.postcard_saved());
   };
 
   // the device's own share sheet, which lists every app the reader has; without one, the card saves instead
@@ -262,47 +263,41 @@ const PostcardPage = () => {
     const file = new File([blob], fileName(), { type: 'image/png' });
     if (!navigator.canShare?.({ files: [file] })) {
       save(blob);
-      setStatus(
-        'This browser can’t open a share sheet, so the postcard saved to your downloads. Attach it in any app.'
-      );
+      setStatus(m.postcard_no_share_sheet());
       return;
     }
     try {
       await navigator.share({
         files: [file],
-        title: goal ? `Goal reached: ${goal.name}` : 'My reading atlas',
+        title: goal
+          ? m.postcard_share_title_goal({ goal: goalName(goal.name) })
+          : m.postcard_share_title(),
         text: goal
-          ? `I reached ${goal.name} on my reading atlas.`
+          ? m.postcard_share_goal({ goal: goalName(goal.name) })
           : Y
-            ? `My ${Y.line}`
+            ? m.postcard_my({ what: Y.line })
             : KINDS[options.kind].share(stats.countries),
       });
     } catch (error) {
       if ((error as Error).name !== 'AbortError')
-        setStatus(
-          'That app couldn’t take the postcard. Try Save postcard instead.'
-        );
+        setStatus(m.postcard_share_failed());
     }
   };
 
   if (!books.length) {
     return (
       <>
-        <PageTitle>Your postcard</PageTitle>
+        <PageTitle>{m.title_postcard()}</PageTitle>
         <div className={s.empty}>
-          <h2>Your postcard is blank</h2>
-          <p>
-            Every country your authors come from, or your stories are set in,
-            becomes a stamp here. Log the last book you loved and the postcard
-            is ready to send.
-          </p>
+          <h2>{m.postcard_blank_title()}</h2>
+          <p>{m.postcard_blank_text()}</p>
           <Link
             className={s.primary}
             to="."
             search={(prev) => ({ ...prev, log: true })}
           >
             <PushPinIcon weight="fill" aria-hidden="true" />
-            Log a book
+            {m.log_a_book()}
           </Link>
         </div>
       </>
@@ -312,16 +307,29 @@ const PostcardPage = () => {
   const label = () => {
     if (goal) {
       const p = progress(goal);
-      return `A postcard: Greetings from ${goal.name}. ${p.done} of ${goal.kind === 'theme' ? plural(p.total, 'book') : plural(p.total, 'country', 'countries')}, postmarked Goal reached.`;
+      const of =
+        goal.kind === 'theme' ? m.postcard_of_books : m.postcard_of_countries;
+      return m.postcard_label_goal({
+        goal: goalName(goal.name),
+        progress: of({ done: p.done, count: p.total }),
+      });
     }
     if (Y)
-      return `Your year-end postcard. ${Y.line} ${plural(Y.books.length, 'book')}, with a stamp for each country.`;
-    return `Your postcard: ${KINDS[options.kind].name.toLowerCase()}. ${stats.countries} of 195 countries, ${stats.books} books, ${stats.continents} continents, with a stamp for each country.`;
+      return m.postcard_label_year({
+        line: Y.line,
+        books: m.count_book({ count: Y.books.length }),
+      });
+    return m.postcard_label_atlas({
+      kind: lower(KINDS[options.kind].name()),
+      countries: stats.countries,
+      books: m.count_book({ count: stats.books }),
+      continents: m.count_continent({ count: stats.continents }),
+    });
   };
 
   return (
     <>
-      <PageTitle>Your Postcard</PageTitle>
+      <PageTitle>{m.title_postcard()}</PageTitle>
       {/* the logo the card draws in its header */}
       <div ref={logoRef} hidden>
         <Logo />
@@ -340,21 +348,19 @@ const PostcardPage = () => {
             />
           </div>
           <p className={s.foot}>
-            {goal
-              ? 'Saved as a 1500 × 1000 picture.'
-              : 'Saved as a 1080 × 1080 picture.'}
+            {goal ? m.postcard_size_wide() : m.postcard_size_square()}
           </p>
         </div>
 
         <div>
           <section aria-labelledby="pc-setup-title">
             <h2 className={s.h2} id="pc-setup-title">
-              Set up your postcard
+              {m.postcard_setup()}
             </h2>
             <div className={s.fields}>
               <div>
                 <label className={s.label} htmlFor="pc-card">
-                  Postcard
+                  {m.nav_postcard()}
                 </label>
                 <select
                   id="pc-card"
@@ -368,27 +374,27 @@ const PostcardPage = () => {
                     });
                   }}
                 >
-                  <option value="atlas">Your reading atlas</option>
+                  <option value="atlas">
+                    {m.postcard_your_reading_atlas()}
+                  </option>
                   {years.map((y) => (
                     <option key={y} value={`year:${y}`}>
-                      {`${y} in books`}
+                      {m.postcard_in_books({ year: y })}
                     </option>
                   ))}
                   {reached.map((g) => (
                     <option key={g.id} value={`goal:${g.id}`}>
-                      {`Goal: ${g.name}`}
+                      {m.postcard_goal_option({ goal: goalName(g.name) })}
                     </option>
                   ))}
                 </select>
-                {!reached.length && (
-                  <Hint>Reach a goal and its postcard joins the list.</Hint>
-                )}
+                {!reached.length && <Hint>{m.postcard_reach_hint()}</Hint>}
               </div>
               {/* a year card takes both kinds of country; a goal's card has none */}
               {!year && !goal && (
                 <div>
                   <span className={s.label} id="pc-kind-label">
-                    Countries
+                    {m.postcard_countries()}
                   </span>
                   <div
                     className={s.kinds}
@@ -406,7 +412,7 @@ const PostcardPage = () => {
                       >
                         <span className={s.kindStamp} aria-hidden="true" />
                         <b className={s.kindN}>{counts[kind]}</b>
-                        <span className={s.kindName}>{KINDS[kind].name}</span>
+                        <span className={s.kindName}>{KINDS[kind].name()}</span>
                       </button>
                     ))}
                   </div>
@@ -415,7 +421,7 @@ const PostcardPage = () => {
 
               <div>
                 <span className={s.label} id="pc-paper-label">
-                  Background
+                  {m.postcard_background()}
                 </span>
                 <div
                   className={s.papers}
@@ -435,7 +441,7 @@ const PostcardPage = () => {
                         style={{ background: PAPERS[paper].fill }}
                         aria-hidden="true"
                       />
-                      {PAPERS[paper].name}
+                      {PAPERS[paper].name()}
                     </button>
                   ))}
                 </div>
@@ -445,10 +451,13 @@ const PostcardPage = () => {
             {!goal && (
               <details className={s.options}>
                 <summary className={s.summary}>
-                  Style{' '}
+                  {m.postcard_style()}{' '}
                   <span className={s.summaryNote}>
-                    · {options.count ? `Top ${options.count}` : 'All'} stamps,{' '}
-                    {options.frame}, {COLORS[color].name.toLowerCase()}
+                    {m.postcard_style_note({
+                      count: countLabel(options.count),
+                      frame: lower(FRAMES[options.frame]()),
+                      color: lower(COLORS[color].name()),
+                    })}
                   </span>
                 </summary>
                 <div
@@ -457,18 +466,18 @@ const PostcardPage = () => {
                   aria-labelledby="pc-count-label"
                 >
                   <span className={s.rowLabel} id="pc-count-label">
-                    Stamps
+                    {m.postcard_stamps()}
                   </span>
                   <div className={s.pills}>
                     {COUNTS.map((c) => (
                       <button
-                        key={c.value}
+                        key={c}
                         type="button"
                         className={s.pill}
-                        aria-pressed={options.count === c.value}
-                        onClick={() => set({ count: c.value })}
+                        aria-pressed={options.count === c}
+                        onClick={() => set({ count: c })}
                       >
-                        {c.label}
+                        {countLabel(c)}
                       </button>
                     ))}
                   </div>
@@ -479,18 +488,18 @@ const PostcardPage = () => {
                   aria-labelledby="pc-frame-label"
                 >
                   <span className={s.rowLabel} id="pc-frame-label">
-                    Frame
+                    {m.postcard_frame()}
                   </span>
                   <div className={s.pills}>
-                    {FRAMES.map((f) => (
+                    {(Object.keys(FRAMES) as Options['frame'][]).map((f) => (
                       <button
-                        key={f.value}
+                        key={f}
                         type="button"
                         className={s.pill}
-                        aria-pressed={options.frame === f.value}
-                        onClick={() => set({ frame: f.value })}
+                        aria-pressed={options.frame === f}
+                        onClick={() => set({ frame: f })}
                       >
-                        {f.label}
+                        {FRAMES[f]()}
                       </button>
                     ))}
                   </div>
@@ -501,7 +510,7 @@ const PostcardPage = () => {
                   aria-labelledby="pc-color-label"
                 >
                   <span className={s.rowLabel} id="pc-color-label">
-                    Colour
+                    {m.postcard_colour()}
                   </span>
                   <div className={s.swatches}>
                     {(Object.keys(COLORS) as (keyof typeof COLORS)[]).map(
@@ -512,22 +521,22 @@ const PostcardPage = () => {
                           className={s.swatch}
                           style={{ background: COLORS[key].fill }}
                           aria-pressed={color === key}
-                          aria-label={COLORS[key].name}
-                          title={COLORS[key].name}
+                          aria-label={COLORS[key].name()}
+                          title={COLORS[key].name()}
                           onClick={() => set({ color: key })}
                         />
                       )
                     )}
                   </div>
                   <span className={s.colorName} aria-hidden="true">
-                    {COLORS[color].name}
+                    {COLORS[color].name()}
                   </span>
                 </div>
               </details>
             )}
           </section>
 
-          <section className={s.send} aria-label="Send your postcard">
+          <section className={s.send} aria-label={m.postcard_send()}>
             <div className={s.actions}>
               <button
                 type="button"
@@ -537,7 +546,7 @@ const PostcardPage = () => {
                 aria-busy={busy === 'save' || undefined}
               >
                 <DownloadSimpleIcon aria-hidden="true" />
-                {busy === 'save' ? 'Drawing…' : 'Save postcard'}
+                {busy === 'save' ? m.postcard_drawing() : m.postcard_save()}
               </button>
               <button
                 type="button"
@@ -547,7 +556,7 @@ const PostcardPage = () => {
                 aria-busy={busy === 'share' || undefined}
               >
                 <ShareFatIcon aria-hidden="true" />
-                {busy === 'share' ? 'Drawing…' : 'Share postcard'}
+                {busy === 'share' ? m.postcard_drawing() : m.postcard_share()}
               </button>
             </div>
             <p className={s.status} role="status">

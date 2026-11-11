@@ -2,7 +2,9 @@ import { geoPath } from 'd3-geo';
 import type { BookEntry, Goal } from '../../types';
 import type { Marks } from '../../utils/atlasMarks';
 import { light } from '../../styles/theme.css';
-import { plural, romanDate, today, type Progress } from '../GoalsPage/goals';
+import { goalName, romanDate, today, type Progress } from '../GoalsPage/goals';
+import { m } from '../../paraglide/messages.js';
+import { getLocale } from '../../paraglide/runtime.js';
 import {
   C,
   PAPERS,
@@ -39,7 +41,7 @@ export async function drawGoalCard({
   goal: g,
   progress: p,
   books: all,
-  marks: m,
+  marks: mk,
   names,
   countries,
   paper: pp,
@@ -77,7 +79,7 @@ export async function drawGoalCard({
     : [
         ...new Map(
           p.reached
-            .flatMap((code) => [...m[code].set, ...m[code].author])
+            .flatMap((code) => [...mk[code].set, ...mk[code].author])
             .map((b) => [b.id, b])
         ).values(),
       ];
@@ -114,18 +116,19 @@ export async function drawGoalCard({
   c.strokeRect(px0, py0, pw, ph);
   c.strokeRect(px0 + 10, py0 + 10, pw - 20, ph - 20);
   text(
-    'Greetings from',
+    m.postcard_greetings(),
     px0 + pw / 2,
     py0 + 104,
     `italic 400 46px ${SERIF}`,
     C.textSecondary,
     { align: 'center' }
   );
+  const title = goalName(g.name);
   text(
-    g.name,
+    title,
     px0 + pw / 2,
     py0 + 206,
-    fit(g.name, `500 {s}px ${SERIF}`, pw - 80, 92, 44),
+    fit(title, `500 {s}px ${SERIF}`, pw - 80, 92, 44),
     C.text,
     { align: 'center' }
   );
@@ -186,9 +189,10 @@ export async function drawGoalCard({
     }
   }
   text(
-    theme
-      ? `${p.done} of ${plural(p.total, 'book')}`
-      : `${p.done} of ${plural(p.total, 'country', 'countries')}`,
+    (theme ? m.postcard_of_books : m.postcard_of_countries)({
+      done: p.done,
+      count: p.total,
+    }),
     px0 + pw / 2,
     py0 + ph - 46,
     `500 30px ${SANS}`,
@@ -300,7 +304,7 @@ export async function drawGoalCard({
   c.font = `700 19px ${SANS}`;
   c.textAlign = 'center';
   c.textBaseline = 'middle';
-  const ring = [...'GOAL REACHED ✦ GOAL REACHED ✦ '];
+  const ring = [...`${m.postcard_goal_reached_ring()} ✦ `.repeat(2)];
   ring.forEach((ch, i) => {
     c.save();
     c.rotate(-Math.PI / 2 + (i * Math.PI * 2) / ring.length);
@@ -314,14 +318,26 @@ export async function drawGoalCard({
 
   // the message, in the reader's voice; a theme already counts books, so it isn't said twice
   const what = theme
-    ? `${plural(p.total, 'book')} for ${g.name}`
-    : `every country in ${g.name}, all ${p.total} of them, read through ${plural(books.length, 'book')}`;
-  const msg = `Made it! ${what[0].toUpperCase()}${what.slice(1)}.${last ? ` The last one was ${last.title}.` : ''}`;
+    ? m.postcard_books_for_goal({
+        books: m.count_book({ count: p.total }),
+        goal: goalName(g.name),
+      })
+    : m.postcard_every_country({
+        goal: goalName(g.name),
+        total: p.total,
+        books: m.count_book({ count: books.length }),
+      });
+  const made = m.postcard_made_it({
+    what: what[0].toLocaleUpperCase(getLocale()) + what.slice(1),
+  });
+  const msg = last
+    ? `${made} ${m.postcard_last_one({ title: last.title })}`
+    : made;
   const mf = `italic 400 40px ${SERIF}`;
   const lines = wrap(msg, mf, 600).slice(0, 5);
   lines.forEach((ln, i) => text(ln, 830, 450 + i * 54, mf, C.text));
   text(
-    `— ${first || 'me'}`,
+    `— ${first || m.postcard_me()}`,
     830,
     450 + lines.length * 54 + 16,
     mf,
@@ -329,7 +345,7 @@ export async function drawGoalCard({
   );
   // three address lines
   const addr = [
-    first ? `${first}’s Reading Atlas` : 'My Reading Atlas',
+    first ? m.postcard_atlas_named({ name: first }) : m.postcard_atlas_mine(),
     'Read The Globe',
     'readtheglobe.app',
   ];

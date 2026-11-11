@@ -1,2 +1,5 @@
 package-lock.json
 src/routeTree.gen.ts
+src/paraglide
+project.inlang/*
+!project.inlang/settings.json

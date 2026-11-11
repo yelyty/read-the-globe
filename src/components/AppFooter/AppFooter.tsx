@@ -1,28 +1,29 @@
 import { Link } from '@tanstack/react-router';
 import * as s from './AppFooter.css';
+import { m } from '../../paraglide/messages.js';
 
 const LINKS = [
-  { label: 'About', to: '/about' },
-  { label: 'Journal', to: '/journal' },
-  { label: 'Contact', to: '/contact' },
-  { label: 'Privacy', to: '/privacy' },
-  { label: 'Terms', to: '/terms' },
+  { label: m.footer_about, to: '/about' },
+  { label: m.footer_journal, to: '/journal' },
+  { label: m.footer_contact, to: '/contact' },
+  { label: m.footer_privacy, to: '/privacy' },
+  { label: m.footer_terms, to: '/terms' },
 ] as const;
 
 const AppFooter = () => {
   return (
     <footer className={s.footer}>
       <div className={s.row}>
-        <p>© 2026 Read The Globe</p>
-        <nav className={s.links} aria-label="About Read The Globe">
+        <p>{m.footer_copyright({ year: 2026 })}</p>
+        <nav className={s.links} aria-label={m.footer_nav()}>
           {LINKS.map((link) => (
             <Link key={link.to} className={s.link} to={link.to}>
-              {link.label}
+              {link.label()}
             </Link>
           ))}
         </nav>
         <p className={s.credit}>
-          Map data from{' '}
+          {m.footer_map_before()}{' '}
           <a
             className={s.link}
             href="https://www.naturalearthdata.com/"
@@ -30,7 +31,7 @@ const AppFooter = () => {
           >
             Natural Earth
           </a>
-          , public domain
+          {m.footer_map_after()}
         </p>
       </div>
     </footer>

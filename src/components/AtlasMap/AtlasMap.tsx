@@ -17,6 +17,7 @@ import {
   type ProjectionFunction,
 } from 'react-simple-maps';
 import type { Marks } from '../../utils/atlasMarks';
+import { m } from '../../paraglide/messages.js';
 import * as s from './AtlasMap.css';
 
 // 50m, not 110m: the low-detail map leaves out small countries, which then could never be marked
@@ -206,7 +207,7 @@ const AtlasMap = memo(
         {hint && (
           <p className={s.hint} aria-hidden="true">
             <ArrowLeftIcon />
-            Slide to see the whole map
+            {m.map_slide_hint()}
             <ArrowRightIcon />
           </p>
         )}

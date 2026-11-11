@@ -2,13 +2,14 @@ import { useState, type RefObject, type SubmitEvent } from 'react';
 import { useRouter } from '@tanstack/react-router';
 import { XIcon, TrashIcon } from '@phosphor-icons/react';
 import Field from '../../../../components/Field/Field';
-import { bookCount } from '../YourData/readingList';
+import { getLocale } from '../../../../paraglide/runtime.js';
 import { deleteAccount } from '../../../../api/Profile/deleteAccount';
 
 import * as s from './DeleteAccount.css';
 import type { BookEntry } from '../../../../types';
 import { Button } from '../../../../components/Button/Button';
 import KeepCopy from './KeepCopy';
+import { m } from '../../../../paraglide/messages.js';
 
 type ConfirmationDialogProps = {
   books: BookEntry[];
@@ -33,24 +34,30 @@ const ConfirmationDialog = ({ books, names, ref }: ConfirmationDialogProps) => {
     setError(undefined);
   };
 
+  // the word is typed in the reader's language: delete, smazat, видалити
+  const confirmed =
+    word.trim().toLocaleLowerCase(getLocale()) === m.account_delete_word();
+  const what = books.length
+    ? m.account_and({
+        a: m.account_your_account(),
+        b: m.count_book({ count: books.length }),
+      })
+    : m.account_your_account();
+
   const submit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (word.trim().toLowerCase() !== 'delete') return;
+    if (!confirmed) return;
     setDeleting(true);
     const problem = await deleteAccount();
     setDeleting(false);
     if (problem) {
-      setError('Your account couldn’t be deleted. Try again.');
+      setError(m.account_delete_failed());
       return;
     }
     close();
     router.clearCache();
     await router.navigate({ to: '/' });
   };
-
-  const confirmed = word.trim().toLowerCase() === 'delete';
-
-  const hasBooks = books.length > 0;
 
   return (
     <>
@@ -68,26 +75,24 @@ const ConfirmationDialog = ({ books, names, ref }: ConfirmationDialogProps) => {
         <form onSubmit={submit} noValidate>
           <div className={s.dialogHead}>
             <h2 className={s.dialogTitle} id="ac-delete-title">
-              Delete your account?
+              {m.account_delete_question()}
             </h2>
             <button
               type="button"
               className={s.close}
-              aria-label="Close"
+              aria-label={m.common_close()}
               onClick={close}
             >
               <XIcon aria-hidden="true" />
             </button>
           </div>
           <p className={s.dialogText} id="ac-delete-q">
-            This deletes your account
-            {hasBooks ? ` and ${bookCount(books.length)}` : ''}. It can’t be
-            undone.
+            {m.account_delete_dialog({ what })}
           </p>
           <KeepCopy key={round} books={books} names={names} />
           <Field
             id="ac-delete-word"
-            label="Type delete to confirm"
+            label={m.account_delete_word_label()}
             autoComplete="off"
             spellCheck={false}
             autoCapitalize="off"
@@ -97,7 +102,7 @@ const ConfirmationDialog = ({ books, names, ref }: ConfirmationDialogProps) => {
           />
           <div className={s.dialogActions}>
             <Button type="button" variant="text" onClick={close}>
-              Keep account
+              {m.account_keep_account()}
             </Button>
             <Button
               type="submit"
@@ -105,7 +110,7 @@ const ConfirmationDialog = ({ books, names, ref }: ConfirmationDialogProps) => {
               disabled={!confirmed || deleting}
             >
               <TrashIcon aria-hidden="true" />
-              Delete account
+              {m.account_delete()}
             </Button>
           </div>
         </form>

@@ -1,5 +1,6 @@
 import type { Profile } from '../../types';
 import { supabase } from '../../utils/supabase';
+import { m } from '../../paraglide/messages.js';
 
 // only the fields given are written, so the Postcard page can save its set-up without touching the name
 export async function updateProfile(
@@ -19,6 +20,6 @@ export async function updateProfile(
     })
     .eq('id', userId);
 
-  if (error?.code === '23505') return 'That handle is taken. Try another.';
+  if (error?.code === '23505') return m.account_handle_taken();
   return error?.message ?? null;
 }

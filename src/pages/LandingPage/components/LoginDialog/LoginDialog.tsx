@@ -13,24 +13,25 @@ import Field from '../../../../components/Field/Field';
 import PasswordStrength from './PasswordStrength';
 import { sendPasswordReset, signIn, signUp } from '../../../../auth/session';
 import { isEmail, newPasswordProblem } from '../../../../auth/forms';
+import { m } from '../../../../paraglide/messages.js';
 
 export type AuthMode = 'signup' | 'login' | 'reset';
 
 const COPY = {
   signup: {
-    title: 'Start your atlas',
-    sub: 'Free, and no card. Your first book takes a minute.',
-    go: 'Create your atlas',
+    title: m.landing_start,
+    sub: m.auth_signup_sub,
+    go: m.auth_signup_go,
   },
   login: {
-    title: 'Welcome back',
-    sub: 'Your atlas is where you left it.',
-    go: 'Log in',
+    title: m.auth_login_title,
+    sub: m.auth_login_sub,
+    go: m.landing_log_in,
   },
   reset: {
-    title: 'Reset your password',
-    sub: 'We’ll email you a link to choose a new one.',
-    go: 'Send the link',
+    title: m.auth_reset_title,
+    sub: m.auth_reset_sub,
+    go: m.auth_reset_go,
   },
 };
 
@@ -42,12 +43,12 @@ const FIELD_ORDER: (keyof Values)[] = ['name', 'email', 'password'];
 const validate = (mode: AuthMode, values: Values): Errors => {
   const errors: Errors = {};
   if (mode === 'signup' && !values.name.trim())
-    errors.name = 'Tell us what to call you.';
-  if (!isEmail(values.email)) errors.email = 'Enter a valid email address.';
+    errors.name = m.auth_name_missing();
+  if (!isEmail(values.email)) errors.email = m.auth_email_invalid();
   if (mode === 'signup')
     errors.password = newPasswordProblem(values.password) ?? undefined;
   if (mode === 'login' && !values.password)
-    errors.password = 'Enter your password.';
+    errors.password = m.auth_password_missing();
   return errors;
 };
 
@@ -130,17 +131,15 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
     const email = values.email.trim();
     if (view === 'reset') {
       if (await sendPasswordReset(email))
-        setNotice(
-          `If ${email} has an atlas, a link to choose a new password is on its way.`
-        );
-      else setFormError('Something went wrong. Try again.');
+        setNotice(m.auth_reset_sent({ email }));
+      else setFormError(m.common_try_again());
     } else if (view === 'login') {
       const problem = await signIn(email, values.password);
       if (problem)
         setFormError(
           problem === 'wrong-credentials'
-            ? "That email and password don't match."
-            : 'Something went wrong. Try again.'
+            ? m.auth_wrong_credentials()
+            : m.common_try_again()
         );
     } else {
       const { problem, confirmEmail } = await signUp({
@@ -152,13 +151,10 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
       if (problem)
         setFormError(
           problem === 'email-taken'
-            ? 'That email already has an atlas. Try logging in instead.'
-            : 'Something went wrong. Try again.'
+            ? m.auth_email_taken()
+            : m.common_try_again()
         );
-      else if (confirmEmail)
-        setNotice(
-          `Check your inbox: we sent a link to ${email} to confirm it.`
-        );
+      else if (confirmEmail) setNotice(m.auth_confirm_email({ email }));
     }
     // a session, if there is one now, takes the reader to /app from the page
     setPending(false);
@@ -175,15 +171,15 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
         <div className={s.dialogHead}>
           <div>
             <h2 className={s.dialogTitle} id="au-title">
-              {COPY[view].title}
+              {COPY[view].title()}
             </h2>
-            <p className={s.dialogSub}>{COPY[view].sub}</p>
+            <p className={s.dialogSub}>{COPY[view].sub()}</p>
           </div>
           <button
             type="button"
             className={s.closeBtn}
             onClick={close}
-            aria-label="Close"
+            aria-label={m.common_close()}
           >
             <XIcon aria-hidden="true" />
           </button>
@@ -204,11 +200,11 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
         {view === 'signup' && (
           <Field
             id="au-name"
-            label="Display name"
+            label={m.auth_name_label()}
             name="name"
             autoComplete="name"
             maxLength={80}
-            placeholder="What should we call you?"
+            placeholder={m.auth_name_placeholder()}
             required
             value={values.name}
             onChange={update('name')}
@@ -217,7 +213,7 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
         )}
         <Field
           id="au-email"
-          label="Email"
+          label={m.auth_email_label()}
           type="email"
           name="email"
           autoComplete="email"
@@ -231,14 +227,16 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
         {view !== 'reset' && (
           <Field
             id="au-password"
-            label="Password"
+            label={m.auth_password_label()}
             password
             name={view === 'signup' ? 'new-password' : 'current-password'}
             autoComplete={
               view === 'signup' ? 'new-password' : 'current-password'
             }
             placeholder={
-              view === 'signup' ? 'At least 8 characters' : 'Your password'
+              view === 'signup'
+                ? m.auth_password_new_placeholder()
+                : m.auth_password_placeholder()
             }
             required
             aria-describedby={view === 'signup' ? 'au-strength' : undefined}
@@ -258,11 +256,8 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
               checked={example}
               onChange={(event) => setExample(event.target.checked)}
             />
-            Add example books to look around
-            <span className={s.exampleHint}>
-              12 books, a goal and two saved for later. Remove them whenever you
-              like.
-            </span>
+            {m.auth_example()}
+            <span className={s.exampleHint}>{m.auth_example_hint()}</span>
           </label>
         )}
 
@@ -272,17 +267,17 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
           disabled={pending}
         >
           <PushPinIcon weight="fill" aria-hidden="true" />
-          {pending ? 'One moment…' : COPY[view].go}
+          {pending ? m.auth_pending() : COPY[view].go()}
         </button>
         <div className={s.links}>
           <p className={s.altAction}>
-            {view === 'signup' ? 'Already reading with us? ' : 'New here? '}
+            {view === 'signup' ? m.auth_have_account() : m.auth_new_here()}{' '}
             <button
               type="button"
               className={s.altLink}
               onClick={() => switchTo(view === 'signup' ? 'login' : 'signup')}
             >
-              {view === 'signup' ? 'Log in' : 'Create an account'}
+              {view === 'signup' ? m.landing_log_in() : m.auth_create_account()}
             </button>
           </p>
           {view !== 'signup' && (
@@ -292,7 +287,7 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
                 className={s.altLink}
                 onClick={() => switchTo(view === 'login' ? 'reset' : 'login')}
               >
-                {view === 'login' ? 'Forgot your password?' : 'Back to log in'}
+                {view === 'login' ? m.auth_forgot() : m.auth_back_to_login()}
               </button>
             </p>
           )}

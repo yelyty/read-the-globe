@@ -17,12 +17,15 @@ import {
   CATALOGUE,
   KIND_GROUP,
   MAX_GOALS,
+  goalName,
   goalProgress,
   isDone,
-  plural,
   today,
+  withBold,
   type GoalDraft,
 } from './goals';
+import { useCountryNames } from '../../hooks/useCountryNames';
+import { m } from '../../paraglide/messages.js';
 import { GoalPlate, GoalShelf } from './GoalPlate';
 import GoalRow from './GoalRow';
 import GoalDialog from './GoalsDialog';
@@ -40,6 +43,7 @@ const GoalsPage = () => {
   const [editing, setEditing] = useState<Goal | 'new' | null>(null);
   const [choosing, setChoosing] = useState<Goal | null>(null);
   const status = useStatus();
+  const localNames = useCountryNames();
   const say = (text: string) => status.show({ text });
   const { add: addSlug } = route.useSearch();
   const navigate = useNavigate();
@@ -114,17 +118,21 @@ const GoalsPage = () => {
     if (goals.length >= MAX_GOALS) return;
     addGoal(c).then((problem) => {
       if (problem) return say(problem);
-      saved(`Goal added: ${c.name}.`, c.name);
+      saved(m.goals_added({ goal: goalName(c.name) }), c.name);
     });
   });
 
   if (!shapes) return <div />;
 
-  const names = Object.fromEntries(
-    Object.entries(shapes)
-      .filter(([, f]) => f.properties?.name)
-      .map(([code, f]) => [code, f.properties!.name as string])
-  );
+  // the map's own names, in the reader's language once those have loaded
+  const names: Record<string, string> = {
+    ...Object.fromEntries(
+      Object.entries(shapes)
+        .filter(([, f]) => f.properties?.name)
+        .map(([code, f]) => [code, f.properties!.name as string])
+    ),
+    ...localNames,
+  };
   const name = (code: string) => names[code] ?? code;
   const full = goals.length >= MAX_GOALS;
   const sorted = [
@@ -138,7 +146,7 @@ const GoalsPage = () => {
     if (full) return;
     const problem = await addGoal(draft);
     if (problem) return say(problem);
-    saved(`Goal added: ${draft.name}.`, draft.name);
+    saved(m.goals_added({ goal: goalName(draft.name) }), draft.name);
   };
 
   const remove = async (goal: Goal) => {
@@ -157,15 +165,18 @@ const GoalsPage = () => {
     )?.focus();
     status.show({
       text: ticked.length
-        ? `Removed ${goal.name}, and unticked ${plural(ticked.length, 'book')}.`
-        : `Removed ${goal.name}.`,
+        ? m.goals_removed_unticked({
+            goal: goalName(goal.name),
+            books: m.count_book({ count: ticked.length }),
+          })
+        : m.goals_removed({ goal: goalName(goal.name) }),
       action: {
-        label: 'Undo',
+        label: m.common_undo(),
         icon: <ArrowCounterClockwiseIcon aria-hidden="true" />,
         run: async () => {
           const problem = await restoreGoal(goal, ticked);
           if (problem) return say(problem);
-          saved(`${goal.name} is back.`, goal.name);
+          saved(m.goals_back({ goal: goalName(goal.name) }), goal.name);
         },
       },
     });
@@ -201,17 +212,19 @@ const GoalsPage = () => {
       <details className={s.sugg} open={!goals.length || undefined}>
         <summary>
           <h2 id="add-goal-title" className={s.h2}>
-            Aim somewhere you haven’t read yet
+            {m.goals_aim()}
           </h2>
         </summary>
         {pick && (
           <div className={s.pick}>
             <p>
-              Your books already reach{' '}
-              <b>
-                {pick.p.done} of {plural(pick.p.total, 'country', 'countries')}
-              </b>{' '}
-              in <b>{pick.c.name}</b>. Make it your first goal?
+              {withBold(
+                m.goals_pick({
+                  done: pick.p.done,
+                  count: pick.p.total,
+                  goal: goalName(pick.c.name),
+                })
+              )}
             </p>
             <button
               type="button"
@@ -219,15 +232,11 @@ const GoalsPage = () => {
               onClick={() => add(pick.c)}
             >
               <PlusIcon aria-hidden="true" />
-              Add {pick.c.name}
+              {m.goals_add_named({ goal: goalName(pick.c.name) })}
             </button>
           </div>
         )}
-        {full && (
-          <p className={s.full}>
-            Ten goals is plenty. Remove one to add another.
-          </p>
-        )}
+        {full && <p className={s.full}>{m.goals_full()}</p>}
         {top.length > 0 && (
           <ul className={s.dests}>
             {top.map(({ c, p }) => (
@@ -250,17 +259,17 @@ const GoalsPage = () => {
                       />
                     )}
                   </span>
-                  <span className={s.destName}>{c.name}</span>
+                  <span className={s.destName}>{goalName(c.name)}</span>
                   <span className={s.destNote}>
                     {p.done
-                      ? `${p.done} of ${p.total} already`
+                      ? m.goals_already({ done: p.done, total: p.total })
                       : c.kind === 'theme'
-                        ? plural(p.total, 'book')
-                        : plural(p.total, 'country', 'countries')}
+                        ? m.count_book({ count: p.total })
+                        : m.count_country({ count: p.total })}
                   </span>
                   <span className={s.destAdd}>
                     <PlusIcon aria-hidden="true" />
-                    Add goal
+                    {m.goals_add_goal()}
                   </span>
                 </button>
               </li>
@@ -270,13 +279,13 @@ const GoalsPage = () => {
         {rest.length > 0 && (
           <details className={s.more}>
             <summary>
-              More goals <span className={s.moreN}>· {rest.length}</span>
+              {m.goals_more()} <span className={s.moreN}>· {rest.length}</span>
             </summary>
             {(Object.keys(KIND_GROUP) as GoalKind[]).map((kind) => {
               const items = rest.filter((x) => x.c.kind === kind);
               return items.length ? (
                 <div key={kind} className={s.group}>
-                  <h3>{KIND_GROUP[kind]}</h3>
+                  <h3>{KIND_GROUP[kind]()}</h3>
                   <ul className={s.chips}>
                     {items.map(({ c, p }) => (
                       <li key={c.name}>
@@ -287,10 +296,13 @@ const GoalsPage = () => {
                           onClick={() => add(c)}
                         >
                           <PlusIcon aria-hidden="true" />
-                          {c.name}
+                          {goalName(c.name)}
                           {p.done > 0 && c.kind !== 'theme' && (
                             <span className={s.chipNote}>
-                              {p.done} of {p.total} already
+                              {m.goals_already({
+                                done: p.done,
+                                total: p.total,
+                              })}
                             </span>
                           )}
                         </button>
@@ -311,25 +323,26 @@ const GoalsPage = () => {
         onClick={() => setEditing('new')}
       >
         <PlusIcon aria-hidden="true" />
-        Make your own
+        {m.goals_make_own()}
       </button>
     </section>
   );
 
   return (
     <>
-      <PageTitle>Goals</PageTitle>
+      <PageTitle>{m.nav_goals()}</PageTitle>
 
       {suggestions}
       {goals.length ? (
         <>
           <details className={s.yours} open>
             <summary>
-              <h2 className={s.h2}>Your goals</h2>
+              <h2 className={s.h2}>{m.goals_yours()}</h2>
               <span className={s.sum}>
-                {plural(goals.length, 'goal')}
-                {nReached > 0 && ` · ${nReached} reached`}
-                {full && ' · ten is the most'}
+                {m.count_goal({ count: goals.length })}
+                {nReached > 0 &&
+                  ` · ${m.goals_sum_reached({ count: nReached })}`}
+                {full && ` · ${m.goals_sum_full()}`}
               </span>
             </summary>
             <ul className={s.goalList}>
@@ -378,13 +391,12 @@ const GoalsPage = () => {
                 d="M66 19 H 92 L 84 28 L 92 37 H 66 Z"
               />
             </svg>
-            <h2 className={s.h2}>No goals yet</h2>
+            <h2 className={s.h2}>{m.goals_empty_title()}</h2>
             <p>
-              A goal gives your reading somewhere to head: a region, a set of
-              countries, or a theme you choose books for.{' '}
+              {m.goals_empty_text()}{' '}
               {books.length
-                ? 'Books already on your atlas count straight away.'
-                : 'They start counting with your first book.'}
+                ? m.goals_empty_have_books()
+                : m.goals_empty_no_books()}
             </p>
           </div>
         </>
@@ -397,7 +409,12 @@ const GoalsPage = () => {
           names={names}
           onClose={() => setEditing(null)}
           onSaved={(n) =>
-            saved(editing === 'new' ? `Goal added: ${n}.` : `Saved ${n}.`, n)
+            saved(
+              (editing === 'new' ? m.goals_added : m.goals_saved)({
+                goal: goalName(n),
+              }),
+              n
+            )
           }
         />
       )}
@@ -408,7 +425,10 @@ const GoalsPage = () => {
           onClose={() => setChoosing(null)}
           onSaved={(n) =>
             saved(
-              `${plural(n, 'book')} ${n === 1 ? 'counts' : 'count'} toward ${choosing.name}.`
+              m.goals_books_counted({
+                count: n,
+                goal: goalName(choosing.name),
+              })
             )
           }
         />

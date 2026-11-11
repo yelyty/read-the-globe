@@ -28,18 +28,22 @@ import {
   tidy,
   type CountryMatch,
 } from '../../utils/countryFrom';
-import { goalProgress, isDone, plural } from '../../pages/GoalsPage/goals';
+import { goalProgress, isDone } from '../../pages/GoalsPage/goals';
 import * as f from '../Field/Field.css';
 import * as s from './LogBook.css';
 import Hint from '../Hint/Hint';
 import Suggest from '../Suggest/Suggest';
 import { localToday, readDate, readOnFor } from '../../utils/readDate';
+import { getCountryNames } from '../../utils/countryNames';
+import { toAlpha2 } from '../../utils/toIsoNumeric';
+import { m } from '../../paraglide/messages.js';
+import { getLocale } from '../../paraglide/runtime.js';
 
 const app = getRouteApi('/app');
 
 const MAX_PLACES = 20;
 const MONTHS = Array.from({ length: 12 }, (_, i) =>
-  new Intl.DateTimeFormat(undefined, { month: 'long' }).format(
+  new Intl.DateTimeFormat(getLocale(), { month: 'long' }).format(
     new Date(2000, i, 1)
   )
 );
@@ -69,7 +73,7 @@ const row = (name = '', country = '', imagined = false): Row => ({
 
 const formatMonth = (day: string) =>
   day
-    ? new Date(`${day}T12:00:00`).toLocaleDateString(undefined, {
+    ? new Date(`${day}T12:00:00`).toLocaleDateString(getLocale(), {
         month: 'short',
         year: 'numeric',
       })
@@ -87,7 +91,7 @@ const LogBook = () => {
   const [, setLanding] = useLanding();
   // on the Shelf, ?country is also the country page, so it stays when the form closes
   const onShelf = useRouterState({
-    select: (st) => st.matches.some((m) => m.routeId === '/app/shelf'),
+    select: (st) => st.matches.some((mt) => mt.routeId === '/app/shelf'),
   });
   const book = edit ? books.find((b) => b.id === edit) : undefined;
   const open = Boolean(log || book);
@@ -95,7 +99,7 @@ const LogBook = () => {
   const nextItem = useRouterState({
     select: (st) =>
       (
-        st.matches.find((m) => m.routeId === '/app/shelf')?.loaderData as
+        st.matches.find((mt) => mt.routeId === '/app/shelf')?.loaderData as
           { items: NextRead[] } | undefined
       )?.items.find((it) => it.id === next),
   });
@@ -105,18 +109,30 @@ const LogBook = () => {
   useEffect(() => {
     if (!open || shapes) return;
     worldShapes().then(setShapes);
+    // the English names, so a country typed in English still matches in Czech or Ukrainian
+    void getCountryNames();
   }, [open, shapes]);
-  const names = useMemo(
-    () =>
-      shapes &&
-      Object.fromEntries(
-        Object.entries(shapes).map(([code, shape]) => [
+  const names = useMemo(() => {
+    if (!shapes) return undefined;
+    let dn: Intl.DisplayNames | null = null;
+    try {
+      if (getLocale() !== 'en')
+        dn = new Intl.DisplayNames([getLocale()], { type: 'region' });
+    } catch {
+      // an old browser: the map's English names
+    }
+    // in the reader's language where the browser knows the country, else the map's English name
+    return Object.fromEntries(
+      Object.entries(shapes).map(([code, shape]) => {
+        const a2 = toAlpha2(code);
+        const local = a2 && dn?.of(a2);
+        return [
           code,
-          String(shape.properties?.name ?? ''),
-        ])
-      ),
-    [shapes]
-  );
+          local && local !== a2 ? local : String(shape.properties?.name ?? ''),
+        ];
+      })
+    );
+  }, [shapes]);
 
   const close = () =>
     navigate({
@@ -148,9 +164,9 @@ const LogBook = () => {
     await close();
     await router.invalidate();
     status.show({
-      text: `Removed ${gone.title} from your atlas.`,
+      text: m.log_removed({ title: gone.title }),
       action: {
-        label: 'Undo',
+        label: m.common_undo(),
         icon: <ArrowCounterClockwiseIcon aria-hidden="true" />,
         run: async () => {
           const { error } = await saveBook({
@@ -167,7 +183,7 @@ const LogBook = () => {
           });
           if (error) return status.show({ text: error });
           await router.invalidate();
-          status.show({ text: `${gone.title} is back on your atlas.` });
+          status.show({ text: m.log_back({ title: gone.title }) });
         },
       },
     });
@@ -234,14 +250,14 @@ const LogForm = ({
   const dialog = useRef<HTMLDialogElement>(null);
   const name = (code?: string | null) => (code ? (names[code] ?? '') : '');
   const countries = useMemo(
-    () => Object.values(names).sort((a, b) => a.localeCompare(b)),
+    () => Object.values(names).sort((a, b) => a.localeCompare(b, getLocale())),
     [names]
   );
   // "City, Country" in one go
   const split = (raw: string) => {
-    const m = raw.match(/^(.*),\s*([^,]+)$/);
-    const c = m && countryFrom(m[2], names);
-    return m && c ? { name: m[1].trim(), code: c.code } : null;
+    const hit = raw.match(/^(.*),\s*([^,]+)$/);
+    const c = hit && countryFrom(hit[2], names);
+    return hit && c ? { name: hit[1].trim(), code: c.code } : null;
   };
 
   const startYm = book ? readDate(book).slice(0, 7) : '';
@@ -278,10 +294,10 @@ const LogForm = ({
   const sub = book
     ? ''
     : world || startCountry
-      ? `A book set in ${world || startCountry}?`
+      ? m.log_sub_set_in({ place: world || startCountry })
       : books.length
         ? ''
-        : 'Pin the last book you loved.';
+        : m.log_sub_first();
   const [mon, setMon] = useState(startYm.slice(5, 7));
   const [year, setYear] = useState(startYm.slice(0, 4));
   const [ticks, setTicks] = useState<number[]>(
@@ -348,26 +364,26 @@ const LogForm = ({
 
   const countryError = (typed: string, place: boolean) =>
     splitStates(typed)
-      ? `Choose which country ${tidy(typed)} is today.`
+      ? m.log_choose_today({ name: tidy(typed) })
       : typed
-        ? `No country called “${typed}”. Pick one from the list.`
+        ? m.log_no_country({ typed })
         : place
-          ? 'Add the country this place is in.'
-          : 'Add the country the author is from.';
+          ? m.log_add_place_country()
+          : m.log_add_author_country();
   const FIELD: Record<string, [id: string, label: string]> = {
-    title: ['f-title', 'title'],
-    author: ['f-author', 'author'],
-    country: ['f-country', 'author’s country'],
+    title: ['f-title', m.log_f_title()],
+    author: ['f-author', m.log_f_author()],
+    country: ['f-country', m.log_f_country()],
   };
   const fieldOf = (key: string) =>
-    FIELD[key] ?? [`pr-country-${key.slice(6)}`, 'a place’s country'];
+    FIELD[key] ?? [`pr-country-${key.slice(6)}`, m.log_f_place()];
 
   const submit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (saving) return;
     const errs: Record<string, string> = {};
-    if (!title.trim()) errs.title = 'Add the book’s title.';
-    if (!author.trim()) errs.author = 'Add the author’s name.';
+    if (!title.trim()) errs.title = m.log_need_title();
+    if (!author.trim()) errs.author = m.log_need_author();
     if (!authorCode) errs.country = countryError(country.trim(), false);
     for (const p of places)
       if (!p.code && !p.imagined)
@@ -378,7 +394,10 @@ const LogForm = ({
       setFormError(
         bad.length === 1
           ? errs[bad[0]]
-          : `${bad.length} fields need a look: ${[...new Set(bad.map((k) => fieldOf(k)[1]))].join(', ')}.`
+          : m.log_fields_need({
+              fields: m.count_field({ count: bad.length }),
+              list: [...new Set(bad.map((k) => fieldOf(k)[1]))].join(', '),
+            })
       );
       document.getElementById(fieldOf(bad[0])[0])?.focus();
       return;
@@ -393,9 +412,7 @@ const LogForm = ({
       );
     if (dup && dupOk !== key) {
       setDupOk(key);
-      setFormError(
-        `Already on your shelf since ${formatMonth(readDate(dup))}. Pin it again to add it a second time.`
-      );
+      setFormError(m.log_dup({ month: formatMonth(readDate(dup)) }));
       return;
     }
 
@@ -427,7 +444,9 @@ const LogForm = ({
     }
     if (!book && nextItem) await removeNextRead(nextItem.id);
     onDone(
-      book ? `Saved ${title.trim()}.` : `Pinned ${title.trim()}.`,
+      book
+        ? m.log_saved({ title: title.trim() })
+        : m.log_pinned({ title: title.trim() }),
       book ? undefined : landing(id, draft)
     );
   };
@@ -468,7 +487,18 @@ const LogForm = ({
       ...pinMoment(added, before, after, names),
       bookId: id,
       reached: g
-        ? `Goal reached: ${g.name}, ${g.kind === 'theme' ? plural(total, 'book') : `all ${plural(total, 'country', 'countries')}`}.${reached.length > 1 ? ` And ${reached.length - 1} more.` : ''}`
+        ? [
+            m.log_goal_reached({
+              name: g.name,
+              total:
+                g.kind === 'theme'
+                  ? m.count_book({ count: total })
+                  : m.log_all({ countries: m.count_country({ count: total }) }),
+            }),
+            reached.length > 1 && m.log_and_more({ count: reached.length - 1 }),
+          ]
+            .filter(Boolean)
+            .join(' ')
         : null,
     };
   };
@@ -488,13 +518,13 @@ const LogForm = ({
   const preview = Object.entries(marks);
   const label = saving
     ? book
-      ? 'Saving…'
-      : 'Pinning…'
+      ? m.log_saving()
+      : m.log_pinning()
     : book
-      ? 'Save changes'
+      ? m.log_save_changes()
       : dupOk
-        ? 'Pin it again'
-        : 'Pin it';
+        ? m.log_pin_again()
+        : m.log_pin_it();
 
   return (
     <dialog
@@ -507,7 +537,7 @@ const LogForm = ({
       <div className={s.head}>
         <div>
           <h2 id="log-title" className={s.title}>
-            {book ? 'Editing' : 'Log a book'}
+            {book ? m.log_editing() : m.log_a_book()}
           </h2>
           {book && <p className={s.editing}>{book.title}</p>}
           {sub && <p className={s.sub}>{sub}</p>}
@@ -515,7 +545,7 @@ const LogForm = ({
         <button
           type="button"
           className={s.close}
-          aria-label="Close"
+          aria-label={m.common_close()}
           onClick={onClose}
         >
           <XIcon aria-hidden="true" />
@@ -524,23 +554,27 @@ const LogForm = ({
 
       {(preview.length > 0 || imagined.length > 0) && (
         <p className={s.preview}>
-          <span className={s.label}>Will mark</span>
-          {preview.map(([code, m]) => (
+          <span className={s.label}>{m.log_will_mark()}</span>
+          {preview.map(([code, mk]) => (
             <span key={code} className={s.mark}>
               <i
                 className={
-                  m.set && m.author ? s.swatch : m.set ? s.dotSet : s.dotAuthor
+                  mk.set && mk.author
+                    ? s.swatch
+                    : mk.set
+                      ? s.dotSet
+                      : s.dotAuthor
                 }
                 aria-hidden="true"
               />
               {name(code)}
               <span className={s.srOnly}>
                 ,{' '}
-                {m.set && m.author
-                  ? 'where it is set and where its author is from'
-                  : m.set
-                    ? 'where it is set'
-                    : 'where its author is from'}
+                {mk.set && mk.author
+                  ? m.log_mark_both()
+                  : mk.set
+                    ? m.log_mark_set()
+                    : m.log_mark_author()}
               </span>
             </span>
           ))}
@@ -548,7 +582,7 @@ const LogForm = ({
             <span key={p.key} className={s.mark}>
               <i className={s.dotImagined} aria-hidden="true" />
               {p.name}
-              <span className={s.markNote}> · imagined, not on the map</span>
+              <span className={s.markNote}> · {m.log_imagined_note()}</span>
             </span>
           ))}
         </p>
@@ -557,14 +591,14 @@ const LogForm = ({
       <form onSubmit={submit} noValidate>
         <div className={f.field} data-invalid={Boolean(errors.title)}>
           <label htmlFor="f-title" className={f.fieldLabel}>
-            Title
+            {m.log_title()}
           </label>
           <input
             id="f-title"
             className={f.input}
             autoComplete="off"
             maxLength={200}
-            placeholder="What is it called?"
+            placeholder={m.log_title_ph()}
             value={title}
             aria-invalid={errors.title ? true : undefined}
             aria-describedby={errors.title ? 'f-title-err' : undefined}
@@ -583,14 +617,14 @@ const LogForm = ({
 
         <div className={f.field} data-invalid={Boolean(errors.author)}>
           <label htmlFor="f-author" className={f.fieldLabel}>
-            Author
+            {m.log_author()}
           </label>
           <input
             id="f-author"
             className={f.input}
             autoComplete="off"
             maxLength={120}
-            placeholder="Who wrote it?"
+            placeholder={m.log_author_ph()}
             value={author}
             aria-invalid={errors.author ? true : undefined}
             aria-describedby={errors.author ? 'f-author-err' : undefined}
@@ -610,7 +644,7 @@ const LogForm = ({
         <div className={f.field} data-invalid={Boolean(errors.country)}>
           <label htmlFor="f-country" className={f.fieldLabel}>
             <i className={s.dotAuthor} aria-hidden="true" />
-            Author’s country
+            {m.log_country()}
           </label>
           <Suggest
             id="f-country"
@@ -618,7 +652,7 @@ const LogForm = ({
             autoComplete="off"
             options={countries}
             maxLength={60}
-            placeholder="Where are they from?"
+            placeholder={m.log_country_ph()}
             value={country}
             aria-invalid={errors.country ? true : undefined}
             aria-describedby={`${errors.country ? 'f-country-err ' : ''}f-country-note`}
@@ -647,24 +681,18 @@ const LogForm = ({
               {errors.country}
             </div>
           )}
-          <Hint id="f-country-note">
-            Lived in more than one? Choose the country where they lived most of
-            their life.
-          </Hint>
+          <Hint id="f-country-note">{m.log_country_hint()}</Hint>
         </div>
 
         <fieldset className={s.set}>
           <legend className={f.fieldLabel}>
             <i className={s.dotSet} aria-hidden="true" />
-            Places in the book
+            {m.log_places()}
           </legend>
-          <Hint>
-            A city or region, or “City, Country” in one go. Each place marks its
-            country.
-          </Hint>
+          <Hint>{m.log_city_hint()}</Hint>
           <div className={s.placesHead} aria-hidden="true">
-            <span>City or region</span>
-            <span>Country</span>
+            <span>{m.log_city()}</span>
+            <span>{m.log_country_col()}</span>
           </div>
           <ul className={s.places}>
             {rows.map((r) => {
@@ -677,16 +705,14 @@ const LogForm = ({
                   data-imagined={r.imagined || undefined}
                 >
                   <label className={s.srOnly} htmlFor={`pr-name-${r.key}`}>
-                    Place
+                    {m.log_place()}
                   </label>
                   <Suggest
                     id={`pr-name-${r.key}`}
                     className={f.input}
                     autoComplete="off"
                     maxLength={80}
-                    placeholder={
-                      r.imagined ? 'Middle-earth, Earthsea…' : 'City or region'
-                    }
+                    placeholder={r.imagined ? m.log_world_ph() : m.log_city()}
                     // an imagined place offers the reader's worlds; ponytail: no gazetteer of real places yet
                     options={r.imagined ? worlds : []}
                     value={r.name}
@@ -704,7 +730,7 @@ const LogForm = ({
                         className={s.srOnly}
                         htmlFor={`pr-country-${r.key}`}
                       >
-                        Country of that place
+                        {m.log_place_country()}
                       </label>
                       <Suggest
                         id={`pr-country-${r.key}`}
@@ -712,7 +738,7 @@ const LogForm = ({
                         autoComplete="off"
                         options={countries}
                         maxLength={60}
-                        placeholder="Country"
+                        placeholder={m.log_country_col()}
                         value={r.country}
                         aria-invalid={err ? true : undefined}
                         aria-describedby={
@@ -740,7 +766,7 @@ const LogForm = ({
                   <button
                     type="button"
                     className={s.close}
-                    aria-label="Remove this place"
+                    aria-label={m.log_remove_place()}
                     hidden={empty}
                     onClick={() => {
                       fix(`place-${r.key}`);
@@ -779,7 +805,7 @@ const LogForm = ({
                         fix(`place-${r.key}`);
                       }}
                     />
-                    Not on any map (an imagined world)
+                    {m.log_imagined()}
                   </label>
                 </li>
               );
@@ -798,16 +824,16 @@ const LogForm = ({
               }}
             >
               <PlusIcon aria-hidden="true" />
-              Add another place
+              {m.log_add_place()}
             </button>
           )}
         </fieldset>
 
         <fieldset className={s.set} aria-describedby="f-month-hint">
-          <legend className={f.fieldLabel}>When you read it</legend>
+          <legend className={f.fieldLabel}>{m.log_when()}</legend>
           <div className={s.month}>
             <label className={s.srOnly} htmlFor="f-mon">
-              Month
+              {m.log_month()}
             </label>
             <select
               id="f-mon"
@@ -815,15 +841,15 @@ const LogForm = ({
               value={mon}
               onChange={(e) => setMon(e.target.value)}
             >
-              <option value="">Month</option>
-              {MONTHS.map((m, i) => (
-                <option key={m} value={String(i + 1).padStart(2, '0')}>
-                  {m}
+              <option value="">{m.log_month()}</option>
+              {MONTHS.map((mo, i) => (
+                <option key={mo} value={String(i + 1).padStart(2, '0')}>
+                  {mo}
                 </option>
               ))}
             </select>
             <label className={s.srOnly} htmlFor="f-year">
-              Year
+              {m.log_year()}
             </label>
             <select
               id="f-year"
@@ -831,7 +857,7 @@ const LogForm = ({
               value={year}
               onChange={(e) => setYear(e.target.value)}
             >
-              <option value="">Year</option>
+              <option value="">{m.log_year()}</option>
               {YEARS.map((y) => (
                 <option key={y} value={y}>
                   {y}
@@ -839,21 +865,19 @@ const LogForm = ({
               ))}
             </select>
           </div>
-          <Hint id="f-month-hint">
-            Month and year. Leave it empty and today’s date is used.
-          </Hint>
+          <Hint id="f-month-hint">{m.log_month_hint()}</Hint>
         </fieldset>
 
         {themes.length > 0 && (
           <fieldset className={s.themes}>
-            <legend className={s.srOnly}>
-              Theme goals this book counts toward
-            </legend>
+            <legend className={s.srOnly}>{m.log_themes()}</legend>
             <details open={ticksOpen}>
               <summary>
                 {ticks.length
-                  ? `Counts toward ${ticks.length} theme ${ticks.length === 1 ? 'goal' : 'goals'}`
-                  : 'Counts toward a theme goal?'}
+                  ? m.log_counts_toward({
+                      goals: m.count_theme_goal({ count: ticks.length }),
+                    })
+                  : m.log_counts_q()}
               </summary>
               <ul>
                 {themes.map((g) => (
@@ -895,15 +919,15 @@ const LogForm = ({
                 onClick={remove}
               >
                 <TrashIcon aria-hidden="true" />
-                Remove from atlas
+                {m.log_remove()}
               </button>
               <button type="button" className={s.linkBtn} onClick={onClose}>
-                Cancel
+                {m.common_cancel()}
               </button>
             </>
           ) : (
             <button type="button" className={s.linkBtn} onClick={onClose}>
-              Close
+              {m.common_close()}
             </button>
           )}
           <button
@@ -918,6 +942,19 @@ const LogForm = ({
         </div>
       </form>
     </dialog>
+  );
+};
+
+// a translated sentence with one word in bold: the message is filled with a marker where the word goes
+const BOLD = '\u0000';
+const Bold = ({ text, bold }: { text: string; bold: string }) => {
+  const [before, after = ''] = text.split(BOLD);
+  return (
+    <>
+      {before}
+      <b>{bold}</b>
+      {after}
+    </>
   );
 };
 
@@ -955,7 +992,10 @@ const ThenNote = ({
   if (states && c && !open)
     content = (
       <p>
-        {name} is counted as <b>{names[c.code]}</b>.{' '}
+        <Bold
+          text={m.log_then_counted({ name, country: BOLD })}
+          bold={names[c.code]}
+        />{' '}
         <button
           type="button"
           className={s.thenChange}
@@ -964,7 +1004,7 @@ const ThenNote = ({
             focusIn('[aria-pressed="true"], button');
           }}
         >
-          Change
+          {m.common_change()}
         </button>
       </p>
     );
@@ -972,10 +1012,11 @@ const ThenNote = ({
     content = (
       <>
         <p>
-          {name} is {states.length} countries today.{' '}
-          {author
-            ? 'Which did the author live in?'
-            : 'Which is this place in now?'}
+          {m.log_then_today({
+            name,
+            countries: m.count_country({ count: states.length }),
+          })}{' '}
+          {author ? m.log_then_author() : m.log_then_place()}
         </p>
         <div className={s.thenPicks}>
           {states.map((code) => (
@@ -995,13 +1036,13 @@ const ThenNote = ({
       </>
     );
   else if (c?.then)
-    content = <p>Counted as {names[c.code]}, the country there today.</p>;
+    content = <p>{m.log_then_as({ country: names[c.code] })}</p>;
   else if (c?.as && c.under)
     content = (
       <p>
         {c.code === c.under
-          ? `Counted under ${names[c.under]}.`
-          : `Counted under ${names[c.under]}; ${c.as} fills in on the map too.`}
+          ? m.log_then_under({ country: names[c.under] })
+          : m.log_then_under_fill({ country: names[c.under], area: c.as })}
       </p>
     );
   return (

@@ -1,4 +1,5 @@
 import { supabase } from '../../utils/supabase';
+import { m } from '../../paraglide/messages.js';
 
 export type ContactMessage = { name: string; email: string; message: string };
 
@@ -8,7 +9,5 @@ export async function sendContactMessage(
 ): Promise<string | null> {
   const { error } = await supabase.from('contact_messages').insert(message);
   if (error) console.error(error);
-  return error
-    ? 'Your message couldn’t be sent. Try again, or email us.'
-    : null;
+  return error ? m.contact_failed() : null;
 }

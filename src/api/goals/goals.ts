@@ -1,5 +1,6 @@
 import type { Goal } from '../../types';
 import { supabase } from '../../utils/supabase';
+import { m } from '../../paraglide/messages.js';
 
 type GoalInput = Pick<
   Goal,
@@ -15,9 +16,7 @@ const toRow = (goal: GoalInput) => ({
 });
 
 const message = (error: { code?: string; message: string } | null) =>
-  error?.code === '23505'
-    ? 'You already have a goal with that name.'
-    : (error?.message ?? null);
+  error?.code === '23505' ? m.goals_err_taken() : (error?.message ?? null);
 
 export async function getGoals(userId: string): Promise<Goal[]> {
   const { data, error } = await supabase
@@ -30,7 +29,7 @@ export async function getGoals(userId: string): Promise<Goal[]> {
     .returns<Goal[]>();
 
   if (error) {
-    throw new Error("Couldn't load your goals");
+    throw new Error(m.goals_err_load());
   }
   return data ?? [];
 }

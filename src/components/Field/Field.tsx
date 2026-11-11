@@ -1,9 +1,10 @@
-import { useState, type ComponentPropsWithoutRef, type ReactNode } from "react";
-import * as s from "./Field.css";
+import { useState, type ComponentPropsWithoutRef, type ReactNode } from 'react';
+import * as s from './Field.css';
+import { m } from '../../paraglide/messages.js';
 
 type FieldProps = Omit<
-  ComponentPropsWithoutRef<"input">,
-  "id" | "className" | "children"
+  ComponentPropsWithoutRef<'input'>,
+  'id' | 'className' | 'children'
 > & {
   id: string;
   label: string;
@@ -26,16 +27,16 @@ const Field = ({
   const [visible, setVisible] = useState(false);
   const errorId = `${id}-err`;
   const describedBy =
-    [error ? errorId : null, inputProps["aria-describedby"]]
+    [error ? errorId : null, inputProps['aria-describedby']]
       .filter(Boolean)
-      .join(" ") || undefined;
+      .join(' ') || undefined;
 
   const input = (
     <input
       {...inputProps}
       id={id}
       className={password ? `${s.input} ${s.inputPassword}` : s.input}
-      type={password ? (visible ? "text" : "password") : inputProps.type}
+      type={password ? (visible ? 'text' : 'password') : inputProps.type}
       aria-invalid={error ? true : undefined}
       aria-describedby={describedBy}
     />
@@ -55,7 +56,7 @@ const Field = ({
             aria-controls={id}
             onClick={() => setVisible((v) => !v)}
           >
-            {visible ? "Hide" : "Show"}
+            {visible ? m.field_hide() : m.field_show()}
           </button>
         </div>
       ) : (

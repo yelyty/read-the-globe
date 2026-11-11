@@ -4,19 +4,22 @@ import { counted, type Mark, type Marks } from '../../utils/atlasMarks';
 import {
   CONTINENT_NAMES,
   CONTINENT_OF,
+  continentName,
   type Continent,
 } from '../../utils/continents';
 
 import * as s from './HomePage.css';
 import CountryShape from './CountryShape';
+import { m } from '../../paraglide/messages.js';
+import { getLocale } from '../../paraglide/runtime.js';
 
 const PEEK = 6;
-const plural = (n: number, one: string, many: string) =>
-  `${n} ${n === 1 ? one : many}`;
 const describe = ({ set, author }: Mark) =>
   [
-    set.length && `${plural(set.length, 'story', 'stories')} set here`,
-    author.length && `${plural(author.length, 'author', 'authors')} from here`,
+    set.length &&
+      m.home_n_set({ stories: m.count_story({ count: set.length }) }),
+    author.length &&
+      m.home_n_from({ authors: m.count_author({ count: author.length }) }),
   ]
     .filter(Boolean)
     .join(', ');
@@ -51,16 +54,14 @@ const AtlasCountries = ({
       <div className={s.subHead}>
         <h2 id="countries-title" className={s.h2}>
           <MapTrifoldIcon className={s.h2Icon} aria-hidden="true" />
-          Countries on your atlas
+          {m.home_countries_title()}
         </h2>
-        <p className={s.subNote}>
-          Open a continent, then choose a country to see its books.
-        </p>
+        <p className={s.subNote}>{m.home_countries_note()}</p>
       </div>
       <div className={s.cc} data-tips>
         {continents.map((continent) => {
           const codes = byContinent[continent]!.sort((a, b) =>
-            name(a).localeCompare(name(b))
+            name(a).localeCompare(name(b), getLocale())
           );
           return (
             <details
@@ -70,12 +71,12 @@ const AtlasCountries = ({
             >
               <summary className={s.ccSummary}>
                 <h3 className={s.ccTitle}>
-                  {CONTINENT_NAMES[continent]}{' '}
+                  {continentName(continent)}{' '}
                   <span className={s.ccN} aria-hidden="true">
                     {codes.length}
                   </span>
                   <span className={s.srOnly}>
-                    , {plural(codes.length, 'country', 'countries')}
+                    , {m.count_country({ count: codes.length })}
                   </span>
                 </h3>
                 <span className={s.ccPeek} aria-hidden="true">

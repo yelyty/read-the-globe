@@ -1,6 +1,7 @@
 import { SunIcon, MoonStarsIcon } from '@phosphor-icons/react';
 import { useTheme } from '../../hooks/useTheme';
 import * as s from './ThemeButton.css';
+import { m } from '../../paraglide/messages.js';
 
 const THEME_KEY = 'rtg-theme';
 
@@ -27,7 +28,7 @@ const ThemeButton = () => {
       className={s.themeBtn}
       onClick={toggle}
       aria-pressed={dark}
-      aria-label={dark ? 'Switch to day reading' : 'Switch to night reading'}
+      aria-label={dark ? m.theme_to_day() : m.theme_to_night()}
     >
       {dark ? (
         <SunIcon aria-hidden="true" />

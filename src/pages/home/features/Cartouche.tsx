@@ -2,19 +2,15 @@ import { useId } from 'react';
 import type { Show } from '../../../components/AtlasMap/AtlasMap.tsx';
 import type { atlasStats } from '../../../utils/atlasMarks';
 import * as s from '../HomePage.css';
+import { m } from '../../../paraglide/messages.js';
 
-const CAPTION: Record<Show, string> = {
-  all: 'countries',
-  set: 'countries where stories are set',
-  author: 'authors’ countries',
+const CAPTION: Record<Show, () => string> = {
+  all: m.home_cap_all,
+  set: m.home_cap_set,
+  author: m.home_cap_author,
 };
 
 const COUNTRY_TOTAL = 195;
-
-const CARTOUCHE_EXPLANATION =
-  "195 = the 193 UN member states, plus the Holy See (Vatican City) and Palestine. Territories count toward their country, so Greenland marks Denmark. Places outside the list, such as Taiwan or Kosovo, show on the map but aren't added to the total.";
-
-const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
 type CartoucheProps = {
   stats: ReturnType<typeof atlasStats>;
@@ -46,14 +42,15 @@ const Cartouche = ({ stats, show, worlds, tick }: CartoucheProps) => {
         <span className={s.cartOf} tabIndex={0} aria-describedby={tooltipId}>
           / {COUNTRY_TOTAL}
           <span className={s.cartWhy} id={tooltipId} role="tooltip">
-            {CARTOUCHE_EXPLANATION}
+            {m.home_cart_why()}
           </span>
         </span>
       </p>
-      <p className={s.cartCap}>{CAPTION[show]}</p>
+      <p className={s.cartCap}>{CAPTION[show]()}</p>
       <p className={s.cartMeta}>
-        {plural(stats.books, 'book')} · {plural(stats.continents, 'continent')}
-        {worlds > 0 && ` · ${plural(worlds, 'imagined world')}`}
+        {m.count_book({ count: stats.books })} ·{' '}
+        {m.count_continent({ count: stats.continents })}
+        {worlds > 0 && ` · ${m.count_imagined_world({ count: worlds })}`}
       </p>
     </div>
   );

@@ -5,32 +5,33 @@ import * as s from './AppHeader.css';
 import ThemeButton from '../ThemeButton/ThemeButton';
 import Logo from '../Logo/Logo';
 import AccountMenu from '../AccountMenu/AccountMenu';
+import { m } from '../../paraglide/messages.js';
 
 const AppHeader = () => {
   return (
     <header className={h.header}>
       <div className={s.row}>
-        <Link to="/app" className={h.brand} aria-label="Read The Globe, home">
+        <Link to="/app" className={h.brand} aria-label={m.brand_home()}>
           <Logo className={h.logo} />
           <span className={h.brandWord}>Read The Globe</span>
         </Link>
 
-        <nav className={s.nav} aria-label="Main">
+        <nav className={s.nav} aria-label={m.nav_main()}>
           <Link
             className={s.navLink}
             to="/app"
             activeOptions={{ exact: true, includeSearch: false }}
           >
-            Home
+            {m.nav_home()}
           </Link>
           <Link className={s.navLink} to="/app/shelf">
-            Shelf
+            {m.nav_shelf()}
           </Link>
           <Link className={s.navLink} to="/app/goals">
-            Goals
+            {m.nav_goals()}
           </Link>
           <Link className={s.navLink} to="/app/postcard">
-            Postcard
+            {m.nav_postcard()}
           </Link>
           <AccountMenu />
         </nav>
@@ -43,7 +44,7 @@ const AppHeader = () => {
             search={(prev) => ({ ...prev, log: true })}
           >
             <PushPinIcon weight="fill" aria-hidden="true" />
-            <span>Log a book</span>
+            <span>{m.log_a_book()}</span>
           </Link>
         </div>
       </div>

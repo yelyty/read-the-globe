@@ -6,6 +6,7 @@ import { toNumeric } from '../../../../utils/toIsoNumeric';
 import { atlasAfter, BOOKS } from './miraAtlas';
 import { srOnly } from '../../../../styles/global.css';
 import * as s from './LiveAtlas.css';
+import { m } from '../../../../paraglide/messages.js';
 
 // the app's own flat map (AtlasMap): 360° across, 83°N to 57°S down, no Antarctica
 const WIDTH = 1000;
@@ -111,17 +112,17 @@ const LiveAtlas = () => {
   const atlas = atlasAfter(shown);
   const latest = BOOKS[shown - 1];
   const now = !latest
-    ? 'Scroll to pin her books'
+    ? m.landing_atlas_scroll()
     : shown === BOOKS.length && reduced()
-      ? `${BOOKS.length} books, ${atlas.countries} countries`
-      : `“${latest[0]}” by ${latest[1]}`;
+      ? `${m.count_book({ count: BOOKS.length })}, ${m.count_country({ count: atlas.countries })}`
+      : m.landing_atlas_latest({ title: latest[0], author: latest[1] });
 
   return (
     <figure className={s.frame} id="atlas" ref={figure}>
       <div className={s.sheet}>
         <div className={s.head}>
-          <span className={s.title}>Mira’s atlas</span>
-          <span className={s.tag}>Example reader</span>
+          <span className={s.title}>{m.landing_atlas_title()}</span>
+          <span className={s.tag}>{m.landing_atlas_tag()}</span>
         </div>
         <svg
           className={s.map}
@@ -176,33 +177,31 @@ const LiveAtlas = () => {
           </g>
         </svg>
         <p className={srOnly} id="al-desc">
-          Mira’s atlas, an example: a world map that fills in as her 48 books
-          are pinned, ending at 44 of 195 countries, olive where her books are
-          set, rust where her authors come from, striped where both.
+          {m.landing_atlas_desc()}
         </p>
         <div className={s.foot} aria-hidden="true">
           <p className={s.count}>
             <b>{atlas.countries}</b>
             <span>/ 195</span>
-            <em>countries</em>
+            <em>{m.landing_atlas_countries()}</em>
           </p>
           <p className={s.now}>{now}</p>
           <p className={s.books}>
-            <b>{shown}</b> of 48 books
+            <b>{shown}</b> {m.landing_atlas_of_books({ total: BOOKS.length })}
           </p>
         </div>
         <ul className={s.key} aria-hidden="true">
           <li>
             <i className={s.keySet} />
-            Story set here
+            {m.landing_key_set()}
           </li>
           <li>
             <i className={s.keyAuthor} />
-            Author from here
+            {m.landing_key_author()}
           </li>
           <li>
             <i className={s.keyBoth} />
-            Both
+            {m.landing_key_both()}
           </li>
         </ul>
       </div>

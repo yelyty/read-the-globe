@@ -6,11 +6,13 @@ import { useReveal } from '../../../../hooks/useReveal';
 import { mainPiece, worldShapes } from '../../../../utils/worldShapes';
 import { btnPrimary } from '../LoginDialog/LoginDialog.css';
 import * as s from './Closing.css';
+import { m } from '../../../../paraglide/messages.js';
+import { getLocale } from '../../../../paraglide/runtime.js';
+import { toAlpha2 } from '../../../../utils/toIsoNumeric';
 
 type Mark = 'set' | 'author' | 'both';
 type Stamp = {
   code: string; // numeric, as on the map
-  name: string;
   mark: Mark;
   wash: string; // the disc under the country
   place: Record<string, string>; // size and spot round the promise
@@ -19,7 +21,6 @@ type Stamp = {
 const STAMPS: Stamp[] = [
   {
     code: '036',
-    name: 'Australia',
     mark: 'both',
     wash: 'var(--olive-wash)',
     place: { '--s': '92px', left: '8%', top: '16%' },
@@ -27,7 +28,6 @@ const STAMPS: Stamp[] = [
   },
   {
     code: '484',
-    name: 'Mexico',
     mark: 'set',
     wash: 'var(--land-t)',
     place: { '--s': '64px', left: '21%', top: '62%' },
@@ -35,7 +35,6 @@ const STAMPS: Stamp[] = [
   },
   {
     code: '804',
-    name: 'Ukraine',
     mark: 'author',
     wash: 'var(--rust-wash)',
     place: { '--s': '76px', left: '4%', top: '70%' },
@@ -43,7 +42,6 @@ const STAMPS: Stamp[] = [
   },
   {
     code: '578',
-    name: 'Norway',
     mark: 'set',
     wash: 'var(--sage)',
     place: { '--s': '56px', left: '28%', top: '8%' },
@@ -51,7 +49,6 @@ const STAMPS: Stamp[] = [
   },
   {
     code: '604',
-    name: 'Peru',
     mark: 'both',
     wash: 'var(--land-t)',
     place: { '--s': '84px', right: '9%', top: '14%' },
@@ -59,7 +56,6 @@ const STAMPS: Stamp[] = [
   },
   {
     code: '404',
-    name: 'Kenya',
     mark: 'author',
     wash: 'var(--olive-wash)',
     place: { '--s': '58px', right: '25%', top: '70%' },
@@ -67,7 +63,6 @@ const STAMPS: Stamp[] = [
   },
   {
     code: '380',
-    name: 'Italy',
     mark: 'set',
     wash: 'var(--rust-wash)',
     place: { '--s': '72px', right: '4%', top: '64%' },
@@ -75,7 +70,6 @@ const STAMPS: Stamp[] = [
   },
   {
     code: '152',
-    name: 'Chile',
     mark: 'both',
     wash: 'var(--sage)',
     place: { '--s': '52px', right: '28%', top: '8%' },
@@ -83,10 +77,10 @@ const STAMPS: Stamp[] = [
   },
 ];
 
-const LABEL: Record<Mark, string> = {
-  set: '{country}: a story set here',
-  author: '{country}: an author from here',
-  both: '{country}: set here, by an author from here',
+const LABEL: Record<Mark, (inputs: { country: string }) => string> = {
+  set: m.landing_stamp_set,
+  author: m.landing_stamp_author,
+  both: m.landing_stamp_both,
 };
 const FILL: Record<Mark, string> = {
   set: 'var(--olive)',
@@ -109,6 +103,8 @@ const outline = (shape: Feature) =>
 // The promise, with the stamps it will collect scattered round it: they press in, one after another, once it's in view.
 const Closing = ({ onSignUp }: { onSignUp: () => void }) => {
   const [ref, revealed] = useReveal<HTMLElement>();
+  // the countries in the reader's language, from the browser
+  const names = new Intl.DisplayNames([getLocale()], { type: 'region' });
   const [shapes, setShapes] = useState<Record<string, Feature>>();
   useEffect(() => {
     if (revealed) void worldShapes().then(setShapes);
@@ -133,7 +129,9 @@ const Closing = ({ onSignUp }: { onSignUp: () => void }) => {
         </pattern>
       </svg>
       {STAMPS.map((stamp, i) => {
-        const label = LABEL[stamp.mark].replace('{country}', stamp.name);
+        const label = LABEL[stamp.mark]({
+          country: names.of(toAlpha2(stamp.code)) ?? stamp.code,
+        });
         const shape = shapes?.[stamp.code];
         return (
           <svg
@@ -152,7 +150,7 @@ const Closing = ({ onSignUp }: { onSignUp: () => void }) => {
       })}
       <div className={s.inner}>
         <h2 className={s.title} id="close-h">
-          No streaks, no scores. Just a map that remembers what you’ve read.
+          {m.landing_close_title()}
         </h2>
         <button
           type="button"
@@ -160,7 +158,7 @@ const Closing = ({ onSignUp }: { onSignUp: () => void }) => {
           onClick={onSignUp}
         >
           <PushPinIcon weight="fill" aria-hidden="true" />
-          Start your atlas
+          {m.landing_start()}
         </button>
       </div>
     </section>

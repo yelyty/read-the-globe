@@ -1,24 +1,27 @@
 import { Link } from '@tanstack/react-router';
 import Logo from '../../../../components/Logo/Logo';
 import { SECTIONS } from '../../sections';
+import LanguagePicker from '../../../../components/LanguagePicker/LanguagePicker';
+import { footSelect } from '../../../../components/LanguagePicker/LanguagePicker.css';
+import { m } from '../../../../paraglide/messages.js';
 import * as s from './Footer.css';
 
 const COLUMNS = [
   {
     id: 'footer-company',
-    title: 'Company',
+    title: m.footer_company,
     links: [
-      { label: 'About', to: '/about' },
-      { label: 'Journal', to: '/journal' },
-      { label: 'Contact', to: '/contact' },
+      { label: m.footer_about, to: '/about' },
+      { label: m.footer_journal, to: '/journal' },
+      { label: m.footer_contact, to: '/contact' },
     ],
   },
   {
     id: 'footer-legal',
-    title: 'Legal',
+    title: m.footer_legal,
     links: [
-      { label: 'Privacy', to: '/privacy' },
-      { label: 'Terms', to: '/terms' },
+      { label: m.footer_privacy, to: '/privacy' },
+      { label: m.footer_terms, to: '/terms' },
     ],
   },
 ] as const;
@@ -32,22 +35,22 @@ const Footer = () => {
             <a
               href="/#top"
               className={s.logoLink}
-              aria-label="Read The Globe, back to the top"
+              aria-label={m.footer_to_top()}
             >
               <Logo className={s.logo} />
               <span className={s.logoTitle}>Read The Globe</span>
             </a>
-            <p className={s.footerTag}>Read the world, one book at a time.</p>
+            <p className={s.footerTag}>{m.footer_tag()}</p>
           </div>
           <nav aria-labelledby="footer-product">
             <h2 className={s.footerHead} id="footer-product">
-              Product
+              {m.footer_product()}
             </h2>
             <ul className={s.footerList}>
               {SECTIONS.map((section) => (
                 <li key={section.hash}>
                   <a className={s.footerLink} href={`/#${section.hash}`}>
-                    {section.label}
+                    {section.label()}
                   </a>
                 </li>
               ))}
@@ -56,13 +59,13 @@ const Footer = () => {
           {COLUMNS.map((column) => (
             <nav key={column.id} aria-labelledby={column.id}>
               <h2 className={s.footerHead} id={column.id}>
-                {column.title}
+                {column.title()}
               </h2>
               <ul className={s.footerList}>
                 {column.links.map((link) => (
-                  <li key={link.label}>
+                  <li key={link.to}>
                     <Link className={s.footerLink} to={link.to}>
-                      {link.label}
+                      {link.label()}
                     </Link>
                   </li>
                 ))}
@@ -71,8 +74,8 @@ const Footer = () => {
           ))}
         </div>
         <div className={s.footerTail}>
-          <span>© 2026 Read The Globe</span>
-          <span>195 countries · one shelf at a time</span>
+          <span>{m.footer_copyright({ year: 2026 })}</span>
+          <LanguagePicker selectClassName={footSelect} />
         </div>
       </div>
     </footer>

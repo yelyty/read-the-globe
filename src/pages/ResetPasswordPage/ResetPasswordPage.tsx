@@ -10,6 +10,7 @@ import { useAuth } from '../../auth/auth-context';
 import { changePassword } from '../../auth/session';
 import { newPasswordProblem } from '../../auth/forms';
 import * as s from '../CompanyPage/CompanyPage.css';
+import { m } from '../../paraglide/messages.js';
 
 // Where the "Forgot your password?" email lands: Supabase signs the reader in from the link, then they pick a new one.
 const ResetPasswordPage = () => {
@@ -39,23 +40,21 @@ const ResetPasswordPage = () => {
 
   return (
     <CompanyPage
-      title="Choose a new password"
-      description="Choose a new password for your Read The Globe atlas."
+      title={m.reset_title()}
+      description={m.reset_description()}
+      translated
     >
-      <h1>Choose a new password</h1>
+      <h1>{m.reset_title()}</h1>
       {!isAuthenticated ? (
-        <p className={s.lede}>
-          This link has expired or was already used. Ask for a new one: Log in,
-          then “Forgot your password?”.
-        </p>
+        <p className={s.lede}>{m.reset_expired()}</p>
       ) : done ? (
         <>
           <p className={formNotice} role="status">
-            Your password is changed.
+            {m.reset_done()}
           </p>
           <Link to="/app" className={btnPrimary}>
             <PushPinIcon weight="fill" aria-hidden="true" />
-            Open your atlas
+            {m.reset_open_atlas()}
           </Link>
         </>
       ) : (
@@ -68,11 +67,11 @@ const ResetPasswordPage = () => {
           )}
           <Field
             id="rp-password"
-            label="New password"
+            label={m.reset_new_password()}
             password
             name="new-password"
             autoComplete="new-password"
-            placeholder="At least 8 characters"
+            placeholder={m.auth_password_new_placeholder()}
             aria-describedby="rp-strength"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
@@ -85,7 +84,7 @@ const ResetPasswordPage = () => {
             className={`${btnPrimary} ${s.send}`}
             disabled={pending}
           >
-            {pending ? 'One moment…' : 'Save the new password'}
+            {pending ? m.auth_pending() : m.reset_save()}
           </button>
         </form>
       )}

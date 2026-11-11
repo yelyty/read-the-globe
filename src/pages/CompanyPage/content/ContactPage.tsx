@@ -10,16 +10,17 @@ import {
   type ContactMessage,
 } from '../../../api/contact/contact';
 import * as s from '../CompanyPage.css';
+import { m } from '../../../paraglide/messages.js';
+import { getLocale } from '../../../paraglide/runtime.js';
 
 type Errors = Partial<Record<keyof ContactMessage, string>>;
 const FIELD_ORDER: (keyof ContactMessage)[] = ['name', 'email', 'message'];
 
 const validate = (values: ContactMessage): Errors => {
   const errors: Errors = {};
-  if (!values.name.trim()) errors.name = 'Tell us what to call you.';
-  if (!isEmail(values.email))
-    errors.email = 'Enter a valid email address, so we can write back.';
-  if (!values.message.trim()) errors.message = 'Write a few words first.';
+  if (!values.name.trim()) errors.name = m.auth_name_missing();
+  if (!isEmail(values.email)) errors.email = m.contact_email_invalid();
+  if (!values.message.trim()) errors.message = m.contact_message_missing();
   return errors;
 };
 
@@ -75,12 +76,22 @@ const ContactPage = () => {
         <a href="mailto:hello@readtheglobe.app">hello@readtheglobe.app</a>.
       </p>
       {sent ? (
-        <p className={s.sent} role="status" tabIndex={-1} ref={sentRef}>
-          Thanks, your message is on its way. We usually reply within a few
-          days.
+        <p
+          className={s.sent}
+          role="status"
+          tabIndex={-1}
+          ref={sentRef}
+          lang={getLocale()}
+        >
+          {m.contact_sent()}
         </p>
       ) : (
-        <form className={s.form} onSubmit={submit} noValidate>
+        <form
+          className={s.form}
+          onSubmit={submit}
+          noValidate
+          lang={getLocale()}
+        >
           {formError && (
             <p className={f.formError} role="alert">
               <WarningCircleIcon aria-hidden="true" />
@@ -89,7 +100,7 @@ const ContactPage = () => {
           )}
           <Field
             id="c-name"
-            label="Your name"
+            label={m.contact_name()}
             autoComplete="name"
             maxLength={80}
             value={values.name}
@@ -98,7 +109,7 @@ const ContactPage = () => {
           />
           <Field
             id="c-email"
-            label="Email"
+            label={m.auth_email_label()}
             type="email"
             inputMode="email"
             autoComplete="email"
@@ -108,7 +119,7 @@ const ContactPage = () => {
           />
           <div className={f.field} data-invalid={Boolean(errors.message)}>
             <label htmlFor="c-message" className={f.fieldLabel}>
-              Message
+              {m.contact_message()}
             </label>
             <textarea
               id="c-message"
@@ -130,7 +141,7 @@ const ContactPage = () => {
             className={`${btnPrimary} ${s.send}`}
             disabled={pending}
           >
-            {pending ? 'One moment…' : 'Send message'}
+            {pending ? m.auth_pending() : m.contact_send()}
           </button>
         </form>
       )}

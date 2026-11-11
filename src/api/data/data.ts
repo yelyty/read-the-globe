@@ -1,6 +1,7 @@
 import type { BookEntry, Goal, NextRead, World } from '../../types';
 import type { ImportedBook } from '../../utils/readingListCsv';
 import { supabase } from '../../utils/supabase';
+import { m } from '../../paraglide/messages.js';
 import getBooks from '../getBooks';
 import { getGoals } from '../goals/goals';
 import { getNextReads } from '../nextReads/nextReads';
@@ -42,23 +43,18 @@ export async function importBooks(
   const done = await supabase.rpc('import_books', { p_books: books });
   if (done.error) console.error(done.error);
   return done.error
-    ? {
-        error:
-          'That reading list couldn’t be imported. Nothing was added. Try again.',
-      }
+    ? { error: m.data_import_failed() }
     : (done.data as { added: number; duplicates: number });
 }
 
 export async function restoreBackup(backup: Backup): Promise<string | null> {
   const { error } = await supabase.rpc('restore_backup', { p_backup: backup });
   if (error) console.error(error);
-  return error
-    ? 'That backup couldn’t be restored. Your atlas is unchanged.'
-    : null;
+  return error ? m.data_restore_failed() : null;
 }
 
 export async function clearAtlas(): Promise<string | null> {
   const { error } = await supabase.rpc('clear_atlas');
   if (error) console.error(error);
-  return error ? 'Your atlas couldn’t be cleared. Try again.' : null;
+  return error ? m.account_clear_failed() : null;
 }

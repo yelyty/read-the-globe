@@ -26,12 +26,15 @@ import { byReadDate, readDate } from '../../utils/readDate';
 import {
   CONTINENT_NAMES,
   CONTINENT_OF,
+  continentName,
   type Continent,
 } from '../../utils/continents';
 import { atlasMarks } from '../../utils/atlasMarks';
 import { countryFrom, PARENT } from '../../utils/countryFrom';
 import { countryStamp, loadCountries } from '../PostcardPage/drawPostcard';
-import { goalHas } from '../GoalsPage/goals';
+import { goalHas, goalName } from '../GoalsPage/goals';
+import { getLocale } from '../../paraglide/runtime.js';
+import { m } from '../../paraglide/messages.js';
 import * as s from './ShelfPage.css';
 import BookRow from '../../components/BookRow/BookRow';
 import NextToRead from './features/NextToRead';
@@ -54,8 +57,6 @@ const authorCode = (b: BookEntry) => b.author?.country?.code;
 const yearOf = (b: BookEntry) => readDate(b).slice(0, 4);
 const placeCodes = (b: BookEntry) =>
   (b.places ?? []).map((p) => p.countryCode).filter((c): c is string => !!c);
-const count = (n: number, one: string, many: string) =>
-  `${n} ${n === 1 ? one : many}`;
 
 const Pick = ({ children, ...props }: ComponentPropsWithoutRef<'select'>) => (
   <span className={s.pick}>
@@ -137,12 +138,14 @@ const ShelfPage = () => {
     return hay.join(' ').toLowerCase().includes(q);
   });
   if (sort === 'new') list.sort(byReadDate);
-  if (sort === 'title') list.sort((a, b) => a.title.localeCompare(b.title));
+  const locale = getLocale();
+  if (sort === 'title')
+    list.sort((a, b) => a.title.localeCompare(b.title, locale));
   if (sort === 'country')
     list.sort(
       (a, b) =>
-        name(authorCode(a)).localeCompare(name(authorCode(b))) ||
-        a.title.localeCompare(b.title)
+        name(authorCode(a)).localeCompare(name(authorCode(b)), locale) ||
+        a.title.localeCompare(b.title, locale)
     );
   const unfiltered = list.length === books.length;
   // a search that names a country with nothing on the shelf is an invitation, not a dead end
@@ -163,7 +166,7 @@ const ShelfPage = () => {
     return Object.fromEntries(
       Object.entries(by).map(([y, n]) => [
         y,
-        `${count(n.books, 'book', 'books')} · ${count(n.codes.size, 'country', 'countries')}`,
+        `${m.count_book({ count: n.books })} · ${m.count_country({ count: n.codes.size })}`,
       ])
     );
   }, [books]);
@@ -224,10 +227,10 @@ const ShelfPage = () => {
 
   return (
     <>
-      <PageTitle>Shelf</PageTitle>
+      <PageTitle>{m.nav_shelf()}</PageTitle>
 
       {/* folder tabs: the open one is the page colour, so it joins the shelf below */}
-      <div className={s.tabs} role="tablist" aria-label="Shelf">
+      <div className={s.tabs} role="tablist" aria-label={m.nav_shelf()}>
         <button
           type="button"
           role="tab"
@@ -239,7 +242,7 @@ const ShelfPage = () => {
           onClick={() => openTab('read')}
           onKeyDown={onTabKey}
         >
-          Read <span className={s.tabN}>{books.length}</span>
+          {m.shelf_tab_read()} <span className={s.tabN}>{books.length}</span>
         </button>
         <button
           type="button"
@@ -252,7 +255,8 @@ const ShelfPage = () => {
           onClick={() => openTab('next')}
           onKeyDown={onTabKey}
         >
-          Next to read <span className={s.tabN}>{nextItems.length}</span>
+          {m.shelf_tab_next()}{' '}
+          <span className={s.tabN}>{nextItems.length}</span>
         </button>
       </div>
 
@@ -319,11 +323,8 @@ const ShelfPage = () => {
                 />
               </svg>
               <div>
-                <h2>Your shelf is empty</h2>
-                <p>
-                  Every book you log stands here, newest first, with the places
-                  it took you.
-                </p>
+                <h2>{m.shelf_empty_title()}</h2>
+                <p>{m.shelf_empty_text()}</p>
                 <div className={s.emptyActions}>
                   <Link
                     className={s.primary}
@@ -331,26 +332,25 @@ const ShelfPage = () => {
                     search={(prev) => ({ ...prev, log: true })}
                   >
                     <PushPinIcon weight="fill" aria-hidden="true" />
-                    Log a book
+                    {m.log_a_book()}
                   </Link>
                   <span className={s.orRule} aria-hidden="true">
-                    or
+                    {m.shelf_or()}
                   </span>
                   <ImportCsv className={s.linkBtn} onDone={imported}>
                     <UploadSimpleIcon aria-hidden="true" />
-                    Have a backlog? Import a reading list (CSV)
+                    {m.shelf_backlog()}
                   </ImportCsv>
                 </div>
                 <p className={s.hint}>
-                  A CSV with columns for title, author, the author’s country,
-                  places (“City, Country; City”) and an optional date.
+                  {m.shelf_csv_hint()}
                   <button
                     type="button"
                     className={s.linkBtn}
                     onClick={exportExample}
                   >
                     <DownloadSimpleIcon aria-hidden="true" />
-                    Download an example CSV
+                    {m.shelf_download_example()}
                   </button>
                 </p>
               </div>
@@ -368,8 +368,8 @@ const ShelfPage = () => {
                       setQuery(e.target.value);
                       reset();
                     }}
-                    placeholder="Search titles, authors, places, countries"
-                    aria-label="Search your shelf"
+                    placeholder={m.shelf_search_placeholder()}
+                    aria-label={m.shelf_search_label()}
                     autoComplete="off"
                   />
                 </div>
@@ -382,18 +382,18 @@ const ShelfPage = () => {
                   onClick={() => setFiltersOpen((o) => !o)}
                 >
                   <FunnelSimpleIcon aria-hidden="true" />
-                  Filters
+                  {m.shelf_filters()}
                 </button>
                 <div
                   className={s.filters}
                   id="shelf-filters"
                   role="group"
-                  aria-label="Filter your shelf"
+                  aria-label={m.shelf_filter_group()}
                   data-open={filtersOpen}
                 >
                   <Pick
                     value={continent}
-                    aria-label="Filter by continent"
+                    aria-label={m.shelf_filter_continent()}
                     onChange={(e) => {
                       const next = e.target.value as Continent | '';
                       setContinent(next);
@@ -401,10 +401,10 @@ const ShelfPage = () => {
                       reset();
                     }}
                   >
-                    <option value="">All continents</option>
+                    <option value="">{m.shelf_all_continents()}</option>
                     {CONTINENTS.map((c) => (
                       <option key={c} value={c}>
-                        {CONTINENT_NAMES[c]}
+                        {continentName(c)}
                       </option>
                     ))}
                   </Pick>
@@ -412,27 +412,27 @@ const ShelfPage = () => {
                   {(country || continent) && (
                     <Pick
                       value={mark}
-                      aria-label="Which mark counts"
+                      aria-label={m.shelf_mark_label()}
                       onChange={(e) => {
                         setMark(e.target.value as Mark);
                         reset();
                       }}
                     >
-                      <option value="">Set there or author from there</option>
-                      <option value="set">Set there</option>
-                      <option value="author">Author from there</option>
+                      <option value="">{m.shelf_mark_any()}</option>
+                      <option value="set">{m.shelf_mark_set()}</option>
+                      <option value="author">{m.shelf_mark_author()}</option>
                     </Pick>
                   )}
                   {years.length > 1 && (
                     <Pick
                       value={year}
-                      aria-label="Filter by year"
+                      aria-label={m.shelf_filter_year()}
                       onChange={(e) => {
                         setYear(e.target.value);
                         reset();
                       }}
                     >
-                      <option value="">All years</option>
+                      <option value="">{m.shelf_all_years()}</option>
                       {years.map((y) => (
                         <option key={y} value={y}>
                           {y}
@@ -443,16 +443,16 @@ const ShelfPage = () => {
                   {goals.length > 0 && (
                     <Pick
                       value={goalId}
-                      aria-label="Filter by goal"
+                      aria-label={m.shelf_filter_goal()}
                       onChange={(e) => {
                         setGoalId(e.target.value);
                         reset();
                       }}
                     >
-                      <option value="">All goals</option>
+                      <option value="">{m.shelf_all_goals()}</option>
                       {goals.map((g) => (
                         <option key={g.id} value={g.id}>
-                          {g.name}
+                          {goalName(g.name)}
                         </option>
                       ))}
                     </Pick>
@@ -460,20 +460,20 @@ const ShelfPage = () => {
                 </div>
                 <Pick
                   value={sort}
-                  aria-label="Sort your shelf"
+                  aria-label={m.shelf_sort_label()}
                   onChange={(e) => {
                     setSort(e.target.value as Sort);
                     reset();
                   }}
                 >
-                  <option value="new">Newest first</option>
-                  <option value="title">By title</option>
-                  <option value="country">By author’s country</option>
+                  <option value="new">{m.shelf_sort_new()}</option>
+                  <option value="title">{m.shelf_sort_title()}</option>
+                  <option value="country">{m.shelf_sort_country()}</option>
                 </Pick>
                 {canClear && (
                   <button type="button" className={s.linkBtn} onClick={clear}>
                     <XIcon aria-hidden="true" />
-                    Clear
+                    {m.shelf_clear()}
                   </button>
                 )}
               </div>
@@ -531,21 +531,26 @@ const ShelfPage = () => {
                     </h2>
                     {CONTINENT_OF[country] && (
                       <p className={s.countryMeta}>
-                        {CONTINENT_NAMES[CONTINENT_OF[country]]}
+                        {continentName(CONTINENT_OF[country])}
                       </p>
                     )}
                     <p className={s.countryWhy}>
                       {here.set.length > 0 && (
                         <span>
                           <i className={s.dotSet} aria-hidden="true" />
-                          {count(here.set.length, 'story', 'stories')} set here
+                          {m.shelf_set_here({
+                            stories: m.count_story({ count: here.set.length }),
+                          })}
                         </span>
                       )}
                       {here.author.length > 0 && (
                         <span>
                           <i className={s.dotAuthor} aria-hidden="true" />
-                          {count(here.author.length, 'author', 'authors')} from
-                          here
+                          {m.shelf_from_here({
+                            authors: m.count_author({
+                              count: here.author.length,
+                            }),
+                          })}
                         </span>
                       )}
                     </p>
@@ -556,11 +561,11 @@ const ShelfPage = () => {
                         search={(prev) => ({ ...prev, log: true, country })}
                       >
                         <PushPinIcon aria-hidden="true" />
-                        Log another book set here
+                        {m.shelf_log_another()}
                       </Link>
                       <Link className={s.linkBtn} to="/app/shelf">
                         <BooksIcon aria-hidden="true" />
-                        The whole shelf
+                        {m.shelf_whole()}
                       </Link>
                     </div>
                   </div>
@@ -570,7 +575,7 @@ const ShelfPage = () => {
               <p className={s.importLine}>
                 <ImportCsv className={s.linkBtn} onDone={imported}>
                   <UploadSimpleIcon aria-hidden="true" />
-                  Import a reading list (CSV)
+                  {m.shelf_import()}
                 </ImportCsv>
                 <button
                   type="button"
@@ -578,7 +583,7 @@ const ShelfPage = () => {
                   onClick={exportExample}
                 >
                   <DownloadSimpleIcon aria-hidden="true" />
-                  Download an example CSV
+                  {m.shelf_download_example()}
                 </button>
               </p>
 
@@ -619,21 +624,21 @@ const ShelfPage = () => {
                 </ul>
               ) : invite ? (
                 <div className={s.emptyNote}>
-                  <p>No books from {name(invite)} or set there yet.</p>
+                  <p>{m.shelf_invite_none({ country: name(invite) })}</p>
                   <Link
                     className={s.linkBtn}
                     to="."
                     search={(prev) => ({ ...prev, log: true, country: invite })}
                   >
                     <PushPinIcon aria-hidden="true" />
-                    Log a book set in {name(invite)}
+                    {m.shelf_invite_log({ country: name(invite) })}
                   </Link>
                 </div>
               ) : (
                 <p className={s.emptyNote}>
                   {q
-                    ? `No books match “${query.trim()}”. Try a broader word, or clear the filters.`
-                    : 'Nothing on your shelf matches that. Try a broader word, or clear the filters.'}
+                    ? m.shelf_no_match({ query: query.trim() })
+                    : m.shelf_nothing_matches()}
                 </p>
               )}
               {list.length > shown && (
@@ -643,7 +648,9 @@ const ShelfPage = () => {
                   onClick={() => setShown(shown + PAGE)}
                 >
                   <ArrowDownIcon aria-hidden="true" />
-                  Show {Math.min(PAGE, list.length - shown)} more
+                  {m.shelf_show_more({
+                    count: Math.min(PAGE, list.length - shown),
+                  })}
                 </button>
               )}
             </>

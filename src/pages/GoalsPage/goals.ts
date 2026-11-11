@@ -1,3 +1,4 @@
+import { createElement, type ReactNode } from 'react';
 import type { Feature } from 'geojson';
 import type { BookEntry, Goal, GoalKind } from '../../types';
 import type { Marks } from '../../utils/atlasMarks';
@@ -7,6 +8,7 @@ import {
   type Continent,
 } from '../../utils/continents';
 import { toNumeric } from '../../utils/toIsoNumeric';
+import { m } from '../../paraglide/messages.js';
 
 export const MAX_GOALS = 10;
 
@@ -61,11 +63,34 @@ export const CATALOGUE: CatalogueGoal[] = [
   draft('theme', 'Written before 1900', { target: 6 }),
 ];
 
-export const KIND_GROUP: Record<GoalKind, string> = {
-  region: 'Regions',
-  countries: 'Sets of countries',
-  theme: 'Themes',
+// catalogue goals are stored by their English name and shown in the reader's language; a goal of the reader's own keeps its name
+const CATALOGUE_NAME: Record<string, () => string> = {
+  'Around South America': m.goals_cat_south_america,
+  'Across Africa': m.goals_cat_africa,
+  'All of Asia': m.goals_cat_asia,
+  'Every corner of Europe': m.goals_cat_europe,
+  'Oceania, island by island': m.goals_cat_oceania,
+  'Island nations': m.goals_cat_islands,
+  'The Silk Road': m.goals_cat_silk_road,
+  'The Nordics': m.goals_cat_nordics,
+  'Along the Nile': m.goals_cat_nile,
+  'Stories set in the Arctic': m.goals_cat_arctic,
+  'Books in translation': m.goals_cat_translation,
+  'Written before 1900': m.goals_cat_before_1900,
 };
+export const goalName = (name: string) => CATALOGUE_NAME[name]?.() ?? name;
+
+export const KIND_GROUP: Record<GoalKind, () => string> = {
+  region: m.goals_group_regions,
+  countries: m.goals_group_countries,
+  theme: m.goals_group_themes,
+};
+
+/** a message's **bold** parts as <b> */
+export const withBold = (text: string): ReactNode[] =>
+  text
+    .split('**')
+    .map((part, i) => (i % 2 ? createElement('b', { key: i }, part) : part));
 
 export type Progress = {
   done: number;

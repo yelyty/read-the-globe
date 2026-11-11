@@ -7,6 +7,7 @@ import { useAuth } from '../../../../auth/auth-context';
 import { SECTIONS } from '../../sections';
 import ThemeButton from '../../../../components/ThemeButton/ThemeButton';
 import Logo from '../../../../components/Logo/Logo';
+import { m } from '../../../../paraglide/messages.js';
 
 // the section on screen: the one crossing a thin line just under the middle of the viewport
 const useCurrentSection = () => {
@@ -77,16 +78,16 @@ const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
   return (
     <>
       <a className={skip} href="#main">
-        Skip to content
+        {m.landing_skip()}
       </a>
       <header className={s.header}>
         <div className={s.topRow}>
-          <a href="/#top" className={s.brand} aria-label="Read The Globe, home">
+          <a href="/#top" className={s.brand} aria-label={m.brand_home()}>
             <Logo className={s.logo} />
             <span className={s.brandWord}>Read The Globe</span>
           </a>
 
-          <nav className={s.track} aria-label="Sections">
+          <nav className={s.track} aria-label={m.landing_sections()}>
             {SECTIONS.map((section) => (
               <a
                 key={section.hash}
@@ -94,7 +95,7 @@ const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
                 href={`/#${section.hash}`}
                 aria-current={current === section.hash ? 'true' : undefined}
               >
-                {section.label}
+                {section.label()}
               </a>
             ))}
           </nav>
@@ -103,16 +104,16 @@ const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
           </div>
           {isAuthenticated ? (
             <Link to="/app" className={s.login}>
-              Your atlas
+              {m.landing_your_atlas()}
             </Link>
           ) : (
             <button type="button" className={s.login} onClick={onLogIn}>
-              Log in
+              {m.landing_log_in()}
             </button>
           )}
           <button type="button" className={s.start} onClick={onSignUp}>
             <PushPinIcon weight="fill" aria-hidden="true" />
-            <span>Start your atlas</span>
+            <span>{m.landing_start()}</span>
           </button>
 
           <button
@@ -121,7 +122,7 @@ const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
             className={s.menuBtn}
             aria-expanded={menuOpen}
             aria-controls="header-menu"
-            aria-label="Menu"
+            aria-label={m.landing_menu()}
             onClick={() => setMenuOpen((open) => !open)}
           >
             <ListIcon aria-hidden="true" />
@@ -130,7 +131,7 @@ const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
             ref={menuRef}
             id="header-menu"
             className={s.menu}
-            aria-label="Menu"
+            aria-label={m.landing_menu()}
             hidden={!menuOpen}
           >
             {SECTIONS.map((section) => (
@@ -140,12 +141,12 @@ const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
                 href={`/#${section.hash}`}
                 onClick={() => setMenuOpen(false)}
               >
-                {section.label}
+                {section.label()}
               </a>
             ))}
             {isAuthenticated ? (
               <Link to="/app" className={`${s.menuItem} ${s.menuLogin}`}>
-                Your atlas
+                {m.landing_your_atlas()}
               </Link>
             ) : (
               <button
@@ -156,7 +157,7 @@ const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
                   onLogIn();
                 }}
               >
-                Log in
+                {m.landing_log_in()}
               </button>
             )}
           </nav>

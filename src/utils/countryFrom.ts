@@ -1,4 +1,5 @@
 import { toNumeric } from './toIsoNumeric';
+import { englishName } from './countryNames';
 
 /* The 195 are the UN's members, Vatican City and Palestine. Two kinds of name map onto them:
    - a state that no longer exists is counted as the country there today; where it split, the reader picks which (HIST);
@@ -209,7 +210,7 @@ export const splitStates = (typed: string) => {
   return h && h.length > 1 ? h : null;
 };
 
-/* What a typed country counts as. names is the map's own list (code → name); pick is the reader's choice for a
+/* What a typed country counts as. names is the map's own list (code → name), in the reader's language; the English name matches too; pick is the reader's choice for a
    state that split. ponytail: a linear scan of ~240 names per call, cheap next to a render */
 export function countryFrom(
   typed: string,
@@ -223,7 +224,9 @@ export function countryFrom(
   // a territory too small for the map's list is saved as its country
   if (t) return { code: names[t[0]] ? t[0] : t[1], as: raw, under: t[1] };
   const code =
-    Object.keys(names).find((c) => names[c].toLowerCase() === k) ?? ALIASES[k];
+    Object.keys(names).find(
+      (c) => names[c].toLowerCase() === k || englishName(c)?.toLowerCase() === k
+    ) ?? ALIASES[k];
   if (code) return { code };
   const h = HIST[k];
   if (!h) return null;

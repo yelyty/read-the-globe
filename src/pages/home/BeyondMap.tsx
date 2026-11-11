@@ -16,11 +16,12 @@ import { sameWorld, type WorldRow } from '../../utils/worlds';
 import * as a from '../account/features/DeleteAccount/DeleteAccount.css';
 import { Button } from '../../components/Button/Button';
 import * as s from './HomePage.css';
+import { m } from '../../paraglide/messages.js';
+import { getLocale } from '../../paraglide/runtime.js';
 
 const OPEN = 'rtg-beyond';
-const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 const formatDay = (day: string) =>
-  new Date(`${day}T12:00:00`).toLocaleDateString(undefined, {
+  new Date(`${day}T12:00:00`).toLocaleDateString(getLocale(), {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
@@ -50,14 +51,14 @@ const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
     if (!typed) return input.current?.focus();
     const had = worlds.find((w) => sameWorld(w.name, typed));
     if (had) {
-      status.show({ text: `${had.name} is already beyond your map.` });
+      status.show({ text: m.world_already({ name: had.name }) });
       return input.current?.select();
     }
     const error = await addWorld(typed);
     if (error) return status.show({ text: error });
     setName('');
     await router.invalidate();
-    status.show({ text: `Saved ${typed}, beyond the map.` });
+    status.show({ text: m.world_saved({ name: typed }) });
   };
 
   const remove = async (world: World) => {
@@ -66,9 +67,9 @@ const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
     await router.invalidate();
     input.current?.focus();
     status.show({
-      text: `Removed ${world.name}.`,
+      text: m.world_removed({ name: world.name }),
       action: {
-        label: 'Undo',
+        label: m.common_undo(),
         icon: <ArrowCounterClockwiseIcon aria-hidden="true" />,
         run: async () => {
           const again = await addWorld(world.name);
@@ -95,11 +96,11 @@ const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
         }}
       >
         <summary className={s.beyondLabel}>
-          Beyond the map{' '}
+          {m.world_beyond()}{' '}
           {worlds.length > 0 && (
             <span className={s.beyondSum}>
-              · {plural(worlds.length, 'world')}
-              {books > 0 && `, ${plural(books, 'book')}`}
+              · {m.count_world({ count: worlds.length })}
+              {books > 0 && `, ${m.count_book({ count: books })}`}
             </span>
           )}
         </summary>
@@ -123,15 +124,15 @@ const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
                     </span>
                     <span className={s.beyondN}>
                       {w.books.length
-                        ? plural(w.books.length, 'book')
-                        : 'no books yet'}
+                        ? m.count_book({ count: w.books.length })
+                        : m.world_no_books_short()}
                     </span>
                   </button>
                   {!w.books.length && w.saved && (
                     <button
                       type="button"
                       className={s.beyondRm}
-                      aria-label={`Remove ${w.name}`}
+                      aria-label={m.world_remove({ name: w.name })}
                       onClick={() => remove(w.saved!)}
                     >
                       <XIcon aria-hidden="true" />
@@ -143,20 +144,20 @@ const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
           )}
           <form className={s.beyondAdd} onSubmit={add} noValidate>
             <label className={s.srOnly} htmlFor="w-name">
-              An imagined world to save
+              {m.world_to_save()}
             </label>
             <input
               ref={input}
               id="w-name"
               maxLength={60}
-              placeholder="Narnia, Earthsea…"
+              placeholder={m.world_placeholder()}
               autoComplete="off"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
             <button type="submit" className={s.beyondBtn}>
               <PlusIcon aria-hidden="true" />
-              Add a world
+              {m.world_add()}
             </button>
           </form>
         </div>
@@ -197,14 +198,16 @@ const WorldDialog = ({
             {world.name}
           </h2>
           <p className={s.worldSub}>
-            Beyond the map ·{' '}
-            {books.length ? plural(books.length, 'book') : 'no books yet'}
+            {m.world_beyond()} ·{' '}
+            {books.length
+              ? m.count_book({ count: books.length })
+              : m.world_no_books_short()}
           </p>
         </div>
         <button
           type="button"
           className={a.close}
-          aria-label="Close"
+          aria-label={m.common_close()}
           onClick={() => dialog.current?.close()}
         >
           <XIcon aria-hidden="true" />
@@ -232,20 +235,17 @@ const WorldDialog = ({
                 className={s.more}
                 to="."
                 search={(prev) => ({ ...prev, edit: b.id })}
-                aria-label={`Edit ${b.title}`}
+                aria-label={m.book_edit({ title: b.title })}
                 onClick={() => dialog.current?.close()}
               >
                 <PencilSimpleIcon aria-hidden="true" />
-                Edit
+                {m.common_edit()}
               </Link>
             </li>
           ))}
         </ul>
       ) : (
-        <p className={a.dialogText}>
-          No books here yet. When you log one set in this world, it lands in
-          this box.
-        </p>
+        <p className={a.dialogText}>{m.world_no_books()}</p>
       )}
       <div className={a.dialogActions}>
         <Button
@@ -253,7 +253,7 @@ const WorldDialog = ({
           variant="text"
           onClick={() => dialog.current?.close()}
         >
-          Close
+          {m.common_close()}
         </Button>
         <Button
           type="button"
@@ -267,7 +267,7 @@ const WorldDialog = ({
           }}
         >
           <PushPinIcon aria-hidden="true" />
-          Log a book set here
+          {m.world_log_here()}
         </Button>
       </div>
     </dialog>

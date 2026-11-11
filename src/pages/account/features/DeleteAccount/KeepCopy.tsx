@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { DownloadSimpleIcon } from '@phosphor-icons/react';
 import type { BookEntry } from '../../../../types';
 import { Button } from '../../../../components/Button/Button';
-import { bookCount, exportReadingList } from '../YourData/readingList';
+import { exportReadingList } from '../YourData/readingList';
+import { m } from '../../../../paraglide/messages.js';
+
 import * as s from './DeleteAccount.css';
 
 type KeepCopyProps = {
@@ -18,17 +20,21 @@ const KeepCopy = ({ books, names }: KeepCopyProps) => {
 
   return (
     <div className={s.keepCopy}>
-      <p>Want to keep your books? Save a copy first.</p>
+      <p>{m.account_keep_copy()}</p>
       <Button
         type="button"
         variant="text"
         onClick={() => {
           exportReadingList(books, names);
-          setKept(`Saved ${bookCount(books.length)} to your downloads.`);
+          setKept(
+            m.account_keep_saved({
+              books: m.count_book({ count: books.length }),
+            })
+          );
         }}
       >
         <DownloadSimpleIcon aria-hidden="true" />
-        Download reading list (CSV)
+        {m.account_download_list()}
       </Button>
       <span className={s.status} role="status">
         {kept}

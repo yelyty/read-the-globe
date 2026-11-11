@@ -1,4 +1,5 @@
 import type { BookEntry, World } from '../types';
+import { getLocale } from '../paraglide/runtime.js';
 
 export type WorldRow = { name: string; books: BookEntry[]; saved?: World };
 
@@ -21,7 +22,9 @@ export function worldsOf(books: BookEntry[], saved: World[]): WorldRow[] {
     else by.set(key(w.name), { name: w.name, books: [], saved: w });
   }
   return [...by.values()].sort(
-    (a, b) => b.books.length - a.books.length || a.name.localeCompare(b.name)
+    (a, b) =>
+      b.books.length - a.books.length ||
+      a.name.localeCompare(b.name, getLocale())
   );
 }
 

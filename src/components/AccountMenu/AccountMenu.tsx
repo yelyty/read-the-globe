@@ -4,6 +4,9 @@ import { Link, useMatchRoute } from '@tanstack/react-router';
 
 import { useSignOut } from '../../hooks/useSignOut';
 import * as s from './AccountMenu.css';
+import { m } from '../../paraglide/messages.js';
+import LanguagePicker from '../LanguagePicker/LanguagePicker';
+import { menuRow } from '../LanguagePicker/LanguagePicker.css';
 
 const AccountMenu = () => {
   const [open, setOpen] = useState(false);
@@ -34,7 +37,8 @@ const AccountMenu = () => {
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault();
       const items = [
-        ...(list.current?.querySelectorAll<HTMLElement>('a, button') ?? []),
+        ...(list.current?.querySelectorAll<HTMLElement>('a, button, select') ??
+          []),
       ];
       const i = items.indexOf(document.activeElement as HTMLElement);
       const step = event.key === 'ArrowDown' ? 1 : -1;
@@ -62,7 +66,8 @@ const AccountMenu = () => {
         aria-controls="account-menu"
         onClick={() => setOpen((current) => !current)}
       >
-        Account <CaretDownIcon className={s.caret} aria-hidden="true" />
+        {m.nav_account()}{' '}
+        <CaretDownIcon className={s.caret} aria-hidden="true" />
       </button>
       <ul ref={list} id="account-menu" className={s.list} hidden={!open}>
         <li>
@@ -71,8 +76,11 @@ const AccountMenu = () => {
             to="/app/account"
             onClick={() => setOpen(false)}
           >
-            Your Account
+            {m.nav_your_account()}
           </Link>
+        </li>
+        <li>
+          <LanguagePicker label={m.language()} className={menuRow} />
         </li>
         <li>
           <button
@@ -83,7 +91,7 @@ const AccountMenu = () => {
               await signOut();
             }}
           >
-            Sign out
+            {m.nav_sign_out()}
           </button>
         </li>
       </ul>

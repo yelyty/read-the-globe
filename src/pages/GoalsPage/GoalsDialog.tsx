@@ -2,18 +2,20 @@ import { useEffect, useRef, useState, type SubmitEvent } from 'react';
 import { CheckIcon, PlusIcon, XIcon } from '@phosphor-icons/react';
 import Field from '../../components/Field/Field';
 import type { Goal, GoalKind } from '../../types';
-import { CONTINENT_NAMES, type Continent } from '../../utils/continents';
+import { continentName, type Continent } from '../../utils/continents';
 import { addGoal, updateGoal } from '../../api/goals/goals';
-import { MAX_GOALS, REGIONS } from './goals';
+import { MAX_GOALS, REGIONS, goalName } from './goals';
+import { getLocale } from '../../paraglide/runtime.js';
+import { m } from '../../paraglide/messages.js';
 import * as a from '../account/features/DeleteAccount/DeleteAccount.css';
 import * as s from './GoalsPage.css';
 import Hint from '../../components/Hint/Hint';
 import { Button } from '../../components/Button/Button';
 
-const NAME_HINT: Record<GoalKind, string> = {
-  region: 'Every corner of Europe',
-  countries: 'Along the Danube',
-  theme: 'Books in translation',
+const NAME_HINT: Record<GoalKind, () => string> = {
+  region: m.goals_cat_europe,
+  countries: m.goals_name_hint_countries,
+  theme: m.goals_cat_translation,
 };
 
 type GoalDialogProps = {
@@ -33,7 +35,9 @@ const GoalDialog = ({
 }: GoalDialogProps) => {
   const dialog = useRef<HTMLDialogElement>(null);
   const [kind, setKind] = useState<GoalKind>(goal?.kind ?? 'region');
-  const [name, setName] = useState(goal?.name ?? '');
+  // a catalogue goal shows its name in the reader's language; left as it is, it keeps its stored English name
+  const shownName = goal ? goalName(goal.name) : '';
+  const [name, setName] = useState(shownName);
   const [continent, setContinent] = useState<Continent>(
     goal?.continent ?? 'EU'
   );
@@ -62,26 +66,26 @@ const GoalDialog = ({
   const submit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     const trimmed = name.trim();
-    if (!trimmed) return setError('Give the goal a name.');
+    if (!trimmed) return setError(m.goals_err_name());
     if (
       goals.some(
         (g) =>
-          g.id !== goal?.id && g.name.toLowerCase() === trimmed.toLowerCase()
+          g.id !== goal?.id &&
+          [g.name, goalName(g.name)].some(
+            (n) => n.toLowerCase() === trimmed.toLowerCase()
+          )
       )
     )
-      return setError(
-        `You already have a goal called “${trimmed}”. Pick another name.`
-      );
+      return setError(m.goals_err_dup({ name: trimmed }));
     if (kind === 'countries' && codes.length < 2)
-      return setError('Add at least two countries.');
+      return setError(m.goals_err_two());
     if (kind === 'theme' && !(Number(target) >= 1))
-      return setError('Choose how many books, 1 or more.');
-    if (!goal && goals.length >= MAX_GOALS)
-      return setError('Ten goals is plenty. Remove one to add another.');
+      return setError(m.goals_err_target());
+    if (!goal && goals.length >= MAX_GOALS) return setError(m.goals_full());
 
     const draft = {
       kind,
-      name: trimmed,
+      name: goal && trimmed === shownName ? goal.name : trimmed,
       continent: kind === 'region' ? continent : null,
       countryCodes: kind === 'countries' ? codes : null,
       target:
@@ -94,7 +98,7 @@ const GoalDialog = ({
     setSaving(false);
     if (problem) return setError(problem);
     dialog.current?.close();
-    onSaved(trimmed);
+    onSaved(draft.name);
   };
 
   return (
@@ -112,12 +116,12 @@ const GoalDialog = ({
         <form onSubmit={submit} noValidate>
           <div className={a.dialogHead}>
             <h2 className={a.dialogTitle} id="goal-dialog-title">
-              {goal ? 'Edit goal' : 'Make your own goal'}
+              {goal ? m.goals_dialog_edit() : m.goals_dialog_new()}
             </h2>
             <button
               type="button"
               className={a.close}
-              aria-label="Close"
+              aria-label={m.common_close()}
               onClick={() => dialog.current?.close()}
             >
               <XIcon aria-hidden="true" />
@@ -126,7 +130,7 @@ const GoalDialog = ({
 
           <div className={s.field}>
             <label className={s.label} htmlFor="g-kind">
-              Type of goal
+              {m.goals_kind_label()}
             </label>
             <select
               id="g-kind"
@@ -135,17 +139,17 @@ const GoalDialog = ({
               disabled={!!goal}
               onChange={(e) => setKind(e.target.value as GoalKind)}
             >
-              <option value="region">Region — a whole continent</option>
-              <option value="countries">Countries — a list you choose</option>
-              <option value="theme">Theme — books you choose yourself</option>
+              <option value="region">{m.goals_kind_region()}</option>
+              <option value="countries">{m.goals_kind_countries()}</option>
+              <option value="theme">{m.goals_kind_theme()}</option>
             </select>
           </div>
 
           <Field
             id="g-name"
-            label="Name"
+            label={m.goals_name()}
             maxLength={80}
-            placeholder={NAME_HINT[kind]}
+            placeholder={NAME_HINT[kind]()}
             autoComplete="off"
             value={name}
             onChange={(e) => {
@@ -157,7 +161,7 @@ const GoalDialog = ({
           {kind === 'region' && (
             <div className={s.field}>
               <label className={s.label} htmlFor="g-region">
-                Region
+                {m.goals_region()}
               </label>
               <select
                 id="g-region"
@@ -167,7 +171,7 @@ const GoalDialog = ({
               >
                 {REGIONS.map((c) => (
                   <option key={c} value={c}>
-                    {CONTINENT_NAMES[c]}
+                    {continentName(c)}
                   </option>
                 ))}
               </select>
@@ -177,13 +181,13 @@ const GoalDialog = ({
           {kind === 'countries' && (
             <div className={s.field}>
               <label className={s.label} htmlFor="g-country">
-                Countries
+                {m.goals_countries()}
               </label>
               <input
                 id="g-country"
                 className={s.input}
                 list="g-countries"
-                placeholder="Iceland"
+                placeholder={m.goals_country_placeholder()}
                 autoComplete="off"
                 aria-describedby="g-country-hint"
                 value={country}
@@ -202,14 +206,12 @@ const GoalDialog = ({
               />
               <datalist id="g-countries">
                 {Object.values(names)
-                  .sort((x, y) => x.localeCompare(y))
+                  .sort((x, y) => x.localeCompare(y, getLocale()))
                   .map((n) => (
                     <option key={n} value={n} />
                   ))}
               </datalist>
-              <Hint id="g-country-hint">
-                Pick from the list, or press Enter after each country.
-              </Hint>
+              <Hint id="g-country-hint">{m.goals_country_hint()}</Hint>
               {codes.length > 0 && (
                 <ul className={s.picked}>
                   {codes.map((code) => (
@@ -217,7 +219,9 @@ const GoalDialog = ({
                       {names[code] ?? code}
                       <button
                         type="button"
-                        aria-label={`Remove ${names[code] ?? code}`}
+                        aria-label={m.goals_remove_country({
+                          country: names[code] ?? code,
+                        })}
                         onClick={() =>
                           setCodes(codes.filter((c) => c !== code))
                         }
@@ -234,7 +238,7 @@ const GoalDialog = ({
           {kind === 'theme' && (
             <Field
               id="g-target"
-              label="How many books"
+              label={m.goals_target()}
               type="number"
               min={1}
               max={200}
@@ -256,7 +260,7 @@ const GoalDialog = ({
               variant="text"
               onClick={() => dialog.current?.close()}
             >
-              Cancel
+              {m.common_cancel()}
             </Button>
             <Button type="submit" disabled={saving}>
               {goal ? (
@@ -264,7 +268,7 @@ const GoalDialog = ({
               ) : (
                 <PlusIcon aria-hidden="true" />
               )}
-              {goal ? 'Save changes' : 'Add goal'}
+              {goal ? m.goals_save_changes() : m.goals_add_goal()}
             </Button>
           </div>
         </form>

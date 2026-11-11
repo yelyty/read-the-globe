@@ -15,7 +15,9 @@ import {
   loadCountries,
   type Country,
 } from '../../PostcardPage/drawPostcard';
-import { goalHas } from '../../GoalsPage/goals';
+import { goalHas, goalName } from '../../GoalsPage/goals';
+import { getLocale } from '../../../paraglide/runtime.js';
+import { m } from '../../../paraglide/messages.js';
 import { useStatus } from '../../../hooks/useStatus';
 import * as s from '../ShelfPage.css';
 
@@ -52,7 +54,7 @@ const NextToRead = ({
   }, []);
 
   const sorted = Object.entries(names).sort(([, a], [, b]) =>
-    a.localeCompare(b)
+    a.localeCompare(b, getLocale())
   );
 
   const codeFor = (typed: string) =>
@@ -64,14 +66,12 @@ const NextToRead = ({
     setSaid('');
     const t = title.trim();
     if (!t) {
-      setError('Add a title, or an idea like “a novel set in Chile”.');
+      setError(m.next_err_title());
       titleRef.current?.focus();
       return;
     }
     if (country.trim() && !code) {
-      setError(
-        `No country called “${country.trim()}”. Pick one from the list, or leave it empty.`
-      );
+      setError(m.next_err_country({ country: country.trim() }));
       document.getElementById('n-country')?.focus();
       return;
     }
@@ -82,9 +82,9 @@ const NextToRead = ({
     );
     if (dup) {
       status.show({
-        text: `“${dup.title}” is already on Next to read.`,
+        text: m.next_dup({ title: dup.title }),
         action: {
-          label: 'See it',
+          label: m.next_see_it(),
           icon: <BookmarkSimpleIcon aria-hidden="true" />,
           run: () => {
             const row = document.getElementById(`next-${dup.id}`);
@@ -104,7 +104,7 @@ const NextToRead = ({
     });
     setSaving(false);
     if (!saved) {
-      setError('That couldn’t be saved. Try again.');
+      setError(m.next_save_failed());
       return;
     }
     setItems((list) => [saved, ...list]);
@@ -113,26 +113,26 @@ const NextToRead = ({
     setCountry('');
     setMark('author');
     setError('');
-    setSaid(`Saved ${saved.title} to Next to read.`);
+    setSaid(m.next_saved({ title: saved.title }));
     titleRef.current?.focus();
   };
 
   const remove = async (item: NextRead) => {
     if (!(await removeNextRead(item.id))) {
-      status.show({ text: `“${item.title}” couldn’t be removed. Try again.` });
+      status.show({ text: m.next_remove_failed({ title: item.title }) });
       return;
     }
     const at = items.indexOf(item);
     setItems((list) => list.filter((it) => it.id !== item.id));
     status.show({
-      text: `Removed ${item.title} from Next to read.`,
+      text: m.next_removed({ title: item.title }),
       action: {
-        label: 'Undo',
+        label: m.common_undo(),
         icon: <ArrowCounterClockwiseIcon aria-hidden="true" />,
         run: async () => {
           const back = await addNextRead(item);
           if (!back) {
-            status.show({ text: 'That couldn’t be saved. Try again.' });
+            status.show({ text: m.next_save_failed() });
             return;
           }
           setItems((list) => [...list.slice(0, at), back, ...list.slice(at)]);
@@ -147,14 +147,14 @@ const NextToRead = ({
       <form className={s.nextForm} onSubmit={submit} noValidate>
         <div>
           <label className={s.fieldLabel} htmlFor="n-title">
-            A book, or an idea
+            {m.next_label_title()}
           </label>
           <input
             ref={titleRef}
             id="n-title"
             className={s.input}
             maxLength={200}
-            placeholder="Kitchen, or “a novel set in Chile”"
+            placeholder={m.next_placeholder_title()}
             value={title}
             aria-invalid={error && !title.trim() ? true : undefined}
             onChange={(e) => {
@@ -165,27 +165,29 @@ const NextToRead = ({
         </div>
         <div>
           <label className={s.fieldLabel} htmlFor="n-author">
-            Author <span className={s.optional}>optional</span>
+            {m.next_label_author()}{' '}
+            <span className={s.optional}>{m.common_optional()}</span>
           </label>
           <input
             id="n-author"
             className={s.input}
             maxLength={120}
-            placeholder="Who wrote it?"
+            placeholder={m.next_placeholder_author()}
             value={author}
             onChange={(e) => setAuthor(e.target.value)}
           />
         </div>
         <div>
           <label className={s.fieldLabel} htmlFor="n-country">
-            Country <span className={s.optional}>optional</span>
+            {m.next_label_country()}{' '}
+            <span className={s.optional}>{m.common_optional()}</span>
           </label>
           <input
             id="n-country"
             className={s.input}
             list="n-countries"
             maxLength={60}
-            placeholder="Chile"
+            placeholder={m.next_placeholder_country()}
             autoComplete="off"
             value={country}
             onChange={(e) => {
@@ -202,7 +204,7 @@ const NextToRead = ({
         {code && (
           <div className={s.nextWide}>
             <label className={s.fieldLabel} htmlFor="n-mark">
-              That country is
+              {m.next_mark_label()}
             </label>
             <span className={s.pick}>
               <select
@@ -211,8 +213,8 @@ const NextToRead = ({
                 value={mark}
                 onChange={(e) => setMark(e.target.value as 'set' | 'author')}
               >
-                <option value="author">where the author is from</option>
-                <option value="set">where the story is set</option>
+                <option value="author">{m.next_mark_author()}</option>
+                <option value="set">{m.next_mark_set()}</option>
               </select>
               <CaretDownIcon aria-hidden="true" />
             </span>
@@ -226,7 +228,7 @@ const NextToRead = ({
         <div className={`${s.nextWide} ${s.formRow}`}>
           <button type="submit" className={s.primary} disabled={saving}>
             <BookmarkSimpleIcon aria-hidden="true" />
-            Save for later
+            {m.next_save()}
           </button>
           <p className={s.status} role="status">
             {said}
@@ -234,11 +236,7 @@ const NextToRead = ({
         </div>
       </form>
 
-      {failed && (
-        <p className={s.emptyNote}>
-          Your Next to read list couldn’t load. Reload the page to try again.
-        </p>
-      )}
+      {failed && <p className={s.emptyNote}>{m.next_load_failed()}</p>}
       {items.length > 0 ? (
         <ul className={s.nextList}>
           {items.map((it) => {
@@ -279,12 +277,12 @@ const NextToRead = ({
                           aria-hidden="true"
                         />
                         {it.mark === 'set'
-                          ? `Set in ${place}`
-                          : `Author from ${place}`}
+                          ? m.next_set_in({ country: place })
+                          : m.next_author_from({ country: place })}
                       </span>
                       {!marks[it.countryCode] && (
                         <span className={s.fresh}>
-                          New ground: it adds {place} to your atlas
+                          {m.next_new_ground({ country: place })}
                         </span>
                       )}
                       {/* the goals this book would move along */}
@@ -292,7 +290,7 @@ const NextToRead = ({
                         .filter((g) => goalHas(g, it.countryCode!))
                         .map((g) => (
                           <span key={g.id} className={s.nextGoal}>
-                            {g.name}
+                            {goalName(g.name)}
                           </span>
                         ))}
                     </div>
@@ -305,16 +303,16 @@ const NextToRead = ({
                     search={(prev) => ({ ...prev, log: true, next: it.id })}
                   >
                     <PushPinIcon aria-hidden="true" />
-                    Log it
+                    {m.next_log_it()}
                   </Link>
                   <button
                     type="button"
                     className={s.linkBtn}
-                    aria-label={`Remove ${it.title} from Next to read`}
+                    aria-label={m.next_remove_label({ title: it.title })}
                     onClick={() => remove(it)}
                   >
                     <TrashIcon aria-hidden="true" />
-                    Remove
+                    {m.common_remove()}
                   </button>
                 </div>
               </li>
@@ -357,7 +355,7 @@ const NextToRead = ({
               />
               <circle className={s.nsPinEye} cx="101" cy="28.6" r="3.4" />
             </svg>
-            <p>Nothing saved yet. Add a book you mean to read.</p>
+            <p>{m.next_empty()}</p>
           </div>
         )
       )}

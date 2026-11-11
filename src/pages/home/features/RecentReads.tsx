@@ -5,6 +5,7 @@ import BookRow from '../../../components/BookRow/BookRow';
 import { list } from '../../../components/BookRow/BookRow.css';
 import type { BookEntry } from '../../../types';
 import * as s from '../HomePage.css';
+import { m } from '../../../paraglide/messages.js';
 
 type RecentReadsProps = { books: BookEntry[]; names: Record<string, string> };
 
@@ -13,10 +14,10 @@ const RecentReads = ({ books, names }: RecentReadsProps) => (
     <div className={s.subHead}>
       <h2 id="recent-title" className={s.h2}>
         <MapPinIcon className={s.h2Icon} aria-hidden="true" />
-        Recent reads
+        {m.home_recent()}
       </h2>
       <Link className={s.more} to="/app/shelf">
-        Shelf <ArrowRightIcon aria-hidden="true" />
+        {m.nav_shelf()} <ArrowRightIcon aria-hidden="true" />
       </Link>
     </div>
     <ul className={list}>

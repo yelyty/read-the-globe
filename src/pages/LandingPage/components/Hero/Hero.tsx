@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react';
 import { PushPinIcon } from '@phosphor-icons/react';
 import * as s from './Hero.css';
 import { btnPrimary } from '../LoginDialog/LoginDialog.css';
+import { m } from '../../../../paraglide/messages.js';
 
 // each sticker is placed by its centre (--x, --y), sized (--s), tilted (--r) and staggered (--n)
 const sticker = (props: Record<string, string>) => props as CSSProperties;
@@ -303,20 +304,16 @@ const Hero = ({ onSignUp }: { onSignUp: () => void }) => {
       </svg>
       <div className={s.heroInner}>
         <h1 className={s.heroTitle} id="hero-h">
-          <span className={s.line1}>Where have your books</span>{' '}
-          <span className={s.line2}>taken you?</span>
+          <span className={s.line1}>{m.landing_hero_line1()}</span>{' '}
+          <span className={s.line2}>{m.landing_hero_line2()}</span>
         </h1>
-        <p className={s.heroSub}>
-          Log a novel and your atlas marks two countries: the one the story is
-          set in, and the one its author calls home. Over years of reading, you
-          can see how much of the world you’ve reached.
-        </p>
+        <p className={s.heroSub}>{m.landing_hero_sub()}</p>
         <div className={s.heroCta}>
           <button type="button" className={btnPrimary} onClick={onSignUp}>
             <PushPinIcon weight="fill" aria-hidden="true" />
-            Start your atlas
+            {m.landing_start()}
           </button>
-          <span className={s.note}>It’s free. No card needed.</span>
+          <span className={s.note}>{m.landing_hero_note()}</span>
         </div>
       </div>
     </section>

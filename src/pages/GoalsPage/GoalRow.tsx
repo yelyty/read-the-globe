@@ -9,8 +9,17 @@ import { Link } from '@tanstack/react-router';
 import type { Feature } from 'geojson';
 import type { Goal } from '../../types';
 import type { Marks } from '../../utils/atlasMarks';
-import { CONTINENT_NAMES } from '../../utils/continents';
-import { CATALOGUE, isDone, plural, romanDate, type Progress } from './goals';
+import { continentName } from '../../utils/continents';
+import { getLocale } from '../../paraglide/runtime.js';
+import { m } from '../../paraglide/messages.js';
+import {
+  CATALOGUE,
+  goalName,
+  isDone,
+  romanDate,
+  withBold,
+  type Progress,
+} from './goals';
 import { Compass, GoalPlate, GoalShelf } from './GoalPlate';
 import { GoalRoute } from './GoalsRoute';
 import * as s from './GoalsPage.css';
@@ -31,7 +40,7 @@ type GoalRowProps = {
 const byName = (codes: string[], name: (code: string) => string) =>
   codes
     .map(name)
-    .sort((a, b) => a.localeCompare(b))
+    .sort((a, b) => a.localeCompare(b, getLocale()))
     .join(', ');
 
 /* The reached stamp, inked like a real postmark: wavy cancellation lines trailing over the plate, a double ring with
@@ -62,7 +71,7 @@ const Postmark = ({ id, date }: { id: number; date: string }) => (
       <circle className={s.pmRing} cx="84" cy="40" r="18.5" />
       <text className={s.pmArc}>
         <textPath href={`#arc-${id}`} textLength="146" lengthAdjust="spacing">
-          GOAL REACHED ✦ GOAL REACHED ✦
+          {`${m.goals_postmark()} ✦ ${m.goals_postmark()} ✦`}
         </textPath>
       </text>
       <path
@@ -93,12 +102,13 @@ const GoalRow = ({
   const over = p.done - p.total;
   const left = p.all.filter((c) => !p.reached.includes(c));
   const journal = CATALOGUE.find((c) => c.name === goal.name)?.journal;
+  const title = goalName(goal.name);
   const meta =
     goal.kind === 'region'
-      ? `Region · ${CONTINENT_NAMES[goal.continent!]}`
+      ? m.goals_meta_region({ continent: continentName(goal.continent!) })
       : goal.kind === 'countries'
-        ? 'Countries you chose'
-        : 'Theme · you tick the books that count';
+        ? m.goals_meta_countries()
+        : m.goals_meta_theme();
 
   return (
     <li
@@ -129,13 +139,13 @@ const GoalRow = ({
         <div className={s.goalHead}>
           <div>
             <h3 className={s.goalName} tabIndex={-1}>
-              {goal.name}
+              {title}
             </h3>
             <p className={s.goalMeta}>{meta}</p>
           </div>
           <div className={s.goalCount}>
             <span aria-hidden="true">
-              <b>{p.done}</b> of {p.total}
+              {withBold(m.goals_of({ done: p.done, total: p.total }))}
               {p.total > 30 && !done && (
                 <span className={s.goalPct}>
                   {' '}
@@ -143,20 +153,33 @@ const GoalRow = ({
                 </span>
               )}
             </span>
-            <span
-              className={s.srOnly}
-            >{`${p.done} of ${plural(p.total, theme ? 'book' : 'country', theme ? 'books' : 'countries')}`}</span>
+            <span className={s.srOnly}>
+              {(theme ? m.goals_of_books : m.goals_of_countries)({
+                done: p.done,
+                count: p.total,
+              })}
+            </span>
             {done && (
               <span className={s.goalReached}>
                 {goal.reachedOn ? (
                   <span className={s.srOnly}>
-                    {`Reached on ${new Date(`${goal.reachedOn}T00:00`).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}`}
+                    {m.goals_reached_on({
+                      date: new Date(
+                        `${goal.reachedOn}T00:00`
+                      ).toLocaleDateString(getLocale(), {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                      }),
+                    })}
                   </span>
                 ) : (
-                  'Reached'
+                  m.goals_reached()
                 )}
                 {over > 0 && (
-                  <span className={s.goalPast}>{over} past the flag</span>
+                  <span className={s.goalPast}>
+                    {m.goals_past_flag({ count: over })}
+                  </span>
                 )}
               </span>
             )}
@@ -166,15 +189,15 @@ const GoalRow = ({
         <div className={s.goalFoot}>
           {!theme && (
             <details className={s.goalTodo}>
-              <summary>Show countries</summary>
+              <summary>{m.goals_show_countries()}</summary>
               {p.reached.length > 0 && (
                 <p>
-                  <b>On your atlas:</b> {byName(p.reached, name)}.
+                  <b>{m.goals_on_atlas()}</b> {byName(p.reached, name)}.
                 </p>
               )}
               {left.length > 0 && (
                 <p>
-                  <b>Still to reach:</b> {byName(left, name)}.
+                  <b>{m.goals_still_to_reach()}</b> {byName(left, name)}.
                 </p>
               )}
             </details>
@@ -188,13 +211,13 @@ const GoalRow = ({
                 onClick={onChooseBooks}
               >
                 <CheckSquareIcon aria-hidden="true" />
-                Choose books
+                {m.goals_choose_books()}
               </button>
             )}
             {journal && (
               <Link className={s.linkBtn} to="/journal">
                 <BooksIcon aria-hidden="true" />
-                Reading ideas
+                {m.goals_reading_ideas()}
               </Link>
             )}
             {done && goal.reachedOn && (
@@ -202,31 +225,31 @@ const GoalRow = ({
                 className={s.linkBtn}
                 to="/app/postcard"
                 search={{ goal: goal.id }}
-                aria-label={`Postcard for ${goal.name}`}
+                aria-label={m.goals_postcard_for({ goal: title })}
               >
                 <ImageIcon aria-hidden="true" />
-                Postcard
+                {m.nav_postcard()}
               </Link>
             )}
             <button
               type="button"
               className={s.linkBtn}
               aria-haspopup="dialog"
-              aria-label={`Edit goal: ${goal.name}`}
+              aria-label={m.goals_edit_label({ goal: title })}
               onClick={onEdit}
             >
               <PencilSimpleIcon aria-hidden="true" />
-              Edit
+              {m.common_edit()}
             </button>
             <button
               type="button"
               className={s.linkBtn}
               data-remove-goal
-              aria-label={`Remove goal: ${goal.name}`}
+              aria-label={m.goals_remove_label({ goal: title })}
               onClick={onRemove}
             >
               <TrashIcon aria-hidden="true" />
-              Remove goal
+              {m.goals_remove()}
             </button>
           </div>
         </div>

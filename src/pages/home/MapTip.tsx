@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef } from 'react';
 import type { Marks } from '../../utils/atlasMarks';
 import { coverColor } from '../../utils/coverColors';
 import * as s from './HomePage.css';
+import { m } from '../../paraglide/messages.js';
 
 export type Tip = {
   code: string;
@@ -14,7 +15,6 @@ export type Tip = {
 };
 
 const SHOWN = 4;
-const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
 type MapTipProps = { tip: Tip; marks: Marks; names: Record<string, string> };
 
@@ -41,12 +41,10 @@ const MapTip = ({ tip, marks, names }: MapTipProps) => {
       <div ref={ref} className={s.tip} role="tooltip">
         <p className={s.tipHead}>
           <b>{name}</b>
-          <span>No books yet</span>
+          <span>{m.tip_no_books()}</span>
         </p>
         <p className={s.tipFoot}>
-          {tip.by === 'touch'
-            ? 'Tap again to log a book set here'
-            : 'Click to log a book set here'}
+          {tip.by === 'touch' ? m.tip_tap_log() : m.tip_click_log()}
         </p>
       </div>
     );
@@ -54,22 +52,16 @@ const MapTip = ({ tip, marks, names }: MapTipProps) => {
   const books = [...new Set([...mark.set, ...mark.author])];
   const one = books.length === 1;
   const foot = {
-    touch: one
-      ? 'Tap again to see it on your shelf'
-      : 'Tap again to see them on your shelf',
-    mouse: one
-      ? 'Click to see it on your shelf'
-      : 'Click to see them on your shelf',
-    key: one
-      ? 'Press Enter to see it on your shelf'
-      : 'Press Enter to see them on your shelf',
-  }[tip.by];
+    touch: one ? m.tip_tap_one : m.tip_tap_many,
+    mouse: one ? m.tip_click_one : m.tip_click_many,
+    key: one ? m.tip_key_one : m.tip_key_many,
+  }[tip.by]();
 
   return (
     <div ref={ref} className={s.tip} role="tooltip">
       <p className={`${s.tipHead} ${s.tipHeadBooks}`}>
         <b>{name}</b>
-        <span>{plural(books.length, 'book')}</span>
+        <span>{m.count_book({ count: books.length })}</span>
       </p>
       <ul className={s.tipList}>
         {books.slice(0, SHOWN).map((b) => {
@@ -99,10 +91,10 @@ const MapTip = ({ tip, marks, names }: MapTipProps) => {
                     aria-hidden="true"
                   />
                   {set && author
-                    ? 'Set here, by an author from here'
+                    ? m.tip_both()
                     : set
-                      ? 'Set here'
-                      : 'Author from here'}
+                      ? m.tip_set()
+                      : m.tip_author()}
                 </span>
               </span>
             </li>
@@ -110,7 +102,8 @@ const MapTip = ({ tip, marks, names }: MapTipProps) => {
         })}
       </ul>
       <p className={`${s.tipFoot} ${s.tipFootRule}`}>
-        {books.length > SHOWN && `+${books.length - SHOWN} more · `}
+        {books.length > SHOWN &&
+          `${m.tip_more({ count: books.length - SHOWN })} · `}
         {foot}
       </p>
     </div>

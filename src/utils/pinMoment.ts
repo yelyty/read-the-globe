@@ -1,8 +1,11 @@
 import type { BookEntry } from '../types';
 import { counted, type Marks } from './atlasMarks';
-import { CONTINENT_NAMES, CONTINENT_OF } from './continents';
+import { CONTINENT_OF, continentName } from './continents';
 import { PARENT } from './countryFrom';
+import { m } from '../paraglide/messages.js';
+import { getLocale } from '../paraglide/runtime.js';
 
+// English ordinals; Czech and Ukrainian say the number ("2.", "2-та")
 const ORD = [
   '',
   'first',
@@ -19,7 +22,8 @@ const ORD = [
 const ord = (n: number) =>
   ORD[n] ??
   `${n}${n % 100 > 10 && n % 100 < 14 ? 'th' : (['th', 'st', 'nd', 'rd'][n % 10] ?? 'th')}`;
-const list = (a: string[]) => (a.length === 2 ? a.join(' and ') : a.join(', '));
+const list = (a: string[]) =>
+  new Intl.ListFormat(getLocale(), { type: 'conjunction' }).format(a);
 
 export type PinMoment = {
   /** the countries the pin flies to: the ones this book adds or gives a new mark, else where it went back to */
@@ -56,19 +60,17 @@ export function pinMoment(
   const gainedCodes = placeCodes.filter(
     (c) => !fresh.includes(c) && !had(c, 'set')
   );
-  const gained = gainedCodes.map(
-    (c) => `${name(c)} now has a story set there.`
-  );
+  const gained = gainedCodes.map((c) => m.pin_gained_set({ country: name(c) }));
   if (authorCode && !fresh.includes(authorCode) && !had(authorCode, 'author')) {
-    gained.push(`${name(authorCode)} now has an author from there.`);
+    gained.push(m.pin_gained_author({ country: name(authorCode) }));
     gainedCodes.push(authorCode);
   }
 
   let where = [
     fresh.length === 1
-      ? `${name(fresh[0])} is new on your atlas.`
+      ? m.pin_new_one({ country: name(fresh[0]) })
       : fresh.length
-        ? `${list(fresh.map(name))} are new on your atlas.`
+        ? m.pin_new_many({ countries: list(fresh.map(name)) })
         : '',
     ...gained,
   ]
@@ -77,9 +79,17 @@ export function pinMoment(
   // a book that adds no new mark is a return: say which, and how many times the reader has been
   const back = placeCodes[0];
   if (!where && back)
-    where = `Back in ${name(back)}: the ${ord(after[back].set.length)} story set there.`;
+    where = m.pin_back_set({
+      country: name(back),
+      ord: ord(after[back].set.length),
+      count: after[back].set.length,
+    });
   else if (!where && authorCode)
-    where = `${name(authorCode)} again: the ${ord(after[authorCode].author.length)} author from there.`;
+    where = m.pin_back_author({
+      country: name(authorCode),
+      ord: ord(after[authorCode].author.length),
+      count: after[authorCode].author.length,
+    });
 
   const first = !was.size;
   // the first country on a continent is a stop worth naming
@@ -88,7 +98,7 @@ export function pinMoment(
   ].filter((cont) => [...was].every((c) => CONTINENT_OF[c] !== cont));
   const stop =
     !first && conts.length
-      ? `${conts.length === 1 ? 'First stop in' : 'First stops in'} ${list(conts.map((c) => CONTINENT_NAMES[c]))}. `
+      ? `${(conts.length === 1 ? m.pin_first_stop : m.pin_first_stops)({ continents: list(conts.map((c) => continentName(c))) })} `
       : '';
 
   const moved = [...fresh, ...gainedCodes];
@@ -98,8 +108,8 @@ export function pinMoment(
       : [back ?? authorCode].filter((c): c is string => !!c)
     ).slice(0, 5),
     line: first
-      ? `Your atlas has begun. ${where}`
-      : `Pinned ${book.title}. ${stop}${where}`,
+      ? m.pin_begun({ where })
+      : m.pin_pinned({ title: book.title, stop, where }),
     returning: !first && !moved.length,
   };
 }

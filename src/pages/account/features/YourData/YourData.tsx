@@ -20,6 +20,8 @@ import {
   exportReadingList,
 } from './readingList';
 import ImportCsv from './ImportCsv';
+import { m } from '../../../../paraglide/messages.js';
+
 import RestoreBackup from './RestoreBackup';
 
 type YourDataProps = {
@@ -35,28 +37,25 @@ const YourData = ({ userId, books, names, goals }: YourDataProps) => {
 
   const onExportReadingListClick = () => {
     exportReadingList(books, names);
-    setStatus(`Exported ${bookCount(books.length)} to a reading list.`);
+    setStatus(m.account_exported({ books: bookCount(books.length) }));
   };
 
   // the backup is read fresh, so it carries next reads and saved worlds too
   const onExportFullBackup = async () => {
     const backup = await getBackup(userId).catch(() => null);
     if (!backup) {
-      setStatus('Your backup couldn’t be saved. Try again.');
+      setStatus(m.account_backup_failed());
       return;
     }
     exportBackup(backup);
-    setStatus('Saved a full backup to your downloads.');
+    setStatus(m.account_backup_saved());
   };
 
   return (
-    <Block title="Your data">
+    <Block title={m.account_data_title()}>
       <div className={s.item}>
-        <h3 className={s.itemTitle}>Export</h3>
-        <p className={s.itemText}>
-          Take your atlas with you. The reading list opens in any spreadsheet;
-          the backup keeps everything.
-        </p>
+        <h3 className={s.itemTitle}>{m.account_export()}</h3>
+        <p className={s.itemText}>{m.account_export_text()}</p>
         <div className={s.row}>
           <Button
             type="button"
@@ -64,11 +63,11 @@ const YourData = ({ userId, books, names, goals }: YourDataProps) => {
             onClick={onExportReadingListClick}
           >
             <FileCsvIcon aria-hidden="true" />
-            Reading list (CSV)
+            {m.account_reading_list_csv()}
           </Button>
           <Button type="button" variant="quiet" onClick={onExportFullBackup}>
             <FileCodeIcon aria-hidden="true" />
-            Full backup (JSON)
+            {m.account_full_backup()}
           </Button>
           <p className={s.status} role="status">
             {status}
@@ -76,16 +75,12 @@ const YourData = ({ userId, books, names, goals }: YourDataProps) => {
         </div>
       </div>
       <div className={s.item}>
-        <h3 className={s.itemTitle}>Import</h3>
-        <p className={s.itemText}>
-          Add books from a reading list (CSV) with columns for title, author,
-          the author’s country, places (“City, Country; City”) and an optional
-          date. Restoring a backup (JSON) replaces everything in this atlas.
-        </p>
+        <h3 className={s.itemTitle}>{m.account_import()}</h3>
+        <p className={s.itemText}>{m.account_import_text()}</p>
         <p className={s.example}>
           <Button type="button" variant="text" onClick={exportExample}>
             <DownloadSimpleIcon aria-hidden="true" />
-            Download an example CSV
+            {m.account_example_csv()}
           </Button>
         </p>
         <div className={s.row}>
@@ -94,7 +89,7 @@ const YourData = ({ userId, books, names, goals }: YourDataProps) => {
             onDone={setImported}
           >
             <UploadSimpleIcon aria-hidden="true" />
-            Reading list (CSV)
+            {m.account_reading_list_csv()}
           </ImportCsv>
           <RestoreBackup
             userId={userId}

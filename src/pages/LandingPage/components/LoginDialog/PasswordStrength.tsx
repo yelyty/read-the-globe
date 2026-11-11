@@ -19,7 +19,7 @@ const PasswordStrength = ({ id, password }: PasswordStrengthProps) => {
         />
       </div>
       <span id={id} className={s.strengthLabel} aria-live="polite">
-        {password ? STRENGTH_LABELS[strength] : ''}
+        {password ? STRENGTH_LABELS[strength]() : ''}
       </span>
     </div>
   );

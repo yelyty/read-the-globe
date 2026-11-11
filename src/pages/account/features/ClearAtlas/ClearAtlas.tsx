@@ -17,6 +17,7 @@ import { Button } from '../../../../components/Button/Button';
 import { atlasWords } from '../YourData/readingList';
 import KeepCopy from '../DeleteAccount/KeepCopy';
 import * as s from '../DeleteAccount/DeleteAccount.css';
+import { m } from '../../../../paraglide/messages.js';
 
 type ClearAtlasProps = {
   userId: string;
@@ -47,9 +48,7 @@ const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
     setClearing(true);
     // the snapshot Undo restores, taken first: if it can't be read, nothing is cleared
     const was = await getBackup(userId).catch(() => null);
-    const problem = was
-      ? await clearAtlas()
-      : 'Your atlas couldn’t be cleared. Try again.';
+    const problem = was ? await clearAtlas() : m.account_clear_failed();
     setClearing(false);
     close();
     if (problem || !was) {
@@ -59,9 +58,9 @@ const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
     await router.invalidate();
     await router.navigate({ to: '/app' });
     status.show({
-      text: `Cleared ${lost}.`,
+      text: m.account_cleared({ what: lost }),
       action: {
-        label: 'Undo',
+        label: m.common_undo(),
         icon: <ArrowCounterClockwiseIcon aria-hidden="true" />,
         run: async () => {
           // anything logged since the clear stays, beside the atlas as it was
@@ -83,10 +82,10 @@ const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
                 ],
                 worlds: [...(was.worlds ?? []), ...(since.worlds ?? [])],
               })
-            : 'That backup couldn’t be restored. Your atlas is unchanged.';
+            : m.data_restore_failed();
           if (problem) return status.show({ text: problem });
           await router.invalidate();
-          status.show({ text: 'Your atlas is back.' });
+          status.show({ text: m.account_atlas_back() });
         },
       },
     });
@@ -94,11 +93,9 @@ const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
 
   return (
     <div className={s.dangerItem}>
-      <h3 className={s.itemTitle}>Clear this atlas</h3>
+      <h3 className={s.itemTitle}>{m.account_clear()}</h3>
       <p className={s.itemText} id="ac-clear-desc">
-        {blank
-          ? 'Your atlas is already blank, so there is nothing to clear yet.'
-          : 'Removes every pinned book and goal. Your account stays.'}
+        {blank ? m.account_clear_blank() : m.account_clear_text()}
       </p>
       <Button
         type="button"
@@ -109,7 +106,7 @@ const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
         onClick={open}
       >
         <EraserIcon aria-hidden="true" />
-        Clear this atlas
+        {m.account_clear()}
       </Button>
 
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- backdrop click; Esc closes it from the keyboard */}
@@ -125,19 +122,19 @@ const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
       >
         <div className={s.dialogHead}>
           <h2 className={s.dialogTitle} id="ac-clear-title">
-            Clear this atlas?
+            {m.account_clear_question()}
           </h2>
           <button
             type="button"
             className={s.close}
-            aria-label="Close"
+            aria-label={m.common_close()}
             onClick={close}
           >
             <XIcon aria-hidden="true" />
           </button>
         </div>
         <p className={s.dialogText} id="ac-clear-q">
-          {`This removes ${lost} from your atlas. You can undo it for a few seconds afterwards.`}
+          {m.account_clear_dialog({ what: lost })}
         </p>
         <KeepCopy key={round} books={books} names={names} />
         <div className={s.dialogActions}>
@@ -147,7 +144,7 @@ const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
             variant="text"
             onClick={close}
           >
-            Keep this atlas
+            {m.account_keep_atlas()}
           </Button>
           <Button
             type="button"
@@ -156,7 +153,7 @@ const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
             onClick={clear}
           >
             <EraserIcon aria-hidden="true" />
-            Clear this atlas
+            {m.account_clear()}
           </Button>
         </div>
       </dialog>

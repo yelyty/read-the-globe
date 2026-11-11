@@ -26,6 +26,7 @@ import MapTip, { type Tip } from './MapTip.tsx';
 import RecentReads from './features/RecentReads.tsx';
 import PageTitle from '../../components/PageTitle/PageTitle.tsx';
 import { byLogged } from '../../utils/readDate';
+import { m } from '../../paraglide/messages.js';
 
 const app = getRouteApi('/app');
 const RECENT = 3;
@@ -191,7 +192,7 @@ const HomePage = () => {
             say({
               text: reached,
               action: {
-                label: 'See it',
+                label: m.home_see_it(),
                 icon: <FlagIcon aria-hidden="true" />,
                 run: () => navigate({ to: '/app/goals' }),
               },
@@ -293,10 +294,10 @@ const HomePage = () => {
     .split(/\s+/)[0];
   const blank = !shown.length;
   const title = blank
-    ? 'Your atlas is blank, for now.'
+    ? m.home_blank()
     : firstName
-      ? `${firstName}’s atlas`
-      : 'Your atlas';
+      ? m.home_named_atlas({ name: firstName })
+      : m.home_your_atlas();
 
   // the countries a tip and a click are for: every marked one, and every unmarked one but Antarctica.
   // ponytail: the mock offers only the 195; here Taiwan or Kosovo invite a book too, as the form already lists them
@@ -327,8 +328,12 @@ const HomePage = () => {
   );
 
   const caption = stats.countries
-    ? `Your map: ${stats.countries} of 195 countries marked, ${stats.set} where stories are set and ${stats.authors} where authors are from.`
-    : 'Your map: no countries marked yet.';
+    ? m.home_map_caption({
+        countries: stats.countries,
+        set: stats.set,
+        authors: stats.authors,
+      })
+    : m.home_map_caption_empty();
 
   return (
     <>
@@ -336,17 +341,14 @@ const HomePage = () => {
 
       {blank && (
         <div className={s.firstRun}>
-          <p>
-            Every book you log marks this map twice: where its author is from,
-            and every country its story is set in.
-          </p>
+          <p>{m.home_first_run()}</p>
           <Link
             className={s.primary}
             to="."
             search={(prev) => ({ ...prev, log: true })}
           >
             <PushPinIcon weight="fill" aria-hidden="true" />
-            Log your first book
+            {m.home_log_first()}
           </Link>
         </div>
       )}
@@ -414,9 +416,9 @@ const HomePage = () => {
           className={s.fullBtn}
           aria-pressed={full}
           aria-label={
-            full ? 'Close the full screen map' : 'Show the map full screen'
+            full ? m.home_full_close_label() : m.home_full_open_label()
           }
-          title={full ? 'Close full screen' : 'Full screen'}
+          title={full ? m.home_full_close() : m.home_full_open()}
           onClick={(e) => {
             e.stopPropagation();
             setFull(!full);

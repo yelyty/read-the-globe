@@ -5,6 +5,7 @@ import {
   readingListRows,
   toCsv,
 } from '../../../../utils/readingListCsv';
+import { m } from '../../../../paraglide/messages.js';
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -77,19 +78,18 @@ export const exportExample = () =>
     'text/csv'
   );
 
-export const bookCount = (n: number) => `${n} ${n === 1 ? 'book' : 'books'}`;
-export const goalCount = (n: number) => `${n} ${n === 1 ? 'goal' : 'goals'}`;
-const rowCount = (n: number) => `${n} ${n === 1 ? 'row' : 'rows'}`;
+export const bookCount = (n: number) => m.count_book({ count: n });
+export const goalCount = (n: number) => m.count_goal({ count: n });
 
 // what clearing or replacing the atlas takes away, without a "0 goals"
 export const atlasWords = (books: number, goals: number) =>
   books && goals
-    ? `${bookCount(books)} and ${goalCount(goals)}`
+    ? m.account_and({ a: bookCount(books), b: goalCount(goals) })
     : books
       ? bookCount(books)
       : goals
         ? goalCount(goals)
-        : 'nothing yet';
+        : m.account_nothing_yet();
 
 // the result of a reading list import, a sentence for each part
 export const importReport = (
@@ -98,10 +98,12 @@ export const importReport = (
   problems: number
 ) =>
   [
-    `Imported ${bookCount(added)}.`,
-    duplicates ? `Skipped ${bookCount(duplicates)} already on your shelf.` : '',
+    m.account_imported({ books: bookCount(added) }),
+    duplicates
+      ? m.account_skipped_duplicates({ books: bookCount(duplicates) })
+      : '',
     problems
-      ? `Skipped ${rowCount(problems)}: each needs a title, an author and a country from the list.`
+      ? m.account_skipped_rows({ rows: m.count_row({ count: problems }) })
       : '',
   ]
     .filter(Boolean)

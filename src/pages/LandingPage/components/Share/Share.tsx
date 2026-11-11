@@ -3,25 +3,26 @@ import { PushPinIcon } from '@phosphor-icons/react';
 import { btnPrimary } from '../LoginDialog/LoginDialog.css';
 import { srOnly } from '../../../../styles/global.css';
 import * as s from './Share.css';
+import { m } from '../../../../paraglide/messages.js';
 
 const KINDS = [
   {
     id: 'authors',
-    name: 'Where your authors are from',
-    detail: 'a stamp for every author’s country',
-    alt: 'An example postcard: Mira’s atlas, where her authors come from: a sheet of stamps for 36 of 195 countries, from 48 books on 6 continents.',
+    name: m.landing_share_authors,
+    detail: m.landing_share_authors_detail,
+    alt: m.landing_share_authors_alt,
   },
   {
     id: 'settings',
-    name: 'Where your books are set',
-    detail: 'a stamp for every country a story visits',
-    alt: 'An example postcard: Mira’s atlas, where her books are set: a sheet of stamps for 41 of 195 countries, from 48 books on 6 continents.',
+    name: m.landing_share_settings,
+    detail: m.landing_share_settings_detail,
+    alt: m.landing_share_settings_alt,
   },
   {
     id: 'year',
-    name: 'A year in books',
-    detail: 'one card for each year you’ve logged, ready every December',
-    alt: 'An example year postcard: Mira’s 2025, stamps for 27 countries on 5 continents, from 29 books.',
+    name: m.landing_share_year,
+    detail: m.landing_share_year_detail,
+    alt: m.landing_share_year_alt,
   },
 ] as const;
 
@@ -35,11 +36,10 @@ const Share = ({ onSignUp }: { onSignUp: () => void }) => {
     <section className={s.share} id="share" aria-labelledby="share-h">
       <div>
         <h2 className={s.title} id="share-h">
-          Share your journey with friends.
+          {m.landing_share_title()}
         </h2>
         <p className={s.sub} id="pcv-label">
-          Send a card home from wherever your reading has been. Pick one of
-          three:
+          {m.landing_share_sub()}
         </p>
         <div
           className={s.variants}
@@ -56,10 +56,10 @@ const Share = ({ onSignUp }: { onSignUp: () => void }) => {
                 checked={kind === k.id}
                 onChange={() => {
                   setKind(k.id);
-                  setLive(`Showing: ${k.name}`);
+                  setLive(m.landing_share_showing({ name: k.name() }));
                 }}
               />
-              <b>{k.name}</b> <span>{k.detail}</span>
+              <b>{k.name()}</b> <span>{k.detail()}</span>
             </label>
           ))}
         </div>
@@ -69,7 +69,7 @@ const Share = ({ onSignUp }: { onSignUp: () => void }) => {
           onClick={onSignUp}
         >
           <PushPinIcon weight="fill" aria-hidden="true" />
-          Start your atlas
+          {m.landing_start()}
         </button>
       </div>
       <figure className={s.stack} id="pc-stack">
@@ -80,14 +80,13 @@ const Share = ({ onSignUp }: { onSignUp: () => void }) => {
             src={`/landing/postcard-${k.id}-day.webp`}
             width={1080}
             height={1080}
-            alt={k.alt}
+            alt={k.alt()}
             loading={k.id === KINDS[0].id ? undefined : 'lazy'}
             decoding="async"
           />
         ))}
         <figcaption className={s.caption}>
-          Mira is an example reader. Every card is saved as a picture, ready for
-          any app.
+          {m.landing_share_caption()}
         </figcaption>
       </figure>
       <p className={srOnly} aria-live="polite">

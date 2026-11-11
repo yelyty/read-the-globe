@@ -1,14 +1,28 @@
+import { m } from '../paraglide/messages.js';
+
+// in English, as goals store them; continentName() says them in the reader's language
 export const CONTINENT_NAMES = {
-	AF: "Africa",
-	AS: "Asia",
-	EU: "Europe",
-	NA: "North America",
-	SA: "South America",
-	OC: "Oceania",
-	AN: "Antarctica",
+  AF: 'Africa',
+  AS: 'Asia',
+  EU: 'Europe',
+  NA: 'North America',
+  SA: 'South America',
+  OC: 'Oceania',
+  AN: 'Antarctica',
 } as const;
 
 export type Continent = keyof typeof CONTINENT_NAMES;
+
+const LABEL: Record<Continent, () => string> = {
+  AF: m.continent_af,
+  AS: m.continent_as,
+  EU: m.continent_eu,
+  NA: m.continent_na,
+  SA: m.continent_sa,
+  OC: m.continent_oc,
+  AN: m.continent_an,
+};
+export const continentName = (c: Continent) => LABEL[c]();
 
 // prettier-ignore
 export const CONTINENT_OF: Record<string, Continent> = {

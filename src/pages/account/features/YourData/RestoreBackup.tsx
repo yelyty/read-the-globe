@@ -17,6 +17,8 @@ import { Button } from '../../../../components/Button/Button';
 import { button } from '../../../../components/Button/Button.css';
 import * as s from '../DeleteAccount/DeleteAccount.css';
 import { atlasWords, bookCount, goalCount } from './readingList';
+import { m } from '../../../../paraglide/messages.js';
+import { getLocale } from '../../../../paraglide/runtime.js';
 
 type RestoreBackupProps = {
   userId: string;
@@ -25,9 +27,6 @@ type RestoreBackupProps = {
   /** a file that isn't a backup, in words */
   onFail: (text: string) => void;
 };
-
-const NOT_A_BACKUP =
-  'That file isn’t a Read The Globe backup. Choose a .json file made with Full backup.';
 
 // Restore a backup (JSON): it replaces the atlas after a confirmation, and Undo puts the atlas back as it was
 const RestoreBackup = ({
@@ -54,7 +53,7 @@ const RestoreBackup = ({
       // not JSON: said below
     }
     if (!data || !Array.isArray(data.books) || !Array.isArray(data.goals)) {
-      onFail(NOT_A_BACKUP);
+      onFail(m.account_not_a_backup());
       return;
     }
     setPending(data as Backup);
@@ -71,7 +70,7 @@ const RestoreBackup = ({
     const was = await getBackup(userId).catch(() => null);
     const problem = was
       ? await restoreBackup(pending)
-      : 'That backup couldn’t be restored. Your atlas is unchanged.';
+      : m.data_restore_failed();
     setRestoring(false);
     close();
     if (problem || !was) {
@@ -80,15 +79,18 @@ const RestoreBackup = ({
     }
     await router.invalidate();
     status.show({
-      text: `Restored ${bookCount(pending.books.length)} and ${goalCount(pending.goals.length)} from your backup.`,
+      text: m.account_restored({
+        books: bookCount(pending.books.length),
+        goals: goalCount(pending.goals.length),
+      }),
       action: {
-        label: 'Undo',
+        label: m.common_undo(),
         icon: <ArrowCounterClockwiseIcon aria-hidden="true" />,
         run: async () => {
           const undone = await restoreBackup(was);
           if (undone) return status.show({ text: undone });
           await router.invalidate();
-          status.show({ text: 'Your atlas is as it was.' });
+          status.show({ text: m.account_as_it_was() });
         },
       },
     });
@@ -97,12 +99,12 @@ const RestoreBackup = ({
   const exported = pending?.exported ? new Date(pending.exported) : null;
   const when =
     exported && !isNaN(exported.getTime())
-      ? exported.toLocaleDateString(undefined, {
+      ? exported.toLocaleDateString(getLocale(), {
           day: 'numeric',
           month: 'long',
           year: 'numeric',
         })
-      : 'an earlier date';
+      : m.account_earlier_date();
 
   return (
     <>
@@ -112,7 +114,7 @@ const RestoreBackup = ({
         onClick={() => file.current?.click()}
       >
         <UploadSimpleIcon aria-hidden="true" />
-        Restore a backup (JSON)
+        {m.account_restore_button()}
       </button>
       <input
         ref={file}
@@ -134,12 +136,12 @@ const RestoreBackup = ({
       >
         <div className={s.dialogHead}>
           <h2 className={s.dialogTitle} id="ac-restore-title">
-            Restore this backup?
+            {m.account_restore_question()}
           </h2>
           <button
             type="button"
             className={s.close}
-            aria-label="Close"
+            aria-label={m.common_close()}
             onClick={close}
           >
             <XIcon aria-hidden="true" />
@@ -147,7 +149,12 @@ const RestoreBackup = ({
         </div>
         {pending && (
           <p className={s.dialogText} id="ac-restore-q">
-            {`This replaces your atlas (${atlasWords(books.length, goals.length)}) with the backup from ${when}: ${bookCount(pending.books.length)} and ${goalCount(pending.goals.length)}. You can undo it for a few seconds afterwards.`}
+            {m.account_restore_dialog({
+              now: atlasWords(books.length, goals.length),
+              when,
+              books: bookCount(pending.books.length),
+              goals: goalCount(pending.goals.length),
+            })}
           </p>
         )}
         <div className={s.dialogActions}>
@@ -157,7 +164,7 @@ const RestoreBackup = ({
             variant="text"
             onClick={close}
           >
-            Keep this atlas
+            {m.account_keep_atlas()}
           </Button>
           <Button
             type="button"
@@ -166,7 +173,7 @@ const RestoreBackup = ({
             onClick={restore}
           >
             <UploadSimpleIcon aria-hidden="true" />
-            Restore backup
+            {m.account_restore_confirm()}
           </Button>
         </div>
       </dialog>

@@ -5,9 +5,11 @@ import * as s from './BookRow.css';
 import { PencilSimpleIcon } from '@phosphor-icons/react';
 import { Link } from '@tanstack/react-router';
 import { readDate } from '../../utils/readDate';
+import { m } from '../../paraglide/messages.js';
+import { getLocale } from '../../paraglide/runtime.js';
 
 const formatMonth = (day: string) =>
-  new Date(`${day}T12:00:00`).toLocaleDateString(undefined, {
+  new Date(`${day}T12:00:00`).toLocaleDateString(getLocale(), {
     month: 'short',
     year: 'numeric',
   });
@@ -44,7 +46,7 @@ const BookRow = ({ book, names }: BookRowProps) => {
           <span className={s.mark}>
             <i className={s.dotSet} aria-hidden="true" />
             <span>
-              <span className={s.srOnly}>Set in </span>
+              <span className={s.srOnly}>{m.book_set_in()} </span>
               {places.map((p, i) => (
                 <Fragment key={p.id}>
                   {i > 0 && ', '}
@@ -57,15 +59,17 @@ const BookRow = ({ book, names }: BookRowProps) => {
             </span>
           </span>
         ) : (
-          !worlds.length && <span className={s.markNone}>No places listed</span>
+          !worlds.length && (
+            <span className={s.markNone}>{m.book_no_places()}</span>
+          )
         )}
         {worlds.length > 0 && (
           <span className={s.mark}>
             <i className={s.dotImagined} aria-hidden="true" />
             <span>
-              <span className={s.srOnly}>Set in the imagined world </span>
+              <span className={s.srOnly}>{m.book_set_in_world()} </span>
               {worlds.map((p) => p.name).join(', ')}
-              <em className={s.markCountry}> · imagined</em>
+              <em className={s.markCountry}> · {m.book_imagined()}</em>
             </span>
           </span>
         )}
@@ -73,7 +77,7 @@ const BookRow = ({ book, names }: BookRowProps) => {
           <span className={s.mark}>
             <i className={s.dotAuthor} aria-hidden="true" />
             <span>
-              <span className={s.srOnly}>Author from </span>
+              <span className={s.srOnly}>{m.book_author_from()} </span>
               {names[book.author.country.code] ?? book.author.country.name}
             </span>
           </span>
@@ -84,10 +88,10 @@ const BookRow = ({ book, names }: BookRowProps) => {
           className={s.edit}
           to="."
           search={(prev) => ({ ...prev, edit: book.id })}
-          aria-label={`Edit ${book.title}`}
+          aria-label={m.book_edit({ title: book.title })}
         >
           <PencilSimpleIcon aria-hidden="true" />
-          Edit
+          {m.common_edit()}
         </Link>
       </div>
     </li>

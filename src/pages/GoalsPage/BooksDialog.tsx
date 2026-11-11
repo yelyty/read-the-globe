@@ -6,6 +6,8 @@ import * as a from '../account/features/DeleteAccount/DeleteAccount.css';
 import * as s from './GoalsPage.css';
 import Hint from '../../components/Hint/Hint';
 import { Button } from '../../components/Button/Button';
+import { goalName, withBold } from './goals';
+import { m } from '../../paraglide/messages.js';
 
 type BooksDialogProps = {
   goal: Goal;
@@ -20,6 +22,7 @@ const fold = (t: string) =>
 // A theme goal's books: search, tick, Save. Ticks are held until Save, so Cancel leaves the goal as it was.
 const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
   const dialog = useRef<HTMLDialogElement>(null);
+  const title = goalName(goal.name);
   const [picked, setPicked] = useState(
     () =>
       new Set(
@@ -53,7 +56,7 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
     setSaving(true);
     const problem = await setGoalBooks(goal.id, [...picked]);
     setSaving(false);
-    if (problem) return setError('Your books couldn’t be saved. Try again.');
+    if (problem) return setError(m.goals_books_save_failed());
     dialog.current?.close();
     onSaved(picked.size);
   };
@@ -73,12 +76,12 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
         <form onSubmit={submit} noValidate>
           <div className={a.dialogHead}>
             <h2 className={a.dialogTitle} id="books-dialog-title">
-              Books for {goal.name}
+              {m.goals_books_title({ goal: title })}
             </h2>
             <button
               type="button"
               className={a.close}
-              aria-label="Close"
+              aria-label={m.common_close()}
               onClick={() => dialog.current?.close()}
             >
               <XIcon aria-hidden="true" />
@@ -88,21 +91,24 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
           {books.length ? (
             <>
               <p className={a.dialogText}>
-                <b>
-                  {picked.size} of {goal.target}
-                </b>{' '}
-                chosen. Tick the books that count toward {goal.name}.
+                {withBold(
+                  m.goals_books_chosen({
+                    picked: picked.size,
+                    target: goal.target ?? 0,
+                    goal: title,
+                  })
+                )}
               </p>
               <div className={s.search}>
                 <label className={s.label} htmlFor="books-q">
-                  Search your books
+                  {m.goals_books_search()}
                 </label>
                 <MagnifyingGlassIcon aria-hidden="true" />
                 <input
                   id="books-q"
                   className={s.input}
                   type="search"
-                  placeholder="Title or author"
+                  placeholder={m.goals_books_placeholder()}
                   autoComplete="off"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
@@ -111,7 +117,7 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
               {shown.length ? (
                 <fieldset className={s.picker}>
                   <legend className={s.srOnly}>
-                    Books that count toward {goal.name}
+                    {m.goals_books_legend({ goal: title })}
                   </legend>
                   <ul>
                     {shown.map((b) => (
@@ -130,13 +136,13 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
                   </ul>
                 </fieldset>
               ) : (
-                <Hint role="status">No books match “{query.trim()}”.</Hint>
+                <Hint role="status">
+                  {m.goals_books_none({ query: query.trim() })}
+                </Hint>
               )}
             </>
           ) : (
-            <p className={a.dialogText}>
-              Log a book first; it will show up here to tick.
-            </p>
+            <p className={a.dialogText}>{m.goals_books_log_first()}</p>
           )}
 
           {error && (
@@ -151,12 +157,12 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
               variant="text"
               onClick={() => dialog.current?.close()}
             >
-              Cancel
+              {m.common_cancel()}
             </Button>
             {books.length > 0 && (
               <Button type="submit" disabled={saving}>
                 <CheckIcon aria-hidden="true" />
-                Save
+                {m.common_save()}
               </Button>
             )}
           </div>

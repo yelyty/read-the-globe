@@ -1,6 +1,8 @@
 import type { BookEntry, Goal } from '../../types';
 import { CONTINENT_OF } from '../../utils/continents';
-import { plural } from '../GoalsPage/goals';
+import { goalName } from '../GoalsPage/goals';
+import { m } from '../../paraglide/messages.js';
+import { getLocale } from '../../paraglide/runtime.js';
 
 // when a book was read; rows saved before read_on fall back to the day they were logged
 export const readDate = (b: BookEntry) =>
@@ -46,12 +48,19 @@ export function yearSum(year: string, books: BookEntry[], goals: Goal[]) {
   const fresh = codes.filter((c) => !before.has(c)).length;
   let extra = '';
   if (themed) {
-    // ponytail: "1 Arctic story" is English word order; the translations step will say "1 book for <goal>" instead
-    const m = themed.g.name.match(/^stories set in (?:the )?(.+)$/i);
-    extra = m
-      ? `${themed.n} ${m[1]} ${themed.n === 1 ? 'story' : 'stories'}`
-      : `${plural(themed.n, 'book')} for ${themed.g.name}`;
-  } else if (fresh && fresh < codes.length) extra = `${fresh} new to my atlas`;
-  const line = `${year}: ${plural(codes.length, 'country', 'countries')}, ${plural(continents, 'continent')}${extra ? `, ${extra}` : ''}.`;
+    // "1 Arctic story" is English word order; Czech and Ukrainian say "1 book for <goal>"
+    const arctic =
+      getLocale() === 'en' &&
+      themed.g.name.match(/^stories set in (?:the )?(.+)$/i);
+    extra = arctic
+      ? `${themed.n} ${arctic[1]} ${themed.n === 1 ? 'story' : 'stories'}`
+      : m.postcard_books_for_goal({
+          books: m.count_book({ count: themed.n }),
+          goal: goalName(themed.g.name),
+        });
+  } else if (fresh && fresh < codes.length)
+    extra = m.postcard_new_to_atlas({ n: fresh });
+  // the same shape in all three languages: "2026: 14 zemí, 3 kontinenty, …"
+  const line = `${year}: ${m.count_country({ count: codes.length })}, ${m.count_continent({ count: continents })}${extra ? `, ${extra}` : ''}.`;
   return { books: yb, codes, continents, line };
 }

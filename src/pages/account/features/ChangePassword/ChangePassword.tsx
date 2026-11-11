@@ -9,6 +9,7 @@ import { Button } from '../../../../components/Button/Button';
 
 import * as s from '../../AccountPage.css';
 import { validate, type Errors } from './validate';
+import { m } from '../../../../paraglide/messages.js';
 
 const ChangePassword = ({ email }: { email: string }) => {
   const [first, setFirst] = useState('');
@@ -35,7 +36,7 @@ const ChangePassword = ({ email }: { email: string }) => {
     }
     setFirst('');
     setSecond('');
-    setStatus('Password changed.');
+    setStatus(m.account_password_changed());
   };
 
   const onNewPasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -49,7 +50,7 @@ const ChangePassword = ({ email }: { email: string }) => {
   };
 
   return (
-    <Block title="Change password">
+    <Block title={m.account_password_title()}>
       <form className={s.form} onSubmit={submit} noValidate>
         <input
           type="text"
@@ -61,7 +62,7 @@ const ChangePassword = ({ email }: { email: string }) => {
         />
         <Field
           id="ac-pass1"
-          label="New password"
+          label={m.account_password_new()}
           password
           autoComplete="new-password"
           minLength={8}
@@ -70,11 +71,11 @@ const ChangePassword = ({ email }: { email: string }) => {
           error={errors.first}
           onChange={onNewPasswordChange}
         >
-          <Hint id="ac-pass1-hint">At least 8 characters.</Hint>
+          <Hint id="ac-pass1-hint">{m.account_password_hint()}</Hint>
         </Field>
         <Field
           id="ac-pass2"
-          label="Repeat new password"
+          label={m.account_password_repeat()}
           password
           autoComplete="new-password"
           value={second}
@@ -84,7 +85,7 @@ const ChangePassword = ({ email }: { email: string }) => {
         <div className={s.row}>
           <Button type="submit" disabled={saving}>
             <LockKeyIcon aria-hidden="true" />
-            Change password
+            {m.account_password_title()}
           </Button>
           <p className={s.status} role="status">
             {status}

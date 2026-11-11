@@ -5,13 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "typecheck": "tsc -b",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "i18n": "node paraglide.config.js",
+    "typecheck": "pnpm i18n && tsc -b",
+    "build": "pnpm typecheck && vite build",
+    "lint": "pnpm i18n && eslint .",
     "format": "prettier --write .",
     "preview": "vite preview",
-    "prepare": "husky",
-    "test": "vitest run"
+    "prepare": "husky && pnpm i18n",
+    "test": "pnpm i18n && vitest run"
   },
   "dependencies": {
     "@phosphor-icons/react": "2.1.10",
@@ -29,6 +30,7 @@
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
+    "@inlang/paraglide-js": "2.29.1",
     "@tanstack/router-plugin": "1.168.18",
     "@types/d3-geo": "2.0.7",
     "@types/geojson": "7946.0.16",

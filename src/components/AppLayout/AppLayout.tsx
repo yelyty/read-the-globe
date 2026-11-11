@@ -11,13 +11,14 @@ import { LandingContext, type Landing } from '../../hooks/useLanding';
 
 import * as s from './AppLayout.css';
 import LogBook from '../LogBook/LogBook';
+import { m } from '../../paraglide/messages.js';
 
-const TITLES: Record<string, string> = {
-  '/app': 'Home',
-  '/app/shelf': 'Shelf',
-  '/app/goals': 'Goals',
-  '/app/account': 'Account',
-  '/app/postcard': 'Your postcard',
+const TITLES: Record<string, () => string> = {
+  '/app': m.nav_home,
+  '/app/shelf': m.nav_shelf,
+  '/app/goals': m.nav_goals,
+  '/app/account': m.nav_account,
+  '/app/postcard': m.title_postcard,
 };
 
 // phones: the floating Log a book pill steps aside while the reader scrolls down, so it never sits on the row
@@ -47,7 +48,7 @@ const LogPill = () => {
       search={(prev) => ({ ...prev, log: true })}
     >
       <PushPinIcon weight="fill" aria-hidden="true" />
-      <span>Log a book</span>
+      <span>{m.log_a_book()}</span>
     </Link>
   );
 };
@@ -60,7 +61,7 @@ const AppLayout = () => {
 
   useEffect(() => {
     const was = document.title;
-    document.title = `${TITLES[path] ?? 'Home'} — Read The Globe`;
+    document.title = m.title_page({ page: (TITLES[path] ?? m.nav_home)() });
     return () => {
       document.title = was;
     };

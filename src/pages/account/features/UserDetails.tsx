@@ -8,6 +8,7 @@ import * as s from '../AccountPage.css';
 import Block from '../components/Block';
 import Hint from '../../../components/Hint/Hint';
 import { Button } from '../../../components/Button/Button';
+import { m } from '../../../paraglide/messages.js';
 
 type UserDetailsProps = {
   user: Reader;
@@ -24,7 +25,7 @@ const UserDetails = ({ user }: UserDetailsProps) => {
     setStatus('');
 
     if (!name.trim()) {
-      setError('Add a name to show on your atlas.');
+      setError(m.account_name_missing());
       document.getElementById('ac-name')?.focus();
       return;
     }
@@ -33,7 +34,7 @@ const UserDetails = ({ user }: UserDetailsProps) => {
     const problem = await updateDisplayName(name.trim());
     setSaving(false);
     setError(problem ?? undefined);
-    if (!problem) setStatus('Saved.');
+    if (!problem) setStatus(m.account_saved());
   };
 
   const onNameChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -43,11 +44,11 @@ const UserDetails = ({ user }: UserDetailsProps) => {
   };
 
   return (
-    <Block title="Your details">
+    <Block title={m.account_details_title()}>
       <form className={s.form} onSubmit={submit} noValidate>
         <Field
           id="ac-name"
-          label="Display name"
+          label={m.account_name_label()}
           autoComplete="name"
           maxLength={80}
           value={name}
@@ -57,19 +58,17 @@ const UserDetails = ({ user }: UserDetailsProps) => {
         <Field
           readOnly
           id="ac-email"
-          label="Email"
+          label={m.account_email_label()}
           type="email"
           aria-describedby="ac-email-hint"
           value={user.email ?? ''}
         >
-          <Hint id="ac-email-hint">
-            The address you sign in with. It can’t be changed here.
-          </Hint>
+          <Hint id="ac-email-hint">{m.account_email_hint()}</Hint>
         </Field>
         <div className={s.row}>
           <Button type="submit" disabled={saving}>
             <CheckIcon aria-hidden="true" />
-            Save
+            {m.common_save()}
           </Button>
           <p className={s.status} role="status">
             {status}

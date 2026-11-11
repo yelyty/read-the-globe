@@ -14,10 +14,17 @@ type CompanyPageProps = {
   description: string;
   /** marks text that's still a draft, to be reviewed before launch */
   draft?: boolean;
+  /** the body is in the reader's language; otherwise it is English (the company pages aren't translated) */
+  translated?: boolean;
   children: ReactNode;
 };
 
-const CompanyPage = ({ title, description, children }: CompanyPageProps) => {
+const CompanyPage = ({
+  title,
+  description,
+  translated = false,
+  children,
+}: CompanyPageProps) => {
   const [auth, setAuth] = useState<AuthMode | null>(null);
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -39,7 +46,12 @@ const CompanyPage = ({ title, description, children }: CompanyPageProps) => {
         onLogIn={() => setAuth('login')}
         onSignUp={() => setAuth('signup')}
       />
-      <main id="main" tabIndex={-1} className={s.main}>
+      <main
+        id="main"
+        tabIndex={-1}
+        className={s.main}
+        lang={translated ? undefined : 'en'}
+      >
         {children}
       </main>
       <LoginDialog mode={auth} onMode={setAuth} onClose={() => setAuth(null)} />

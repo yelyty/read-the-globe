@@ -1,6 +1,7 @@
 import { XIcon } from '@phosphor-icons/react';
 import { useEffect, type ReactNode } from 'react';
 import * as s from './Dialog.css';
+import { m } from '../../paraglide/messages.js';
 
 type DialogProps = {
   isOpen: boolean;
@@ -37,7 +38,7 @@ const Dialog = ({
           <button
             className={s.closeButton}
             onClick={onClose}
-            aria-label="Close dialog"
+            aria-label={m.dialog_close()}
           >
             <XIcon size={32} />
           </button>

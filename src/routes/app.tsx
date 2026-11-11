@@ -3,6 +3,7 @@ import getBooks from '../api/getBooks';
 import AppLayout from '../components/AppLayout/AppLayout';
 import { getGoals } from '../api/goals/goals';
 import { getWorlds } from '../api/worlds/worlds';
+import { m } from '../paraglide/messages.js';
 
 type AppSearch = {
   log?: true;
@@ -37,6 +38,6 @@ export const Route = createFileRoute('/app')({
     return { books, goals, worlds };
   },
   //   TODO: Create error component
-  errorComponent: () => <p>Error</p>,
+  errorComponent: () => <p>{m.common_try_again()}</p>,
   component: AppLayout,
 });

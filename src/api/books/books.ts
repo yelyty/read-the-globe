@@ -1,4 +1,5 @@
 import { supabase } from '../../utils/supabase';
+import { m } from '../../paraglide/messages.js';
 
 export type BookDraft = {
   title: string;
@@ -27,13 +28,11 @@ export async function saveBook(
   });
   const { error } = saved;
   if (error) console.error(error);
-  return error
-    ? { error: 'That couldn’t be saved. Check your connection and try again.' }
-    : { id: saved.data as string };
+  return error ? { error: m.book_save_failed() } : { id: saved.data as string };
 }
 
 export async function deleteBook(id: string): Promise<string | null> {
   const { error } = await supabase.from('books').delete().eq('id', id);
   if (error) console.error(error);
-  return error ? 'That couldn’t be removed. Try again.' : null;
+  return error ? m.book_remove_failed() : null;
 }

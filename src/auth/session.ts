@@ -1,5 +1,7 @@
 import type { User } from '@supabase/supabase-js';
 import { supabase } from '../utils/supabase';
+import { adoptAccountLang } from '../utils/lang';
+import { m } from '../paraglide/messages.js';
 
 export interface Reader {
   id: string;
@@ -30,11 +32,15 @@ export async function signIn(
   password: string
 ): Promise<AuthProblem | null> {
   try {
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
-    if (!error) return null;
+    // the account's language: a reader who picked Czech on another device gets Czech here too
+    if (!error) {
+      await adoptAccountLang(data.user.id).catch(() => false);
+      return null;
+    }
     return error.code === 'invalid_credentials'
       ? 'wrong-credentials'
       : 'failed';
@@ -99,19 +105,16 @@ export async function updateDisplayName(name: string): Promise<string | null> {
   const { error } = await supabase.auth.updateUser({
     data: { display_name: name },
   });
-  return error ? "Couldn't save your name. Try again" : null;
+  return error ? m.auth_name_save_failed() : null;
 }
 
 export async function changePassword(password: string): Promise<string | null> {
   const { error } = await supabase.auth.updateUser({ password });
 
   if (!error) return null;
-  if (error.code === 'same_password')
-    return "That's your current password. Choose a new one.";
-  if (error.code === 'weak_password')
-    return 'Choose a stronger password: at least 8 characters.';
-  if (error.code === 'reauthentication_needed')
-    return 'For your safety, sign out and in again, then change your password.';
+  if (error.code === 'same_password') return m.auth_same_password();
+  if (error.code === 'weak_password') return m.auth_weak_password();
+  if (error.code === 'reauthentication_needed') return m.auth_reauth_needed();
 
-  return "Couldn't change your password. Try again.";
+  return m.auth_change_failed();
 }
