@@ -1,60 +1,118 @@
-import { globalStyle, style } from "@vanilla-extract/css";
-import { vars } from "../../styles/theme.css";
-import { headline } from "../LandingPage/LandingPage.css";
+import { globalStyle, style } from '@vanilla-extract/css';
+import { vars } from '../../styles/theme.css';
+import { band } from '../../styles/global.css';
+import { headline } from '../LandingPage/LandingPage.css';
 
+// one reading column in the landing's own type
 export const main = style({
-	maxWidth: "44rem",
-	marginInline: "auto",
-	padding: "40px clamp(18px, 4vw, 40px) 80px",
-	fontFamily: vars.font.serif,
-	fontSize: 18,
-	lineHeight: 1.6,
-	outline: "none",
+  width: 'min(720px, 100% - 32px)',
+  marginInline: 'auto',
+  padding: '72px 0 120px',
+  fontFamily: vars.font.serif,
+  fontSize: 18,
+  lineHeight: 1.6,
+  outline: 'none',
+  '@media': { 'screen and (max-width: 799px)': { padding: '48px 0 96px' } },
 });
 
 globalStyle(`${main} h1`, {
-	...headline,
-	margin: "0 0 8px",
-	color: vars.color.text,
+  ...headline,
+  margin: 0,
+  fontSize: 'clamp(40px, 6vw, 64px)',
+  color: vars.color.text,
 });
 globalStyle(`${main} h2`, {
-	...headline,
-	margin: "40px 0 8px",
-	fontSize: 28,
-	lineHeight: 1.1,
-	letterSpacing: "-.02em",
-	color: vars.color.text,
+  ...headline,
+  margin: '56px 0 0',
+  fontSize: 28,
+  lineHeight: 1.1,
+  letterSpacing: '-.02em',
+  color: vars.color.text,
 });
-globalStyle(`${main} p, ${main} li`, { color: vars.color.text });
-globalStyle(`${main} a`, { color: vars.color.accent, textUnderlineOffset: 3 });
-globalStyle(`${main} code`, {
-	fontSize: "0.85em",
-	padding: "1px 5px",
-	borderRadius: 4,
-	background: vars.color.surface,
+globalStyle(`${main} p, ${main} li`, {
+  maxWidth: '68ch',
+  color: vars.color.text,
+  textWrap: 'pretty',
 });
-globalStyle(`${main} table`, {
-	width: "100%",
-	marginTop: 12,
-	borderCollapse: "collapse",
-	fontSize: "0.95rem",
-});
-globalStyle(`${main} th, ${main} td`, {
-	padding: "10px 12px 10px 0",
-	textAlign: "left",
-	verticalAlign: "top",
-	borderBottom: `1px solid ${vars.color.border}`,
-});
-globalStyle(`${main} th`, {
-	fontFamily: vars.font.sans,
-	fontWeight: 500,
-	color: vars.color.textSecondary,
+globalStyle(`${main} :is(p, h2, ul) + p`, { marginTop: 16 });
+globalStyle(`${main} ul`, { margin: '16px 0 0', paddingLeft: 24 });
+globalStyle(`${main} li + li`, { marginTop: 8 });
+globalStyle(`${main} a`, { color: vars.color.text, textUnderlineOffset: 4 });
+
+export const draft = style({
+  display: 'inline-block',
+  marginBottom: 24,
+  padding: '4px 12px',
+  borderRadius: 999,
+  background: band,
+  fontFamily: vars.font.sans,
+  fontSize: 14,
+  fontWeight: 500,
+  lineHeight: 1.4,
+  color: vars.color.textSecondary,
 });
 
-export const lede = style({
-	fontSize: "1.15rem",
-	color: vars.color.textSecondary,
+export const lede = style({ fontSize: 21, lineHeight: 1.5 });
+globalStyle(`${main} p${lede}`, {
+  marginTop: 24,
+  color: vars.color.textSecondary,
 });
-globalStyle(`${main} p${lede}`, { color: vars.color.textSecondary });
-export const updated = style({ margin: "0 0 32px", fontSize: "0.95rem" });
-globalStyle(`${main} p${updated}`, { color: vars.color.textMuted });
+
+export const meta = style({
+  fontFamily: vars.font.sans,
+  fontSize: 15,
+  lineHeight: 1.4,
+});
+globalStyle(`${main} p${meta}`, { marginTop: 16, color: vars.color.textMuted });
+
+/* the journal's posts: flat cards on the band's fill */
+export const posts = style({ display: 'grid', gap: 16, listStyle: 'none' });
+globalStyle(`${main} ul${posts}`, { margin: '48px 0 0', padding: 0 });
+export const post = style({
+  padding: 32,
+  borderRadius: 16,
+  background: band,
+  '@media': { 'screen and (max-width: 799px)': { padding: 24 } },
+});
+globalStyle(`${main} ${posts} li`, { maxWidth: 'none' });
+globalStyle(`${main} ${posts} li + li`, { marginTop: 0 });
+globalStyle(`${post} time`, {
+  fontFamily: vars.font.sans,
+  fontSize: 15,
+  lineHeight: 1,
+  color: vars.color.textMuted,
+  fontVariantNumeric: 'tabular-nums',
+});
+globalStyle(`${main} ${post} h2`, { marginTop: 8 });
+globalStyle(`${main} ${post} p`, {
+  marginTop: 16,
+  color: vars.color.textSecondary,
+});
+
+/* the contact form */
+export const form = style({
+  display: 'grid',
+  gap: 0,
+  maxWidth: 520,
+  marginTop: 40,
+});
+export const textarea = style({
+  display: 'block',
+  height: 'auto',
+  minHeight: 160,
+  paddingBlock: 12,
+  lineHeight: 1.4,
+  resize: 'vertical',
+});
+export const send = style({ justifySelf: 'start', marginTop: 8 });
+export const sent = style({
+  marginTop: 24,
+  padding: '16px 24px',
+  borderRadius: 16,
+  background: vars.color.oliveWash,
+  fontFamily: vars.font.sans,
+  fontSize: 17,
+  fontWeight: 500,
+  lineHeight: 1.4,
+  outline: 'none',
+});

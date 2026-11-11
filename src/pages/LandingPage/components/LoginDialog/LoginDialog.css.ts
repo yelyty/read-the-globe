@@ -114,6 +114,7 @@ export const strength = style({
   alignItems: 'center',
   gap: 8,
   marginTop: 8,
+  selectors: { '&[hidden]': { display: 'none' } },
 });
 
 export const strengthBar = style({
@@ -197,4 +198,40 @@ export const altLink = style({
   textDecoration: 'underline',
   textUnderlineOffset: 4,
   cursor: 'pointer',
+});
+
+export const links = style({
+  display: 'flex',
+  flexWrap: 'wrap',
+  justifyContent: 'space-between',
+  gap: '8px 16px',
+  marginTop: 16,
+});
+globalStyle(`${links} ${altAction}`, { margin: 0 });
+
+// "Add example books": a checkbox with its hint under the words
+export const example = style({
+  display: 'grid',
+  gridTemplateColumns: 'auto 1fr',
+  alignItems: 'center',
+  gap: '0 8px',
+  margin: '0 0 16px',
+  fontFamily: vars.font.sans,
+  fontSize: 15,
+  fontWeight: 500,
+  lineHeight: 1.4,
+  color: vars.color.text,
+  cursor: 'pointer',
+});
+globalStyle(`${example} input`, {
+  width: 20,
+  height: 20,
+  margin: 0,
+  accentColor: vars.color.primary,
+});
+export const exampleHint = style({
+  gridColumn: 2,
+  fontWeight: 400,
+  fontSize: 14,
+  color: vars.color.textMuted,
 });

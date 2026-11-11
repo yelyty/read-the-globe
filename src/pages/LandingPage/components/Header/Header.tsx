@@ -1,13 +1,34 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link } from '@tanstack/react-router';
 import { ListIcon, PushPinIcon } from '@phosphor-icons/react';
 import * as s from './Header.css';
+import { skip } from '../../LandingPage.css';
+import { useAuth } from '../../../../auth/auth-context';
+import { SECTIONS } from '../../sections';
 import ThemeButton from '../../../../components/ThemeButton/ThemeButton';
 import Logo from '../../../../components/Logo/Logo';
 
-const SECTIONS = [
-  { href: '#how', label: 'The atlas' },
-  { href: '#goals', label: 'Goals' },
-];
+// the section on screen: the one crossing a thin line just under the middle of the viewport
+const useCurrentSection = () => {
+  const [current, setCurrent] = useState<string | null>(null);
+  useEffect(() => {
+    const sections = SECTIONS.map(({ hash }) =>
+      document.getElementById(hash)
+    ).filter((el) => el !== null);
+    if (!sections.length) return;
+    const seen = new Map<Element, boolean>();
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => seen.set(e.target, e.isIntersecting));
+        setCurrent(sections.filter((el) => seen.get(el)).pop()?.id ?? null);
+      },
+      { rootMargin: '-45% 0px -50% 0px' }
+    );
+    sections.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+  return current;
+};
 
 type HeaderProps = {
   onLogIn: () => void;
@@ -18,6 +39,8 @@ const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLElement>(null);
   const menuBtnRef = useRef<HTMLButtonElement>(null);
+  const current = useCurrentSection();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -52,72 +75,94 @@ const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
   }, [menuOpen]);
 
   return (
-    <header className={s.header}>
-      <div className={s.topRow}>
-        <a href="#top" className={s.brand} aria-label="Read The Globe, home">
-          <Logo className={s.logo} />
-          <span className={s.brandWord}>Read The Globe</span>
-        </a>
+    <>
+      <a className={skip} href="#main">
+        Skip to content
+      </a>
+      <header className={s.header}>
+        <div className={s.topRow}>
+          <a href="/#top" className={s.brand} aria-label="Read The Globe, home">
+            <Logo className={s.logo} />
+            <span className={s.brandWord}>Read The Globe</span>
+          </a>
 
-        <nav className={s.track} aria-label="Sections">
-          {SECTIONS.map((section) => (
-            <a key={section.href} className={s.trackLink} href={section.href}>
-              {section.label}
-            </a>
-          ))}
-        </nav>
-        <div className={s.tools}>
-          <ThemeButton />
-        </div>
-        <button type="button" className={s.login} onClick={onLogIn}>
-          Log in
-        </button>
-        <button type="button" className={s.start} onClick={onSignUp}>
-          <PushPinIcon weight="fill" aria-hidden="true" />
-          <span>Start your atlas</span>
-        </button>
-
-        <button
-          ref={menuBtnRef}
-          type="button"
-          className={s.menuBtn}
-          aria-expanded={menuOpen}
-          aria-controls="header-menu"
-          aria-label="Menu"
-          onClick={() => setMenuOpen((open) => !open)}
-        >
-          <ListIcon aria-hidden="true" />
-        </button>
-        <nav
-          ref={menuRef}
-          id="header-menu"
-          className={s.menu}
-          aria-label="Menu"
-          hidden={!menuOpen}
-        >
-          {SECTIONS.map((section) => (
-            <a
-              key={section.href}
-              className={s.menuItem}
-              href={section.href}
-              onClick={() => setMenuOpen(false)}
-            >
-              {section.label}
-            </a>
-          ))}
-          <button
-            type="button"
-            className={`${s.menuItem} ${s.menuLogin}`}
-            onClick={() => {
-              setMenuOpen(false);
-              onLogIn();
-            }}
-          >
-            Log in
+          <nav className={s.track} aria-label="Sections">
+            {SECTIONS.map((section) => (
+              <a
+                key={section.hash}
+                className={s.trackLink}
+                href={`/#${section.hash}`}
+                aria-current={current === section.hash ? 'true' : undefined}
+              >
+                {section.label}
+              </a>
+            ))}
+          </nav>
+          <div className={s.tools}>
+            <ThemeButton />
+          </div>
+          {isAuthenticated ? (
+            <Link to="/app" className={s.login}>
+              Your atlas
+            </Link>
+          ) : (
+            <button type="button" className={s.login} onClick={onLogIn}>
+              Log in
+            </button>
+          )}
+          <button type="button" className={s.start} onClick={onSignUp}>
+            <PushPinIcon weight="fill" aria-hidden="true" />
+            <span>Start your atlas</span>
           </button>
-        </nav>
-      </div>
-    </header>
+
+          <button
+            ref={menuBtnRef}
+            type="button"
+            className={s.menuBtn}
+            aria-expanded={menuOpen}
+            aria-controls="header-menu"
+            aria-label="Menu"
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            <ListIcon aria-hidden="true" />
+          </button>
+          <nav
+            ref={menuRef}
+            id="header-menu"
+            className={s.menu}
+            aria-label="Menu"
+            hidden={!menuOpen}
+          >
+            {SECTIONS.map((section) => (
+              <a
+                key={section.hash}
+                className={s.menuItem}
+                href={`/#${section.hash}`}
+                onClick={() => setMenuOpen(false)}
+              >
+                {section.label}
+              </a>
+            ))}
+            {isAuthenticated ? (
+              <Link to="/app" className={`${s.menuItem} ${s.menuLogin}`}>
+                Your atlas
+              </Link>
+            ) : (
+              <button
+                type="button"
+                className={`${s.menuItem} ${s.menuLogin}`}
+                onClick={() => {
+                  setMenuOpen(false);
+                  onLogIn();
+                }}
+              >
+                Log in
+              </button>
+            )}
+          </nav>
+        </div>
+      </header>
+    </>
   );
 };
 

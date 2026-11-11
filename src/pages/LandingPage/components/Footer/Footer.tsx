@@ -1,31 +1,24 @@
-import { Link } from "@tanstack/react-router";
-import Logo from "../../../../components/Logo/Logo";
-import * as s from "./Footer.css";
+import { Link } from '@tanstack/react-router';
+import Logo from '../../../../components/Logo/Logo';
+import { SECTIONS } from '../../sections';
+import * as s from './Footer.css';
 
 const COLUMNS = [
   {
-    id: "footer-product",
-    title: "Product",
+    id: 'footer-company',
+    title: 'Company',
     links: [
-      { label: "The atlas", to: "/", hash: "how" },
-      { label: "Goals", to: "/", hash: "goals" },
+      { label: 'About', to: '/about' },
+      { label: 'Journal', to: '/journal' },
+      { label: 'Contact', to: '/contact' },
     ],
   },
   {
-    id: "footer-company",
-    title: "Company",
+    id: 'footer-legal',
+    title: 'Legal',
     links: [
-      { label: "About", to: "/about" },
-      { label: "Roadmap", to: "/roadmap" },
-      { label: "Contact", to: "/contact" },
-    ],
-  },
-  {
-    id: "footer-legal",
-    title: "Legal",
-    links: [
-      { label: "Privacy", to: "/privacy" },
-      { label: "Terms", to: "/terms" },
+      { label: 'Privacy', to: '/privacy' },
+      { label: 'Terms', to: '/terms' },
     ],
   },
 ] as const;
@@ -37,7 +30,7 @@ const Footer = () => {
         <div className={s.footerGrid}>
           <div>
             <a
-              href="#top"
+              href="/#top"
               className={s.logoLink}
               aria-label="Read The Globe, back to the top"
             >
@@ -46,6 +39,20 @@ const Footer = () => {
             </a>
             <p className={s.footerTag}>Read the world, one book at a time.</p>
           </div>
+          <nav aria-labelledby="footer-product">
+            <h2 className={s.footerHead} id="footer-product">
+              Product
+            </h2>
+            <ul className={s.footerList}>
+              {SECTIONS.map((section) => (
+                <li key={section.hash}>
+                  <a className={s.footerLink} href={`/#${section.hash}`}>
+                    {section.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
           {COLUMNS.map((column) => (
             <nav key={column.id} aria-labelledby={column.id}>
               <h2 className={s.footerHead} id={column.id}>
@@ -54,11 +61,7 @@ const Footer = () => {
               <ul className={s.footerList}>
                 {column.links.map((link) => (
                   <li key={link.label}>
-                    <Link
-                      className={s.footerLink}
-                      to={link.to}
-                      hash={"hash" in link ? link.hash : undefined}
-                    >
+                    <Link className={s.footerLink} to={link.to}>
                       {link.label}
                     </Link>
                   </li>

@@ -8,6 +8,11 @@ import LoginDialog, {
   type AuthMode,
 } from './components/LoginDialog/LoginDialog';
 import Footer from './components/Footer/Footer';
+import LiveAtlas from './components/LiveAtlas/LiveAtlas';
+import Features from './components/Features/Features';
+import Share from './components/Share/Share';
+import Faq from './components/Faq/Faq';
+import Closing from './components/Closing/Closing';
 
 const LandingPage = () => {
   const [auth, setAuth] = useState<AuthMode | null>(null);
@@ -26,8 +31,13 @@ const LandingPage = () => {
   return (
     <div className={s.page}>
       <Header onLogIn={openLogIn} onSignUp={openSignUp} />
-      <main id="main" tabIndex={-1}>
+      <main id="main" tabIndex={-1} className={s.main}>
         <Hero onSignUp={openSignUp} />
+        <LiveAtlas />
+        <Features />
+        <Share onSignUp={openSignUp} />
+        <Faq />
+        <Closing onSignUp={openSignUp} />
       </main>
       <LoginDialog mode={auth} onMode={setAuth} onClose={closeAuth} />
       <Footer />

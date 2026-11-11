@@ -1,50 +1,53 @@
 import {
   useEffect,
+  useEffectEvent,
   useRef,
   useState,
   type ChangeEvent,
   type SubmitEvent,
-} from "react";
-import { PushPinIcon, WarningCircleIcon, XIcon } from "@phosphor-icons/react";
+} from 'react';
+import { PushPinIcon, WarningCircleIcon, XIcon } from '@phosphor-icons/react';
 
-import * as s from "./LoginDialog.css";
-import Field from "../../../../components/Field/Field";
-import { signIn, signUp } from "../../../../auth/session";
-import {
-  isEmail,
-  passwordStrength,
-  STRENGTH_LABELS,
-} from "../../../../auth/forms";
+import * as s from './LoginDialog.css';
+import Field from '../../../../components/Field/Field';
+import PasswordStrength from './PasswordStrength';
+import { sendPasswordReset, signIn, signUp } from '../../../../auth/session';
+import { isEmail, newPasswordProblem } from '../../../../auth/forms';
 
-export type AuthMode = "signup" | "login";
+export type AuthMode = 'signup' | 'login' | 'reset';
 
 const COPY = {
   signup: {
-    title: "Start your atlas",
-    sub: "Free, and no card. Your first book takes a minute.",
-    go: "Create your atlas",
+    title: 'Start your atlas',
+    sub: 'Free, and no card. Your first book takes a minute.',
+    go: 'Create your atlas',
   },
   login: {
-    title: "Welcome back",
-    sub: "Your atlas is where you left it.",
-    go: "Log in",
+    title: 'Welcome back',
+    sub: 'Your atlas is where you left it.',
+    go: 'Log in',
+  },
+  reset: {
+    title: 'Reset your password',
+    sub: 'We’ll email you a link to choose a new one.',
+    go: 'Send the link',
   },
 };
 
 type Values = { name: string; email: string; password: string };
 type Errors = Partial<Record<keyof Values, string>>;
 
-const FIELD_ORDER: (keyof Values)[] = ["name", "email", "password"];
+const FIELD_ORDER: (keyof Values)[] = ['name', 'email', 'password'];
 
 const validate = (mode: AuthMode, values: Values): Errors => {
   const errors: Errors = {};
-  if (mode === "signup" && !values.name.trim())
-    errors.name = "Tell us what to call you.";
-  if (!isEmail(values.email)) errors.email = "Enter a valid email address.";
-  if (mode === "signup" && values.password.length < 8)
-    errors.password = "Use at least 8 characters.";
-  if (mode === "login" && !values.password)
-    errors.password = "Enter your password.";
+  if (mode === 'signup' && !values.name.trim())
+    errors.name = 'Tell us what to call you.';
+  if (!isEmail(values.email)) errors.email = 'Enter a valid email address.';
+  if (mode === 'signup')
+    errors.password = newPasswordProblem(values.password) ?? undefined;
+  if (mode === 'login' && !values.password)
+    errors.password = 'Enter your password.';
   return errors;
 };
 
@@ -58,10 +61,11 @@ type LoginDialogProps = {
 const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [values, setValues] = useState<Values>({
-    name: "",
-    email: "",
-    password: "",
+    name: '',
+    email: '',
+    password: '',
   });
+  const [example, setExample] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [pending, setPending] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -74,13 +78,12 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
     if (!mode && dialog.open) dialog.close();
     if (mode)
       document
-        .getElementById(mode === "signup" ? "au-name" : "au-email")
+        .getElementById(mode === 'signup' ? 'au-name' : 'au-email')
         ?.focus();
   }, [mode]);
 
-  const view = mode ?? "login";
+  const view = mode ?? 'login';
   const errors = submitted ? validate(view, values) : {};
-  const strength = passwordStrength(values.password);
 
   const clearMessages = () => {
     setSubmitted(false);
@@ -95,6 +98,17 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
     clearMessages();
     onClose();
   };
+
+  // a click on the backdrop lands on the <dialog> itself; Escape is the dialog's own keyboard way out
+  const onBackdrop = useEffectEvent(close);
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    const onClick = (event: MouseEvent) => {
+      if (event.target === dialog) onBackdrop();
+    };
+    dialog?.addEventListener('click', onClick);
+    return () => dialog?.removeEventListener('click', onClick);
+  }, []);
 
   const update =
     (key: keyof Values) => (event: ChangeEvent<HTMLInputElement>) =>
@@ -114,29 +128,36 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
     setFormError(null);
     setNotice(null);
     const email = values.email.trim();
-    if (view === "login") {
+    if (view === 'reset') {
+      if (await sendPasswordReset(email))
+        setNotice(
+          `If ${email} has an atlas, a link to choose a new password is on its way.`
+        );
+      else setFormError('Something went wrong. Try again.');
+    } else if (view === 'login') {
       const problem = await signIn(email, values.password);
       if (problem)
         setFormError(
-          problem === "wrong-credentials"
+          problem === 'wrong-credentials'
             ? "That email and password don't match."
-            : "Something went wrong. Try again.",
+            : 'Something went wrong. Try again.'
         );
     } else {
       const { problem, confirmEmail } = await signUp({
         email,
         password: values.password,
         name: values.name.trim(),
+        example,
       });
       if (problem)
         setFormError(
-          problem === "email-taken"
-            ? "That email already has an atlas. Try logging in instead."
-            : "Something went wrong. Try again.",
+          problem === 'email-taken'
+            ? 'That email already has an atlas. Try logging in instead.'
+            : 'Something went wrong. Try again.'
         );
       else if (confirmEmail)
         setNotice(
-          `Check your inbox: we sent a link to ${email} to confirm it.`,
+          `Check your inbox: we sent a link to ${email} to confirm it.`
         );
     }
     // a session, if there is one now, takes the reader to /app from the page
@@ -149,9 +170,6 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
       className={s.dialog}
       aria-labelledby="au-title"
       onClose={close}
-      onClick={(event) => {
-        if (event.target === event.currentTarget) close();
-      }}
     >
       <form className={s.dialogForm} onSubmit={submit} noValidate>
         <div className={s.dialogHead}>
@@ -183,7 +201,7 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
           </p>
         )}
 
-        {view === "signup" && (
+        {view === 'signup' && (
           <Field
             id="au-name"
             label="Display name"
@@ -193,7 +211,7 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
             placeholder="What should we call you?"
             required
             value={values.name}
-            onChange={update("name")}
+            onChange={update('name')}
             error={errors.name}
           />
         )}
@@ -207,44 +225,46 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
           placeholder="you@example.com"
           required
           value={values.email}
-          onChange={update("email")}
+          onChange={update('email')}
           error={errors.email}
         />
-        <Field
-          id="au-password"
-          label="Password"
-          password
-          name={view === "signup" ? "new-password" : "current-password"}
-          autoComplete={view === "signup" ? "new-password" : "current-password"}
-          placeholder={
-            view === "signup" ? "At least 8 characters" : "Your password"
-          }
-          required
-          aria-describedby={view === "signup" ? "au-strength" : undefined}
-          value={values.password}
-          onChange={update("password")}
-          error={errors.password}
-        >
-          {view === "signup" && (
-            <div id="au-strength" aria-live="polite">
-              {values.password && (
-                <div className={s.strength}>
-                  <div className={s.strengthBar} aria-hidden="true">
-                    <div
-                      className={s.strengthFill[strength]}
-                      style={{
-                        transform: `scaleX(${Math.max(0.04, strength / 4)})`,
-                      }}
-                    />
-                  </div>
-                  <span className={s.strengthLabel}>
-                    {STRENGTH_LABELS[strength]}
-                  </span>
-                </div>
-              )}
-            </div>
-          )}
-        </Field>
+        {view !== 'reset' && (
+          <Field
+            id="au-password"
+            label="Password"
+            password
+            name={view === 'signup' ? 'new-password' : 'current-password'}
+            autoComplete={
+              view === 'signup' ? 'new-password' : 'current-password'
+            }
+            placeholder={
+              view === 'signup' ? 'At least 8 characters' : 'Your password'
+            }
+            required
+            aria-describedby={view === 'signup' ? 'au-strength' : undefined}
+            value={values.password}
+            onChange={update('password')}
+            error={errors.password}
+          >
+            {view === 'signup' && (
+              <PasswordStrength id="au-strength" password={values.password} />
+            )}
+          </Field>
+        )}
+        {view === 'signup' && (
+          <label className={s.example}>
+            <input
+              type="checkbox"
+              checked={example}
+              onChange={(event) => setExample(event.target.checked)}
+            />
+            Add example books to look around
+            <span className={s.exampleHint}>
+              12 books, a goal and two saved for later. Remove them whenever you
+              like.
+            </span>
+          </label>
+        )}
 
         <button
           type="submit"
@@ -252,18 +272,31 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
           disabled={pending}
         >
           <PushPinIcon weight="fill" aria-hidden="true" />
-          {pending ? "One moment…" : COPY[view].go}
+          {pending ? 'One moment…' : COPY[view].go}
         </button>
-        <p className={s.altAction}>
-          {view === "signup" ? "Already reading with us? " : "New here? "}
-          <button
-            type="button"
-            className={s.altLink}
-            onClick={() => switchTo(view === "signup" ? "login" : "signup")}
-          >
-            {view === "signup" ? "Log in" : "Create an account"}
-          </button>
-        </p>
+        <div className={s.links}>
+          <p className={s.altAction}>
+            {view === 'signup' ? 'Already reading with us? ' : 'New here? '}
+            <button
+              type="button"
+              className={s.altLink}
+              onClick={() => switchTo(view === 'signup' ? 'login' : 'signup')}
+            >
+              {view === 'signup' ? 'Log in' : 'Create an account'}
+            </button>
+          </p>
+          {view !== 'signup' && (
+            <p className={s.altAction}>
+              <button
+                type="button"
+                className={s.altLink}
+                onClick={() => switchTo(view === 'login' ? 'reset' : 'login')}
+              >
+                {view === 'login' ? 'Forgot your password?' : 'Back to log in'}
+              </button>
+            </p>
+          )}
+        </div>
       </form>
     </dialog>
   );

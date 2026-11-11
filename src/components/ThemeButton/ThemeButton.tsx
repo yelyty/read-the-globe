@@ -1,39 +1,24 @@
-import { SunIcon, MoonStarsIcon } from "@phosphor-icons/react";
-import { useState, useEffect } from "react";
-import * as s from "./ThemeButton.css";
+import { SunIcon, MoonStarsIcon } from '@phosphor-icons/react';
+import { useTheme } from '../../hooks/useTheme';
+import * as s from './ThemeButton.css';
 
-const THEME_KEY = "rtg-theme";
-const darkQuery = () => window.matchMedia("(prefers-color-scheme: dark)");
+const THEME_KEY = 'rtg-theme';
 
+// index.html reads the saved choice back before paint; this only flips it and saves it
 const ThemeButton = () => {
-  const [dark, setDark] = useState(() => {
-    const picked = document.documentElement.dataset.theme;
-    return picked ? picked === "dark" : darkQuery().matches;
-  });
-
-  useEffect(() => {
-    const query = darkQuery();
-    const follow = () => {
-      if (!document.documentElement.dataset.theme) setDark(query.matches);
-    };
-    query.addEventListener("change", follow);
-    return () => query.removeEventListener("change", follow);
-  }, []);
+  const dark = useTheme() === 'dark';
 
   const toggle = () => {
-    const next = dark ? "light" : "dark";
+    const next = dark ? 'light' : 'dark';
     document.documentElement.dataset.theme = next;
     document
-      .querySelectorAll('meta[name="theme-color"]')
-      .forEach((m) =>
-        m.setAttribute("content", next === "dark" ? "#1c1811" : "#f6f0e2"),
-      );
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute('content', next === 'dark' ? '#1C1811' : '#FFFFFD');
     try {
       localStorage.setItem(THEME_KEY, next);
     } catch {
-      //
+      // private mode: the choice lasts for this page only
     }
-    setDark(!dark);
   };
 
   return (
@@ -42,7 +27,7 @@ const ThemeButton = () => {
       className={s.themeBtn}
       onClick={toggle}
       aria-pressed={dark}
-      aria-label="Night mode"
+      aria-label={dark ? 'Switch to day reading' : 'Switch to night reading'}
     >
       {dark ? (
         <SunIcon aria-hidden="true" />

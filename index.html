@@ -4,15 +4,61 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#FFFFFD" />
+    <script>
+      // one theme switch: data-theme is set before paint, from the saved choice (ThemeButton saves "light" or "dark")
+      // or else the system setting, and follows the system until the reader picks
+      (() => {
+        const root = document.documentElement;
+        const dark = matchMedia('(prefers-color-scheme: dark)');
+        const saved = () => {
+          try {
+            return localStorage.getItem('rtg-theme');
+          } catch {
+            return null;
+          }
+        };
+        const set = () => {
+          const picked = saved();
+          const theme =
+            picked === 'light' || picked === 'dark'
+              ? picked
+              : dark.matches
+                ? 'dark'
+                : 'light';
+          root.dataset.theme = theme;
+          document.querySelector('meta[name="theme-color"]').content =
+            theme === 'dark' ? '#1C1811' : '#FFFFFD';
+        };
+        set();
+        dark.addEventListener('change', () => {
+          if (!saved()) set();
+        });
+      })();
+    </script>
+    <title>Read The Globe</title>
     <meta
-      name="theme-color"
-      content="#f6f0e2"
-      media="(prefers-color-scheme:light)"
+      name="description"
+      content="Log a novel and your atlas marks two countries: the one the story is set in, and the one its author calls home. Free, and no card needed."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Read The Globe" />
+    <meta
+      property="og:title"
+      content="Read The Globe: where have your books taken you?"
     />
     <meta
-      name="theme-color"
-      content="#1c1811"
-      media="(prefers-color-scheme:dark)"
+      property="og:description"
+      content="Log a novel and your atlas marks two countries: the one the story is set in, and the one its author calls home. Over years of reading, you can see how much of the world you’ve reached."
+    />
+    <meta name="twitter:card" content="summary" />
+    <meta
+      name="twitter:title"
+      content="Read The Globe: where have your books taken you?"
+    />
+    <meta
+      name="twitter:description"
+      content="Log a novel and your atlas marks two countries: where the story is set, and where its author calls home."
     />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -20,8 +66,6 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;1,400&family=Alegreya+Sans:wght@400;500;800&family=IM+Fell+English&display=swap"
     />
-    <!-- TODO: set up meta tags -->
-    <title>Read The Globe</title>
   </head>
   <body>
     <div id="root"></div>

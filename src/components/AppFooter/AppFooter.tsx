@@ -1,12 +1,12 @@
-import { Link } from "@tanstack/react-router";
-import * as s from "./AppFooter.css";
+import { Link } from '@tanstack/react-router';
+import * as s from './AppFooter.css';
 
 const LINKS = [
-  { label: "About", to: "/about" },
-  { label: "Roadmap", to: "/roadmap" },
-  { label: "Contact", to: "/contact" },
-  { label: "Privacy", to: "/privacy" },
-  { label: "Terms", to: "/terms" },
+  { label: 'About', to: '/about' },
+  { label: 'Journal', to: '/journal' },
+  { label: 'Contact', to: '/contact' },
+  { label: 'Privacy', to: '/privacy' },
+  { label: 'Terms', to: '/terms' },
 ] as const;
 
 const AppFooter = () => {
@@ -22,7 +22,7 @@ const AppFooter = () => {
           ))}
         </nav>
         <p className={s.credit}>
-          Map data from{" "}
+          Map data from{' '}
           <a
             className={s.link}
             href="https://www.naturalearthdata.com/"

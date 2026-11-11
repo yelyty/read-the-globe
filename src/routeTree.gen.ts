@@ -10,8 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
-import { Route as RoadmapRouteImport } from './routes/roadmap'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as JournalRouteImport } from './routes/journal'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as AboutRouteImport } from './routes/about'
@@ -27,14 +28,19 @@ const TermsRoute = TermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RoadmapRoute = RoadmapRouteImport.update({
-  id: '/roadmap',
-  path: '/roadmap',
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JournalRoute = JournalRouteImport.update({
+  id: '/journal',
+  path: '/journal',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -88,8 +94,9 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/app': typeof AppRouteWithChildren
   '/contact': typeof ContactRoute
+  '/journal': typeof JournalRoute
   '/privacy': typeof PrivacyRoute
-  '/roadmap': typeof RoadmapRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/app/account': typeof AppAccountRoute
   '/app/goals': typeof AppGoalsRoute
@@ -101,8 +108,9 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/journal': typeof JournalRoute
   '/privacy': typeof PrivacyRoute
-  '/roadmap': typeof RoadmapRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/app/account': typeof AppAccountRoute
   '/app/goals': typeof AppGoalsRoute
@@ -116,8 +124,9 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/app': typeof AppRouteWithChildren
   '/contact': typeof ContactRoute
+  '/journal': typeof JournalRoute
   '/privacy': typeof PrivacyRoute
-  '/roadmap': typeof RoadmapRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/app/account': typeof AppAccountRoute
   '/app/goals': typeof AppGoalsRoute
@@ -132,8 +141,9 @@ export interface FileRouteTypes {
     | '/about'
     | '/app'
     | '/contact'
+    | '/journal'
     | '/privacy'
-    | '/roadmap'
+    | '/reset-password'
     | '/terms'
     | '/app/account'
     | '/app/goals'
@@ -145,8 +155,9 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
+    | '/journal'
     | '/privacy'
-    | '/roadmap'
+    | '/reset-password'
     | '/terms'
     | '/app/account'
     | '/app/goals'
@@ -159,8 +170,9 @@ export interface FileRouteTypes {
     | '/about'
     | '/app'
     | '/contact'
+    | '/journal'
     | '/privacy'
-    | '/roadmap'
+    | '/reset-password'
     | '/terms'
     | '/app/account'
     | '/app/goals'
@@ -174,8 +186,9 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AppRoute: typeof AppRouteWithChildren
   ContactRoute: typeof ContactRoute
+  JournalRoute: typeof JournalRoute
   PrivacyRoute: typeof PrivacyRoute
-  RoadmapRoute: typeof RoadmapRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   TermsRoute: typeof TermsRoute
 }
 
@@ -188,11 +201,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/roadmap': {
-      id: '/roadmap'
-      path: '/roadmap'
-      fullPath: '/roadmap'
-      preLoaderRoute: typeof RoadmapRouteImport
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -200,6 +213,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/journal': {
+      id: '/journal'
+      path: '/journal'
+      fullPath: '/journal'
+      preLoaderRoute: typeof JournalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -291,8 +311,9 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AppRoute: AppRouteWithChildren,
   ContactRoute: ContactRoute,
+  JournalRoute: JournalRoute,
   PrivacyRoute: PrivacyRoute,
-  RoadmapRoute: RoadmapRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   TermsRoute: TermsRoute,
 }
 export const routeTree = rootRouteImport
