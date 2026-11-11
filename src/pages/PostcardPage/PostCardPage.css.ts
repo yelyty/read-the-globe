@@ -1,5 +1,6 @@
 import { globalStyle, keyframes, style } from '@vanilla-extract/css';
 import { vars } from '../../styles/theme.css';
+import { input as fieldInput } from '../../components/Field/Field.css';
 import {
   band,
   coarse,
@@ -428,3 +429,6 @@ export const status = style({
   color: vars.color.textSecondary,
   selectors: { '&:empty': { display: 'none' } },
 });
+
+// the Postcard menu: which card to make
+export const select = style([fieldInput, { marginTop: 8 }]);

@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { getRouteApi, useRouter } from '@tanstack/react-router';
+import { useEffect, useRef, useState } from 'react';
+import { getRouteApi, useNavigate, useRouter } from '@tanstack/react-router';
 import type { Feature } from 'geojson';
 import type { Goal, GoalKind } from '../../types';
 import { ArrowCounterClockwiseIcon, PlusIcon } from '@phosphor-icons/react';
@@ -12,6 +12,7 @@ import {
   restoreGoal,
 } from '../../api/goals/goals';
 import { useStatus } from '../../hooks/useStatus';
+import { reducedMotion } from '../../styles/global.css';
 import {
   CATALOGUE,
   KIND_GROUP,
@@ -30,6 +31,7 @@ import * as s from './GoalsPage.css';
 import PageTitle from '../../components/PageTitle/PageTitle';
 
 const app = getRouteApi('/app');
+const route = getRouteApi('/app/goals');
 
 const GoalsPage = () => {
   const { books, goals } = app.useLoaderData();
@@ -39,10 +41,22 @@ const GoalsPage = () => {
   const [choosing, setChoosing] = useState<Goal | null>(null);
   const status = useStatus();
   const say = (text: string) => status.show({ text });
+  const { add: addSlug } = route.useSearch();
+  const navigate = useNavigate();
+  // goals that crossed their flag while the reader looked: each gets the arrival once
+  const [arriving, setArriving] = useState<number[]>([]);
+  // the goal to focus once it shows up in the list: one just added, or back from Undo
+  const focusName = useRef<string | null>(null);
 
   useEffect(() => {
     worldShapes().then(setShapes);
   }, []);
+
+  const saved = async (message: string, focus?: string) => {
+    say(message);
+    if (focus) focusName.current = focus.trim().toLowerCase();
+    await router.invalidate();
+  };
 
   const marks = atlasMarks(books);
   const progress = (g: GoalDraft & { id?: number }) =>
@@ -61,9 +75,48 @@ const GoalsPage = () => {
     Promise.all(
       changes.map(({ g, done }) => markReached(g.id, done ? today() : null))
     ).then((problems) => {
-      if (problems.every((p) => !p)) router.invalidate();
+      if (!problems.every((p) => !p)) return;
+      if (!matchMedia(reducedMotion).matches)
+        setArriving((a) => [
+          ...a,
+          ...changes.filter((c) => c.done).map((c) => c.g.id),
+        ]);
+      router.invalidate();
     });
   }, [goals, books, shapes, router]);
+
+  useEffect(() => {
+    const g = goals.find((x) => x.name.toLowerCase() === focusName.current);
+    const h =
+      g && document.querySelector<HTMLElement>(`[data-goal="${g.id}"] h3`);
+    if (!h) return;
+    focusName.current = null;
+    h.scrollIntoView({
+      block: 'center',
+      behavior: matchMedia(reducedMotion).matches ? 'auto' : 'smooth',
+    });
+    h.focus({ preventScroll: true });
+  }, [goals, shapes]);
+
+  // ?add=<slug>: a Journal article's "Add this goal" lands here and adds it once, or shows it if it's already there
+  const added = useRef<string | null>(null);
+  useEffect(() => {
+    if (!addSlug || added.current === addSlug) return;
+    added.current = addSlug;
+    navigate({ to: '/app/goals', search: {}, replace: true });
+    const c = CATALOGUE.find((x) => x.slug === addSlug);
+    if (!c) return;
+    const name = c.name.toLowerCase();
+    if (goals.some((g) => g.name.toLowerCase() === name)) {
+      focusName.current = name;
+      return;
+    }
+    if (goals.length >= MAX_GOALS) return;
+    addGoal(c).then((problem) => {
+      if (problem) return say(problem);
+      saved(`Goal added: ${c.name}.`, c.name);
+    });
+  });
 
   if (!shapes) return <div />;
 
@@ -81,16 +134,11 @@ const GoalsPage = () => {
   const nReached =
     goals.length - goals.filter((g) => !isDone(progress(g))).length;
 
-  const saved = async (message: string) => {
-    say(message);
-    await router.invalidate();
-  };
-
   const add = async (draft: GoalDraft) => {
     if (full) return;
     const problem = await addGoal(draft);
     if (problem) return say(problem);
-    saved(`Goal added: ${draft.name}.`);
+    saved(`Goal added: ${draft.name}.`, draft.name);
   };
 
   const remove = async (goal: Goal) => {
@@ -117,7 +165,7 @@ const GoalsPage = () => {
         run: async () => {
           const problem = await restoreGoal(goal, ticked);
           if (problem) return say(problem);
-          saved(`${goal.name} is back.`);
+          saved(`${goal.name} is back.`, goal.name);
         },
       },
     });
@@ -272,6 +320,7 @@ const GoalsPage = () => {
     <>
       <PageTitle>Goals</PageTitle>
 
+      {suggestions}
       {goals.length ? (
         <>
           <details className={s.yours} open>
@@ -295,11 +344,11 @@ const GoalsPage = () => {
                   onEdit={() => setEditing(g)}
                   onRemove={() => remove(g)}
                   onChooseBooks={() => setChoosing(g)}
+                  arriving={arriving.includes(g.id)}
                 />
               ))}
             </ul>
           </details>
-          {suggestions}
         </>
       ) : (
         <>
@@ -338,7 +387,6 @@ const GoalsPage = () => {
                 : 'They start counting with your first book.'}
             </p>
           </div>
-          {suggestions}
         </>
       )}
 
@@ -349,7 +397,7 @@ const GoalsPage = () => {
           names={names}
           onClose={() => setEditing(null)}
           onSaved={(n) =>
-            saved(editing === 'new' ? `Goal added: ${n}.` : `Saved ${n}.`)
+            saved(editing === 'new' ? `Goal added: ${n}.` : `Saved ${n}.`, n)
           }
         />
       )}

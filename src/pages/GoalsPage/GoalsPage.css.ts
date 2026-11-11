@@ -3,6 +3,7 @@ import { fontSize, space, vars } from '../../styles/theme.css';
 import {
   goldBand,
   easeOut,
+  easeSoft,
   focusRing,
   hover,
   phone,
@@ -44,7 +45,7 @@ const foldSummary = {
   listStyle: 'none',
 } as const;
 
-export const yours = style({});
+export const yours = style({ marginTop: space.sp7 });
 globalStyle(`${yours} > summary`, {
   ...foldSummary,
   paddingBottom: space.sp2,
@@ -70,7 +71,7 @@ globalStyle(
   { rotate: '45deg' }
 );
 
-export const addGoal = style({ marginTop: space.sp7 });
+export const addGoal = style({}); // suggestions first: the page opens on somewhere new to aim at
 
 export const pick = style({
   maxWidth: 520,
@@ -263,7 +264,10 @@ globalStyle(`${primary} svg, ${outline} svg`, {
   flex: 'none',
 });
 
+// no goals yet: the sticker sits below a hairline, where the goals will be
 export const empty = style({
+  marginTop: space.sp7,
+  borderTop: `1px solid ${vars.color.border}`,
   display: 'grid',
   justifyItems: 'center',
   gap: space.sp2,
@@ -318,6 +322,7 @@ export const goal = style({
   },
 });
 export const goalDone = style({});
+export const goalArriving = style({});
 export const goalMap = style({ position: 'relative' });
 export const plate = style({
   display: 'block',
@@ -396,6 +401,12 @@ export const goalHead = style({
 });
 export const goalName = style({
   margin: 0,
+  // a goal just added gets focus on its name, shown as an underline rather than a box round the title
+  ':focus': { outline: 'none' },
+  ':focus-visible': {
+    textDecoration: `underline 2px ${vars.color.accent}`,
+    textUnderlineOffset: 5,
+  },
   fontFamily: vars.font.display,
   fontSize: fontSize.heading,
   fontWeight: 500,
@@ -478,6 +489,7 @@ export const goalActions = style({
 });
 export const linkBtn = style({
   display: 'inline-flex',
+  textDecoration: 'none',
   alignItems: 'center',
   gap: 8,
   minHeight: 40,
@@ -715,3 +727,121 @@ export const pickAuthor = style({
 });
 
 export { srOnly } from '../../styles/global.css';
+
+/* ---------- the reached stamp: a green postmark pressed over the plate's top-right corner ---------- */
+export const stamp = style({
+  position: 'absolute',
+  zIndex: 2,
+  top: -20,
+  right: -8,
+  width: 132,
+  height: 88,
+  rotate: '-12deg',
+  overflow: 'visible',
+  pointerEvents: 'none',
+  '@media': { [phone]: { width: 84, height: 56, top: -12, right: -2 } },
+});
+export const pmRing = style({
+  fill: 'none',
+  stroke: vars.color.accent,
+  strokeWidth: 1.1,
+});
+export const pmRingOut = style({
+  fill: vars.color.surface,
+  fillOpacity: 0.82,
+  strokeWidth: 2.2,
+});
+export const pmWave = style({
+  fill: 'none',
+  stroke: vars.color.accent,
+  strokeWidth: 1.8,
+  strokeLinecap: 'round',
+  opacity: 0.85,
+});
+export const pmArc = style({
+  fontFamily: vars.font.sans,
+  fontSize: 8.4,
+  fontWeight: 700,
+  fill: vars.color.accent,
+});
+export const pmFlag = style({
+  fill: 'none',
+  stroke: vars.color.accent,
+  strokeWidth: 1.4,
+  strokeLinejoin: 'round',
+  strokeLinecap: 'round',
+});
+export const pmDate = style({
+  fontFamily: vars.font.serif,
+  fontSize: 10.5,
+  fontWeight: 600,
+  fill: vars.color.accent,
+});
+
+/* ---------- the arrival: the pin runs the last stretch, the flag rises and catches gold, the count ticks once,
+   the stamp lands; then gold leaves. Once per goal reached; GoalsPage leaves it off under reduced motion. ---------- */
+const arriveFill = keyframes({
+  from: { transform: 'scaleX(.8)' },
+  to: { transform: 'scaleX(1)' },
+});
+const arrivePin = keyframes({
+  '0%': { left: 'calc(.8 * (100% - 16px))', opacity: 1 },
+  '70%': { left: 'calc(100% - 16px)', opacity: 1 },
+  '100%': { left: 'calc(100% - 16px)', opacity: 0 },
+});
+const arriveFlag = keyframes({
+  '0%, 55%': { transform: 'translateY(-84%) scale(1)' },
+  '75%': { transform: 'translateY(-104%) scale(1.45)' },
+  '100%': { transform: 'translateY(-92%) scale(1.3)' },
+});
+const flagGold = keyframes({
+  '0%, 55%': { fill: vars.color.text },
+  '72%': { fill: vars.color.secondary },
+  '100%': { fill: vars.color.text },
+});
+const poleGold = keyframes({
+  '0%, 55%': { stroke: vars.color.text },
+  '72%': { stroke: vars.color.secondary },
+  '100%': { stroke: vars.color.text },
+});
+const tick = keyframes({
+  '0%': { color: vars.color.secondary, translate: '0 -3px' },
+  '100%': { color: 'inherit', translate: '0 0' },
+});
+const doneIn = keyframes({
+  from: { opacity: 0, translate: '0 3px' },
+  to: { opacity: 1, translate: '0 0' },
+});
+const stampIn = keyframes({
+  from: { opacity: 0, scale: '1.6', rotate: '-26deg' },
+  '60%': { opacity: 1, scale: '.9', rotate: '-8deg' },
+  '80%': { scale: '1.04' },
+  to: { opacity: 1, scale: '1', rotate: '-12deg' },
+});
+const arrive = (name: string, ms: number, delay: number) =>
+  `${name} ${ms}ms ${easeSoft} ${delay}ms both`;
+globalStyle(`${goalArriving} ${routeFill}`, {
+  animation: arrive(arriveFill, 800, 150),
+});
+globalStyle(`${goalArriving} ${routePin}`, {
+  animation: arrive(arrivePin, 1100, 150),
+});
+globalStyle(`${goalArriving} ${routeFlag}`, {
+  animation: arrive(arriveFlag, 1400, 150),
+});
+globalStyle(`${goalArriving} ${flagCloth}`, {
+  animation: `${flagGold} 2.2s ease .15s both`,
+});
+globalStyle(`${goalArriving} ${flagPole}`, {
+  animation: `${poleGold} 2.2s ease .15s both`,
+});
+globalStyle(`${goalArriving} ${goalCount} b`, {
+  display: 'inline-block',
+  animation: arrive(tick, 600, 1000),
+});
+globalStyle(`${goalArriving} ${goalReached}`, {
+  animation: arrive(doneIn, 500, 1100),
+});
+globalStyle(`${goalArriving} ${stamp}`, {
+  animation: arrive(stampIn, 450, 1100),
+});
