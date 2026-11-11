@@ -22,7 +22,7 @@ import * as s from './AtlasMap.css';
 
 // 50m, not 110m: the low-detail map leaves out small countries, which then could never be marked
 export const GEO_URL =
-  'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json';
+  'https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json';
 
 // A flat latitude/longitude grid, as in the mock: 360° across, 83°N to 57°S down (no Antarctica).
 const WIDTH = 1000;

@@ -11,7 +11,8 @@ export const SIZE = 1080;
 
 export type Country = { shape: Feature<Polygon | MultiPolygon>; main: Box };
 
-const GEO_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json';
+const GEO_URL =
+  'https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json';
 
 export const projection = geoEquirectangular()
   .scale(1000 / (2 * Math.PI))

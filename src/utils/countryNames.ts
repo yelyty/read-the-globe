@@ -2,7 +2,7 @@ import { getLocale } from '../paraglide/runtime.js';
 import { toAlpha2 } from './toIsoNumeric';
 
 const GEO_URL =
-  'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
+  'https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json';
 
 let english: Record<string, string> | null = null;
 let cache: Record<string, string> | null = null;

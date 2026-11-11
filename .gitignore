@@ -23,4 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
-.env
+# env files hold the Supabase keys; only the example is committed
+.env*
+!.env.example
