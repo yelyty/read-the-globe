@@ -27,6 +27,7 @@ import {
   type Continent,
 } from '../../utils/continents';
 import { atlasMarks } from '../../utils/atlasMarks';
+import { countryFrom, PARENT } from '../../utils/countryFrom';
 import { countryStamp, loadCountries } from '../PostcardPage/drawPostcard';
 import { goalHas } from '../GoalsPage/goals';
 import * as s from './ShelfPage.css';
@@ -62,12 +63,12 @@ const Pick = ({ children, ...props }: ComponentPropsWithoutRef<'select'>) => (
 
 const ShelfPage = () => {
   const { books, goals } = app.useLoaderData();
-  const { country, tab } = shelfRoute.useSearch();
+  const { country, tab, q: linkedQuery } = shelfRoute.useSearch();
   const next = shelfRoute.useLoaderData();
   const [nextItems, setNextItems] = useState(next.items);
   const navigate = useNavigate();
   const names = useCountryNames();
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(linkedQuery ?? '');
   const [continent, setContinent] = useState<Continent | ''>('');
   const [mark, setMark] = useState<Mark>('');
   const [year, setYear] = useState('');
@@ -137,6 +138,12 @@ const ShelfPage = () => {
         a.title.localeCompare(b.title)
     );
   const unfiltered = list.length === books.length;
+  // a search that names a country with nothing on the shelf is an invitation, not a dead end
+  const named = !list.length ? countryFrom(query, names) : null;
+  const invite =
+    named && !marks[PARENT[named.code] ?? named.code]
+      ? (PARENT[named.code] ?? named.code)
+      : null;
 
   // each year's line says where that year's reading went: books and countries
   const yearNotes = useMemo(() => {
@@ -182,7 +189,7 @@ const ShelfPage = () => {
     setGoalId('');
     setSort('new');
     setShown(PAGE);
-    if (country) navigate({ to: '/app/shelf' });
+    if (country || linkedQuery) navigate({ to: '/app/shelf' });
     search.current?.focus();
   };
   const toggleYear = (y: string) =>
@@ -304,19 +311,24 @@ const ShelfPage = () => {
                   rx="2"
                 />
               </svg>
-              <h2>Your shelf is empty</h2>
-              <p>
-                Every book you log stands here, newest first, with the places it
-                took you.
-              </p>
-              <Link
-                className={s.primary}
-                to="."
-                search={(prev) => ({ ...prev, log: true })}
-              >
-                <PushPinIcon weight="fill" aria-hidden="true" />
-                Log a book
-              </Link>
+              <div>
+                <h2>Your shelf is empty</h2>
+                <p>
+                  Every book you log stands here, newest first, with the places
+                  it took you.
+                </p>
+                <div className={s.emptyActions}>
+                  <Link
+                    className={s.primary}
+                    to="."
+                    search={(prev) => ({ ...prev, log: true })}
+                  >
+                    <PushPinIcon weight="fill" aria-hidden="true" />
+                    Log a book
+                  </Link>
+                  {/* step 3: "or", Have a backlog? Import a reading list (CSV), and under it the hint with the example CSV */}
+                </div>
+              </div>
             </div>
           ) : (
             <>
@@ -516,10 +528,10 @@ const ShelfPage = () => {
                       <Link
                         className={s.linkBtn}
                         to="."
-                        search={(prev) => ({ ...prev, log: true })}
+                        search={(prev) => ({ ...prev, log: true, country })}
                       >
                         <PushPinIcon aria-hidden="true" />
-                        Log another book
+                        Log another book set here
                       </Link>
                       <Link className={s.linkBtn} to="/app/shelf">
                         <BooksIcon aria-hidden="true" />
@@ -565,6 +577,18 @@ const ShelfPage = () => {
                     );
                   })}
                 </ul>
+              ) : invite ? (
+                <div className={s.emptyNote}>
+                  <p>No books from {name(invite)} or set there yet.</p>
+                  <Link
+                    className={s.linkBtn}
+                    to="."
+                    search={(prev) => ({ ...prev, log: true, country: invite })}
+                  >
+                    <PushPinIcon aria-hidden="true" />
+                    Log a book set in {name(invite)}
+                  </Link>
+                </div>
               ) : (
                 <p className={s.emptyNote}>
                   {q

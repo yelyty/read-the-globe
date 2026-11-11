@@ -1,35 +1,98 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { getRouteApi, Link, useNavigate } from '@tanstack/react-router';
 import {
   ArrowsInIcon,
   ArrowsOutIcon,
+  FlagIcon,
   PushPinIcon,
 } from '@phosphor-icons/react';
-import AtlasMap, { type Show } from '../../components/AtlasMap/AtlasMap.tsx';
-import { marked } from '../../components/AtlasMap/AtlasMap.css';
+import AtlasMap, {
+  ANTARCTICA,
+  type Show,
+} from '../../components/AtlasMap/AtlasMap.tsx';
 import { atlasMarks, atlasStats } from '../../utils/atlasMarks';
+import { worldsOf } from '../../utils/worlds';
 
 import * as s from './HomePage.css';
 import { useAuth } from '../../auth/auth-context.ts';
 import { useCountryNames } from '../../hooks/useCountryNames.ts';
+import { useLanding } from '../../hooks/useLanding.ts';
+import { useStatus } from '../../hooks/useStatus.ts';
 import AtlasCountries from './AtlasCountries.tsx';
+import BeyondMap from './BeyondMap.tsx';
 import Cartouche from './features/Cartouche.tsx';
 import MapKey from './MapKey.tsx';
+import MapTip, { type Tip } from './MapTip.tsx';
 import RecentReads from './features/RecentReads.tsx';
 import PageTitle from '../../components/PageTitle/PageTitle.tsx';
 import { byLogged } from '../../utils/readDate';
 
 const app = getRouteApi('/app');
 const RECENT = 3;
+const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+const PIN =
+  '<svg viewBox="0 0 24 24"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"/><circle cx="12" cy="9" r="2.8"/></svg>';
+
+// a country too small to see fill gets a gold ring where the pin landed
+const ringAt = (b: DOMRect) => {
+  const ring = document.createElement('div');
+  ring.className = s.landRing;
+  ring.setAttribute('aria-hidden', 'true');
+  ring.style.left = `${b.left + b.width / 2}px`;
+  ring.style.top = `${b.top + b.height / 2}px`;
+  document.body.appendChild(ring);
+  ring.animate(
+    [
+      { transform: 'translate(-50%, -50%) scale(.4)', opacity: 1 },
+      { transform: 'translate(-50%, -50%) scale(1.7)', opacity: 0 },
+    ],
+    { duration: 750, easing: 'cubic-bezier(.2,.8,.25,1)' }
+  ).onfinish = () => ring.remove();
+};
+
+// Home, with the plate in view: scroll only if it isn't already, and let the scroll settle before anything flies
+const plateInView = (plate: Element) =>
+  new Promise<void>((done) => {
+    const top = plate.getBoundingClientRect().top;
+    const head = document.querySelector('header')?.offsetHeight ?? 0;
+    if (top >= head - 4 && top < innerHeight * 0.35)
+      return requestAnimationFrame(() => done());
+    const to = Math.max(0, top + scrollY - head - 24);
+    if (reduced()) {
+      scrollTo({ top: to, behavior: 'instant' });
+      return requestAnimationFrame(() => done());
+    }
+    addEventListener('scrollend', () => done(), { once: true });
+    setTimeout(done, 650);
+    scrollTo({ top: to, behavior: 'smooth' });
+  });
+
+// the map's countries are drawn once its shapes arrive: wait for them (two seconds at most)
+const drawn = (plate: Element) =>
+  new Promise<void>((done) => {
+    let n = 0;
+    const look = () =>
+      plate.querySelector('[data-code]') || ++n > 120
+        ? done()
+        : requestAnimationFrame(look);
+    look();
+  });
 
 const HomePage = () => {
   const [show, setShow] = useState<Show>('all');
   const [full, setFull] = useState(false);
+  const [tip, setTip] = useState<Tip | null>(null);
+  const [landed, setLanded] = useState<Set<string>>(() => new Set());
+  const [said, setSaid] = useState('');
+  const [tick, setTick] = useState(0);
+  const pointer = useRef<'mouse' | 'touch'>('mouse');
+  const plate = useRef<HTMLDivElement>(null);
 
-  const { books } = app.useLoaderData();
+  const { books, worlds: savedWorlds } = app.useLoaderData();
   const { user } = useAuth();
   const names = useCountryNames();
-
+  const [landing, setLanding] = useLanding();
+  const { show: say } = useStatus();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -45,24 +108,223 @@ const HomePage = () => {
     };
   }, [full]);
 
+  // a tip goes on Escape, or a press anywhere but the map and the country list
+  useEffect(() => {
+    if (!tip) return;
+    const away = (e: Event) =>
+      (e instanceof KeyboardEvent
+        ? e.key === 'Escape'
+        : !(e.target as Element).closest('[data-tips]')) && setTip(null);
+    document.addEventListener('pointerdown', away);
+    document.addEventListener('keydown', away);
+    return () => {
+      document.removeEventListener('pointerdown', away);
+      document.removeEventListener('keydown', away);
+    };
+  }, [tip]);
+
+  // the line said when the pins land stays a few seconds
+  useEffect(() => {
+    if (!said) return;
+    const t = setTimeout(() => setSaid(''), 6000);
+    return () => clearTimeout(t);
+  }, [said]);
+
+  /* A book just pinned: until its pins land, Home draws the atlas as it was (map, count, rows), and each country
+     takes its mark as its pin arrives. ponytail: leaving Home mid-flight keeps the landing, so it flies again
+     on the next visit; clear it on unmount if that ever matters. */
+  const flying =
+    landing && books.some((b) => b.id === landing.bookId) ? landing : null;
   const marks = useMemo(() => atlasMarks(books), [books]);
-  const stats = atlasStats(books, marks);
-  const dots = books
-    .flatMap((b) => b.places ?? [])
-    .filter((p) => p.lon != null && p.lat != null);
+  const shown = useMemo(
+    () => (flying ? books.filter((b) => b.id !== flying.bookId) : books),
+    [books, flying]
+  );
+  const held = useMemo(
+    () => (flying ? atlasMarks(shown) : marks),
+    [flying, shown, marks]
+  );
+  const painted = useMemo(
+    () =>
+      flying
+        ? {
+            ...held,
+            ...Object.fromEntries(
+              [...landed].filter((c) => marks[c]).map((c) => [c, marks[c]])
+            ),
+          }
+        : marks,
+    [flying, held, landed, marks]
+  );
+  const dots = useMemo(
+    () =>
+      shown
+        .flatMap((b) => b.places ?? [])
+        .filter((p) => p.lon != null && p.lat != null),
+    [shown]
+  );
+  const worlds = useMemo(
+    () => worldsOf(shown, savedWorlds),
+    [shown, savedWorlds]
+  );
+  const stats = useMemo(() => atlasStats(shown, held), [shown, held]);
+
+  /* The one authored moment: an ink pin with a gold head leaves Log a book, arcs to each country the book adds,
+     and the country takes its mark as the pin lands. The count, the line and the goal news wait for the last
+     pin. Reduced motion lands everything at once. */
+  useEffect(() => {
+    const box = plate.current;
+    if (!flying || !box) return;
+    let live = true;
+    const pins: HTMLElement[] = [];
+    const land = () => {
+      if (!live) return;
+      setLanded(new Set(flying.targets));
+      setLanding(null);
+      setTick((t) => t + 1);
+      setSaid(flying.line);
+      // the bigger news, a beat after the pin: a goal crossed its flag with this book
+      const reached = flying.reached;
+      if (reached)
+        setTimeout(
+          () =>
+            say({
+              text: reached,
+              action: {
+                label: 'See it',
+                icon: <FlagIcon aria-hidden="true" />,
+                run: () => navigate({ to: '/app/goals' }),
+              },
+            }),
+          reduced() ? 0 : 900
+        );
+    };
+    (async () => {
+      setLanded(new Set());
+      await drawn(box);
+      await plateInView(box);
+      if (!live) return;
+      const paths = flying.targets
+        .map((c) => box.querySelector<SVGPathElement>(`[data-code="${c}"]`))
+        .filter((p): p is SVGPathElement => !!p);
+      if (reduced() || !paths.length) return land();
+      // phones: bring the first country into view before anything lands on it
+      const scroller = paths[0].ownerSVGElement?.parentElement;
+      if (scroller && scroller.scrollWidth > scroller.clientWidth + 1) {
+        const a = scroller.getBoundingClientRect();
+        const b = paths[0].getBoundingClientRect();
+        scroller.scrollLeft += b.left + b.width / 2 - (a.left + a.width / 2);
+        await new Promise(requestAnimationFrame);
+      }
+      // a return visit: no flight to a country already marked, just a ring where the book went back to
+      if (flying.returning) {
+        ringAt(paths[0].getBoundingClientRect());
+        return land();
+      }
+      const launch =
+        [...document.querySelectorAll('[data-log-toggle]')].find(
+          (t) =>
+            t.getClientRects().length &&
+            getComputedStyle(t).visibility !== 'hidden'
+        ) ?? document.querySelector('header');
+      const from = launch!.getBoundingClientRect();
+      const x0 = from.left + from.width / 2;
+      const y0 = from.top + from.height / 2;
+      let count = 0;
+      paths.forEach((p, n) => {
+        const b = p.getBoundingClientRect();
+        const dx = b.left + b.width / 2 - x0;
+        const dy = b.top + b.height / 2 - y0;
+        const lift = Math.min(160, Math.abs(dx) * 0.25 + 60);
+        const pin = document.createElement('div');
+        pin.className = s.flyPin;
+        pin.setAttribute('aria-hidden', 'true');
+        pin.innerHTML = PIN;
+        pin.style.left = `${x0}px`;
+        pin.style.top = `${y0}px`;
+        document.body.appendChild(pin);
+        pins.push(pin);
+        pin.animate(
+          [
+            { transform: 'translate(-50%, -100%) scale(1.2)', opacity: 0 },
+            {
+              transform: 'translate(-50%, -100%) scale(1)',
+              opacity: 1,
+              offset: 0.12,
+            },
+            {
+              transform: `translate(calc(-50% + ${dx / 2}px), calc(-100% + ${dy / 2 - lift}px)) scale(1)`,
+              offset: 0.55,
+            },
+            {
+              transform: `translate(calc(-50% + ${dx}px), calc(-100% + ${dy}px)) scale(1)`,
+              opacity: 1,
+              offset: 0.9,
+            },
+            {
+              transform: `translate(calc(-50% + ${dx}px), calc(-100% + ${dy}px)) scale(.6)`,
+              opacity: 0,
+            },
+          ],
+          {
+            duration: 820,
+            delay: 120 + n * 110,
+            easing: 'cubic-bezier(.45,.05,.3,1)',
+            fill: 'forwards',
+          }
+        ).onfinish = () => {
+          pin.remove();
+          if (!live) return;
+          const code = p.dataset.code!;
+          setLanded((l) => new Set(l).add(code));
+          if (b.width < 24 && b.height < 24) ringAt(b);
+          if (++count === paths.length) setTimeout(land, 260);
+        };
+      });
+    })();
+    return () => {
+      live = false;
+      pins.forEach((p) => p.remove());
+    };
+  }, [flying, setLanding, say, navigate]);
+
   const firstName = String(user?.signUpName ?? '')
     .trim()
     .split(/\s+/)[0];
-  const blank = !books.length;
+  const blank = !shown.length;
   const title = blank
     ? 'Your atlas is blank, for now.'
     : firstName
       ? `${firstName}’s atlas`
       : 'Your atlas';
 
-  const onCountryClick = (code: string) => {
-    navigate({ to: '/app/shelf', search: { country: code } });
+  // the countries a tip and a click are for: every marked one, and every unmarked one but Antarctica.
+  // ponytail: the mock offers only the 195; here Taiwan or Kosovo invite a book too, as the form already lists them
+  const codeAt = (target: EventTarget) => {
+    const el = (target as Element).closest<SVGElement>('[data-code]');
+    const code = el?.dataset.code;
+    return el && code && code !== ANTARCTICA ? { el, code } : null;
   };
+  const tipAt = (code: string, el: Element, by: Tip['by']) => {
+    const r = el.getBoundingClientRect();
+    setTip({ code, x: r.left + r.width / 2, y: r.top, bottom: r.bottom, by });
+  };
+
+  const imagined = worlds.filter((w) => w.books.length).length;
+  // laid over the map; kept as one element so the map itself doesn't redraw while a tip follows the pointer
+  const overlay = useMemo(
+    () => (
+      <>
+        {!blank && (
+          <Cartouche stats={stats} show={show} worlds={imagined} tick={tick} />
+        )}
+        <p className={s.atlasStatus} role="status" hidden={!said}>
+          {said}
+        </p>
+      </>
+    ),
+    [blank, stats, show, imagined, tick, said]
+  );
 
   const caption = stats.countries
     ? `Your map: ${stats.countries} of 195 countries marked, ${stats.set} where stories are set and ${stats.authors} where authors are from.`
@@ -89,17 +351,62 @@ const HomePage = () => {
         </div>
       )}
 
-      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- mouse shortcut; the full screen button is the keyboard way */}
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- mouse shortcuts; the country list and the full screen button are the keyboard way */}
       <div
+        ref={plate}
         className={s.plate}
         data-full={full || undefined}
+        data-tips
+        onPointerDown={(e) => {
+          pointer.current =
+            e.pointerType === 'touch' || e.pointerType === 'pen'
+              ? 'touch'
+              : 'mouse';
+        }}
+        onMouseMove={(e) => {
+          if (pointer.current === 'touch') return;
+          const at = codeAt(e.target);
+          setTip(
+            at
+              ? {
+                  code: at.code,
+                  x: e.clientX,
+                  y: e.clientY,
+                  bottom: e.clientY,
+                  by: 'mouse',
+                }
+              : null
+          );
+        }}
+        onMouseLeave={() => pointer.current !== 'touch' && setTip(null)}
         onClick={(e) => {
-          if (
-            !full &&
-            (e.target as Element).closest('.rsm-svg') &&
-            !(e.target as Element).closest(`.${marked}`)
-          )
-            setFull(true);
+          const at = codeAt(e.target);
+          if (!at) {
+            setTip(null);
+            // anywhere but a country opens the full screen map
+            if (
+              !full &&
+              (e.target as Element).closest('.rsm-svg') &&
+              !(e.target as Element).closest('[data-code]')
+            )
+              setFull(true);
+            return;
+          }
+          // on touch, a tap shows the country's card first; a second tap on the same country acts
+          if (pointer.current === 'touch' && tip?.code !== at.code)
+            return tipAt(at.code, at.el, 'touch');
+          setTip(null);
+          if (marks[at.code])
+            return navigate({
+              to: '/app/shelf',
+              search: { country: at.code },
+            });
+          // an unmarked country opens Log a book with it as a place
+          setFull(false);
+          navigate({
+            to: '.',
+            search: (prev) => ({ ...prev, log: true, country: at.code }),
+          });
         }}
       >
         <button
@@ -122,28 +429,38 @@ const HomePage = () => {
           )}
         </button>
         <AtlasMap
-          marks={marks}
+          marks={painted}
           dots={dots}
           show={show}
-          onCountryClick={onCountryClick}
+          open
+          landed={landed}
           caption={caption}
         >
-          {!blank && <Cartouche stats={stats} show={show} />}
+          {overlay}
         </AtlasMap>
         {!blank && (
-          <MapKey show={show} onShow={setShow} canFilter={books.length > 1} />
+          <MapKey show={show} onShow={setShow} canFilter={shown.length > 1} />
         )}
       </div>
 
       {!blank && (
         <>
+          <BeyondMap worlds={worlds} />
           <RecentReads
-            books={[...books].sort(byLogged).slice(0, RECENT)}
+            books={[...shown].sort(byLogged).slice(0, RECENT)}
             names={names}
           />
-          <AtlasCountries marks={marks} names={names} />
+          <AtlasCountries
+            marks={held}
+            names={names}
+            onFocusCountry={(code, el) =>
+              el ? tipAt(code, el, 'key') : setTip(null)
+            }
+          />
         </>
       )}
+
+      {tip && <MapTip tip={tip} marks={marks} names={names} />}
     </>
   );
 };

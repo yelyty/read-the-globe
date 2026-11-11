@@ -1,6 +1,14 @@
-import { globalStyle, style } from '@vanilla-extract/css';
+import { globalStyle, keyframes, style } from '@vanilla-extract/css';
 import { fontSize, space, vars } from '../../styles/theme.css';
-import { coarse, hover, phone } from '../../styles/global.css';
+import {
+  band as paperBand,
+  coarse,
+  easeOut,
+  easeSoft,
+  hover,
+  phone,
+  reducedMotion,
+} from '../../styles/global.css';
 
 const focusRing = {
   outline: `2px solid ${vars.color.accent}`,
@@ -505,3 +513,367 @@ export const primary = style({
   ':hover': { background: vars.color.primaryHover },
 });
 globalStyle(`${primary} svg`, { width: 16, height: 16 });
+
+/* ---------- the map's tip: a marked country's books, or what a click on an unmarked one does ---------- */
+// a floating layer keeps a thin edge in place of a blurred shadow
+export const tip = style({
+  position: 'fixed',
+  zIndex: 90,
+  width: 'max-content',
+  maxWidth: 300,
+  padding: '16px 16px 8px',
+  background: vars.color.surface,
+  color: vars.color.text,
+  border: `1px solid ${vars.color.border}`,
+  borderRadius: 8,
+  fontSize: fontSize.meta,
+  lineHeight: 1.35,
+  pointerEvents: 'none',
+});
+export const tipHead = style({
+  display: 'flex',
+  alignItems: 'baseline',
+  justifyContent: 'space-between',
+  gap: 16,
+  margin: 0,
+});
+globalStyle(`${tipHead} b`, {
+  fontFamily: vars.font.serif,
+  fontSize: fontSize.item,
+  fontWeight: 500,
+});
+globalStyle(`${tipHead} span`, {
+  fontSize: fontSize.label,
+  color: vars.color.textMuted,
+  whiteSpace: 'nowrap',
+});
+export const tipHeadBooks = style({
+  paddingBottom: 8,
+  borderBottom: `1px solid ${vars.color.border}`,
+});
+export const tipList = style({
+  listStyle: 'none',
+  margin: 0,
+  padding: '8px 0 0',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 8,
+});
+globalStyle(`${tipList} li`, {
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: 8,
+});
+// the covers, drawn small: a cloth colour with a band near the top
+export const tipCover = style({
+  flex: 'none',
+  position: 'relative',
+  width: 26,
+  height: 37,
+  borderRadius: 2,
+  '::before': {
+    content: '""',
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: '18%',
+    height: 1.2,
+    background: 'rgba(255, 255, 255, .45)',
+  },
+});
+export const tipBook = style({
+  display: 'flex',
+  flexDirection: 'column',
+  minWidth: 0,
+  color: vars.color.textSecondary,
+});
+export const tipTitle = style({
+  fontFamily: vars.font.serif,
+  fontSize: fontSize.body,
+  lineHeight: 1.2,
+  color: vars.color.text,
+});
+export const tipWhy = style({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 8,
+  marginTop: 2,
+  fontSize: fontSize.label,
+  color: vars.color.textMuted,
+});
+globalStyle(`${tipWhy} i`, { width: 8, height: 8 });
+export const tipFoot = style({
+  margin: '4px 0 0',
+  fontSize: fontSize.label,
+  color: vars.color.textMuted,
+});
+export const tipFootRule = style({
+  marginTop: 8,
+  paddingTop: 8,
+  borderTop: `1px solid ${vars.color.border}`,
+});
+
+/* ---------- the pin moment: a pin flies from Log a book to each new country, the count ticks ---------- */
+export const flyPin = style({
+  position: 'fixed',
+  zIndex: 90,
+  width: 32,
+  height: 32,
+  pointerEvents: 'none',
+});
+globalStyle(`${flyPin} svg`, {
+  display: 'block',
+  width: '100%',
+  height: '100%',
+});
+globalStyle(`${flyPin} path`, {
+  fill: vars.color.text,
+  stroke: vars.color.surface,
+  strokeWidth: 1.4,
+});
+globalStyle(`${flyPin} circle`, { fill: vars.color.secondaryBright });
+export const landRing = style({
+  position: 'fixed',
+  zIndex: 89,
+  width: 32,
+  height: 32,
+  borderRadius: '50%',
+  border: `2px solid ${vars.color.secondary}`,
+  pointerEvents: 'none',
+});
+const tickIn = keyframes({
+  '0%': { color: vars.color.secondary, translate: '0 -3px' },
+  '100%': { translate: '0 0' },
+});
+export const ticked = style({
+  display: 'inline-block',
+  animation: `${tickIn} .6s ${easeSoft} both`,
+  '@media': { [reducedMotion]: { animation: 'none' } },
+});
+// the line said when the pins land, on the map's southern edge so the page never reflows
+export const atlasStatus = style({
+  position: 'absolute',
+  right: 16,
+  bottom: 16,
+  zIndex: 3,
+  maxWidth: 'min(60%, 520px)',
+  margin: 0,
+  padding: '8px 16px',
+  borderRadius: 8,
+  background: vars.color.oliveWash,
+  color: vars.color.oliveInk,
+  border: `1px solid ${vars.color.border}`,
+  fontWeight: 500,
+  fontSize: fontSize.body,
+  '@media': {
+    [phone]: {
+      top: 8,
+      bottom: 'auto',
+      left: 8,
+      right: 8,
+      maxWidth: 'none',
+      fontSize: fontSize.meta,
+    },
+  },
+});
+
+/* ---------- Beyond the map: imagined worlds, under the map ---------- */
+export const beyond = style({
+  marginTop: 8,
+  padding: '16px 24px',
+  borderRadius: 8,
+  background: paperBand,
+});
+export const beyondLabel = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 8,
+  width: 'fit-content',
+  minHeight: 40,
+  fontSize: fontSize.label,
+  fontWeight: 500,
+  letterSpacing: 1.4,
+  textTransform: 'uppercase',
+  color: vars.color.textMuted,
+  cursor: 'pointer',
+  listStyle: 'none',
+  ':focus-visible': focusRing,
+  '::before': {
+    content: '""',
+    width: 7,
+    height: 7,
+    marginRight: 2,
+    borderRight: '1.5px solid currentColor',
+    borderBottom: '1.5px solid currentColor',
+    rotate: '-45deg',
+    transition: `rotate .2s ${easeOut}`,
+  },
+  selectors: {
+    '&::-webkit-details-marker': { display: 'none' },
+    [`${beyond}[open] > &::before`]: { rotate: '45deg' },
+  },
+  '@media': {
+    [hover]: { selectors: { '&:hover': { color: vars.color.text } } },
+    [coarse]: { minHeight: 44 },
+    [reducedMotion]: { selectors: { '&::before': { transition: 'none' } } },
+  },
+});
+export const beyondSum = style({
+  fontWeight: 400,
+  letterSpacing: 0,
+  textTransform: 'none',
+  fontSize: fontSize.meta,
+  fontVariantNumeric: 'lining-nums tabular-nums',
+});
+export const beyondBody = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 16,
+  marginTop: 16,
+});
+export const beyondList = style({
+  margin: 0,
+  padding: 0,
+  listStyle: 'none',
+  borderTop: `1px solid ${vars.color.border}`,
+});
+export const worldRow = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 8,
+  borderBottom: `1px solid ${vars.color.border}`,
+});
+export const worldOpen = style({
+  flex: 1,
+  display: 'flex',
+  alignItems: 'baseline',
+  gap: 8,
+  minHeight: 44,
+  padding: '8px 4px',
+  background: 'none',
+  border: 0,
+  font: 'inherit',
+  color: 'inherit',
+  textAlign: 'left',
+  cursor: 'pointer',
+  ':focus-visible': { ...focusRing, borderRadius: 8 },
+});
+export const dotImagined = style({
+  alignSelf: 'center',
+  flex: 'none',
+  width: 10,
+  height: 10,
+  borderRadius: '50%',
+  border: `1.5px dashed ${vars.color.textSecondary}`,
+});
+export const worldName = style({
+  fontFamily: vars.font.serif,
+  fontSize: fontSize.item,
+  color: vars.color.text,
+  selectors: { '&[data-saved]': { color: vars.color.textSecondary } },
+  '@media': {
+    [hover]: {
+      selectors: {
+        [`${worldOpen}:hover &`]: {
+          textDecoration: 'underline',
+          textUnderlineOffset: 3,
+        },
+      },
+    },
+  },
+});
+export const beyondN = style({
+  marginLeft: 'auto',
+  fontSize: fontSize.meta,
+  color: vars.color.textMuted,
+  fontVariantNumeric: 'lining-nums tabular-nums',
+});
+export const beyondRm = style({
+  display: 'grid',
+  placeItems: 'center',
+  flex: 'none',
+  width: 32,
+  height: 32,
+  padding: 0,
+  border: 0,
+  borderRadius: '50%',
+  background: 'none',
+  color: vars.color.textSecondary,
+  cursor: 'pointer',
+  transition: `scale .16s ${easeOut}`,
+  ':focus-visible': focusRing,
+  ':active': { scale: '.97' },
+  '@media': {
+    [hover]: { selectors: { '&:hover': { background: fill } } },
+    [coarse]: { width: 44, height: 44 },
+  },
+});
+globalStyle(`${beyondRm} svg`, { width: 16, height: 16 });
+export const beyondAdd = style({
+  display: 'flex',
+  flexWrap: 'wrap',
+  alignItems: 'center',
+  gap: 8,
+});
+globalStyle(`${beyondAdd} input`, {
+  width: 184,
+  minHeight: 40,
+  padding: '4px 16px',
+  border: `1.5px solid ${vars.color.fieldLine}`,
+  borderRadius: 999,
+  background: vars.color.field,
+  fontFamily: vars.font.serif,
+  fontSize: fontSize.body,
+  color: vars.color.text,
+  '@media': {
+    [phone]: { flex: 1, width: 'auto' },
+    [coarse]: { minHeight: 44 },
+  },
+});
+globalStyle(`${beyondAdd} input:focus`, {
+  outline: 'none',
+  borderColor: vars.color.accent,
+});
+export const beyondBtn = style([
+  more,
+  {
+    padding: 0,
+    border: 0,
+    background: 'none',
+    fontFamily: vars.font.sans,
+    fontSize: fontSize.body,
+    cursor: 'pointer',
+    whiteSpace: 'nowrap',
+  },
+]);
+
+/* ---------- a world's books, in a dialog ---------- */
+export const worldSub = style({
+  margin: '2px 0 0',
+  fontSize: fontSize.meta,
+  color: vars.color.textMuted,
+});
+export const worldBooks = style({
+  listStyle: 'none',
+  margin: 0,
+  padding: 0,
+  maxHeight: 'min(380px, 50vh)',
+  overflowY: 'auto',
+  borderTop: `1px solid ${vars.color.border}`,
+});
+globalStyle(`${worldBooks} li`, {
+  display: 'flex',
+  alignItems: 'center',
+  gap: 16,
+  padding: '16px 0',
+  borderBottom: `1px solid ${vars.color.border}`,
+});
+globalStyle(`${worldBooks} li > div`, {
+  flex: 1,
+  minWidth: 0,
+  display: 'flex',
+  flexDirection: 'column',
+  fontSize: fontSize.meta,
+  color: vars.color.textSecondary,
+});
+globalStyle(`${worldBooks} time`, { color: vars.color.textMuted });

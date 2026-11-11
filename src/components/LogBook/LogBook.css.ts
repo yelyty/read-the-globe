@@ -8,6 +8,7 @@ import {
   caps,
   easeOut,
   fill,
+  fillHover,
   focusRing,
   hatch,
 } from '../../styles/global.css';
@@ -154,6 +155,14 @@ export const swatch = style({
   background: hatch,
 });
 globalStyle(`${mark} i`, { marginRight: 0 });
+// an imagined world: a dashed ring, on no map
+export const dotImagined = style({
+  ...dot,
+  border: `1.5px dashed ${vars.color.textSecondary}`,
+  width: 10,
+  height: 10,
+});
+export const markNote = style({ color: vars.color.textMuted });
 
 /* ---------- places ---------- */
 export const set = style({
@@ -202,6 +211,84 @@ globalStyle(`${place} > button`, {
   '@media': { [phone]: { gridColumn: 2, gridRow: '1 / span 2' } },
 });
 globalStyle(`${place} > div`, { '@media': { [phone]: { gridColumn: 1 } } });
+
+// an imagined place has no country: its name takes the country's room
+globalStyle(`${place}[data-imagined] > input`, {
+  gridColumn: '1 / 3',
+  '@media': { [phone]: { gridColumn: 1 } },
+});
+
+/* ---------- under a country: what an old or dependent name counts as, and the choice for a state that split ---------- */
+export const thenNote = style({
+  marginTop: 8,
+  fontSize: 14,
+  color: vars.color.textSecondary,
+  selectors: { [`${place} > &`]: { gridColumn: '1 / -1', marginTop: 0 } },
+});
+globalStyle(`${thenNote} p`, { margin: 0 });
+globalStyle(`${thenNote} b`, { fontWeight: 500, color: vars.color.text });
+export const thenChange = style({
+  marginLeft: 4,
+  padding: 0,
+  border: 0,
+  background: 'none',
+  font: 'inherit',
+  fontWeight: 500,
+  color: vars.color.textSecondary,
+  textDecoration: 'underline',
+  textUnderlineOffset: 3,
+  cursor: 'pointer',
+  ':focus-visible': focusRing,
+  '@media': {
+    [hover]: { selectors: { '&:hover': { color: vars.color.text } } },
+  },
+});
+export const thenPicks = style({
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: 8,
+  marginTop: 8,
+});
+// the same pills as the map's Show filter: a flat fill, no bolder weight when picked
+globalStyle(`${thenPicks} button`, {
+  minHeight: 32,
+  padding: '4px 16px',
+  border: '1px solid transparent',
+  borderRadius: 999,
+  background: fill,
+  fontFamily: vars.font.sans,
+  fontSize: 14,
+  fontWeight: 500,
+  color: vars.color.textSecondary,
+  cursor: 'pointer',
+  transition: `scale .16s ${easeOut}`,
+  '@media': {
+    [coarse]: { minHeight: 44 },
+    [reducedMotion]: { transition: 'none' },
+    '(forced-colors: active)': { borderColor: 'ButtonText' },
+  },
+});
+globalStyle(`${thenPicks} button:active`, { scale: '.97' });
+globalStyle(`${thenPicks} button:hover`, {
+  '@media': { [hover]: { background: fillHover, color: vars.color.text } },
+});
+globalStyle(`${thenPicks} button:focus-visible`, focusRing);
+globalStyle(`${thenPicks} button[aria-pressed="true"]`, {
+  background: `color-mix(in srgb, ${vars.color.secondary} 22%, ${vars.color.background})`,
+  color: vars.color.text,
+});
+
+export const imagined = style({
+  gridColumn: '1 / -1',
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 8,
+  width: 'fit-content',
+  minHeight: 32,
+  fontSize: 14,
+  color: vars.color.textSecondary,
+  cursor: 'pointer',
+});
 
 export const month = style({ display: 'flex', gap: 8, maxWidth: 400 });
 globalStyle(`${month} select:first-of-type`, { flex: '1.4 1 0' });

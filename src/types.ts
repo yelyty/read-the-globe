@@ -41,6 +41,13 @@ export interface Place {
   lat: number;
   countryCode?: string | null;
   bookId: string;
+  /** not on any map: name is the imagined world, and there is no country */
+  imagined?: boolean;
+}
+
+export interface World {
+  id: string;
+  name: string;
 }
 
 export type GoalKind = 'region' | 'countries' | 'theme';

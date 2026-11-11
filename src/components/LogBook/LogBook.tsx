@@ -12,14 +12,27 @@ import {
   TrashIcon,
   XIcon,
 } from '@phosphor-icons/react';
+import type { Feature } from 'geojson';
 import { useStatus } from '../../hooks/useStatus';
+import { useLanding, type Landing } from '../../hooks/useLanding';
 import type { BookEntry, Goal, NextRead } from '../../types';
-import { deleteBook, saveBook } from '../../api/books/books';
+import { deleteBook, saveBook, type BookDraft } from '../../api/books/books';
 import { removeNextRead } from '../../api/nextReads/nextReads';
 import { worldShapes } from '../../utils/worldShapes';
+import { atlasMarks } from '../../utils/atlasMarks';
+import { pinMoment } from '../../utils/pinMoment';
+import { worldsOf } from '../../utils/worlds';
+import {
+  countryFrom,
+  splitStates,
+  tidy,
+  type CountryMatch,
+} from '../../utils/countryFrom';
+import { goalProgress, isDone, plural } from '../../pages/GoalsPage/goals';
 import * as f from '../Field/Field.css';
 import * as s from './LogBook.css';
 import Hint from '../Hint/Hint';
+import Suggest from '../Suggest/Suggest';
 import { localToday, readDate, readOnFor } from '../../utils/readDate';
 
 const app = getRouteApi('/app');
@@ -34,12 +47,24 @@ const YEARS = Array.from({ length: 80 }, (_, i) =>
   String(new Date().getFullYear() - i)
 );
 
-type Row = { key: number; name: string; country: string };
+/* a place: a name and its country, or (imagined) a world's name and no country.
+   pick: the country chosen for a state that split; open: its choice unfolded again by Change */
+type Row = {
+  key: number;
+  name: string;
+  country: string;
+  imagined: boolean;
+  pick: string;
+  open: boolean;
+};
 let rowKey = 0;
-const row = (name = '', country = ''): Row => ({
+const row = (name = '', country = '', imagined = false): Row => ({
   key: ++rowKey,
   name,
   country,
+  imagined,
+  pick: '',
+  open: false,
 });
 
 const formatMonth = (day: string) =>
@@ -50,14 +75,20 @@ const formatMonth = (day: string) =>
       })
     : '';
 
+// ?country=<code> or ?world=<name> starts it with a place there (a click on the map, a world's Log a book set here).
 const LogBook = () => {
   const status = useStatus();
-  const { log, edit, next } = app.useSearch();
-  const { books, goals } = app.useLoaderData();
+  const { log, edit, next, country, world } = app.useSearch();
+  const { books, goals, worlds } = app.useLoaderData();
   const navigate = useNavigate();
   const router = useRouter();
-  const [names, setNames] = useState<Record<string, string>>();
+  const [shapes, setShapes] = useState<Record<string, Feature>>();
   const [said, setSaid] = useState('');
+  const [, setLanding] = useLanding();
+  // on the Shelf, ?country is also the country page, so it stays when the form closes
+  const onShelf = useRouterState({
+    select: (st) => st.matches.some((m) => m.routeId === '/app/shelf'),
+  });
   const book = edit ? books.find((b) => b.id === edit) : undefined;
   const open = Boolean(log || book);
   // the item "Log it" came from, from the Shelf's loader (the only place it can be pressed)
@@ -69,20 +100,23 @@ const LogBook = () => {
       )?.items.find((it) => it.id === next),
   });
 
-  // country names from the 50m map, the same list as the countries table (the 110m one misses small countries)
+  // country names from the 50m map, the same list as the countries table (the 110m one misses small countries);
+  // the shapes themselves size up a region goal, to tell whether this book reached it
   useEffect(() => {
-    if (!open || names) return;
-    worldShapes().then((shapes) =>
-      setNames(
-        Object.fromEntries(
-          Object.entries(shapes).map(([code, shape]) => [
-            code,
-            String(shape.properties?.name ?? ''),
-          ])
-        )
-      )
-    );
-  }, [open, names]);
+    if (!open || shapes) return;
+    worldShapes().then(setShapes);
+  }, [open, shapes]);
+  const names = useMemo(
+    () =>
+      shapes &&
+      Object.fromEntries(
+        Object.entries(shapes).map(([code, shape]) => [
+          code,
+          String(shape.properties?.name ?? ''),
+        ])
+      ),
+    [shapes]
+  );
 
   const close = () =>
     navigate({
@@ -92,15 +126,20 @@ const LogBook = () => {
         log: undefined,
         edit: undefined,
         next: undefined,
+        world: undefined,
+        country: onShelf ? prev.country : undefined,
       }),
     });
 
-  // a new book goes to Home to be seen on the atlas; an edit stays where it was
-  const done = async (message: string, home: boolean) => {
-    if (home) await navigate({ to: '/app', search: {} });
-    else await close();
+  // a new book goes to Home to land on the atlas; an edit stays where it was
+  const done = async (message: string, landing?: Landing) => {
+    if (landing) {
+      setLanding(landing);
+      await navigate({ to: '/app', search: {} });
+    } else await close();
     await router.invalidate();
-    setSaid(message);
+    // Home says where the new book went when its pins land
+    if (!landing) setSaid(message);
   };
 
   // Undo puts the book back through the same save as the form: a new row with the same title, author, places,
@@ -114,14 +153,15 @@ const LogBook = () => {
         label: 'Undo',
         icon: <ArrowCounterClockwiseIcon aria-hidden="true" />,
         run: async () => {
-          const error = await saveBook({
+          const { error } = await saveBook({
             title: gone.title,
             author: gone.author?.name ?? '',
             authorCountry: gone.author?.country?.code ?? '',
             readOn: readDate(gone),
             places: gone.places.map((p) => ({
               name: p.name,
-              country: p.countryCode ?? '',
+              country: p.imagined ? null : (p.countryCode ?? ''),
+              imagined: p.imagined,
             })),
             goalIds: gone.goals.map((g) => g.goalId),
           });
@@ -135,14 +175,18 @@ const LogBook = () => {
 
   return (
     <>
-      {open && names && (
+      {open && shapes && names && (
         <LogForm
           key={edit ?? 'new'}
           book={book}
           nextItem={nextItem}
+          setIn={country}
+          world={world}
+          shapes={shapes}
           names={names}
           books={books}
           goals={goals}
+          worlds={worldsOf(books, worlds).map((w) => w.name)}
           onClose={close}
           onDone={done}
           onRemoved={removed}
@@ -158,40 +202,46 @@ const LogBook = () => {
 type LogFormProps = {
   book?: BookEntry;
   nextItem?: NextRead;
+  /** a country to start with as a place */
+  setIn?: string;
+  /** an imagined world to start with as a place */
+  world?: string;
+  shapes: Record<string, Feature>;
   names: Record<string, string>;
   books: BookEntry[];
   goals: Goal[];
+  /** the reader's imagined worlds, offered when a place is marked imagined */
+  worlds: string[];
   onClose: () => void;
-  onDone: (message: string, home: boolean) => void;
+  onDone: (message: string, landing?: Landing) => void;
   onRemoved: (book: BookEntry) => void;
 };
 
 const LogForm = ({
   book,
   nextItem,
+  setIn,
+  world,
+  shapes,
   names,
   books,
   goals,
+  worlds,
   onClose,
   onDone,
   onRemoved,
 }: LogFormProps) => {
   const dialog = useRef<HTMLDialogElement>(null);
   const name = (code?: string | null) => (code ? (names[code] ?? '') : '');
-  const byName = useMemo(
-    () =>
-      Object.fromEntries(
-        Object.entries(names).map(([code, n]) => [n.toLowerCase(), code])
-      ),
+  const countries = useMemo(
+    () => Object.values(names).sort((a, b) => a.localeCompare(b)),
     [names]
   );
-  const codeOf = (typed: string): string | undefined =>
-    byName[typed.trim().toLowerCase()];
   // "City, Country" in one go
   const split = (raw: string) => {
     const m = raw.match(/^(.*),\s*([^,]+)$/);
-    const code = m ? codeOf(m[2]) : undefined;
-    return m && code ? { name: m[1].trim(), code } : null;
+    const c = m && countryFrom(m[2], names);
+    return m && c ? { name: m[1].trim(), code: c.code } : null;
   };
 
   const startYm = book ? readDate(book).slice(0, 7) : '';
@@ -206,14 +256,32 @@ const LogForm = ({
         (nextItem?.mark === 'author' ? nextItem.countryCode : null)
     )
   );
+  const [authorPick, setAuthorPick] = useState('');
+  const [authorOpen, setAuthorOpen] = useState(false);
+  // a place to start with: from a Next to read item, a click on the map, or a world's box
+  const startCountry = name(
+    nextItem?.mark === 'set' ? nextItem.countryCode : setIn
+  );
   const [rows, setRows] = useState<Row[]>(() =>
     book?.places.length
       ? book.places.map((p) =>
-          // a place saved as just its country shows as an empty name beside that country
-          row(p.name === name(p.countryCode) ? '' : p.name, name(p.countryCode))
+          p.imagined
+            ? row(p.name, '', true)
+            : // a place saved as just its country shows as an empty name beside that country
+              row(
+                p.name === name(p.countryCode) ? '' : p.name,
+                name(p.countryCode)
+              )
         )
-      : [row('', nextItem?.mark === 'set' ? name(nextItem.countryCode) : '')]
+      : [world ? row(world, '', true) : row('', startCountry)]
   );
+  const sub = book
+    ? ''
+    : world || startCountry
+      ? `A book set in ${world || startCountry}?`
+      : books.length
+        ? ''
+        : 'Pin the last book you loved.';
   const [mon, setMon] = useState(startYm.slice(5, 7));
   const [year, setYear] = useState(startYm.slice(0, 4));
   const [ticks, setTicks] = useState<number[]>(
@@ -235,23 +303,32 @@ const LogForm = ({
   }, []);
 
   const places = rows
-    .filter((r) => r.name.trim() || r.country.trim())
+    .filter((r) => r.name.trim() || (!r.imagined && r.country.trim()))
     .map((r) => {
+      if (r.imagined)
+        return { key: r.key, name: tidy(r.name), imagined: true, typed: '' };
       const sp = split(r.name);
+      const c: CountryMatch | null =
+        countryFrom(r.country, names, r.pick) ??
+        (sp ? { code: sp.code } : null);
       return {
         key: r.key,
         name: sp ? sp.name : r.name.trim(),
-        code: codeOf(r.country) ?? sp?.code,
+        imagined: false,
+        match: c,
+        code: c?.code,
         typed: r.country.trim(),
       };
     });
-  const authorCode = codeOf(country);
+  const authorMatch = countryFrom(country, names, authorPick);
+  const authorCode = authorMatch?.code;
 
   // what Pin it will mark, in words
   const marks: Record<string, { set?: boolean; author?: boolean }> = {};
   if (authorCode) marks[authorCode] = { author: true };
   for (const p of places)
     if (p.code) marks[p.code] = { ...marks[p.code], set: true };
+  const imagined = places.filter((p) => p.imagined);
 
   // an error goes as soon as its field is touched
   const fix = (key: string) => {
@@ -270,11 +347,13 @@ const LogForm = ({
     setRows((rs) => rs.map((r) => (r.key === key ? { ...r, ...change } : r)));
 
   const countryError = (typed: string, place: boolean) =>
-    typed
-      ? `No country called “${typed}”. Pick one from the list.`
-      : place
-        ? 'Add the country this place is in.'
-        : 'Add the country the author is from.';
+    splitStates(typed)
+      ? `Choose which country ${tidy(typed)} is today.`
+      : typed
+        ? `No country called “${typed}”. Pick one from the list.`
+        : place
+          ? 'Add the country this place is in.'
+          : 'Add the country the author is from.';
   const FIELD: Record<string, [id: string, label: string]> = {
     title: ['f-title', 'title'],
     author: ['f-author', 'author'],
@@ -291,7 +370,8 @@ const LogForm = ({
     if (!author.trim()) errs.author = 'Add the author’s name.';
     if (!authorCode) errs.country = countryError(country.trim(), false);
     for (const p of places)
-      if (!p.code) errs[`place-${p.key}`] = countryError(p.typed, true);
+      if (!p.code && !p.imagined)
+        errs[`place-${p.key}`] = countryError(p.typed, true);
     setErrors(errs);
     const bad = Object.keys(errs);
     if (bad.length) {
@@ -321,28 +401,76 @@ const LogForm = ({
 
     // the read month goes to read_on; created_at stays the day it was logged (Home's Recent reads)
     const readOn = readOnFor(mon, year, startYm, localToday());
+
+    // ponytail: an old name or a territory isn't kept beside the country; it only names an unnamed place
+    const draft: BookDraft = {
+      title: title.trim(),
+      author: author.trim(),
+      authorCountry: authorCode!,
+      readOn,
+      places: places.map((p) =>
+        p.imagined
+          ? { name: p.name, country: null, imagined: true }
+          : {
+              name: p.name || p.match?.as || p.match?.then || name(p.code),
+              country: p.code!,
+            }
+      ),
+      goalIds: ticks,
+    };
     setSaving(true);
-    const error = await saveBook(
-      {
-        title: title.trim(),
-        author: author.trim(),
-        authorCountry: authorCode!,
-        readOn,
-        places: places.map((p) => ({
-          name: p.name || name(p.code),
-          country: p.code!,
-        })),
-        goalIds: ticks,
-      },
-      book?.id
-    );
-    if (error) {
+    const { id, error } = await saveBook(draft, book?.id);
+    if (error || !id) {
       setSaving(false);
-      setFormError(error);
+      setFormError(error ?? '');
       return;
     }
     if (!book && nextItem) await removeNextRead(nextItem.id);
-    onDone(book ? `Saved ${title.trim()}.` : `Pinned ${title.trim()}.`, !book);
+    onDone(
+      book ? `Saved ${title.trim()}.` : `Pinned ${title.trim()}.`,
+      book ? undefined : landing(id, draft)
+    );
+  };
+
+  // where the new book lands on Home, and whether it carried a goal over its flag
+  const landing = (id: string, draft: BookDraft): Landing => {
+    const added: BookEntry = {
+      id,
+      title: draft.title,
+      author: {
+        name: draft.author,
+        country: { code: draft.authorCountry, name: name(draft.authorCountry) },
+      },
+      places: draft.places.map((p, i) => ({
+        id: String(i),
+        name: p.name,
+        lon: 0,
+        lat: 0,
+        countryCode: p.country,
+        bookId: id,
+        imagined: p.imagined,
+      })),
+      goals: draft.goalIds.map((goalId) => ({ goalId })),
+    };
+    const all = [...books, added];
+    const before = atlasMarks(books);
+    const after = atlasMarks(all);
+    // the Goals page stamps them when the reader goes to look
+    const reached = goals.filter(
+      (g) =>
+        !g.reachedOn &&
+        !isDone(goalProgress(g, before, books, shapes)) &&
+        isDone(goalProgress(g, after, all, shapes))
+    );
+    const g = reached[0];
+    const total = g && goalProgress(g, after, all, shapes).total;
+    return {
+      ...pinMoment(added, before, after, names),
+      bookId: id,
+      reached: g
+        ? `Goal reached: ${g.name}, ${g.kind === 'theme' ? plural(total, 'book') : `all ${plural(total, 'country', 'countries')}`}.${reached.length > 1 ? ` And ${reached.length - 1} more.` : ''}`
+        : null,
+    };
   };
 
   const remove = async () => {
@@ -382,9 +510,7 @@ const LogForm = ({
             {book ? 'Editing' : 'Log a book'}
           </h2>
           {book && <p className={s.editing}>{book.title}</p>}
-          {!book && !books.length && (
-            <p className={s.sub}>Pin the last book you loved.</p>
-          )}
+          {sub && <p className={s.sub}>{sub}</p>}
         </div>
         <button
           type="button"
@@ -396,7 +522,7 @@ const LogForm = ({
         </button>
       </div>
 
-      {preview.length > 0 && (
+      {(preview.length > 0 || imagined.length > 0) && (
         <p className={s.preview}>
           <span className={s.label}>Will mark</span>
           {preview.map(([code, m]) => (
@@ -416,6 +542,13 @@ const LogForm = ({
                     ? 'where it is set'
                     : 'where its author is from'}
               </span>
+            </span>
+          ))}
+          {imagined.map((p) => (
+            <span key={p.key} className={s.mark}>
+              <i className={s.dotImagined} aria-hidden="true" />
+              {p.name}
+              <span className={s.markNote}> · imagined, not on the map</span>
             </span>
           ))}
         </p>
@@ -479,20 +612,35 @@ const LogForm = ({
             <i className={s.dotAuthor} aria-hidden="true" />
             Author’s country
           </label>
-          <input
+          <Suggest
             id="f-country"
             className={f.input}
             autoComplete="off"
-            list="log-countries"
+            options={countries}
             maxLength={60}
             placeholder="Where are they from?"
             value={country}
             aria-invalid={errors.country ? true : undefined}
             aria-describedby={`${errors.country ? 'f-country-err ' : ''}f-country-note`}
-            onChange={(e) => {
-              setCountry(e.target.value);
+            onValue={(v) => {
+              setCountry(v);
+              if (!splitStates(v)) setAuthorPick('');
+              setAuthorOpen(false);
               fix('country');
             }}
+          />
+          <ThenNote
+            typed={country}
+            pick={authorPick}
+            open={authorOpen}
+            author
+            names={names}
+            onPick={(code) => {
+              setAuthorPick(code);
+              setAuthorOpen(false);
+              fix('country');
+            }}
+            onChange={() => setAuthorOpen(true)}
           />
           {errors.country && (
             <div id="f-country-err" className={f.fieldError}>
@@ -523,55 +671,72 @@ const LogForm = ({
               const err = errors[`place-${r.key}`];
               const empty = rows.length === 1 && !r.name && !r.country;
               return (
-                <li key={r.key} className={s.place}>
+                <li
+                  key={r.key}
+                  className={s.place}
+                  data-imagined={r.imagined || undefined}
+                >
                   <label className={s.srOnly} htmlFor={`pr-name-${r.key}`}>
                     Place
                   </label>
-                  <input
+                  <Suggest
                     id={`pr-name-${r.key}`}
                     className={f.input}
                     autoComplete="off"
                     maxLength={80}
-                    placeholder="City or region"
+                    placeholder={
+                      r.imagined ? 'Middle-earth, Earthsea…' : 'City or region'
+                    }
+                    // an imagined place offers the reader's worlds; ponytail: no gazetteer of real places yet
+                    options={r.imagined ? worlds : []}
                     value={r.name}
-                    onChange={(e) => {
-                      const sp = split(e.target.value);
+                    onValue={(v) => {
+                      const sp = !r.imagined && split(v);
                       setRow(r.key, {
-                        name: e.target.value,
+                        name: v,
                         ...(sp && !r.country && { country: name(sp.code) }),
                       });
                     }}
                   />
-                  <div data-invalid={Boolean(err)}>
-                    <label className={s.srOnly} htmlFor={`pr-country-${r.key}`}>
-                      Country of that place
-                    </label>
-                    <input
-                      id={`pr-country-${r.key}`}
-                      className={f.input}
-                      autoComplete="off"
-                      list="log-countries"
-                      maxLength={60}
-                      placeholder="Country"
-                      value={r.country}
-                      aria-invalid={err ? true : undefined}
-                      aria-describedby={
-                        err ? `pr-country-${r.key}-err` : undefined
-                      }
-                      onChange={(e) => {
-                        setRow(r.key, { country: e.target.value });
-                        fix(`place-${r.key}`);
-                      }}
-                    />
-                    {err && (
-                      <div
-                        id={`pr-country-${r.key}-err`}
-                        className={f.fieldError}
+                  {!r.imagined && (
+                    <div data-invalid={Boolean(err)}>
+                      <label
+                        className={s.srOnly}
+                        htmlFor={`pr-country-${r.key}`}
                       >
-                        {err}
-                      </div>
-                    )}
-                  </div>
+                        Country of that place
+                      </label>
+                      <Suggest
+                        id={`pr-country-${r.key}`}
+                        className={f.input}
+                        autoComplete="off"
+                        options={countries}
+                        maxLength={60}
+                        placeholder="Country"
+                        value={r.country}
+                        aria-invalid={err ? true : undefined}
+                        aria-describedby={
+                          err ? `pr-country-${r.key}-err` : undefined
+                        }
+                        onValue={(v) => {
+                          setRow(r.key, {
+                            country: v,
+                            open: false,
+                            ...(!splitStates(v) && { pick: '' }),
+                          });
+                          fix(`place-${r.key}`);
+                        }}
+                      />
+                      {err && (
+                        <div
+                          id={`pr-country-${r.key}-err`}
+                          className={f.fieldError}
+                        >
+                          {err}
+                        </div>
+                      )}
+                    </div>
+                  )}
                   <button
                     type="button"
                     className={s.close}
@@ -591,6 +756,31 @@ const LogForm = ({
                   >
                     <XIcon aria-hidden="true" />
                   </button>
+                  {!r.imagined && (
+                    <ThenNote
+                      typed={r.country}
+                      pick={r.pick}
+                      open={r.open}
+                      names={names}
+                      onPick={(code) => {
+                        setRow(r.key, { pick: code, open: false });
+                        fix(`place-${r.key}`);
+                      }}
+                      onChange={() => setRow(r.key, { open: true })}
+                    />
+                  )}
+                  {/* an imagined world has no country: ticking it sets the country aside (kept, in case it's unticked) */}
+                  <label className={s.imagined}>
+                    <input
+                      type="checkbox"
+                      checked={r.imagined}
+                      onChange={(e) => {
+                        setRow(r.key, { imagined: e.target.checked });
+                        fix(`place-${r.key}`);
+                      }}
+                    />
+                    Not on any map (an imagined world)
+                  </label>
                 </li>
               );
             })}
@@ -727,15 +917,97 @@ const LogForm = ({
           </button>
         </div>
       </form>
-
-      <datalist id="log-countries">
-        {Object.values(names)
-          .sort((a, b) => a.localeCompare(b))
-          .map((n) => (
-            <option key={n} value={n} />
-          ))}
-      </datalist>
     </dialog>
+  );
+};
+
+type ThenNoteProps = {
+  typed: string;
+  pick: string;
+  /** the choice unfolded again by Change */
+  open: boolean;
+  author?: boolean;
+  names: Record<string, string>;
+  onPick: (code: string) => void;
+  onChange: () => void;
+};
+
+// Under a country field: what an old or dependent name counts as, and for a state that split, a choice of today's countries
+const ThenNote = ({
+  typed,
+  pick,
+  open,
+  author,
+  names,
+  onPick,
+  onChange,
+}: ThenNoteProps) => {
+  const note = useRef<HTMLDivElement>(null);
+  // after a pick, focus goes to Change; after Change, to the chosen pill
+  const focusIn = (selector: string) =>
+    requestAnimationFrame(() =>
+      note.current?.querySelector<HTMLElement>(selector)?.focus()
+    );
+  const name = tidy(typed);
+  const states = splitStates(typed);
+  const c = countryFrom(typed, names, pick);
+  let content = null;
+  if (states && c && !open)
+    content = (
+      <p>
+        {name} is counted as <b>{names[c.code]}</b>.{' '}
+        <button
+          type="button"
+          className={s.thenChange}
+          onClick={() => {
+            onChange();
+            focusIn('[aria-pressed="true"], button');
+          }}
+        >
+          Change
+        </button>
+      </p>
+    );
+  else if (states)
+    content = (
+      <>
+        <p>
+          {name} is {states.length} countries today.{' '}
+          {author
+            ? 'Which did the author live in?'
+            : 'Which is this place in now?'}
+        </p>
+        <div className={s.thenPicks}>
+          {states.map((code) => (
+            <button
+              key={code}
+              type="button"
+              aria-pressed={pick === code}
+              onClick={() => {
+                onPick(code);
+                focusIn('button');
+              }}
+            >
+              {names[code]}
+            </button>
+          ))}
+        </div>
+      </>
+    );
+  else if (c?.then)
+    content = <p>Counted as {names[c.code]}, the country there today.</p>;
+  else if (c?.as && c.under)
+    content = (
+      <p>
+        {c.code === c.under
+          ? `Counted under ${names[c.under]}.`
+          : `Counted under ${names[c.under]}; ${c.as} fills in on the map too.`}
+      </p>
+    );
+  return (
+    <div ref={note} className={s.thenNote} aria-live="polite" hidden={!content}>
+      {content}
+    </div>
   );
 };
 

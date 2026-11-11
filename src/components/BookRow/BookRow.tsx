@@ -15,7 +15,10 @@ const formatMonth = (day: string) =>
 type BookRowProps = { book: BookEntry; names: Record<string, string> };
 
 const BookRow = ({ book, names }: BookRowProps) => {
-  const places = (book.places ?? []).filter((p) => p.name || p.countryCode);
+  const places = (book.places ?? []).filter(
+    (p) => !p.imagined && (p.name || p.countryCode)
+  );
+  const worlds = (book.places ?? []).filter((p) => p.imagined && p.name);
   return (
     <li className={s.row}>
       <div className={s.rowMain}>
@@ -54,7 +57,17 @@ const BookRow = ({ book, names }: BookRowProps) => {
             </span>
           </span>
         ) : (
-          <span className={s.markNone}>No places listed</span>
+          !worlds.length && <span className={s.markNone}>No places listed</span>
+        )}
+        {worlds.length > 0 && (
+          <span className={s.mark}>
+            <i className={s.dotImagined} aria-hidden="true" />
+            <span>
+              <span className={s.srOnly}>Set in the imagined world </span>
+              {worlds.map((p) => p.name).join(', ')}
+              <em className={s.markCountry}> · imagined</em>
+            </span>
+          </span>
         )}
         {book.author?.country && (
           <span className={s.mark}>

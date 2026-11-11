@@ -7,6 +7,7 @@ import '../../App.css';
 import AppHeader from '../AppHeader/AppHeader';
 import AppFooter from '../AppFooter/AppFooter';
 import StatusBar from '../StatusBar/StatusBar';
+import { LandingContext, type Landing } from '../../hooks/useLanding';
 
 import * as s from './AppLayout.css';
 import LogBook from '../LogBook/LogBook';
@@ -41,6 +42,7 @@ const LogPill = () => {
     <Link
       className={s.pill}
       data-away={away || undefined}
+      data-log-toggle // the pinned book's pin leaves from here
       to="."
       search={(prev) => ({ ...prev, log: true })}
     >
@@ -51,6 +53,7 @@ const LogPill = () => {
 };
 
 const AppLayout = () => {
+  const landing = useState<Landing | null>(null);
   const path = useRouterState({
     select: (st) => st.location.pathname.replace(/\/$/, ''),
   });
@@ -64,15 +67,17 @@ const AppLayout = () => {
   }, [path]);
   return (
     <StatusBar>
-      <div className={s.shell}>
-        <AppHeader />
-        <main className={`wrapper ${s.main}`}>
-          <Outlet />
-        </main>
-        <AppFooter />
-        <LogBook />
-        <LogPill />
-      </div>
+      <LandingContext value={landing}>
+        <div className={s.shell}>
+          <AppHeader />
+          <main className={`wrapper ${s.main}`}>
+            <Outlet />
+          </main>
+          <AppFooter />
+          <LogBook />
+          <LogPill />
+        </div>
+      </LandingContext>
     </StatusBar>
   );
 };

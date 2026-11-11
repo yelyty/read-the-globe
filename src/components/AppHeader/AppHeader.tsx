@@ -38,6 +38,7 @@ const AppHeader = () => {
           <ThemeButton />
           <Link
             className={`${h.start} ${s.logBtn}`}
+            data-log-toggle
             to="."
             search={(prev) => ({ ...prev, log: true })}
           >

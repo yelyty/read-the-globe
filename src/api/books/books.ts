@@ -6,15 +6,17 @@ export type BookDraft = {
   authorCountry: string;
   /** when it was read, YYYY-MM-DD; null keeps the book's date (today for a new one) */
   readOn: string | null;
-  places: { name: string; country: string }[];
+  /** an imagined place has a name (its world) and no country */
+  places: { name: string; country: string | null; imagined?: boolean }[];
   goalIds: number[];
 };
 
+// the saved book's id, or what went wrong
 export async function saveBook(
   draft: BookDraft,
   id?: string
-): Promise<string | null> {
-  const { error } = await supabase.rpc('save_book', {
+): Promise<{ id?: string; error?: string }> {
+  const saved = await supabase.rpc('save_book', {
     p_book_id: id ?? null,
     p_title: draft.title,
     p_author: draft.author,
@@ -23,10 +25,11 @@ export async function saveBook(
     p_places: draft.places,
     p_goal_ids: draft.goalIds,
   });
+  const { error } = saved;
   if (error) console.error(error);
   return error
-    ? 'That couldn’t be saved. Check your connection and try again.'
-    : null;
+    ? { error: 'That couldn’t be saved. Check your connection and try again.' }
+    : { id: saved.data as string };
 }
 
 export async function deleteBook(id: string): Promise<string | null> {

@@ -1,6 +1,6 @@
-import { globalStyle, style } from '@vanilla-extract/css';
-import { vars } from '../../styles/theme.css';
-import { phone } from '../../styles/global.css';
+import { globalStyle, keyframes, style } from '@vanilla-extract/css';
+import { fontSize, vars } from '../../styles/theme.css';
+import { easeSoft, hover, phone, reducedMotion } from '../../styles/global.css';
 
 export const plate = style({ position: 'relative', margin: 0 });
 
@@ -13,9 +13,39 @@ export const scroll = style({
       scrollbarColor: `${vars.color.border} transparent`,
       marginInline: 'calc(-1 * clamp(18px, 4vw, 40px))',
       paddingInline: 'clamp(18px, 4vw, 40px)',
+      // the edge that hides more of the world fades out, so the map reads as wider than the screen
+      selectors: {
+        '&[data-more-right]': {
+          maskImage: 'linear-gradient(90deg, #000 85%, transparent)',
+        },
+        '&[data-more-left]': {
+          maskImage: 'linear-gradient(90deg, transparent, #000 15%)',
+        },
+        '&[data-more-left][data-more-right]': {
+          maskImage:
+            'linear-gradient(90deg, transparent, #000 15%, #000 85%, transparent)',
+        },
+      },
     },
   },
 });
+
+// phones only: the one-time "Slide to see the whole map"
+export const hint = style({
+  display: 'none',
+  '@media': {
+    [phone]: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8,
+      margin: '8px 0 0',
+      fontSize: fontSize.meta,
+      color: vars.color.textSecondary,
+    },
+  },
+});
+globalStyle(`${hint} svg`, { width: 16, height: 16 });
 
 export const map = style({
   display: 'block',
@@ -36,6 +66,32 @@ export const land = style({
 export const set = style({});
 export const author = style({});
 export const marked = style({ cursor: 'pointer' });
+// Home: an unmarked country lifts under the pointer, somewhere a book could go
+export const open = style({
+  cursor: 'pointer',
+  '@media': {
+    [hover]: {
+      selectors: {
+        '&:hover': {
+          fillOpacity: 0.95,
+          stroke: vars.color.textMuted,
+          strokeWidth: 0.8,
+        },
+      },
+    },
+  },
+});
+
+// a pinned country settles in: it inks from nothing under a gold edge
+const landIn = keyframes({
+  '0%': { fillOpacity: 0, strokeWidth: 2, stroke: vars.color.secondary },
+  '55%': { fillOpacity: 1 },
+  '100%': { stroke: vars.color.border },
+});
+export const landed = style({
+  animation: `${landIn} .7s ${easeSoft} both`,
+  '@media': { [reducedMotion]: { animation: 'none' } },
+});
 
 globalStyle(`${land}${set}`, { fill: vars.color.olive, fillOpacity: 0.92 });
 

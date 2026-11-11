@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { MapTrifoldIcon } from '@phosphor-icons/react';
-import type { Mark, Marks } from '../../utils/atlasMarks';
+import { counted, type Mark, type Marks } from '../../utils/atlasMarks';
 import {
   CONTINENT_NAMES,
   CONTINENT_OF,
@@ -21,11 +21,21 @@ const describe = ({ set, author }: Mark) =>
     .filter(Boolean)
     .join(', ');
 
-type AtlasCountriesProps = { marks: Marks; names: Record<string, string> };
+type AtlasCountriesProps = {
+  marks: Marks;
+  names: Record<string, string>;
+  /** a chip reached from the keyboard shows the map's tip for its country; null when it goes */
+  onFocusCountry?: (code: string, el: Element | null) => void;
+};
 
-const AtlasCountries = ({ marks, names }: AtlasCountriesProps) => {
+const AtlasCountries = ({
+  marks,
+  names,
+  onFocusCountry,
+}: AtlasCountriesProps) => {
   const byContinent: Partial<Record<Continent, string[]>> = {};
-  for (const code of Object.keys(marks))
+  // a territory's own shape counts under its country, so it isn't listed
+  for (const code of counted(marks))
     (byContinent[CONTINENT_OF[code]] ??= []).push(code);
   const name = (code: string) => names[code] ?? code;
   const continents = (Object.keys(CONTINENT_NAMES) as Continent[]).filter(
@@ -47,7 +57,7 @@ const AtlasCountries = ({ marks, names }: AtlasCountriesProps) => {
           Open a continent, then choose a country to see its books.
         </p>
       </div>
-      <div className={s.cc}>
+      <div className={s.cc} data-tips>
         {continents.map((continent) => {
           const codes = byContinent[continent]!.sort((a, b) =>
             name(a).localeCompare(name(b))
@@ -90,6 +100,11 @@ const AtlasCountries = ({ marks, names }: AtlasCountriesProps) => {
                       className={s.ccStamp}
                       to="/app/shelf"
                       search={{ country: code }}
+                      onFocus={(e) =>
+                        e.currentTarget.matches(':focus-visible') &&
+                        onFocusCountry?.(code, e.currentTarget)
+                      }
+                      onBlur={() => onFocusCountry?.(code, null)}
                     >
                       <span className={s.ccShape}>
                         <CountryShape

@@ -330,10 +330,19 @@ globalStyle(`${emptyPanel} h2`, {
   color: vars.color.text,
 });
 globalStyle(`${emptyPanel} p`, {
-  margin: 0,
+  margin: '0 auto',
   maxWidth: '56ch',
   color: vars.color.textSecondary,
 });
+// Log a book, and (step 3) the reading list import under an "or"
+export const emptyActions = style({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: 16,
+  marginTop: 32,
+});
+globalStyle(`${emptyActions} > a`, { marginTop: 0 });
 
 /* ---------- the stickers: a shelf with a gap (no books), a book with a ribbon (nothing saved) ---------- */
 const deepRust = `color-mix(in srgb, ${vars.color.markerAuthor} 80%, black)`;
@@ -428,6 +437,7 @@ export const emptyNote = style({
   margin: '4px 0 16px',
   color: vars.color.textSecondary,
 });
+globalStyle(`${emptyNote} p`, { margin: '0 0 8px' });
 
 export const moreBtn = style({
   ...button,

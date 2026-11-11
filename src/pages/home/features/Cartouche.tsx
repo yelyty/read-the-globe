@@ -19,9 +19,13 @@ const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 type CartoucheProps = {
   stats: ReturnType<typeof atlasStats>;
   show: Show;
+  /** imagined worlds with books in them */
+  worlds: number;
+  /** goes up when a pinned book lands: the count ticks */
+  tick: number;
 };
 
-const Cartouche = ({ stats, show }: CartoucheProps) => {
+const Cartouche = ({ stats, show, worlds, tick }: CartoucheProps) => {
   const tooltipId = useId();
 
   const countByShow: Record<Show, number> = {
@@ -35,7 +39,9 @@ const Cartouche = ({ stats, show }: CartoucheProps) => {
   return (
     <div className={s.cartouche}>
       <p className={s.cartBig}>
-        <b>{count}</b>
+        <b key={tick} className={tick ? s.ticked : undefined}>
+          {count}
+        </b>
         {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- focusable so keyboard users can open the tooltip */}
         <span className={s.cartOf} tabIndex={0} aria-describedby={tooltipId}>
           / {COUNTRY_TOTAL}
@@ -47,6 +53,7 @@ const Cartouche = ({ stats, show }: CartoucheProps) => {
       <p className={s.cartCap}>{CAPTION[show]}</p>
       <p className={s.cartMeta}>
         {plural(stats.books, 'book')} · {plural(stats.continents, 'continent')}
+        {worlds > 0 && ` · ${plural(worlds, 'imagined world')}`}
       </p>
     </div>
   );

@@ -71,6 +71,13 @@ export const dotAuthor = style({
   ...dot,
   boxShadow: `inset 0 0 0 2.5px ${vars.color.markerAuthor}`,
 });
+// an imagined world: a dashed ring, on no map
+export const dotImagined = style({
+  ...dot,
+  width: 10,
+  height: 10,
+  border: `1.5px dashed ${vars.color.textSecondary}`,
+});
 export const markCountry = style({
   fontStyle: 'normal',
   color: vars.color.textMuted,
