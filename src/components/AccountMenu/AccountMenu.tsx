@@ -53,6 +53,7 @@ const AccountMenu = () => {
       }}
     >
       <button
+        ref={button}
         type="button"
         className={s.button}
         data-current={onAccount || undefined}

@@ -121,7 +121,6 @@ const GoalsPage = () => {
         },
       },
     });
-    saved(`Removed ${goal.name}.`);
   };
 
   // the suggestions: the ones your books already go furthest into lead as destinations (four, one row),

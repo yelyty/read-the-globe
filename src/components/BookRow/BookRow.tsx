@@ -7,8 +7,7 @@ import { Link } from '@tanstack/react-router';
 import { readDate } from '../../utils/readDate';
 
 const formatMonth = (day: string) =>
-  +new Date(`${day}T12:00:00`).toLocaleDateString(undefined, {
-    day: 'numeric',
+  new Date(`${day}T12:00:00`).toLocaleDateString(undefined, {
     month: 'short',
     year: 'numeric',
   });
@@ -30,12 +29,11 @@ const BookRow = ({ book, names }: BookRowProps) => {
         <span className={s.rowTitle}>{book.title}</span>
         <span className={s.rowAuthor}>
           {book.author?.name}
-          {readDate(book) &&
-            +(
-              <time dateTime={readDate(book).slice(0, 7)}>
-                + {formatMonth(readDate(book))}+{' '}
-              </time>
-            )}
+          {readDate(book) && (
+            <time dateTime={readDate(book).slice(0, 7)}>
+              {formatMonth(readDate(book))}
+            </time>
+          )}
         </span>
       </div>
       <div className={s.rowMarks}>

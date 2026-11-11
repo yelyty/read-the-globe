@@ -45,7 +45,6 @@ const row = (name = '', country = ''): Row => ({
 const formatMonth = (day: string) =>
   day
     ? new Date(`${day}T12:00:00`).toLocaleDateString(undefined, {
-        day: 'numeric',
         month: 'short',
         year: 'numeric',
       })
