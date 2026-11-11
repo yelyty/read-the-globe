@@ -1,13 +1,14 @@
 import { useState, type RefObject, type SubmitEvent } from 'react';
 import { useRouter } from '@tanstack/react-router';
-import { XIcon, DownloadSimpleIcon, TrashIcon } from '@phosphor-icons/react';
+import { XIcon, TrashIcon } from '@phosphor-icons/react';
 import Field from '../../../../components/Field/Field';
-import { bookCount, exportReadingList } from '../YourData/readingList';
+import { bookCount } from '../YourData/readingList';
 import { deleteAccount } from '../../../../api/Profile/deleteAccount';
 
 import * as s from './DeleteAccount.css';
 import type { BookEntry } from '../../../../types';
 import { Button } from '../../../../components/Button/Button';
+import KeepCopy from './KeepCopy';
 
 type ConfirmationDialogProps = {
   books: BookEntry[];
@@ -19,7 +20,8 @@ const ConfirmationDialog = ({ books, names, ref }: ConfirmationDialogProps) => {
   const router = useRouter();
 
   const [word, setWord] = useState('');
-  const [kept, setKept] = useState('');
+  // a new KeepCopy each time the dialog opens, so its "Saved" line starts empty
+  const [round, setRound] = useState(0);
   const [error, setError] = useState<string>();
   const [deleting, setDeleting] = useState(false);
 
@@ -27,7 +29,7 @@ const ConfirmationDialog = ({ books, names, ref }: ConfirmationDialogProps) => {
 
   const reset = () => {
     setWord('');
-    setKept('');
+    setRound((r) => r + 1);
     setError(undefined);
   };
 
@@ -44,11 +46,6 @@ const ConfirmationDialog = ({ books, names, ref }: ConfirmationDialogProps) => {
     close();
     router.clearCache();
     await router.navigate({ to: '/' });
-  };
-
-  const exportCopy = () => {
-    exportReadingList(books, names);
-    setKept(`Saved ${bookCount(books.length)} to your downloads.`);
   };
 
   const confirmed = word.trim().toLowerCase() === 'delete';
@@ -87,18 +84,7 @@ const ConfirmationDialog = ({ books, names, ref }: ConfirmationDialogProps) => {
             {hasBooks ? ` and ${bookCount(books.length)}` : ''}. It can’t be
             undone.
           </p>
-          {hasBooks && (
-            <div className={s.keepCopy}>
-              <p>Want to keep your books? Save a copy first.</p>
-              <Button type="button" variant="text" onClick={exportCopy}>
-                <DownloadSimpleIcon aria-hidden="true" />
-                Download reading list (CSV)
-              </Button>
-              <span className={s.status} role="status">
-                {kept}
-              </span>
-            </div>
-          )}
+          <KeepCopy key={round} books={books} names={names} />
           <Field
             id="ac-delete-word"
             label="Type delete to confirm"

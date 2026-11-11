@@ -12,9 +12,11 @@ import {
   ArrowDownIcon,
   BooksIcon,
   CaretDownIcon,
+  DownloadSimpleIcon,
   FunnelSimpleIcon,
   MagnifyingGlassIcon,
   PushPinIcon,
+  UploadSimpleIcon,
   XIcon,
 } from '@phosphor-icons/react';
 import { useCountryNames } from '../../hooks/useCountryNames';
@@ -33,6 +35,9 @@ import { goalHas } from '../GoalsPage/goals';
 import * as s from './ShelfPage.css';
 import BookRow from '../../components/BookRow/BookRow';
 import NextToRead from './features/NextToRead';
+import ImportCsv from '../account/features/YourData/ImportCsv';
+import { exportExample } from '../account/features/YourData/readingList';
+import { useStatus } from '../../hooks/useStatus';
 import PageTitle from '../../components/PageTitle/PageTitle';
 
 const app = getRouteApi('/app');
@@ -77,6 +82,8 @@ const ShelfPage = () => {
   const [shown, setShown] = useState(PAGE);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const search = useRef<HTMLInputElement>(null);
+  const status = useStatus();
+  const imported = (text: string) => status.show({ text });
   const name = (code?: string) => (code ? (names[code] ?? '') : '');
 
   const marks = useMemo(() => atlasMarks(books), [books]);
@@ -326,8 +333,26 @@ const ShelfPage = () => {
                     <PushPinIcon weight="fill" aria-hidden="true" />
                     Log a book
                   </Link>
-                  {/* step 3: "or", Have a backlog? Import a reading list (CSV), and under it the hint with the example CSV */}
+                  <span className={s.orRule} aria-hidden="true">
+                    or
+                  </span>
+                  <ImportCsv className={s.linkBtn} onDone={imported}>
+                    <UploadSimpleIcon aria-hidden="true" />
+                    Have a backlog? Import a reading list (CSV)
+                  </ImportCsv>
                 </div>
+                <p className={s.hint}>
+                  A CSV with columns for title, author, the author’s country,
+                  places (“City, Country; City”) and an optional date.
+                  <button
+                    type="button"
+                    className={s.linkBtn}
+                    onClick={exportExample}
+                  >
+                    <DownloadSimpleIcon aria-hidden="true" />
+                    Download an example CSV
+                  </button>
+                </p>
               </div>
             </div>
           ) : (
@@ -541,6 +566,21 @@ const ShelfPage = () => {
                   </div>
                 </section>
               )}
+
+              <p className={s.importLine}>
+                <ImportCsv className={s.linkBtn} onDone={imported}>
+                  <UploadSimpleIcon aria-hidden="true" />
+                  Import a reading list (CSV)
+                </ImportCsv>
+                <button
+                  type="button"
+                  className={s.linkBtn}
+                  onClick={exportExample}
+                >
+                  <DownloadSimpleIcon aria-hidden="true" />
+                  Download an example CSV
+                </button>
+              </p>
 
               {list.length ? (
                 <ul className={`${bookList} ${s.shelfList}`}>

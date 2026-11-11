@@ -1,5 +1,5 @@
 import { globalStyle, style } from '@vanilla-extract/css';
-import { vars } from '../../styles/theme.css';
+import { fontSize, vars } from '../../styles/theme.css';
 import {
   band,
   coarse,
@@ -343,6 +343,44 @@ export const emptyActions = style({
   marginTop: 32,
 });
 globalStyle(`${emptyActions} > a`, { marginTop: 0 });
+// an "or" between two lines, under Log a book
+export const orRule = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 16,
+  width: 'min(320px, 100%)',
+  fontFamily: vars.font.display,
+  fontStyle: 'italic',
+  color: vars.color.textMuted,
+  selectors: {
+    '&::before, &::after': {
+      content: '""',
+      flex: 1,
+      borderTop: `1px solid ${vars.color.border}`,
+    },
+  },
+});
+// what the CSV holds, with the example to download under it
+export const hint = style({});
+globalStyle(`${emptyPanel} p${hint}`, {
+  maxWidth: '48ch',
+  marginTop: 24,
+  fontSize: fontSize.meta,
+  lineHeight: 1.6,
+  color: vars.color.textMuted,
+});
+globalStyle(`${hint} ${linkBtn}`, {
+  display: 'flex',
+  margin: '8px auto 0',
+  fontSize: fontSize.meta,
+});
+// Import a reading list (CSV) and the example, above a shelf that has books
+export const importLine = style({
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '0 24px',
+  margin: '0 0 16px',
+});
 
 /* ---------- the stickers: a shelf with a gap (no books), a book with a ribbon (nothing saved) ---------- */
 const deepRust = `color-mix(in srgb, ${vars.color.markerAuthor} 80%, black)`;

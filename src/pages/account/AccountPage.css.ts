@@ -65,3 +65,6 @@ export const status = style({
   fontWeight: 500,
   color: vars.color.oliveInk,
 });
+
+// Download an example CSV, tucked under the import's description
+export const example = style({ margin: '-8px 0 8px' });
