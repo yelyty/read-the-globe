@@ -13,6 +13,7 @@ export const englishName = (code: string) => english?.[code];
 // code → name in the reader's language: the browser's own Intl.DisplayNames, the map's English name where it has none
 export async function getCountryNames(): Promise<Record<string, string>> {
   if (cache) return cache;
+
   const topo = (await fetch(GEO_URL).then((r) => r.json())) as {
     objects: {
       countries: {
@@ -20,24 +21,32 @@ export async function getCountryNames(): Promise<Record<string, string>> {
       };
     };
   };
+
   const geometries = topo.objects.countries.geometries;
+
   english = Object.fromEntries(
     geometries.filter((g) => g.id).map((g) => [g.id, g.properties.name])
   );
+
   const locale = getLocale();
+
   if (locale === 'en') return (cache = english);
   let dn: Intl.DisplayNames | null = null;
+
   try {
     dn = new Intl.DisplayNames([locale], { type: 'region' });
   } catch {
     // an old browser: English names
   }
+
   cache = Object.fromEntries(
     Object.entries(english).map(([code, name]) => {
       const a2 = toAlpha2(code);
       const local = a2 && dn?.of(a2);
+
       return [code, local && local !== a2 ? local : name];
     })
   );
+
   return cache;
 }

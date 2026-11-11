@@ -19,7 +19,9 @@ export const hero = style({
 const setIn = keyframes({
   from: { opacity: 0, translate: '0 24px', filter: 'blur(4px)' },
 });
+
 const fadeIn = keyframes({ from: { opacity: 0 } });
+
 const enter = (delay: number) => ({
   '@media': {
     [motionOk]: { animation: `${setIn} .72s ${settle} ${delay}s both` },
@@ -71,6 +73,7 @@ export const note = style({
 const stkIn = keyframes({
   from: { opacity: 0, scale: '.9', rotate: 'calc(var(--r) - 18deg)' },
 });
+
 const stkDrift = keyframes({ to: { translate: '0 -8px' } });
 
 export const sticker = style({
@@ -93,6 +96,7 @@ export const sticker = style({
 
 // narrow screens keep two stickers, tucked above the headline (!important beats the inline placement)
 const hide = { '@media': { [narrow]: { display: 'none' } } };
+
 const corner = (x: string) => ({
   '@media': {
     [narrow]: {
@@ -104,6 +108,7 @@ const corner = (x: string) => ({
     },
   },
 });
+
 export const k1 = style(corner('12%'));
 export const k2 = style(hide);
 export const k3 = style(hide);

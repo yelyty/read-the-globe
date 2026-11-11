@@ -65,6 +65,7 @@ export const firstRun = style({
   margin: `calc(${space.sp2} * -1) 0 ${space.sp5}`,
   textAlign: 'center',
 });
+
 globalStyle(`${firstRun} p`, {
   margin: '0 auto',
   maxWidth: '56ch',
@@ -161,6 +162,7 @@ export const cartBig = style({
   gap: space.sp2,
   margin: 0,
 });
+
 globalStyle(`${cartBig} b`, {
   fontFamily: vars.font.serif,
   fontWeight: 400,
@@ -170,6 +172,7 @@ globalStyle(`${cartBig} b`, {
   color: vars.color.text,
   fontVariantNumeric: 'lining-nums tabular-nums',
 });
+
 export const cartOf = style({
   position: 'relative',
   fontSize: fontSize.body,
@@ -242,17 +245,20 @@ export const key = style({
   flexWrap: 'wrap',
   gap: '8px 16px',
 });
+
 globalStyle(`${key} li`, {
   display: 'inline-flex',
   alignItems: 'center',
   gap: 8,
 });
+
 const swatch = {
   width: 11,
   height: 11,
   borderRadius: 2,
   flex: 'none',
 } as const;
+
 export const swatchSet = style({ ...swatch, background: vars.color.olive });
 export const swatchAuthor = style({
   ...swatch,
@@ -420,10 +426,12 @@ export const ccPeek = style({
   marginLeft: 'auto',
 });
 globalStyle(`${ccRow}[open] ${ccPeek}`, { display: 'none' });
+
 // phones: three outlines are enough of a hint
 globalStyle(`${ccPeek} svg:nth-child(n+4)`, {
   '@media': { [phone]: { display: 'none' } },
 });
+
 export const ccMore = style({
   fontSize: fontSize.meta,
   color: vars.color.textMuted,
@@ -476,9 +484,11 @@ export const ccShape = style({
   marginBottom: 16,
   '@media': { [phone]: { height: 70 } },
 });
+
 globalStyle(`${ccShape} svg`, {
   '@media': { [phone]: { width: 112, height: 70 } },
 });
+
 export const ccName = style({
   fontFamily: vars.font.serif,
   fontWeight: 500,
@@ -537,16 +547,19 @@ export const tipHead = style({
   gap: 16,
   margin: 0,
 });
+
 globalStyle(`${tipHead} b`, {
   fontFamily: vars.font.serif,
   fontSize: fontSize.item,
   fontWeight: 500,
 });
+
 globalStyle(`${tipHead} span`, {
   fontSize: fontSize.label,
   color: vars.color.textMuted,
   whiteSpace: 'nowrap',
 });
+
 export const tipHeadBooks = style({
   paddingBottom: 8,
   borderBottom: `1px solid ${vars.color.border}`,
@@ -559,11 +572,13 @@ export const tipList = style({
   flexDirection: 'column',
   gap: 8,
 });
+
 globalStyle(`${tipList} li`, {
   display: 'flex',
   alignItems: 'flex-start',
   gap: 8,
 });
+
 // the covers, drawn small: a cloth colour with a band near the top
 export const tipCover = style({
   flex: 'none',
@@ -621,16 +636,19 @@ export const flyPin = style({
   height: 32,
   pointerEvents: 'none',
 });
+
 globalStyle(`${flyPin} svg`, {
   display: 'block',
   width: '100%',
   height: '100%',
 });
+
 globalStyle(`${flyPin} path`, {
   fill: vars.color.text,
   stroke: vars.color.surface,
   strokeWidth: 1.4,
 });
+
 globalStyle(`${flyPin} circle`, { fill: vars.color.secondaryBright });
 export const landRing = style({
   position: 'fixed',
@@ -641,10 +659,12 @@ export const landRing = style({
   border: `2px solid ${vars.color.secondary}`,
   pointerEvents: 'none',
 });
+
 const tickIn = keyframes({
   '0%': { color: vars.color.secondary, translate: '0 -3px' },
   '100%': { translate: '0 0' },
 });
+
 export const ticked = style({
   display: 'inline-block',
   animation: `${tickIn} .6s ${easeSoft} both`,
@@ -815,6 +835,7 @@ export const beyondAdd = style({
   alignItems: 'center',
   gap: 8,
 });
+
 globalStyle(`${beyondAdd} input`, {
   width: 184,
   minHeight: 40,
@@ -830,10 +851,12 @@ globalStyle(`${beyondAdd} input`, {
     [coarse]: { minHeight: 44 },
   },
 });
+
 globalStyle(`${beyondAdd} input:focus`, {
   outline: 'none',
   borderColor: vars.color.accent,
 });
+
 export const beyondBtn = style([
   more,
   {
@@ -861,6 +884,7 @@ export const worldBooks = style({
   overflowY: 'auto',
   borderTop: `1px solid ${vars.color.border}`,
 });
+
 globalStyle(`${worldBooks} li`, {
   display: 'flex',
   alignItems: 'center',
@@ -868,6 +892,7 @@ globalStyle(`${worldBooks} li`, {
   padding: '16px 0',
   borderBottom: `1px solid ${vars.color.border}`,
 });
+
 globalStyle(`${worldBooks} li > div`, {
   flex: 1,
   minWidth: 0,
@@ -876,4 +901,5 @@ globalStyle(`${worldBooks} li > div`, {
   fontSize: fontSize.meta,
   color: vars.color.textSecondary,
 });
+
 globalStyle(`${worldBooks} time`, { color: vars.color.textMuted });

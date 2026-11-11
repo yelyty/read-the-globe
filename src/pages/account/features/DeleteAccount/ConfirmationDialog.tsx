@@ -37,6 +37,7 @@ const ConfirmationDialog = ({ books, names, ref }: ConfirmationDialogProps) => {
   // the word is typed in the reader's language: delete, smazat, видалити
   const confirmed =
     word.trim().toLocaleLowerCase(getLocale()) === m.account_delete_word();
+
   const what = books.length
     ? m.account_and({
         a: m.account_your_account(),
@@ -49,11 +50,15 @@ const ConfirmationDialog = ({ books, names, ref }: ConfirmationDialogProps) => {
     if (!confirmed) return;
     setDeleting(true);
     const problem = await deleteAccount();
+
     setDeleting(false);
+
     if (problem) {
       setError(m.account_delete_failed());
+
       return;
     }
+
     close();
     router.clearCache();
     await router.navigate({ to: '/' });

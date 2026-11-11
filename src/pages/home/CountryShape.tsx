@@ -7,6 +7,7 @@ import * as s from './HomePage.css';
 
 const mainPiece = (f: Feature): Feature => {
   if (f.geometry.type !== 'MultiPolygon') return f;
+
   const pieces = f.geometry.coordinates.map(
     (coordinates): Feature<Polygon> => ({
       type: 'Feature',
@@ -14,6 +15,7 @@ const mainPiece = (f: Feature): Feature => {
       geometry: { type: 'Polygon', coordinates },
     })
   );
+
   return pieces.reduce((a, b) => (geoArea(b) > geoArea(a) ? b : a));
 };
 
@@ -29,12 +31,15 @@ const CountryShape = ({ code, mark, width, height }: CountryShapeProps) => {
   const [shape, setShape] = useState<Feature>();
   // useId gives «r0»-style ids; an SVG url() wants plain letters
   const hatch = 'hatch-' + useId().replace(/[^\w-]/g, '');
+
   useEffect(() => {
     worldShapes().then((all) => setShape(all[code]));
   }, [code]);
+
   if (!shape) return <svg width={width} height={height} aria-hidden="true" />;
 
   const pad = Math.min(width, height) * 0.06;
+
   const projection = geoEquirectangular().fitExtent(
     [
       [pad, pad],
@@ -42,12 +47,15 @@ const CountryShape = ({ code, mark, width, height }: CountryShapeProps) => {
     ],
     mainPiece(shape)
   );
+
   const both = mark.set.length > 0 && mark.author.length > 0;
+
   const fill = both
     ? `url(#${hatch})`
     : mark.set.length
       ? s.shapeSet
       : s.shapeAuthor;
+
   return (
     <svg
       viewBox={`0 0 ${width} ${height}`}

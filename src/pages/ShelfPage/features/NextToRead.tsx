@@ -59,27 +59,34 @@ const NextToRead = ({
 
   const codeFor = (typed: string) =>
     sorted.find(([, n]) => n.toLowerCase() === typed.trim().toLowerCase())?.[0];
+
   const code = codeFor(country);
 
   const submit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSaid('');
     const t = title.trim();
+
     if (!t) {
       setError(m.next_err_title());
       titleRef.current?.focus();
+
       return;
     }
+
     if (country.trim() && !code) {
       setError(m.next_err_country({ country: country.trim() }));
       document.getElementById('n-country')?.focus();
+
       return;
     }
+
     const dup = items.find(
       (it) =>
         it.title.toLowerCase() === t.toLowerCase() &&
         it.countryCode === (code ?? null)
     );
+
     if (dup) {
       status.show({
         text: m.next_dup({ title: dup.title }),
@@ -88,25 +95,33 @@ const NextToRead = ({
           icon: <BookmarkSimpleIcon aria-hidden="true" />,
           run: () => {
             const row = document.getElementById(`next-${dup.id}`);
+
             row?.scrollIntoView({ block: 'center' });
             row?.focus({ preventScroll: true });
           },
         },
       });
+
       return;
     }
+
     setSaving(true);
+
     const saved = await addNextRead({
       title: t,
       author: author.trim() || null,
       countryCode: code ?? null,
       mark: code ? mark : null,
     });
+
     setSaving(false);
+
     if (!saved) {
       setError(m.next_save_failed());
+
       return;
     }
+
     setItems((list) => [saved, ...list]);
     setTitle('');
     setAuthor('');
@@ -120,10 +135,14 @@ const NextToRead = ({
   const remove = async (item: NextRead) => {
     if (!(await removeNextRead(item.id))) {
       status.show({ text: m.next_remove_failed({ title: item.title }) });
+
       return;
     }
+
     const at = items.indexOf(item);
+
     setItems((list) => list.filter((it) => it.id !== item.id));
+
     status.show({
       text: m.next_removed({ title: item.title }),
       action: {
@@ -131,14 +150,18 @@ const NextToRead = ({
         icon: <ArrowCounterClockwiseIcon aria-hidden="true" />,
         run: async () => {
           const back = await addNextRead(item);
+
           if (!back) {
             status.show({ text: m.next_save_failed() });
+
             return;
           }
+
           setItems((list) => [...list.slice(0, at), back, ...list.slice(at)]);
         },
       },
     });
+
     titleRef.current?.focus();
   };
 
@@ -243,6 +266,7 @@ const NextToRead = ({
             const c = it.countryCode && countries?.get(it.countryCode);
             const stamp = c ? countryStamp(c) : null;
             const place = it.countryCode ? (names[it.countryCode] ?? '') : '';
+
             return (
               <li
                 key={it.id}

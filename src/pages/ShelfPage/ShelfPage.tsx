@@ -48,13 +48,16 @@ const shelfRoute = getRouteApi('/app/shelf');
 
 type Sort = 'new' | 'title' | 'country';
 type Mark = '' | 'set' | 'author';
+
 const CONTINENTS = (Object.keys(CONTINENT_NAMES) as Continent[]).filter(
   (c) => c !== 'AN'
 );
+
 const PAGE = 100;
 
 const authorCode = (b: BookEntry) => b.author?.country?.code;
 const yearOf = (b: BookEntry) => readDate(b).slice(0, 4);
+
 const placeCodes = (b: BookEntry) =>
   (b.places ?? []).map((p) => p.countryCode).filter((c): c is string => !!c);
 
@@ -88,10 +91,12 @@ const ShelfPage = () => {
   const name = (code?: string) => (code ? (names[code] ?? '') : '');
 
   const marks = useMemo(() => atlasMarks(books), [books]);
+
   const years = useMemo(
     () => [...new Set(books.map(yearOf).filter(Boolean))].sort().reverse(),
     [books]
   );
+
   // earlier years start folded; this year and the newest logged year stay open
   const [folded, setFolded] = useState(
     () =>
@@ -105,6 +110,7 @@ const ShelfPage = () => {
   // a place filter can count where the story is set, where the author is from, or either
   const hits = (b: BookEntry, test: (code: string) => boolean) => {
     const a = authorCode(b);
+
     return (
       (mark !== 'author' && placeCodes(b).some(test)) ||
       (mark !== 'set' && !!a && test(a))
@@ -113,6 +119,7 @@ const ShelfPage = () => {
 
   const goal = goals.find((g) => String(g.id) === goalId);
   const q = query.trim().toLowerCase();
+
   const list = books.filter((b) => {
     if (country && !hits(b, (c) => c === country)) return false;
     if (continent && !hits(b, (c) => CONTINENT_OF[c] === continent))
@@ -126,6 +133,7 @@ const ShelfPage = () => {
     )
       return false;
     if (!q) return true;
+
     const hay = [
       b.title,
       b.author?.name,
@@ -135,10 +143,13 @@ const ShelfPage = () => {
         name(p.countryCode ?? undefined),
       ]),
     ];
+
     return hay.join(' ').toLowerCase().includes(q);
   });
+
   if (sort === 'new') list.sort(byReadDate);
   const locale = getLocale();
+
   if (sort === 'title')
     list.sort((a, b) => a.title.localeCompare(b.title, locale));
   if (sort === 'country')
@@ -150,6 +161,7 @@ const ShelfPage = () => {
   const unfiltered = list.length === books.length;
   // a search that names a country with nothing on the shelf is an invitation, not a dead end
   const named = !list.length ? countryFrom(query, names) : null;
+
   const invite =
     named && !marks[PARENT[named.code] ?? named.code]
       ? (PARENT[named.code] ?? named.code)
@@ -158,11 +170,14 @@ const ShelfPage = () => {
   // each year's line says where that year's reading went: books and countries
   const yearNotes = useMemo(() => {
     const by: Record<string, { books: number; codes: Set<string> }> = {};
+
     for (const b of books) {
       const n = (by[yearOf(b)] ??= { books: 0, codes: new Set() });
+
       n.books++;
       for (const c of [authorCode(b), ...placeCodes(b)]) if (c) n.codes.add(c);
     }
+
     return Object.fromEntries(
       Object.entries(by).map(([y, n]) => [
         y,
@@ -175,22 +190,28 @@ const ShelfPage = () => {
   const [stamp, setStamp] = useState<
     (ReturnType<typeof countryStamp> & { code: string }) | null
   >(null);
+
   useEffect(() => {
     if (!country) return;
     let live = true;
+
     loadCountries().then((all) => {
       const c = all.get(country);
+
       if (live && c) setStamp({ ...countryStamp(c), code: country });
     });
+
     return () => {
       live = false;
     };
   }, [country]);
+
   const here = country ? marks[country] : undefined;
 
   const canClear = Boolean(
     q || continent || mark || year || goalId || sort !== 'new' || country
   );
+
   const clear = () => {
     setQuery('');
     setContinent('');
@@ -202,13 +223,17 @@ const ShelfPage = () => {
     if (country || linkedQuery) navigate({ to: '/app/shelf' });
     search.current?.focus();
   };
+
   const toggleYear = (y: string) =>
     setFolded((f) => {
       const next = new Set(f);
+
       if (next.has(y)) next.delete(y);
       else next.add(y);
+
       return next;
     });
+
   const reset = () => setShown(PAGE);
 
   const openTab = (to: 'read' | 'next') => {
@@ -217,8 +242,10 @@ const ShelfPage = () => {
       search: (prev) => ({ ...prev, tab: to === 'next' ? 'next' : undefined }),
       replace: true,
     });
+
     document.getElementById(`tab-${to}`)?.focus();
   };
+
   // the arrow keys move between the two tabs
   const onTabKey = (e: KeyboardEvent) => {
     if (e.key === 'ArrowRight' || e.key === 'ArrowLeft')
@@ -396,6 +423,7 @@ const ShelfPage = () => {
                     aria-label={m.shelf_filter_continent()}
                     onChange={(e) => {
                       const next = e.target.value as Continent | '';
+
                       setContinent(next);
                       if (!next && !country) setMark('');
                       reset();
@@ -592,6 +620,7 @@ const ShelfPage = () => {
                   {list.slice(0, shown).map((book, i) => {
                     const y = sort === 'new' ? yearOf(book) : '';
                     const isFolded = !!y && unfiltered && folded.has(y);
+
                     const heading =
                       y && (i === 0 || yearOf(list[i - 1]) !== y) ? (
                         <li className={s.yearHead}>
@@ -614,6 +643,7 @@ const ShelfPage = () => {
                           {unfiltered && yearNotes[y] && <p>{yearNotes[y]}</p>}
                         </li>
                       ) : null;
+
                     return (
                       <Fragment key={book.id}>
                         {heading}

@@ -3,6 +3,7 @@ import * as s from './PageTitle.css';
 type PageTitleProps = {
   children: string;
 };
+
 const PageTitle = ({ children }: PageTitleProps) => {
   return (
     <header className={s.header}>

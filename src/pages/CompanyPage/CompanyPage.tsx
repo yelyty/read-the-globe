@@ -35,6 +35,7 @@ const CompanyPage = ({
 
   useEffect(() => {
     document.title = `${title} · Read The Globe`;
+
     document
       .querySelector('meta[name="description"]')
       ?.setAttribute('content', description);

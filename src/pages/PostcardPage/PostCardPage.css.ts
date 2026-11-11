@@ -22,6 +22,7 @@ export const empty = style({
   borderTop: `1px solid ${vars.color.border}`,
   borderBottom: `1px solid ${vars.color.border}`,
 });
+
 globalStyle(`${empty} h2`, {
   margin: 0,
   fontFamily: vars.font.display,
@@ -29,6 +30,7 @@ globalStyle(`${empty} h2`, {
   fontWeight: 500,
   color: vars.color.text,
 });
+
 globalStyle(`${empty} p`, {
   margin: '4px 0 0',
   maxWidth: '56ch',
@@ -84,6 +86,7 @@ export const card = style({
     [reducedMotion]: { animation: 'none' },
   },
 });
+
 globalStyle(`${card}::before`, {
   '@media': { [phone]: { rotate: '3deg', translate: '4px 2px' } },
 });
@@ -417,6 +420,7 @@ export const quiet = style({
     },
   },
 });
+
 globalStyle(`${primary} svg, ${quiet} svg`, {
   width: 16,
   height: 16,

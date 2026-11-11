@@ -69,6 +69,7 @@ const panelBase = style({
     [narrow]: { height: 'auto', minHeight: 760, padding: '40px 24px 0' },
   },
 });
+
 globalStyle(`${panelBase}:not(:last-child)`, {
   '@media': {
     [stacking]: {
@@ -135,6 +136,7 @@ export const panelText = style({
     [narrow]: { gridTemplateColumns: 'minmax(0, 1fr)', paddingBottom: 32 },
   },
 });
+
 globalStyle(`${panelText} h3`, {
   fontFamily: vars.font.sans,
   fontWeight: 800,
@@ -144,6 +146,7 @@ globalStyle(`${panelText} h3`, {
   textWrap: 'balance',
   color: 'inherit',
 });
+
 globalStyle(`${panelText} p`, {
   maxWidth: '28em',
   color: 'var(--pf2)',
@@ -160,6 +163,7 @@ export const shot = style({
   borderRadius: '16px 16px 0 0',
   '@media': { [narrow]: { flexBasis: 400 } },
 });
+
 globalStyle(`${shot} img`, {
   display: 'block',
   width: '100%',

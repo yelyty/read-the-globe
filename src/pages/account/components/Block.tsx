@@ -10,6 +10,7 @@ type BlockProps = {
 
 const Block = ({ title, danger, children }: BlockProps) => {
   const id = useId();
+
   return (
     <section className={s.block} aria-labelledby={id}>
       <h2

@@ -103,6 +103,7 @@ const GoalRow = ({
   const left = p.all.filter((c) => !p.reached.includes(c));
   const journal = CATALOGUE.find((c) => c.name === goal.name)?.journal;
   const title = goalName(goal.name);
+
   const meta =
     goal.kind === 'region'
       ? m.goals_meta_region({ continent: continentName(goal.continent!) })

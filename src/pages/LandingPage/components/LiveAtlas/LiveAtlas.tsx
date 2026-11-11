@@ -11,10 +11,12 @@ import { m } from '../../../../paraglide/messages.js';
 // the app's own flat map (AtlasMap): 360° across, 83°N to 57°S down, no Antarctica
 const WIDTH = 1000;
 const HEIGHT = Math.round((WIDTH * (83 + 57)) / 360);
+
 const projection = geoEquirectangular()
   .scale(WIDTH / (2 * Math.PI))
   .center([0, (83 - 57) / 2])
   .translate([WIDTH / 2, HEIGHT / 2]);
+
 const path = geoPath(projection);
 const ANTARCTICA = '010';
 
@@ -28,6 +30,7 @@ type Ping = { key: string; x: number; y: number };
 const LiveAtlas = () => {
   const figure = useRef<HTMLElement>(null);
   const [shapes, setShapes] = useState<Record<string, Feature>>();
+
   // how many books are pinned, and whether the last scroll added one (only then do rings ping)
   const [{ shown, grew }, setPinned] = useState(() => ({
     shown: reduced() ? BOOKS.length : 0,
@@ -37,7 +40,9 @@ const LiveAtlas = () => {
   // the world's shapes are big: fetch them only once the map is a screen away
   useEffect(() => {
     const el = figure.current;
+
     if (!el) return;
+
     const io = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;
@@ -46,39 +51,50 @@ const LiveAtlas = () => {
       },
       { rootMargin: '100% 0px' }
     );
+
     io.observe(el);
+
     return () => io.disconnect();
   }, []);
 
   useEffect(() => {
     const el = figure.current;
+
     if (!el || reduced()) return;
     let frame = 0;
+
     const update = () => {
       frame = 0;
       const top = el.getBoundingClientRect().top;
+
       // the window: 80% and tilted back as it enters, full size and flat once its top nears the top of the screen
       const p = Math.min(
         1,
         Math.max(0, (innerHeight - top) / (innerHeight * 0.85))
       );
+
       el.style.setProperty('--z', (0.8 + 0.2 * p).toFixed(4));
       el.style.setProperty('--tilt', `${(18 * (1 - p)).toFixed(2)}deg`);
       // the books: none at the top of the page, all of them once the window's top is near the top of the screen
       const end = Math.max(1, top + scrollY - innerHeight * 0.12);
+
       const next = Math.round(
         Math.min(1, Math.max(0, scrollY / end)) * BOOKS.length
       );
+
       setPinned((prev) =>
         prev.shown === next ? prev : { shown: next, grew: next > prev.shown }
       );
     };
+
     const onScroll = () => {
       frame ||= requestAnimationFrame(update);
     };
+
     addEventListener('scroll', onScroll, { passive: true });
     addEventListener('resize', onScroll);
     update();
+
     return () => {
       removeEventListener('scroll', onScroll);
       removeEventListener('resize', onScroll);
@@ -102,8 +118,10 @@ const LiveAtlas = () => {
       ? [...new Set([BOOKS[shown - 1][2], ...BOOKS[shown - 1][3]])].flatMap(
           (iso) => {
             const shape = shapes[toNumeric(iso) ?? ''];
+
             if (!shape) return [];
             const [x, y] = path.centroid(mainPiece(shape));
+
             return [{ key: `${shown}-${iso}`, x, y }];
           }
         )
@@ -111,6 +129,7 @@ const LiveAtlas = () => {
 
   const atlas = atlasAfter(shown);
   const latest = BOOKS[shown - 1];
+
   const now = !latest
     ? m.landing_atlas_scroll()
     : shown === BOOKS.length && reduced()
@@ -147,6 +166,7 @@ const LiveAtlas = () => {
             {countries.map(({ code, d }) => {
               const set = atlas.set.has(code);
               const author = atlas.author.has(code);
+
               return (
                 <path
                   key={code}

@@ -59,6 +59,7 @@ export const mark = style({
   minWidth: 0,
   overflowWrap: 'anywhere',
 });
+
 const dot = {
   flex: 'none',
   width: 9,
@@ -66,6 +67,7 @@ const dot = {
   borderRadius: '50%',
   alignSelf: 'center',
 } as const;
+
 export const dotSet = style({ ...dot, background: vars.color.olive });
 export const dotAuthor = style({
   ...dot,

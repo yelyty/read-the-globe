@@ -42,6 +42,7 @@ const FIELD_ORDER: (keyof Values)[] = ['name', 'email', 'password'];
 
 const validate = (mode: AuthMode, values: Values): Errors => {
   const errors: Errors = {};
+
   if (mode === 'signup' && !values.name.trim())
     errors.name = m.auth_name_missing();
   if (!isEmail(values.email)) errors.email = m.auth_email_invalid();
@@ -49,6 +50,7 @@ const validate = (mode: AuthMode, values: Values): Errors => {
     errors.password = newPasswordProblem(values.password) ?? undefined;
   if (mode === 'login' && !values.password)
     errors.password = m.auth_password_missing();
+
   return errors;
 };
 
@@ -61,11 +63,13 @@ type LoginDialogProps = {
 
 const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
+
   const [values, setValues] = useState<Values>({
     name: '',
     email: '',
     password: '',
   });
+
   const [example, setExample] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [pending, setPending] = useState(false);
@@ -74,6 +78,7 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
 
   useEffect(() => {
     const dialog = dialogRef.current;
+
     if (!dialog) return;
     if (mode && !dialog.open) dialog.showModal();
     if (!mode && dialog.open) dialog.close();
@@ -91,10 +96,12 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
     setFormError(null);
     setNotice(null);
   };
+
   const switchTo = (next: AuthMode) => {
     clearMessages();
     onMode(next);
   };
+
   const close = () => {
     clearMessages();
     onClose();
@@ -102,12 +109,16 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
 
   // a click on the backdrop lands on the <dialog> itself; Escape is the dialog's own keyboard way out
   const onBackdrop = useEffectEvent(close);
+
   useEffect(() => {
     const dialog = dialogRef.current;
+
     const onClick = (event: MouseEvent) => {
       if (event.target === dialog) onBackdrop();
     };
+
     dialog?.addEventListener('click', onClick);
+
     return () => dialog?.removeEventListener('click', onClick);
   }, []);
 
@@ -120,8 +131,10 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
     setSubmitted(true);
     const found = validate(view, values);
     const firstInvalid = FIELD_ORDER.find((key) => found[key]);
+
     if (firstInvalid) {
       document.getElementById(`au-${firstInvalid}`)?.focus();
+
       return;
     }
 
@@ -129,12 +142,14 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
     setFormError(null);
     setNotice(null);
     const email = values.email.trim();
+
     if (view === 'reset') {
       if (await sendPasswordReset(email))
         setNotice(m.auth_reset_sent({ email }));
       else setFormError(m.common_try_again());
     } else if (view === 'login') {
       const problem = await signIn(email, values.password);
+
       if (problem)
         setFormError(
           problem === 'wrong-credentials'
@@ -148,6 +163,7 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
         name: values.name.trim(),
         example,
       });
+
       if (problem)
         setFormError(
           problem === 'email-taken'
@@ -156,6 +172,7 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
         );
       else if (confirmEmail) setNotice(m.auth_confirm_email({ email }));
     }
+
     // a session, if there is one now, takes the reader to /app from the page
     setPending(false);
   };

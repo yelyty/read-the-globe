@@ -24,6 +24,7 @@ const book = (
   })),
   goals: goals.map((goalId) => ({ goalId })),
 });
+
 const theme = (id: number, name: string): Goal => ({
   id,
   kind: 'theme',
@@ -57,7 +58,9 @@ describe('yearSum', () => {
       theme(1, 'Books in translation'),
       theme(2, 'Stories set in the Arctic'),
     ];
+
     books[1].goals = [{ goalId: 1 }, { goalId: 2 }];
+
     expect(yearSum('2026', books, goals).line).toBe(
       '2026: 3 countries, 3 continents, 1 Arctic story.'
     );

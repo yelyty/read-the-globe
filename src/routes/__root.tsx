@@ -25,23 +25,28 @@ export interface RouterContext {
 const wantedLocale = () => {
   try {
     const saved = toLocale(localStorage.getItem(localStorageKey));
+
     if (saved) return saved;
   } catch {
     // storage blocked: fall back to the browser
   }
+
   return extractLocaleFromNavigator();
 };
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   beforeLoad: () => {
     const prefix = window.location.pathname.split('/')[1];
+
     if (!locales.some((l) => l === prefix)) {
       const wanted = wantedLocale();
+
       if (wanted && wanted !== baseLocale)
         throw redirect({
           href: localizeUrl(window.location.href, { locale: wanted }).href,
         });
     }
+
     document.documentElement.lang = getLocale();
   },
   component: Outlet,

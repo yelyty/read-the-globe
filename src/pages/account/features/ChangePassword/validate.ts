@@ -13,5 +13,6 @@ export const validate = (first: string, second: string): Errors => {
         ? m.account_password_mismatch()
         : m.account_password_repeat_missing(),
     };
+
   return {};
 };

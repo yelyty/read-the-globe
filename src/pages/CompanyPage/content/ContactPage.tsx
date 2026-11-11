@@ -18,9 +18,11 @@ const FIELD_ORDER: (keyof ContactMessage)[] = ['name', 'email', 'message'];
 
 const validate = (values: ContactMessage): Errors => {
   const errors: Errors = {};
+
   if (!values.name.trim()) errors.name = m.auth_name_missing();
   if (!isEmail(values.email)) errors.email = m.contact_email_invalid();
   if (!values.message.trim()) errors.message = m.contact_message_missing();
+
   return errors;
 };
 
@@ -30,6 +32,7 @@ const ContactPage = () => {
     email: '',
     message: '',
   });
+
   const [submitted, setSubmitted] = useState(false);
   const [pending, setPending] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -46,18 +49,24 @@ const ContactPage = () => {
     event.preventDefault();
     setSubmitted(true);
     const firstInvalid = FIELD_ORDER.find((key) => validate(values)[key]);
+
     if (firstInvalid) {
       document.getElementById(`c-${firstInvalid}`)?.focus();
+
       return;
     }
+
     setPending(true);
+
     const problem = await sendContactMessage({
       name: values.name.trim(),
       email: values.email.trim(),
       message: values.message.trim(),
     });
+
     setPending(false);
     setFormError(problem);
+
     if (!problem) {
       setSent(true);
       requestAnimationFrame(() => sentRef.current?.focus());

@@ -26,6 +26,7 @@ const KeepCopy = ({ books, names }: KeepCopyProps) => {
         variant="text"
         onClick={() => {
           exportReadingList(books, names);
+
           setKept(
             m.account_keep_saved({
               books: m.count_book({ count: books.length }),

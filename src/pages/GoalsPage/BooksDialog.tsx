@@ -23,6 +23,7 @@ const fold = (t: string) =>
 const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
   const dialog = useRef<HTMLDialogElement>(null);
   const title = goalName(goal.name);
+
   const [picked, setPicked] = useState(
     () =>
       new Set(
@@ -31,6 +32,7 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
           .map((b) => b.id)
       )
   );
+
   const [query, setQuery] = useState('');
   const [error, setError] = useState<string>();
   const [saving, setSaving] = useState(false);
@@ -41,12 +43,14 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
   }, []);
 
   const q = fold(query.trim());
+
   const shown = books.filter(
     (b) => !q || fold(`${b.title} ${b.author?.name ?? ''}`).includes(q)
   );
 
   const toggle = (id: string) => {
     const next = new Set(picked);
+
     if (!next.delete(id)) next.add(id);
     setPicked(next);
   };
@@ -55,6 +59,7 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
     event.preventDefault();
     setSaving(true);
     const problem = await setGoalBooks(goal.id, [...picked]);
+
     setSaving(false);
     if (problem) return setError(m.goals_books_save_failed());
     dialog.current?.close();

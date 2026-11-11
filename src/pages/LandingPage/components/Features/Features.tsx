@@ -29,6 +29,7 @@ const PANELS = [
 // Three colour panels that pile up as you scroll, each with the app's own screen (phone-sized on phones).
 const Features = () => {
   const night = useTheme() === 'dark' ? '-night' : '';
+
   return (
     <section className={s.band} id="features" aria-labelledby="band-h">
       <svg

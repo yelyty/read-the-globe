@@ -11,6 +11,7 @@ const today = () => new Date().toISOString().slice(0, 10);
 
 const download = (text: string, name: string, type: string) => {
   const a = document.createElement('a');
+
   a.href = URL.createObjectURL(new Blob([text], { type }));
   a.download = name;
   a.click();

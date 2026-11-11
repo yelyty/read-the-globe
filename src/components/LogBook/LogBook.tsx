@@ -42,11 +42,13 @@ import { getLocale } from '../../paraglide/runtime.js';
 const app = getRouteApi('/app');
 
 const MAX_PLACES = 20;
+
 const MONTHS = Array.from({ length: 12 }, (_, i) =>
   new Intl.DateTimeFormat(getLocale(), { month: 'long' }).format(
     new Date(2000, i, 1)
   )
 );
+
 const YEARS = Array.from({ length: 80 }, (_, i) =>
   String(new Date().getFullYear() - i)
 );
@@ -62,6 +64,7 @@ type Row = {
   open: boolean;
 };
 let rowKey = 0;
+
 const row = (name = '', country = '', imagined = false): Row => ({
   key: ++rowKey,
   name,
@@ -89,12 +92,15 @@ const LogBook = () => {
   const [shapes, setShapes] = useState<Record<string, Feature>>();
   const [said, setSaid] = useState('');
   const [, setLanding] = useLanding();
+
   // on the Shelf, ?country is also the country page, so it stays when the form closes
   const onShelf = useRouterState({
     select: (st) => st.matches.some((mt) => mt.routeId === '/app/shelf'),
   });
+
   const book = edit ? books.find((b) => b.id === edit) : undefined;
   const open = Boolean(log || book);
+
   // the item "Log it" came from, from the Shelf's loader (the only place it can be pressed)
   const nextItem = useRouterState({
     select: (st) =>
@@ -112,20 +118,24 @@ const LogBook = () => {
     // the English names, so a country typed in English still matches in Czech or Ukrainian
     void getCountryNames();
   }, [open, shapes]);
+
   const names = useMemo(() => {
     if (!shapes) return undefined;
     let dn: Intl.DisplayNames | null = null;
+
     try {
       if (getLocale() !== 'en')
         dn = new Intl.DisplayNames([getLocale()], { type: 'region' });
     } catch {
       // an old browser: the map's English names
     }
+
     // in the reader's language where the browser knows the country, else the map's English name
     return Object.fromEntries(
       Object.entries(shapes).map(([code, shape]) => {
         const a2 = toAlpha2(code);
         const local = a2 && dn?.of(a2);
+
         return [
           code,
           local && local !== a2 ? local : String(shape.properties?.name ?? ''),
@@ -163,6 +173,7 @@ const LogBook = () => {
   const removed = async (gone: BookEntry) => {
     await close();
     await router.invalidate();
+
     status.show({
       text: m.log_removed({ title: gone.title }),
       action: {
@@ -181,6 +192,7 @@ const LogBook = () => {
             })),
             goalIds: gone.goals.map((g) => g.goalId),
           });
+
           if (error) return status.show({ text: error });
           await router.invalidate();
           status.show({ text: m.log_back({ title: gone.title }) });
@@ -249,35 +261,43 @@ const LogForm = ({
 }: LogFormProps) => {
   const dialog = useRef<HTMLDialogElement>(null);
   const name = (code?: string | null) => (code ? (names[code] ?? '') : '');
+
   const countries = useMemo(
     () => Object.values(names).sort((a, b) => a.localeCompare(b, getLocale())),
     [names]
   );
+
   // "City, Country" in one go
   const split = (raw: string) => {
     const hit = raw.match(/^(.*),\s*([^,]+)$/);
     const c = hit && countryFrom(hit[2], names);
+
     return hit && c ? { name: hit[1].trim(), code: c.code } : null;
   };
 
   const startYm = book ? readDate(book).slice(0, 7) : '';
   const themes = goals.filter((g) => g.kind === 'theme');
   const [title, setTitle] = useState(book?.title ?? nextItem?.title ?? '');
+
   const [author, setAuthor] = useState(
     book?.author?.name ?? nextItem?.author ?? ''
   );
+
   const [country, setCountry] = useState(
     name(
       book?.author?.country?.code ??
         (nextItem?.mark === 'author' ? nextItem.countryCode : null)
     )
   );
+
   const [authorPick, setAuthorPick] = useState('');
   const [authorOpen, setAuthorOpen] = useState(false);
+
   // a place to start with: from a Next to read item, a click on the map, or a world's box
   const startCountry = name(
     nextItem?.mark === 'set' ? nextItem.countryCode : setIn
   );
+
   const [rows, setRows] = useState<Row[]>(() =>
     book?.places.length
       ? book.places.map((p) =>
@@ -291,6 +311,7 @@ const LogForm = ({
         )
       : [world ? row(world, '', true) : row('', startCountry)]
   );
+
   const sub = book
     ? ''
     : world || startCountry
@@ -298,14 +319,17 @@ const LogForm = ({
       : books.length
         ? ''
         : m.log_sub_first();
+
   const [mon, setMon] = useState(startYm.slice(5, 7));
   const [year, setYear] = useState(startYm.slice(0, 4));
+
   const [ticks, setTicks] = useState<number[]>(
     () =>
       book?.goals
         ?.map((g) => g.goalId)
         .filter((id) => themes.some((t) => t.id === id)) ?? []
   );
+
   // the goal ticks start open only if the book already counts toward one; after that the reader folds them
   const [ticksOpen] = useState(ticks.length > 0);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -324,9 +348,11 @@ const LogForm = ({
       if (r.imagined)
         return { key: r.key, name: tidy(r.name), imagined: true, typed: '' };
       const sp = split(r.name);
+
       const c: CountryMatch | null =
         countryFrom(r.country, names, r.pick) ??
         (sp ? { code: sp.code } : null);
+
       return {
         key: r.key,
         name: sp ? sp.name : r.name.trim(),
@@ -336,11 +362,13 @@ const LogForm = ({
         typed: r.country.trim(),
       };
     });
+
   const authorMatch = countryFrom(country, names, authorPick);
   const authorCode = authorMatch?.code;
 
   // what Pin it will mark, in words
   const marks: Record<string, { set?: boolean; author?: boolean }> = {};
+
   if (authorCode) marks[authorCode] = { author: true };
   for (const p of places)
     if (p.code) marks[p.code] = { ...marks[p.code], set: true };
@@ -350,15 +378,18 @@ const LogForm = ({
   const fix = (key: string) => {
     if (!errors[key]) return;
     const rest = { ...errors };
+
     delete rest[key];
     setErrors(rest);
     if (!Object.keys(rest).length) setFormError('');
   };
+
   const forgetDup = () => {
     if (!dupOk) return;
     setDupOk('');
     setFormError('');
   };
+
   const setRow = (key: number, change: Partial<Row>) =>
     setRows((rs) => rs.map((r) => (r.key === key ? { ...r, ...change } : r)));
 
@@ -370,11 +401,13 @@ const LogForm = ({
         : place
           ? m.log_add_place_country()
           : m.log_add_author_country();
+
   const FIELD: Record<string, [id: string, label: string]> = {
     title: ['f-title', m.log_f_title()],
     author: ['f-author', m.log_f_author()],
     country: ['f-country', m.log_f_country()],
   };
+
   const fieldOf = (key: string) =>
     FIELD[key] ?? [`pr-country-${key.slice(6)}`, m.log_f_place()];
 
@@ -382,6 +415,7 @@ const LogForm = ({
     event.preventDefault();
     if (saving) return;
     const errs: Record<string, string> = {};
+
     if (!title.trim()) errs.title = m.log_need_title();
     if (!author.trim()) errs.author = m.log_need_author();
     if (!authorCode) errs.country = countryError(country.trim(), false);
@@ -390,6 +424,7 @@ const LogForm = ({
         errs[`place-${p.key}`] = countryError(p.typed, true);
     setErrors(errs);
     const bad = Object.keys(errs);
+
     if (bad.length) {
       setFormError(
         bad.length === 1
@@ -399,20 +434,25 @@ const LogForm = ({
               list: [...new Set(bad.map((k) => fieldOf(k)[1]))].join(', '),
             })
       );
+
       document.getElementById(fieldOf(bad[0])[0])?.focus();
+
       return;
     }
 
     // the same book twice is usually a slip: say so once, then let a second Pin it through
     const key = `${title.trim()}|${author.trim()}`.toLowerCase();
+
     const dup =
       !book &&
       books.find(
         (b) => `${b.title}|${b.author?.name ?? ''}`.toLowerCase() === key
       );
+
     if (dup && dupOk !== key) {
       setDupOk(key);
       setFormError(m.log_dup({ month: formatMonth(readDate(dup)) }));
+
       return;
     }
 
@@ -435,14 +475,19 @@ const LogForm = ({
       ),
       goalIds: ticks,
     };
+
     setSaving(true);
     const { id, error } = await saveBook(draft, book?.id);
+
     if (error || !id) {
       setSaving(false);
       setFormError(error ?? '');
+
       return;
     }
+
     if (!book && nextItem) await removeNextRead(nextItem.id);
+
     onDone(
       book
         ? m.log_saved({ title: title.trim() })
@@ -471,9 +516,11 @@ const LogForm = ({
       })),
       goals: draft.goalIds.map((goalId) => ({ goalId })),
     };
+
     const all = [...books, added];
     const before = atlasMarks(books);
     const after = atlasMarks(all);
+
     // the Goals page stamps them when the reader goes to look
     const reached = goals.filter(
       (g) =>
@@ -481,8 +528,10 @@ const LogForm = ({
         !isDone(goalProgress(g, before, books, shapes)) &&
         isDone(goalProgress(g, after, all, shapes))
     );
+
     const g = reached[0];
     const total = g && goalProgress(g, after, all, shapes).total;
+
     return {
       ...pinMoment(added, before, after, names),
       bookId: id,
@@ -507,15 +556,19 @@ const LogForm = ({
     if (!book) return;
     setSaving(true);
     const error = await deleteBook(book.id);
+
     if (error) {
       setSaving(false);
       setFormError(error);
+
       return;
     }
+
     onRemoved(book);
   };
 
   const preview = Object.entries(marks);
+
   const label = saving
     ? book
       ? m.log_saving()
@@ -698,6 +751,7 @@ const LogForm = ({
             {rows.map((r) => {
               const err = errors[`place-${r.key}`];
               const empty = rows.length === 1 && !r.name && !r.country;
+
               return (
                 <li
                   key={r.key}
@@ -718,6 +772,7 @@ const LogForm = ({
                     value={r.name}
                     onValue={(v) => {
                       const sp = !r.imagined && split(v);
+
                       setRow(r.key, {
                         name: v,
                         ...(sp && !r.country && { country: name(sp.code) }),
@@ -750,6 +805,7 @@ const LogForm = ({
                             open: false,
                             ...(!splitStates(v) && { pick: '' }),
                           });
+
                           fix(`place-${r.key}`);
                         }}
                       />
@@ -770,11 +826,13 @@ const LogForm = ({
                     hidden={empty}
                     onClick={() => {
                       fix(`place-${r.key}`);
+
                       setRows((rs) =>
                         rs.length === 1
                           ? [row()]
                           : rs.filter((x) => x.key !== r.key)
                       );
+
                       document
                         .querySelector<HTMLInputElement>(`.${s.place} input`)
                         ?.focus();
@@ -817,7 +875,9 @@ const LogForm = ({
               className={s.linkBtn}
               onClick={() => {
                 const r = row();
+
                 setRows((rs) => [...rs, r]);
+
                 requestAnimationFrame(() =>
                   document.getElementById(`pr-name-${r.key}`)?.focus()
                 );
@@ -947,8 +1007,10 @@ const LogForm = ({
 
 // a translated sentence with one word in bold: the message is filled with a marker where the word goes
 const BOLD = '\u0000';
+
 const Bold = ({ text, bold }: { text: string; bold: string }) => {
   const [before, after = ''] = text.split(BOLD);
+
   return (
     <>
       {before}
@@ -980,15 +1042,18 @@ const ThenNote = ({
   onChange,
 }: ThenNoteProps) => {
   const note = useRef<HTMLDivElement>(null);
+
   // after a pick, focus goes to Change; after Change, to the chosen pill
   const focusIn = (selector: string) =>
     requestAnimationFrame(() =>
       note.current?.querySelector<HTMLElement>(selector)?.focus()
     );
+
   const name = tidy(typed);
   const states = splitStates(typed);
   const c = countryFrom(typed, names, pick);
   let content = null;
+
   if (states && c && !open)
     content = (
       <p>
@@ -1045,6 +1110,7 @@ const ThenNote = ({
           : m.log_then_under_fill({ country: names[c.under], area: c.as })}
       </p>
     );
+
   return (
     <div ref={note} className={s.thenNote} aria-live="polite" hidden={!content}>
       {content}

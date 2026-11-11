@@ -27,11 +27,14 @@ const UserDetails = ({ user }: UserDetailsProps) => {
     if (!name.trim()) {
       setError(m.account_name_missing());
       document.getElementById('ac-name')?.focus();
+
       return;
     }
+
     setSaving(true);
 
     const problem = await updateDisplayName(name.trim());
+
     setSaving(false);
     setError(problem ?? undefined);
     if (!problem) setStatus(m.account_saved());

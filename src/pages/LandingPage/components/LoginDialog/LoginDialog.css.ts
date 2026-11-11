@@ -95,6 +95,7 @@ export const formError = style({
   background: vars.color.rustWash,
   border: `1px solid ${vars.color.markerAuthor}`,
 });
+
 globalStyle(`${formError} svg`, {
   width: 17,
   height: 17,
@@ -132,6 +133,7 @@ const strengthFillBase = style({
   borderRadius: 999,
   transition: `transform .2s ${easeOut}, background .2s ${easeOut}`,
 });
+
 export const strengthFill = styleVariants({
   0: [strengthFillBase, { background: vars.color.error }],
   1: [strengthFillBase, { background: vars.color.error }],
@@ -146,6 +148,7 @@ export const strengthLabel = style({
   color: vars.color.textMuted,
   whiteSpace: 'nowrap',
 });
+
 const btn = style({
   display: 'inline-flex',
   alignItems: 'center',
@@ -165,6 +168,7 @@ const btn = style({
     '&[disabled]': { opacity: 0.72, cursor: 'progress' },
   },
 });
+
 globalStyle(`${btn} svg`, { width: 17, height: 17, flex: 'none' });
 
 export const btnPrimary = style([
@@ -223,12 +227,14 @@ export const example = style({
   color: vars.color.text,
   cursor: 'pointer',
 });
+
 globalStyle(`${example} input`, {
   width: 20,
   height: 20,
   margin: 0,
   accentColor: vars.color.primary,
 });
+
 export const exampleHint = style({
   gridColumn: 2,
   fontWeight: 400,

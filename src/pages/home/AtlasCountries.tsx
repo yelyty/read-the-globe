@@ -14,6 +14,7 @@ import { m } from '../../paraglide/messages.js';
 import { getLocale } from '../../paraglide/runtime.js';
 
 const PEEK = 6;
+
 const describe = ({ set, author }: Mark) =>
   [
     set.length &&
@@ -37,13 +38,16 @@ const AtlasCountries = ({
   onFocusCountry,
 }: AtlasCountriesProps) => {
   const byContinent: Partial<Record<Continent, string[]>> = {};
+
   // a territory's own shape counts under its country, so it isn't listed
   for (const code of counted(marks))
     (byContinent[CONTINENT_OF[code]] ??= []).push(code);
   const name = (code: string) => names[code] ?? code;
+
   const continents = (Object.keys(CONTINENT_NAMES) as Continent[]).filter(
     (c) => byContinent[c]
   );
+
   const biggest = continents.reduce<Continent | undefined>(
     (a, c) => (!a || byContinent[c]!.length > byContinent[a]!.length ? c : a),
     undefined
@@ -63,6 +67,7 @@ const AtlasCountries = ({
           const codes = byContinent[continent]!.sort((a, b) =>
             name(a).localeCompare(name(b), getLocale())
           );
+
           return (
             <details
               key={continent}

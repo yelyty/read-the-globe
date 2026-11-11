@@ -22,6 +22,7 @@ const LABEL: Record<Continent, () => string> = {
   OC: m.continent_oc,
   AN: m.continent_an,
 };
+
 export const continentName = (c: Continent) => LABEL[c]();
 
 // prettier-ignore

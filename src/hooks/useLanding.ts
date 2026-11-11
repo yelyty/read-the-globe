@@ -11,6 +11,8 @@ export const LandingContext = createContext<
 
 export function useLanding() {
   const landing = useContext(LandingContext);
+
   if (!landing) throw new Error('useLanding must be used within AppLayout');
+
   return landing;
 }

@@ -44,11 +44,13 @@ export const variant = style({
   cursor: 'pointer',
   '@media': { [hover]: { selectors: { '&:hover': { background: band } } } },
 });
+
 globalStyle(`${variant} b`, {
   display: 'block',
   fontWeight: 500,
   color: vars.color.text,
 });
+
 globalStyle(`${variant} input`, {
   appearance: 'none',
   position: 'absolute',
@@ -63,6 +65,7 @@ globalStyle(`${variant} input`, {
   cursor: 'pointer',
   '@media': { '(forced-colors: active)': { appearance: 'auto' } },
 });
+
 globalStyle(`${variant} input:checked`, {
   background: `radial-gradient(circle, ${vars.color.olive} 0 4.5px, ${vars.color.background} 5px)`,
 });

@@ -18,6 +18,7 @@ type Stamp = {
   place: Record<string, string>; // size and spot round the promise
   n: number; // the order they press in
 };
+
 const STAMPS: Stamp[] = [
   {
     code: '036',
@@ -82,6 +83,7 @@ const LABEL: Record<Mark, (inputs: { country: string }) => string> = {
   author: m.landing_stamp_author,
   both: m.landing_stamp_both,
 };
+
 const FILL: Record<Mark, string> = {
   set: 'var(--olive)',
   author: 'var(--rust)',
@@ -106,6 +108,7 @@ const Closing = ({ onSignUp }: { onSignUp: () => void }) => {
   // the countries in the reader's language, from the browser
   const names = new Intl.DisplayNames([getLocale()], { type: 'region' });
   const [shapes, setShapes] = useState<Record<string, Feature>>();
+
   useEffect(() => {
     if (revealed) void worldShapes().then(setShapes);
   }, [revealed]);
@@ -132,7 +135,9 @@ const Closing = ({ onSignUp }: { onSignUp: () => void }) => {
         const label = LABEL[stamp.mark]({
           country: names.of(toAlpha2(stamp.code)) ?? stamp.code,
         });
+
         const shape = shapes?.[stamp.code];
+
         return (
           <svg
             key={stamp.code}

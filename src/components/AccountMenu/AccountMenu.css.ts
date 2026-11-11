@@ -32,6 +32,7 @@ export const caret = style({
 });
 
 const listIn = keyframes({ from: { opacity: 0, transform: 'scale(.97)' } });
+
 export const list = style({
   position: 'absolute',
   right: -12,
@@ -49,6 +50,7 @@ export const list = style({
   selectors: { '&[hidden]': { display: 'none' } },
   '@media': { [reducedMotion]: { animation: 'none' } },
 });
+
 globalStyle(`${list} li + li`, {
   marginTop: 4,
   paddingTop: 4,

@@ -21,6 +21,7 @@ globalStyle(`${main} h1`, {
   fontSize: 'clamp(40px, 6vw, 64px)',
   color: vars.color.text,
 });
+
 globalStyle(`${main} h2`, {
   ...headline,
   margin: '56px 0 0',
@@ -29,11 +30,13 @@ globalStyle(`${main} h2`, {
   letterSpacing: '-.02em',
   color: vars.color.text,
 });
+
 globalStyle(`${main} p, ${main} li`, {
   maxWidth: '68ch',
   color: vars.color.text,
   textWrap: 'pretty',
 });
+
 globalStyle(`${main} :is(p, h2, ul) + p`, { marginTop: 16 });
 globalStyle(`${main} ul`, { margin: '16px 0 0', paddingLeft: 24 });
 globalStyle(`${main} li + li`, { marginTop: 8 });
@@ -53,6 +56,7 @@ export const draft = style({
 });
 
 export const lede = style({ fontSize: 21, lineHeight: 1.5 });
+
 globalStyle(`${main} p${lede}`, {
   marginTop: 24,
   color: vars.color.textSecondary,
@@ -76,6 +80,7 @@ export const post = style({
 });
 globalStyle(`${main} ${posts} li`, { maxWidth: 'none' });
 globalStyle(`${main} ${posts} li + li`, { marginTop: 0 });
+
 globalStyle(`${post} time`, {
   fontFamily: vars.font.sans,
   fontSize: 15,
@@ -83,7 +88,9 @@ globalStyle(`${post} time`, {
   color: vars.color.textMuted,
   fontVariantNumeric: 'tabular-nums',
 });
+
 globalStyle(`${main} ${post} h2`, { marginTop: 8 });
+
 globalStyle(`${main} ${post} p`, {
   marginTop: 16,
   color: vars.color.textSecondary,

@@ -31,6 +31,7 @@ describe('booksFromCsv', () => {
       'No author,,Japan,,',
       'Somewhere,Someone,Atlantis,,',
     ].join('\n');
+
     expect(booksFromCsv(csv, names)).toEqual({
       books: [
         {
@@ -87,7 +88,9 @@ describe('booksFromCsv', () => {
       ],
       goals: [],
     };
+
     const csv = toCsv(readingListRows([book], names));
+
     expect(booksFromCsv(csv, names).books).toEqual([
       {
         title: book.title,

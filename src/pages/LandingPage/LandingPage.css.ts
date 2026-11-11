@@ -71,17 +71,21 @@ globalStyle(`${page} :where(h1, h2, h3)`, {
   fontFamily: vars.font.display,
   fontWeight: 500,
 });
+
 globalStyle(`${page} :where(p)`, { margin: 0 });
+
 globalStyle(`${page} :where(a)`, {
   color: vars.color.text,
   textUnderlineOffset: 3,
   textUnderlinePosition: 'from-font',
   textDecorationSkipInk: 'auto',
 });
+
 globalStyle(`${page} :where(button, input, textarea)`, {
   font: 'inherit',
   color: 'inherit',
 });
+
 globalStyle(
   `${page} :where(a, button, input, textarea, summary, [tabindex]):focus-visible`,
   {
@@ -89,7 +93,9 @@ globalStyle(
     outlineOffset: 2,
   }
 );
+
 globalStyle(`${page} ::selection`, { background: 'rgba(74, 106, 64, 0.25)' });
+
 globalStyle(`${page} *, ${page} *::before, ${page} *::after`, {
   '@media': {
     [reducedMotion]: {
@@ -99,7 +105,9 @@ globalStyle(`${page} *, ${page} *::before, ${page} *::after`, {
     },
   },
 });
+
 globalStyle('body:has(dialog[open])', { overflow: 'hidden' });
+
 // section links land below the sticky header
 globalStyle(`html:has(${page})`, {
   scrollPaddingTop: 80,

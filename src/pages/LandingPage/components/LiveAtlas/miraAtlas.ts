@@ -63,9 +63,11 @@ export const BOOKS: MiraBook[] = [
 export const atlasAfter = (count: number) => {
   const set = new Set<string>();
   const author = new Set<string>();
+
   for (const [, , from, places] of BOOKS.slice(0, count)) {
     author.add(toNumeric(from)!);
     for (const p of places) set.add(toNumeric(p)!);
   }
+
   return { set, author, countries: new Set([...set, ...author]).size };
 };

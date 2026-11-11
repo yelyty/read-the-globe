@@ -27,10 +27,12 @@ export const GEO_URL =
 // A flat latitude/longitude grid, as in the mock: 360° across, 83°N to 57°S down (no Antarctica).
 const WIDTH = 1000;
 const HEIGHT = Math.round((WIDTH * (83 + 57)) / 360);
+
 const projection = geoEquirectangular()
   .scale(WIDTH / (2 * Math.PI))
   .center([0, (83 - 57) / 2])
   .translate([WIDTH / 2, HEIGHT / 2]);
+
 // react-simple-maps 1.0.0 uses a projection passed as a function as-is; its @types describe a factory instead
 const projectionProp = projection as unknown as ProjectionFunction;
 
@@ -50,6 +52,7 @@ type AtlasMapProps = {
 };
 
 const SLID = 'rtg-map-slid';
+
 const store = {
   get: (k: string) => {
     try {
@@ -70,6 +73,7 @@ const store = {
 // mounted inside the map once its countries are drawn, so the phone frame can measure them
 const Drawn = ({ onDrawn }: { onDrawn: () => void }) => {
   useEffect(onDrawn, [onDrawn]);
+
   return null;
 };
 
@@ -94,8 +98,10 @@ const AtlasMap = memo(
 
     const measure = useCallback(() => {
       const el = scroll.current;
+
       if (!el) return;
       const max = el.scrollWidth - el.clientWidth;
+
       setEdges({
         left: max > 1 && el.scrollLeft > 2,
         right: max > 1 && el.scrollLeft < max - 2,
@@ -104,22 +110,28 @@ const AtlasMap = memo(
 
     const frame = useCallback(() => {
       const el = scroll.current;
+
       if (!el || framed.current || el.scrollWidth <= el.clientWidth + 1)
         return measure();
       framed.current = true;
       const box = el.getBoundingClientRect();
+
       const xs = [...el.querySelectorAll(`.${s.marked}`)]
         .map((p) => p.getBoundingClientRect())
         .filter((r) => r.width)
         .map((r) => r.left + r.width / 2)
         .sort((a, b) => a - b);
+
       auto.current = Date.now();
       if (xs.length) {
         let best = [xs[0]];
+
         xs.forEach((x, i) => {
           const g = xs.slice(i).filter((y) => y - x <= box.width * 0.8);
+
           if (g.length > best.length) best = g;
         });
+
         el.scrollLeft +=
           (best[0] + best[best.length - 1]) / 2 - (box.left + box.width / 2);
       } else el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2; // no marks yet: Europe and Africa, not the Pacific
@@ -129,11 +141,13 @@ const AtlasMap = memo(
 
     useEffect(() => {
       window.addEventListener('resize', measure);
+
       return () => window.removeEventListener('resize', measure);
     }, [measure]);
 
     const onScroll = () => {
       measure();
+
       if (hint && Date.now() - auto.current > 400) {
         setHint(false);
         store.set(SLID, '1');
@@ -173,6 +187,7 @@ const AtlasMap = memo(
                 <>
                   {geographies.map((geo: Geo) => {
                     const mark = marks[geo.id];
+
                     const classes = [
                       s.land,
                       mark?.set.length && s.set,
@@ -181,6 +196,7 @@ const AtlasMap = memo(
                       !mark && open && geo.id !== ANTARCTICA && s.open,
                       landed?.has(geo.id) && s.landed,
                     ];
+
                     return (
                       <Geography
                         key={geo.rsmKey}

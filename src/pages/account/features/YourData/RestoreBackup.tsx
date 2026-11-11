@@ -44,18 +44,23 @@ const RestoreBackup = ({
 
   const pick = async (event: ChangeEvent<HTMLInputElement>) => {
     const chosen = event.target.files?.[0];
+
     event.target.value = '';
     if (!chosen) return;
     let data: Partial<Backup> | null = null;
+
     try {
       data = JSON.parse(await chosen.text()) as Partial<Backup>;
     } catch {
       // not JSON: said below
     }
+
     if (!data || !Array.isArray(data.books) || !Array.isArray(data.goals)) {
       onFail(m.account_not_a_backup());
+
       return;
     }
+
     setPending(data as Backup);
     dialog.current?.showModal();
     document.getElementById('ac-restore-keep')?.focus(); // the safe choice takes focus
@@ -68,16 +73,22 @@ const RestoreBackup = ({
     setRestoring(true);
     // the atlas as it is now, exported first so Undo can restore it
     const was = await getBackup(userId).catch(() => null);
+
     const problem = was
       ? await restoreBackup(pending)
       : m.data_restore_failed();
+
     setRestoring(false);
     close();
+
     if (problem || !was) {
       status.show({ text: problem ?? '' });
+
       return;
     }
+
     await router.invalidate();
+
     status.show({
       text: m.account_restored({
         books: bookCount(pending.books.length),
@@ -88,6 +99,7 @@ const RestoreBackup = ({
         icon: <ArrowCounterClockwiseIcon aria-hidden="true" />,
         run: async () => {
           const undone = await restoreBackup(was);
+
           if (undone) return status.show({ text: undone });
           await router.invalidate();
           status.show({ text: m.account_as_it_was() });
@@ -97,6 +109,7 @@ const RestoreBackup = ({
   };
 
   const exported = pending?.exported ? new Date(pending.exported) : null;
+
   const when =
     exported && !isNaN(exported.getTime())
       ? exported.toLocaleDateString(getLocale(), {

@@ -67,6 +67,7 @@ const pingOut = keyframes({
   from: { opacity: 0.9, scale: '.3' },
   to: { opacity: 0, scale: '1.6' },
 });
+
 export const ping = style({
   fill: 'none',
   stroke: vars.color.text,
@@ -92,6 +93,7 @@ export const foot = style({
 });
 
 export const count = style({ display: 'flex', alignItems: 'baseline', gap: 8 });
+
 globalStyle(`${count} b`, {
   fontFamily: vars.font.serif,
   fontWeight: 400,
@@ -100,11 +102,13 @@ globalStyle(`${count} b`, {
   fontVariantNumeric: 'lining-nums tabular-nums',
   minWidth: '2ch',
 });
+
 globalStyle(`${count} span`, {
   fontSize: 20,
   lineHeight: 1,
   color: vars.color.textSecondary,
 });
+
 globalStyle(`${count} em`, {
   fontFamily: vars.font.sans,
   fontStyle: 'normal',
@@ -152,6 +156,7 @@ export const key = style({
 });
 globalStyle(`${key} li`, { display: 'flex', alignItems: 'center', gap: 8 });
 const swatch = { width: 12, height: 12, borderRadius: 2 };
+
 export const keySet = style({ ...swatch, background: vars.color.olive });
 export const keyAuthor = style({
   ...swatch,

@@ -31,11 +31,13 @@ export async function getGoals(userId: string): Promise<Goal[]> {
   if (error) {
     throw new Error(m.goals_err_load());
   }
+
   return data ?? [];
 }
 
 export async function addGoal(goal: GoalInput): Promise<string | null> {
   const { error } = await supabase.from('goals').insert(toRow(goal));
+
   return message(error);
 }
 
@@ -48,11 +50,13 @@ export async function updateGoal(
     .from('goals')
     .update(toRow(goal))
     .eq('id', id);
+
   return message(error);
 }
 
 export async function deleteGoal(id: number): Promise<string | null> {
   const { error } = await supabase.from('goals').delete().eq('id', id);
+
   return error?.message ?? null;
 }
 
@@ -64,6 +68,7 @@ export async function markReached(
     .from('goals')
     .update({ reached_on: date })
     .eq('id', id);
+
   return error?.message ?? null;
 }
 
@@ -75,6 +80,7 @@ export async function setGoalBooks(
     p_goal_id: goalId,
     p_book_ids: bookIds,
   });
+
   return error?.message ?? null;
 }
 
@@ -87,6 +93,8 @@ export async function restoreGoal(
     .insert({ ...toRow(goal), reached_on: goal.reachedOn })
     .select('id')
     .single<{ id: number }>();
+
   if (error) return message(error);
+
   return bookIds.length ? setGoalBooks(data.id, bookIds) : null;
 }

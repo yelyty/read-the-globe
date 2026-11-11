@@ -20,6 +20,7 @@ const ResetPasswordPage = () => {
   const [pending, setPending] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+
   const error = submitted
     ? (newPasswordProblem(password) ?? undefined)
     : undefined;
@@ -27,12 +28,16 @@ const ResetPasswordPage = () => {
   const submit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSubmitted(true);
+
     if (newPasswordProblem(password)) {
       document.getElementById('rp-password')?.focus();
+
       return;
     }
+
     setPending(true);
     const failed = await changePassword(password);
+
     setPending(false);
     setProblem(failed);
     setDone(!failed);

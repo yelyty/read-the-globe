@@ -10,19 +10,25 @@ export type Marks = Record<string, Mark>;
 export function atlasMarks(books: BookEntry[]): Marks {
   const marks: Marks = {};
   const at = (code: string) => (marks[code] ??= { set: [], author: [] });
+
   const withParent = (code: string) =>
     PARENT[code] ? [code, PARENT[code]] : [code];
+
   for (const book of books) {
     const authorCountry = book.author?.country?.code;
+
     if (authorCountry)
       for (const code of withParent(authorCountry)) at(code).author.push(book);
+
     const setIn = new Set(
       (book.places ?? []).flatMap((p) =>
         p.countryCode ? withParent(p.countryCode) : []
       )
     );
+
     for (const code of setIn) at(code).set.push(book);
   }
+
   return marks;
 }
 
@@ -32,6 +38,7 @@ export const counted = (marks: Marks) =>
 
 export function atlasStats(books: BookEntry[], marks: Marks) {
   const codes = counted(marks);
+
   return {
     books: books.length,
     countries: codes.length,

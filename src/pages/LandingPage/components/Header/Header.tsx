@@ -12,12 +12,15 @@ import { m } from '../../../../paraglide/messages.js';
 // the section on screen: the one crossing a thin line just under the middle of the viewport
 const useCurrentSection = () => {
   const [current, setCurrent] = useState<string | null>(null);
+
   useEffect(() => {
     const sections = SECTIONS.map(({ hash }) =>
       document.getElementById(hash)
     ).filter((el) => el !== null);
+
     if (!sections.length) return;
     const seen = new Map<Element, boolean>();
+
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => seen.set(e.target, e.isIntersecting));
@@ -25,9 +28,12 @@ const useCurrentSection = () => {
       },
       { rootMargin: '-45% 0px -50% 0px' }
     );
+
     sections.forEach((el) => io.observe(el));
+
     return () => io.disconnect();
   }, []);
+
   return current;
 };
 
@@ -52,15 +58,19 @@ const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
       setMenuOpen(false);
       menuBtnRef.current?.focus();
     };
+
     const onPointer = (event: PointerEvent) => {
       const target = event.target as Node;
+
       if (
         !menuRef.current?.contains(target) &&
         !menuBtnRef.current?.contains(target)
       )
         setMenuOpen(false);
     };
+
     const wide = window.matchMedia('(min-width: 800px)');
+
     const onWide = (event: MediaQueryListEvent) => {
       if (event.matches) setMenuOpen(false);
     };
@@ -68,6 +78,7 @@ const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
     document.addEventListener('keydown', onKey);
     document.addEventListener('pointerdown', onPointer);
     wide.addEventListener('change', onWide);
+
     return () => {
       document.removeEventListener('keydown', onKey);
       document.removeEventListener('pointerdown', onPointer);

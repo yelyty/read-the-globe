@@ -8,9 +8,11 @@ const read = (): Theme =>
 
 const subscribe = (onChange: () => void) => {
   const observer = new MutationObserver(onChange);
+
   observer.observe(document.documentElement, {
     attributeFilter: ['data-theme'],
   });
+
   return () => observer.disconnect();
 };
 

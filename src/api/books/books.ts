@@ -26,13 +26,18 @@ export async function saveBook(
     p_places: draft.places,
     p_goal_ids: draft.goalIds,
   });
+
   const { error } = saved;
+
   if (error) console.error(error);
+
   return error ? { error: m.book_save_failed() } : { id: saved.data as string };
 }
 
 export async function deleteBook(id: string): Promise<string | null> {
   const { error } = await supabase.from('books').delete().eq('id', id);
+
   if (error) console.error(error);
+
   return error ? m.book_remove_failed() : null;
 }

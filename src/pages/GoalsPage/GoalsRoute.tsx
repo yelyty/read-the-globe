@@ -1,14 +1,15 @@
-import type { CSSProperties } from "react";
-import * as s from "./GoalsPage.css";
+import type { CSSProperties } from 'react';
+import * as s from './GoalsPage.css';
 
 type GoalRouteProps = { done: number; total: number; theme?: boolean };
 
 export const GoalRoute = ({ done, total, theme }: GoalRouteProps) => {
   const p = Math.min(1, total ? done / total : 0);
+
   return (
     <div
       className={theme ? `${s.route} ${s.routeTheme}` : s.route}
-      style={{ "--p": p } as CSSProperties}
+      style={{ '--p': p } as CSSProperties}
       aria-hidden="true"
     >
       <div className={s.routeTrack} />
@@ -19,7 +20,7 @@ export const GoalRoute = ({ done, total, theme }: GoalRouteProps) => {
             <i
               key={i}
               className={i + 1 <= done ? s.stopHit : s.stop}
-              style={{ "--k": (i + 1) / total } as CSSProperties}
+              style={{ '--k': (i + 1) / total } as CSSProperties}
             />
           ))}
         </div>

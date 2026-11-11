@@ -39,6 +39,7 @@ describe('read date', () => {
 
   it("turns the form's month into a read_on date", () => {
     const today = '2026-10-27';
+
     expect(readOnFor('', '', '', today)).toBeNull(); // left empty
     expect(readOnFor('03', '2019', '2019-03', today)).toBeNull(); // unchanged on an edit
     expect(readOnFor('10', '2026', '', today)).toBe('2026-10-27'); // this month: today

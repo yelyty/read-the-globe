@@ -25,7 +25,9 @@ export async function getBackup(userId: string): Promise<Backup> {
     getNextReads(userId),
     getWorlds(userId),
   ]);
+
   if (next.failed) throw new Error("Couldn't load your next reads");
+
   return {
     exported: new Date().toISOString(),
     books,
@@ -41,7 +43,9 @@ export async function importBooks(
 ): Promise<{ added: number; duplicates: number } | { error: string }> {
   if (!books.length) return { added: 0, duplicates: 0 };
   const done = await supabase.rpc('import_books', { p_books: books });
+
   if (done.error) console.error(done.error);
+
   return done.error
     ? { error: m.data_import_failed() }
     : (done.data as { added: number; duplicates: number });
@@ -49,12 +53,16 @@ export async function importBooks(
 
 export async function restoreBackup(backup: Backup): Promise<string | null> {
   const { error } = await supabase.rpc('restore_backup', { p_backup: backup });
+
   if (error) console.error(error);
+
   return error ? m.data_restore_failed() : null;
 }
 
 export async function clearAtlas(): Promise<string | null> {
   const { error } = await supabase.rpc('clear_atlas');
+
   if (error) console.error(error);
+
   return error ? m.account_clear_failed() : null;
 }

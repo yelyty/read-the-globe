@@ -12,6 +12,7 @@ import {
 const dialogIn = keyframes({
   from: { opacity: 0, translate: '0 8px', scale: '.98' },
 });
+
 const fadeIn = keyframes({ from: { opacity: 0 } });
 
 export const dialog = style({
@@ -91,6 +92,7 @@ export const keepCopy = style({
   border: `1px solid ${vars.color.border}`,
   borderRadius: 8,
 });
+
 globalStyle(`${keepCopy} > p:first-child`, {
   flexBasis: '100%',
   margin: 0,

@@ -19,8 +19,10 @@ export function parseCsv(text: string): string[][] {
   let value = '';
   let quoted = false;
   const src = text.replace(/^\uFEFF/, ''); // Excel's byte order mark
+
   for (let i = 0; i < src.length; i++) {
     const ch = src[i];
+
     if (quoted) {
       if (ch === '"' && src[i + 1] === '"') {
         value += '"';
@@ -39,10 +41,12 @@ export function parseCsv(text: string): string[][] {
       value = '';
     } else value += ch;
   }
+
   if (value || row.length) {
     row.push(value);
     rows.push(row);
   }
+
   return rows.filter((r) => r.some((c) => c.trim()));
 }
 
@@ -54,10 +58,12 @@ export function readingListRows(
   const place = (p: BookEntry['places'][number]) => {
     if (p.imagined) return `${p.name} (imagined)`;
     const country = p.countryCode ? (names[p.countryCode] ?? '') : '';
+
     return p.name && p.name !== country
       ? [p.name, country].filter(Boolean).join(', ')
       : country;
   };
+
   return [
     CSV_HEAD,
     ...books.map((b) => [
@@ -90,9 +96,11 @@ export function booksFromCsv(
   names: Record<string, string>
 ): { books: ImportedBook[]; problems: number } {
   const rows = parseCsv(text);
+
   if (rows.length && /title/i.test(rows[0][0] ?? '')) rows.shift();
   const books: ImportedBook[] = [];
   let problems = 0;
+
   for (const [
     title = '',
     author = '',
@@ -101,11 +109,14 @@ export function booksFromCsv(
     date = '',
   ] of rows) {
     const c = countryFrom(country, names);
+
     if (!title.trim() || !author.trim() || !c) {
       problems++;
       continue;
     }
+
     const day = date.trim();
+
     books.push({
       title: title.trim(),
       author: author.trim(),
@@ -121,12 +132,15 @@ export function booksFromCsv(
         .filter(Boolean)
         .flatMap((p): ImportedBook['places'] => {
           const world = p.match(/^(.+?)\s*\(imagined\)$/i);
+
           if (world) return [{ name: world[1], country: null, imagined: true }];
           const split = p.match(/^(.*),\s*([^,]+)$/);
           const inCountry = split && countryFrom(split[2], names);
+
           if (split && inCountry)
             return [{ name: split[1].trim(), country: inCountry.code }];
           const bare = countryFrom(p, names);
+
           return bare
             ? [
                 {
@@ -138,5 +152,6 @@ export function booksFromCsv(
         }),
     });
   }
+
   return { books, problems };
 }

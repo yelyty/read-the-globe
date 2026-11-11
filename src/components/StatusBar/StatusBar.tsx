@@ -22,11 +22,13 @@ const StatusBar = ({ children }: { children: ReactNode }) => {
     clearTimeout(timer.current);
     timer.current = window.setTimeout(() => setStatus(null), ms);
   }, [ms]);
+
   const pause = () => clearTimeout(timer.current);
 
   useEffect(() => {
     if (!status) return;
     arm();
+
     return pause;
   }, [status, arm]);
 

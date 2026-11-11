@@ -9,6 +9,7 @@ describe('atlasAfter', () => {
   it('counts a country marked twice once', () => {
     // The Master and Margarita: by a Russian author, set in Russia
     const first = atlasAfter(1);
+
     expect(first.set).toEqual(new Set(['643']));
     expect(first.author).toEqual(new Set(['643']));
     expect(first.countries).toBe(1);

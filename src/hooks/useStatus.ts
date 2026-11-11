@@ -12,6 +12,8 @@ export const StatusContext = createContext<((status: Status) => void) | null>(
 
 export function useStatus() {
   const show = useContext(StatusContext);
+
   if (!show) throw new Error('useStatus must be used within StatusBar');
+
   return { show };
 }

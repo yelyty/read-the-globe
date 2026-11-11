@@ -17,6 +17,7 @@ import { hint } from '../Hint/Hint.css';
 const rise = keyframes({
   from: { opacity: 0, translate: '0 8px', scale: '.98' },
 });
+
 const sheetUp = keyframes({ from: { translate: '0 100%' } });
 const fade = keyframes({ from: { opacity: 0 } });
 
@@ -134,6 +135,7 @@ export const mark = style({
   alignItems: 'center',
   gap: 8,
 });
+
 const dot = {
   display: 'inline-block',
   flex: 'none',
@@ -143,6 +145,7 @@ const dot = {
   marginRight: 8,
   verticalAlign: '0.05em',
 } as const;
+
 export const dotSet = style({ ...dot, background: vars.color.olive });
 export const dotAuthor = style({
   ...dot,
@@ -173,12 +176,14 @@ export const set = style({
 });
 globalStyle(`${set} > legend`, { padding: 0 });
 globalStyle(`${set} > legend + ${hint}`, { margin: '0 0 8px' });
+
 const placeGrid = {
   display: 'grid',
   gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr) 40px',
   gap: 8,
   alignItems: 'start',
 } as const;
+
 export const placesHead = style({
   ...placeGrid,
   marginBottom: 8,
@@ -210,6 +215,7 @@ globalStyle(`${place} > button`, {
   margin: 0,
   '@media': { [phone]: { gridColumn: 2, gridRow: '1 / span 2' } },
 });
+
 globalStyle(`${place} > div`, { '@media': { [phone]: { gridColumn: 1 } } });
 
 // an imagined place has no country: its name takes the country's room
@@ -249,6 +255,7 @@ export const thenPicks = style({
   gap: 8,
   marginTop: 8,
 });
+
 // the same pills as the map's Show filter: a flat fill, no bolder weight when picked
 globalStyle(`${thenPicks} button`, {
   minHeight: 32,
@@ -268,11 +275,15 @@ globalStyle(`${thenPicks} button`, {
     '(forced-colors: active)': { borderColor: 'ButtonText' },
   },
 });
+
 globalStyle(`${thenPicks} button:active`, { scale: '.97' });
+
 globalStyle(`${thenPicks} button:hover`, {
   '@media': { [hover]: { background: fillHover, color: vars.color.text } },
 });
+
 globalStyle(`${thenPicks} button:focus-visible`, focusRing);
+
 globalStyle(`${thenPicks} button[aria-pressed="true"]`, {
   background: `color-mix(in srgb, ${vars.color.secondary} 22%, ${vars.color.background})`,
   color: vars.color.text,
@@ -295,11 +306,13 @@ globalStyle(`${month} select:first-of-type`, { flex: '1.4 1 0' });
 globalStyle(`${month} select:last-of-type`, { flex: '1 1 0' });
 
 export const themes = style({ margin: '0 0 16px', padding: 0, border: 0 });
+
 globalStyle(`${themes} summary`, {
   cursor: 'pointer',
   fontWeight: 500,
   color: vars.color.textSecondary,
 });
+
 globalStyle(`${themes} ul`, {
   listStyle: 'none',
   margin: '8px 0 0 16px',
@@ -308,6 +321,7 @@ globalStyle(`${themes} ul`, {
   flexDirection: 'column',
   gap: 4,
 });
+
 globalStyle(`${themes} label`, {
   display: 'flex',
   alignItems: 'center',

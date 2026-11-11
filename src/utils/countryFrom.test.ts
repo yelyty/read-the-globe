@@ -30,10 +30,12 @@ describe('countryFrom', () => {
   it('waits for a pick when a state split', () => {
     expect(splitStates('the Soviet Union')).toHaveLength(15);
     expect(countryFrom('USSR', names)).toBeNull();
+
     expect(countryFrom('USSR', names, '804')).toEqual({
       code: '804',
       then: 'USSR',
     });
+
     expect(splitStates('Ceylon')).toBeNull();
   });
 
@@ -43,6 +45,7 @@ describe('countryFrom', () => {
       as: 'Greenland',
       under: '208',
     });
+
     expect(countryFrom('Faroe Islands', names)).toEqual({
       code: '208',
       as: 'Faroe Islands',
@@ -60,6 +63,7 @@ describe('worldsOf', () => {
     bookId: 'b',
     imagined,
   });
+
   it('groups imagined places by name, then saved worlds with no books', () => {
     const books = [
       {
@@ -77,10 +81,12 @@ describe('worldsOf', () => {
         places: [place('earthsea ', true)],
       },
     ];
+
     const rows = worldsOf(books, [
       { id: 'w', name: 'Narnia' },
       { id: 'x', name: 'EARTHSEA' },
     ]);
+
     expect(rows.map((r) => [r.name, r.books.length, r.saved?.id])).toEqual([
       ['Earthsea', 2, 'x'],
       ['Narnia', 0, 'w'],

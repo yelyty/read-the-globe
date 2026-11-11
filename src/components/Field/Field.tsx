@@ -26,6 +26,7 @@ const Field = ({
 }: FieldProps) => {
   const [visible, setVisible] = useState(false);
   const errorId = `${id}-err`;
+
   const describedBy =
     [error ? errorId : null, inputProps['aria-describedby']]
       .filter(Boolean)

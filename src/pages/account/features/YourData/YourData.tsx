@@ -43,10 +43,13 @@ const YourData = ({ userId, books, names, goals }: YourDataProps) => {
   // the backup is read fresh, so it carries next reads and saved worlds too
   const onExportFullBackup = async () => {
     const backup = await getBackup(userId).catch(() => null);
+
     if (!backup) {
       setStatus(m.account_backup_failed());
+
       return;
     }
+
     exportBackup(backup);
     setStatus(m.account_backup_saved());
   };

@@ -22,18 +22,26 @@ const ChangePassword = ({ email }: { email: string }) => {
     event.preventDefault();
     setStatus('');
     const found = validate(first, second);
+
     setErrors(found);
+
     if (found.first || found.second) {
       document.getElementById(found.first ? 'ac-pass1' : 'ac-pass2')?.focus();
+
       return;
     }
+
     setSaving(true);
     const problem = await changePassword(first);
+
     setSaving(false);
+
     if (problem) {
       setErrors({ first: problem });
+
       return;
     }
+
     setFirst('');
     setSecond('');
     setStatus(m.account_password_changed());

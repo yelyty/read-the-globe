@@ -20,7 +20,9 @@ const BookRow = ({ book, names }: BookRowProps) => {
   const places = (book.places ?? []).filter(
     (p) => !p.imagined && (p.name || p.countryCode)
   );
+
   const worlds = (book.places ?? []).filter((p) => p.imagined && p.name);
+
   return (
     <li className={s.row}>
       <div className={s.rowMain}>

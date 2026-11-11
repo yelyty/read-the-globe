@@ -11,10 +11,13 @@ const ThemeButton = () => {
 
   const toggle = () => {
     const next = dark ? 'light' : 'dark';
+
     document.documentElement.dataset.theme = next;
+
     document
       .querySelector('meta[name="theme-color"]')
       ?.setAttribute('content', next === 'dark' ? '#1C1811' : '#FFFFFD');
+
     try {
       localStorage.setItem(THEME_KEY, next);
     } catch {

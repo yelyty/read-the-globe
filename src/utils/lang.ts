@@ -18,6 +18,7 @@ export const LANG_NAMES: Record<Locale, string> = {
 export async function pickLang(lang: Locale) {
   const { data } = await supabase.auth.getSession();
   const id = data.session?.user.id;
+
   if (id) await supabase.from('profiles').update({ lang }).eq('id', id);
   void setLocale(lang);
 }
@@ -30,15 +31,20 @@ export async function adoptAccountLang(userId: string): Promise<boolean> {
     .select('lang')
     .eq('id', userId)
     .maybeSingle<{ lang: string | null }>();
+
   const saved = toLocale(data?.lang);
+
   if (!saved) {
     await supabase
       .from('profiles')
       .update({ lang: getLocale() })
       .eq('id', userId);
+
     return false;
   }
+
   if (saved === getLocale()) return false;
   void setLocale(saved);
+
   return true;
 }

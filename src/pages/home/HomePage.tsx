@@ -31,17 +31,20 @@ import { m } from '../../paraglide/messages.js';
 const app = getRouteApi('/app');
 const RECENT = 3;
 const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 const PIN =
   '<svg viewBox="0 0 24 24"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"/><circle cx="12" cy="9" r="2.8"/></svg>';
 
 // a country too small to see fill gets a gold ring where the pin landed
 const ringAt = (b: DOMRect) => {
   const ring = document.createElement('div');
+
   ring.className = s.landRing;
   ring.setAttribute('aria-hidden', 'true');
   ring.style.left = `${b.left + b.width / 2}px`;
   ring.style.top = `${b.top + b.height / 2}px`;
   document.body.appendChild(ring);
+
   ring.animate(
     [
       { transform: 'translate(-50%, -50%) scale(.4)', opacity: 1 },
@@ -56,13 +59,17 @@ const plateInView = (plate: Element) =>
   new Promise<void>((done) => {
     const top = plate.getBoundingClientRect().top;
     const head = document.querySelector('header')?.offsetHeight ?? 0;
+
     if (top >= head - 4 && top < innerHeight * 0.35)
       return requestAnimationFrame(() => done());
     const to = Math.max(0, top + scrollY - head - 24);
+
     if (reduced()) {
       scrollTo({ top: to, behavior: 'instant' });
+
       return requestAnimationFrame(() => done());
     }
+
     addEventListener('scrollend', () => done(), { once: true });
     setTimeout(done, 650);
     scrollTo({ top: to, behavior: 'smooth' });
@@ -72,10 +79,12 @@ const plateInView = (plate: Element) =>
 const drawn = (plate: Element) =>
   new Promise<void>((done) => {
     let n = 0;
+
     const look = () =>
       plate.querySelector('[data-code]') || ++n > 120
         ? done()
         : requestAnimationFrame(look);
+
     look();
   });
 
@@ -112,12 +121,15 @@ const HomePage = () => {
   // a tip goes on Escape, or a press anywhere but the map and the country list
   useEffect(() => {
     if (!tip) return;
+
     const away = (e: Event) =>
       (e instanceof KeyboardEvent
         ? e.key === 'Escape'
         : !(e.target as Element).closest('[data-tips]')) && setTip(null);
+
     document.addEventListener('pointerdown', away);
     document.addEventListener('keydown', away);
+
     return () => {
       document.removeEventListener('pointerdown', away);
       document.removeEventListener('keydown', away);
@@ -128,6 +140,7 @@ const HomePage = () => {
   useEffect(() => {
     if (!said) return;
     const t = setTimeout(() => setSaid(''), 6000);
+
     return () => clearTimeout(t);
   }, [said]);
 
@@ -136,15 +149,19 @@ const HomePage = () => {
      on the next visit; clear it on unmount if that ever matters. */
   const flying =
     landing && books.some((b) => b.id === landing.bookId) ? landing : null;
+
   const marks = useMemo(() => atlasMarks(books), [books]);
+
   const shown = useMemo(
     () => (flying ? books.filter((b) => b.id !== flying.bookId) : books),
     [books, flying]
   );
+
   const held = useMemo(
     () => (flying ? atlasMarks(shown) : marks),
     [flying, shown, marks]
   );
+
   const painted = useMemo(
     () =>
       flying
@@ -157,6 +174,7 @@ const HomePage = () => {
         : marks,
     [flying, held, landed, marks]
   );
+
   const dots = useMemo(
     () =>
       shown
@@ -164,10 +182,12 @@ const HomePage = () => {
         .filter((p) => p.lon != null && p.lat != null),
     [shown]
   );
+
   const worlds = useMemo(
     () => worldsOf(shown, savedWorlds),
     [shown, savedWorlds]
   );
+
   const stats = useMemo(() => atlasStats(shown, held), [shown, held]);
 
   /* The one authored moment: an ink pin with a gold head leaves Log a book, arcs to each country the book adds,
@@ -175,9 +195,11 @@ const HomePage = () => {
      pin. Reduced motion lands everything at once. */
   useEffect(() => {
     const box = plate.current;
+
     if (!flying || !box) return;
     let live = true;
     const pins: HTMLElement[] = [];
+
     const land = () => {
       if (!live) return;
       setLanded(new Set(flying.targets));
@@ -186,6 +208,7 @@ const HomePage = () => {
       setSaid(flying.line);
       // the bigger news, a beat after the pin: a goal crossed its flag with this book
       const reached = flying.reached;
+
       if (reached)
         setTimeout(
           () =>
@@ -200,44 +223,55 @@ const HomePage = () => {
           reduced() ? 0 : 900
         );
     };
+
     (async () => {
       setLanded(new Set());
       await drawn(box);
       await plateInView(box);
       if (!live) return;
+
       const paths = flying.targets
         .map((c) => box.querySelector<SVGPathElement>(`[data-code="${c}"]`))
         .filter((p): p is SVGPathElement => !!p);
+
       if (reduced() || !paths.length) return land();
       // phones: bring the first country into view before anything lands on it
       const scroller = paths[0].ownerSVGElement?.parentElement;
+
       if (scroller && scroller.scrollWidth > scroller.clientWidth + 1) {
         const a = scroller.getBoundingClientRect();
         const b = paths[0].getBoundingClientRect();
+
         scroller.scrollLeft += b.left + b.width / 2 - (a.left + a.width / 2);
         await new Promise(requestAnimationFrame);
       }
+
       // a return visit: no flight to a country already marked, just a ring where the book went back to
       if (flying.returning) {
         ringAt(paths[0].getBoundingClientRect());
+
         return land();
       }
+
       const launch =
         [...document.querySelectorAll('[data-log-toggle]')].find(
           (t) =>
             t.getClientRects().length &&
             getComputedStyle(t).visibility !== 'hidden'
         ) ?? document.querySelector('header');
+
       const from = launch!.getBoundingClientRect();
       const x0 = from.left + from.width / 2;
       const y0 = from.top + from.height / 2;
       let count = 0;
+
       paths.forEach((p, n) => {
         const b = p.getBoundingClientRect();
         const dx = b.left + b.width / 2 - x0;
         const dy = b.top + b.height / 2 - y0;
         const lift = Math.min(160, Math.abs(dx) * 0.25 + 60);
         const pin = document.createElement('div');
+
         pin.className = s.flyPin;
         pin.setAttribute('aria-hidden', 'true');
         pin.innerHTML = PIN;
@@ -245,6 +279,7 @@ const HomePage = () => {
         pin.style.top = `${y0}px`;
         document.body.appendChild(pin);
         pins.push(pin);
+
         pin.animate(
           [
             { transform: 'translate(-50%, -100%) scale(1.2)', opacity: 0 },
@@ -277,12 +312,14 @@ const HomePage = () => {
           pin.remove();
           if (!live) return;
           const code = p.dataset.code!;
+
           setLanded((l) => new Set(l).add(code));
           if (b.width < 24 && b.height < 24) ringAt(b);
           if (++count === paths.length) setTimeout(land, 260);
         };
       });
     })();
+
     return () => {
       live = false;
       pins.forEach((p) => p.remove());
@@ -292,7 +329,9 @@ const HomePage = () => {
   const firstName = String(user?.signUpName ?? '')
     .trim()
     .split(/\s+/)[0];
+
   const blank = !shown.length;
+
   const title = blank
     ? m.home_blank()
     : firstName
@@ -304,14 +343,18 @@ const HomePage = () => {
   const codeAt = (target: EventTarget) => {
     const el = (target as Element).closest<SVGElement>('[data-code]');
     const code = el?.dataset.code;
+
     return el && code && code !== ANTARCTICA ? { el, code } : null;
   };
+
   const tipAt = (code: string, el: Element, by: Tip['by']) => {
     const r = el.getBoundingClientRect();
+
     setTip({ code, x: r.left + r.width / 2, y: r.top, bottom: r.bottom, by });
   };
 
   const imagined = worlds.filter((w) => w.books.length).length;
+
   // laid over the map; kept as one element so the map itself doesn't redraw while a tip follows the pointer
   const overlay = useMemo(
     () => (
@@ -368,6 +411,7 @@ const HomePage = () => {
         onMouseMove={(e) => {
           if (pointer.current === 'touch') return;
           const at = codeAt(e.target);
+
           setTip(
             at
               ? {
@@ -383,6 +427,7 @@ const HomePage = () => {
         onMouseLeave={() => pointer.current !== 'touch' && setTip(null)}
         onClick={(e) => {
           const at = codeAt(e.target);
+
           if (!at) {
             setTip(null);
             // anywhere but a country opens the full screen map
@@ -392,8 +437,10 @@ const HomePage = () => {
               !(e.target as Element).closest('[data-code]')
             )
               setFull(true);
+
             return;
           }
+
           // on touch, a tap shows the country's card first; a second tap on the same country acts
           if (pointer.current === 'touch' && tip?.code !== at.code)
             return tipAt(at.code, at.el, 'touch');
@@ -405,6 +452,7 @@ const HomePage = () => {
             });
           // an unmarked country opens Log a book with it as a place
           setFull(false);
+
           navigate({
             to: '.',
             search: (prev) => ({ ...prev, log: true, country: at.code }),

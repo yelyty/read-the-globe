@@ -46,12 +46,14 @@ const foldSummary = {
 } as const;
 
 export const yours = style({ marginTop: space.sp7 });
+
 globalStyle(`${yours} > summary`, {
   ...foldSummary,
   paddingBottom: space.sp2,
   marginBottom: space.sp5,
   borderBottom: `1px solid ${vars.color.border}`,
 });
+
 export const sum = style({
   marginLeft: 'auto',
   color: vars.color.textSecondary,
@@ -61,11 +63,14 @@ export const sum = style({
 
 export const sugg = style({});
 globalStyle(`${sugg} > summary`, foldSummary);
+
 globalStyle(
   `${yours} > summary::-webkit-details-marker, ${sugg} > summary::-webkit-details-marker`,
   { display: 'none' }
 );
+
 globalStyle(`${yours} > summary::before, ${sugg} > summary::before`, caret(9));
+
 globalStyle(
   `${yours}[open] > summary::before, ${sugg}[open] > summary::before`,
   { rotate: '45deg' }
@@ -80,10 +85,12 @@ export const pick = style({
   background: goldBand,
   borderRadius: 8,
 });
+
 globalStyle(`${pick} p`, {
   margin: `0 0 ${space.sp3}`,
   color: vars.color.text,
 });
+
 globalStyle(`${pick} b`, { fontWeight: 500 });
 
 export const full = style({
@@ -149,6 +156,7 @@ export const destAdd = style({
 globalStyle(`${destAdd} svg`, { width: 14, height: 14 });
 
 export const more = style({ marginTop: 0 });
+
 globalStyle(`${more} > summary`, {
   display: 'inline-flex',
   alignItems: 'center',
@@ -160,11 +168,13 @@ globalStyle(`${more} > summary`, {
   fontWeight: 500,
   color: vars.color.textSecondary,
 });
+
 globalStyle(`${more} > summary::-webkit-details-marker`, { display: 'none' });
 globalStyle(`${more} > summary::before`, caret(7));
 globalStyle(`${more}[open] > summary::before`, { rotate: '45deg' });
 export const moreN = style({ fontWeight: 400 });
 export const group = style({ marginTop: 16 });
+
 globalStyle(`${group} h3`, {
   margin: `0 0 ${space.sp2}`,
   fontFamily: vars.font.sans,
@@ -174,6 +184,7 @@ globalStyle(`${group} h3`, {
   textTransform: 'uppercase',
   color: vars.color.textMuted,
 });
+
 export const chips = style({
   listStyle: 'none',
   margin: 0,
@@ -204,11 +215,13 @@ export const chip = style({
     },
   },
 });
+
 globalStyle(`${chip} svg`, {
   width: 13,
   height: 13,
   color: vars.color.textMuted,
 });
+
 export const chipNote = style({
   marginLeft: 4,
   fontSize: fontSize.meta,
@@ -230,6 +243,7 @@ const button = {
   ':focus-visible': focusRing,
   ':disabled': { opacity: 0.5, cursor: 'not-allowed' },
 } as const;
+
 export const primary = style({
   ...button,
   border: 0,
@@ -258,6 +272,7 @@ export const outline = style({
     },
   },
 });
+
 globalStyle(`${primary} svg, ${outline} svg`, {
   width: 16,
   height: 16,
@@ -274,11 +289,13 @@ export const empty = style({
   textAlign: 'center',
   padding: `${space.sp6} 0`,
 });
+
 globalStyle(`${empty} p`, {
   margin: 0,
   maxWidth: '52ch',
   color: vars.color.textSecondary,
 });
+
 export const sticker = style({
   width: 120,
   height: 100,
@@ -332,15 +349,18 @@ export const plate = style({
   background: vars.map.sea,
   borderRadius: 8,
 });
+
 globalStyle(`${goal} ${plate}`, {
   width: 176,
   '@media': { [phone]: { width: 96 } },
 });
+
 globalStyle(`${plate} path`, {
   strokeWidth: 0.6,
   vectorEffect: 'non-scaling-stroke',
   stroke: vars.color.border,
 });
+
 export const shapeSet = style({ fill: vars.color.olive });
 export const shapeAuthor = style({ fill: vars.color.markerAuthor });
 export const shapeMarked = style({});
@@ -377,11 +397,13 @@ export const compass = style({
   overflow: 'visible',
   '@media': { [phone]: { display: 'none' } },
 });
+
 globalStyle(`${compass} circle`, {
   fill: vars.map.sea,
   stroke: vars.color.mark,
   strokeWidth: 0.8,
 });
+
 globalStyle(`${compass} path`, { fill: vars.color.mark });
 export const compassNorth = style({
   selectors: { [`${compass} &`]: { fill: vars.color.primary } },
@@ -426,12 +448,14 @@ export const goalCount = style({
   fontVariantNumeric: 'tabular-nums',
   whiteSpace: 'nowrap',
 });
+
 globalStyle(`${goalCount} b`, {
   fontFamily: vars.font.serif,
   fontSize: fontSize.numerals,
   fontWeight: 400,
   color: vars.color.text,
 });
+
 export const goalPct = style({});
 export const goalReached = style({
   '@media': { [phone]: { whiteSpace: 'normal', textAlign: 'right' } },
@@ -464,6 +488,7 @@ export const goalTodo = style({
   fontSize: fontSize.body,
   color: vars.color.textSecondary,
 });
+
 globalStyle(`${goalTodo} summary`, {
   display: 'inline-flex',
   alignItems: 'center',
@@ -473,14 +498,17 @@ globalStyle(`${goalTodo} summary`, {
   listStyle: 'none',
   fontWeight: 500,
 });
+
 globalStyle(`${goalTodo} summary::-webkit-details-marker`, { display: 'none' });
 globalStyle(`${goalTodo} summary::before`, caret(7));
 globalStyle(`${goalTodo}[open] summary::before`, { rotate: '45deg' });
+
 globalStyle(`${goalTodo} p`, {
   margin: '4px 0 0',
   lineHeight: 1.5,
   maxWidth: '62ch',
 });
+
 globalStyle(`${goalTodo} b`, { fontWeight: 500, color: vars.color.text });
 export const goalActions = style({
   display: 'flex',
@@ -521,6 +549,7 @@ export const route = style({
 });
 export const routeTheme = style({});
 const road = { position: 'absolute', left: 0, right: 16, top: '50%' } as const;
+
 export const routeTrack = style({
   ...road,
   height: 3,
@@ -529,6 +558,7 @@ export const routeTrack = style({
   background: vars.color.border,
 });
 const fillIn = keyframes({ from: { transform: 'scaleX(0)' } });
+
 export const routeFill = style({
   ...road,
   zIndex: 1,
@@ -583,10 +613,12 @@ export const routePin = style({
   transition: `opacity .3s ${easeOut}`,
   selectors: { [`${goalDone} &`]: { opacity: 0 } },
 });
+
 globalStyle(`${routePin} path`, {
   fill: vars.color.primary,
   stroke: vars.color.background,
 });
+
 globalStyle(`${routeTheme} ${routePin} path`, { fill: vars.color.textMuted });
 globalStyle(`${routePin} circle`, { fill: vars.color.background });
 export const routeFlag = style({
@@ -646,6 +678,7 @@ export const picked = style({
   flexWrap: 'wrap',
   gap: 8,
 });
+
 globalStyle(`${picked} li`, {
   display: 'inline-flex',
   alignItems: 'center',
@@ -656,6 +689,7 @@ globalStyle(`${picked} li`, {
   fontSize: fontSize.body,
   color: vars.color.oliveInk,
 });
+
 globalStyle(`${picked} button`, {
   display: 'grid',
   placeItems: 'center',
@@ -668,6 +702,7 @@ globalStyle(`${picked} button`, {
   color: 'inherit',
   cursor: 'pointer',
 });
+
 globalStyle(`${picked} svg`, { width: 14, height: 14 });
 export const formError = style({
   margin: '0 0 16px',
@@ -680,6 +715,7 @@ export const formError = style({
 });
 
 export const search = style({ position: 'relative' });
+
 globalStyle(`${search} svg`, {
   position: 'absolute',
   left: 16,
@@ -689,6 +725,7 @@ globalStyle(`${search} svg`, {
   color: vars.color.textMuted,
   pointerEvents: 'none',
 });
+
 globalStyle(`${search} input`, { paddingLeft: 40 });
 export const picker = style({
   margin: '16px 0 0',
@@ -696,6 +733,7 @@ export const picker = style({
   border: 0,
   minWidth: 0,
 });
+
 globalStyle(`${picker} ul`, {
   listStyle: 'none',
   margin: 0,
@@ -705,6 +743,7 @@ globalStyle(`${picker} ul`, {
   overscrollBehavior: 'contain',
   borderBlock: `1px solid ${vars.color.border}`,
 });
+
 globalStyle(`${picker} label`, {
   display: 'grid',
   gridTemplateColumns: '20px minmax(0, 1fr)',
@@ -713,12 +752,14 @@ globalStyle(`${picker} label`, {
   padding: '8px 2px',
   cursor: 'pointer',
 });
+
 globalStyle(`${picker} input`, {
   margin: 0,
   alignSelf: 'center',
   gridRow: '1 / span 2',
   accentColor: vars.color.primary,
 });
+
 export const pickTitle = style({ fontWeight: 500, overflowWrap: 'break-word' });
 export const pickAuthor = style({
   gridColumn: 2,
@@ -784,64 +825,80 @@ const arriveFill = keyframes({
   from: { transform: 'scaleX(.8)' },
   to: { transform: 'scaleX(1)' },
 });
+
 const arrivePin = keyframes({
   '0%': { left: 'calc(.8 * (100% - 16px))', opacity: 1 },
   '70%': { left: 'calc(100% - 16px)', opacity: 1 },
   '100%': { left: 'calc(100% - 16px)', opacity: 0 },
 });
+
 const arriveFlag = keyframes({
   '0%, 55%': { transform: 'translateY(-84%) scale(1)' },
   '75%': { transform: 'translateY(-104%) scale(1.45)' },
   '100%': { transform: 'translateY(-92%) scale(1.3)' },
 });
+
 const flagGold = keyframes({
   '0%, 55%': { fill: vars.color.text },
   '72%': { fill: vars.color.secondary },
   '100%': { fill: vars.color.text },
 });
+
 const poleGold = keyframes({
   '0%, 55%': { stroke: vars.color.text },
   '72%': { stroke: vars.color.secondary },
   '100%': { stroke: vars.color.text },
 });
+
 const tick = keyframes({
   '0%': { color: vars.color.secondary, translate: '0 -3px' },
   '100%': { color: 'inherit', translate: '0 0' },
 });
+
 const doneIn = keyframes({
   from: { opacity: 0, translate: '0 3px' },
   to: { opacity: 1, translate: '0 0' },
 });
+
 const stampIn = keyframes({
   from: { opacity: 0, scale: '1.6', rotate: '-26deg' },
   '60%': { opacity: 1, scale: '.9', rotate: '-8deg' },
   '80%': { scale: '1.04' },
   to: { opacity: 1, scale: '1', rotate: '-12deg' },
 });
+
 const arrive = (name: string, ms: number, delay: number) =>
   `${name} ${ms}ms ${easeSoft} ${delay}ms both`;
+
 globalStyle(`${goalArriving} ${routeFill}`, {
   animation: arrive(arriveFill, 800, 150),
 });
+
 globalStyle(`${goalArriving} ${routePin}`, {
   animation: arrive(arrivePin, 1100, 150),
 });
+
 globalStyle(`${goalArriving} ${routeFlag}`, {
   animation: arrive(arriveFlag, 1400, 150),
 });
+
 globalStyle(`${goalArriving} ${flagCloth}`, {
   animation: `${flagGold} 2.2s ease .15s both`,
 });
+
 globalStyle(`${goalArriving} ${flagPole}`, {
   animation: `${poleGold} 2.2s ease .15s both`,
 });
+
 globalStyle(`${goalArriving} ${goalCount} b`, {
   display: 'inline-block',
   animation: arrive(tick, 600, 1000),
 });
+
 globalStyle(`${goalArriving} ${goalReached}`, {
   animation: arrive(doneIn, 500, 1100),
 });
+
 globalStyle(`${goalArriving} ${stamp}`, {
   animation: arrive(stampIn, 450, 1100),
 });

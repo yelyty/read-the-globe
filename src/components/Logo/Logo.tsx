@@ -1,6 +1,7 @@
 type LogoProps = {
   className?: string;
 };
+
 const Logo = ({ className }: LogoProps) => {
   return (
     <svg
@@ -8,9 +9,9 @@ const Logo = ({ className }: LogoProps) => {
       viewBox="0 0 604 610"
       version="1.1"
       style={{
-        fillRule: "evenodd",
-        clipRule: "evenodd",
-        strokeLinejoin: "round",
+        fillRule: 'evenodd',
+        clipRule: 'evenodd',
+        strokeLinejoin: 'round',
         strokeMiterlimit: 2,
       }}
     >

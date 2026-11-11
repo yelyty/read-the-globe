@@ -21,27 +21,35 @@ const AccountMenu = () => {
 
   useEffect(() => {
     if (!open) return;
+
     const handlePointerDown = (event: PointerEvent) => {
       if (!root.current?.contains(event.target as Node)) setOpen(false);
     };
+
     document.addEventListener('pointerdown', handlePointerDown);
+
     return () => document.removeEventListener('pointerdown', handlePointerDown);
   }, [open]);
 
   const onKeyDown = (event: KeyboardEvent) => {
     if (!open) return;
+
     if (event.key === 'Escape') {
       setOpen(false);
       button.current?.focus();
     }
+
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault();
+
       const items = [
         ...(list.current?.querySelectorAll<HTMLElement>('a, button, select') ??
           []),
       ];
+
       const i = items.indexOf(document.activeElement as HTMLElement);
       const step = event.key === 'ArrowDown' ? 1 : -1;
+
       items[(i + step + items.length) % items.length]?.focus();
     }
   };

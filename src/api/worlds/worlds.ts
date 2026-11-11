@@ -10,19 +10,25 @@ export async function getWorlds(userId: string): Promise<World[]> {
     .eq('user_id', userId)
     .order('created_at')
     .returns<World[]>();
+
   // ponytail: a missing worlds table (app-2-atlas.sql not run yet) just means no saved worlds
   if (error) console.error(error);
+
   return data ?? [];
 }
 
 export async function addWorld(name: string): Promise<string | null> {
   const { error } = await supabase.from('worlds').insert({ name });
+
   if (error) console.error(error);
+
   return error ? m.world_save_failed() : null;
 }
 
 export async function removeWorld(id: string): Promise<string | null> {
   const { error } = await supabase.from('worlds').delete().eq('id', id);
+
   if (error) console.error(error);
+
   return error ? m.world_remove_failed() : null;
 }

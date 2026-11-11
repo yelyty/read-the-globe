@@ -6,6 +6,7 @@ import { englishName } from './countryNames';
    - a dependent territory counts toward the country it belongs to, and its own shape fills on the map too (TERR).
    Tables in ISO alpha-2 as in the mock, turned into the map's numeric codes below. */
 const SU = 'ru ua by kz uz ge az am md lt lv ee kg tj tm';
+
 const HIST_A2: Record<string, string> = {
   ussr: SU,
   'the ussr': SU,
@@ -46,6 +47,7 @@ const HIST_A2: Record<string, string> = {
   'south yemen': 'ye',
   'north yemen': 'ye',
 };
+
 // [the territory's own shape, the country it counts toward]
 const TERR_A2: Record<string, string> = {
   greenland: 'gl dk',
@@ -73,6 +75,7 @@ const TERR_A2: Record<string, string> = {
   curacao: 'cw nl',
   'cook islands': 'ck nz',
 };
+
 // the same old states and territories by their Czech and Ukrainian names
 const SAME: Record<string, string> = {
   sssr: 'ussr',
@@ -134,6 +137,7 @@ const SAME: Record<string, string> = {
   'кайманові острови': 'cayman islands',
   гуам: 'guam',
 };
+
 // everyday names the map's own list spells differently
 const ALIASES_A2: Record<string, string> = {
   usa: 'us',
@@ -176,15 +180,20 @@ const ALIASES_A2: Record<string, string> = {
 
 const codes = (a2: string) => a2.split(' ').map((c) => toNumeric(c)!);
 const HIST: Record<string, string[]> = {};
+
 for (const [k, v] of Object.entries(HIST_A2)) HIST[k] = codes(v);
 const TERR: Record<string, [area: string, parent: string]> = {};
+
 for (const [k, v] of Object.entries(TERR_A2))
   TERR[k] = codes(v) as [string, string];
+
 for (const [k, en] of Object.entries(SAME)) {
   if (HIST[en]) HIST[k] = HIST[en];
   if (TERR[en]) TERR[k] = TERR[en];
 }
+
 const ALIASES: Record<string, string> = {};
+
 for (const [k, v] of Object.entries(ALIASES_A2)) ALIASES[k] = toNumeric(v)!;
 
 /** a territory's own shape → the country it counts toward: the map fills both, the count takes only the country */
@@ -207,6 +216,7 @@ export type CountryMatch = {
 /** a state that split: the countries there today, for the reader to choose from */
 export const splitStates = (typed: string) => {
   const h = HIST[tidy(typed).toLowerCase()];
+
   return h && h.length > 1 ? h : null;
 };
 
@@ -219,17 +229,23 @@ export function countryFrom(
 ): CountryMatch | null {
   const raw = tidy(typed);
   const k = raw.toLowerCase();
+
   if (!k) return null;
   const t = TERR[k];
+
   // a territory too small for the map's list is saved as its country
   if (t) return { code: names[t[0]] ? t[0] : t[1], as: raw, under: t[1] };
+
   const code =
     Object.keys(names).find(
       (c) => names[c].toLowerCase() === k || englishName(c)?.toLowerCase() === k
     ) ?? ALIASES[k];
+
   if (code) return { code };
   const h = HIST[k];
+
   if (!h) return null;
   const to = h.length === 1 ? h[0] : pick && h.includes(pick) ? pick : null;
+
   return to ? { code: to, then: raw } : null;
 }

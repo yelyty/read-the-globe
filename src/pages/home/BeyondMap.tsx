@@ -20,6 +20,7 @@ import { m } from '../../paraglide/messages.js';
 import { getLocale } from '../../paraglide/runtime.js';
 
 const OPEN = 'rtg-beyond';
+
 const formatDay = (day: string) =>
   new Date(`${day}T12:00:00`).toLocaleDateString(getLocale(), {
     day: 'numeric',
@@ -33,6 +34,7 @@ const formatDay = (day: string) =>
 const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
   const router = useRouter();
   const status = useStatus();
+
   const [open, setOpen] = useState(() => {
     try {
       return localStorage.getItem(OPEN) !== 'closed';
@@ -40,6 +42,7 @@ const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
       return true;
     }
   });
+
   const [name, setName] = useState('');
   const [shown, setShown] = useState<WorldRow | null>(null);
   const input = useRef<HTMLInputElement>(null);
@@ -48,13 +51,18 @@ const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
   const add = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     const typed = name.trim().replace(/\s+/g, ' ');
+
     if (!typed) return input.current?.focus();
     const had = worlds.find((w) => sameWorld(w.name, typed));
+
     if (had) {
       status.show({ text: m.world_already({ name: had.name }) });
+
       return input.current?.select();
     }
+
     const error = await addWorld(typed);
+
     if (error) return status.show({ text: error });
     setName('');
     await router.invalidate();
@@ -63,9 +71,11 @@ const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
 
   const remove = async (world: World) => {
     const error = await removeWorld(world.id);
+
     if (error) return status.show({ text: error });
     await router.invalidate();
     input.current?.focus();
+
     status.show({
       text: m.world_removed({ name: world.name }),
       action: {
@@ -73,6 +83,7 @@ const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
         icon: <ArrowCounterClockwiseIcon aria-hidden="true" />,
         run: async () => {
           const again = await addWorld(world.name);
+
           if (again) return status.show({ text: again });
           await router.invalidate();
         },
@@ -87,7 +98,9 @@ const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
         open={open}
         onToggle={(e) => {
           const now = e.currentTarget.open;
+
           setOpen(now);
+
           try {
             localStorage.setItem(OPEN, now ? 'open' : 'closed');
           } catch {
@@ -178,6 +191,7 @@ const WorldDialog = ({
   const dialog = useRef<HTMLDialogElement>(null);
   const navigate = useNavigate();
   const books = [...world.books].sort(byReadDate);
+
   useEffect(() => {
     dialog.current?.showModal();
     document.getElementById('world-log')?.focus();
@@ -260,6 +274,7 @@ const WorldDialog = ({
           id="world-log"
           onClick={() => {
             dialog.current?.close();
+
             navigate({
               to: '.',
               search: (prev) => ({ ...prev, log: true, world: world.name }),

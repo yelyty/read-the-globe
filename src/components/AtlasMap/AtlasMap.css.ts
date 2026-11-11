@@ -88,6 +88,7 @@ const landIn = keyframes({
   '55%': { fillOpacity: 1 },
   '100%': { stroke: vars.color.border },
 });
+
 export const landed = style({
   animation: `${landIn} .7s ${easeSoft} both`,
   '@media': { [reducedMotion]: { animation: 'none' } },
@@ -121,11 +122,13 @@ globalStyle(
     cursor: 'default',
   }
 );
+
 globalStyle(`${plate}[data-show="set"] ${land}${set}${author}`, {
   fill: vars.color.olive,
   stroke: vars.color.border,
   strokeWidth: 0.5,
 });
+
 globalStyle(`${plate}[data-show="author"] ${land}${set}${author}`, {
   fill: vars.color.markerAuthor,
   stroke: vars.color.border,
@@ -145,9 +148,11 @@ export const dot = style({
 globalStyle(`${land}${set}${author}`, { fill: 'url(#both-hatch)' });
 export const hatchSet = style({ fill: vars.color.olive });
 export const hatchAuthor = style({ fill: vars.color.markerAuthor });
+
 globalStyle(`${plate}[data-show="set"] ${land}${set}${author}`, {
   fill: vars.color.olive,
 });
+
 globalStyle(`${plate}[data-show="author"] ${land}${set}${author}`, {
   fill: vars.color.markerAuthor,
 });

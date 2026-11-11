@@ -42,6 +42,7 @@ const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
     dialog.current?.showModal();
     document.getElementById('ac-clear-keep')?.focus(); // the safe choice takes focus
   };
+
   const close = () => dialog.current?.close();
 
   const clear = async () => {
@@ -49,14 +50,19 @@ const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
     // the snapshot Undo restores, taken first: if it can't be read, nothing is cleared
     const was = await getBackup(userId).catch(() => null);
     const problem = was ? await clearAtlas() : m.account_clear_failed();
+
     setClearing(false);
     close();
+
     if (problem || !was) {
       status.show({ text: problem ?? '' });
+
       return;
     }
+
     await router.invalidate();
     await router.navigate({ to: '/app' });
+
     status.show({
       text: m.account_cleared({ what: lost }),
       action: {
@@ -66,6 +72,7 @@ const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
           // anything logged since the clear stays, beside the atlas as it was
           const since = await getBackup(userId).catch(() => null);
           const taken = new Set(was.goals.map((g) => g.name.toLowerCase()));
+
           const problem = since
             ? await restoreBackup({
                 ...was,
@@ -83,6 +90,7 @@ const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
                 worlds: [...(was.worlds ?? []), ...(since.worlds ?? [])],
               })
             : m.data_restore_failed();
+
           if (problem) return status.show({ text: problem });
           await router.invalidate();
           status.show({ text: m.account_atlas_back() });

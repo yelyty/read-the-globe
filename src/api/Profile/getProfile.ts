@@ -14,5 +14,6 @@ export async function getProfile(
     .maybeSingle<Profile & { postcard: SavedPostcard }>();
 
   if (error) console.error(error);
+
   return data;
 }

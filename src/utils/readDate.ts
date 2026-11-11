@@ -22,7 +22,9 @@ export function readOnFor(
 ): string | null {
   if (!mon && !year) return null;
   const ym = `${year || today.slice(0, 4)}-${mon || '01'}`;
+
   if (ym === startYm) return null;
+
   return ym === today.slice(0, 7) ? today : `${ym}-01`;
 }
 

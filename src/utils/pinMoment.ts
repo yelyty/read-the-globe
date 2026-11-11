@@ -19,9 +19,11 @@ const ORD = [
   'ninth',
   'tenth',
 ];
+
 const ord = (n: number) =>
   ORD[n] ??
   `${n}${n % 100 > 10 && n % 100 < 14 ? 'th' : (['th', 'st', 'nd', 'rd'][n % 10] ?? 'th')}`;
+
 const list = (a: string[]) =>
   new Intl.ListFormat(getLocale(), { type: 'conjunction' }).format(a);
 
@@ -48,6 +50,7 @@ export function pinMoment(
   const had = (c: string, kind: 'set' | 'author') => !!before[c]?.[kind].length;
   // a territory speaks for its country
   const country = (c?: string | null) => (c ? (PARENT[c] ?? c) : undefined);
+
   const placeCodes = [
     ...new Set(
       book.places
@@ -55,12 +58,16 @@ export function pinMoment(
         .filter((c): c is string => !!c)
     ),
   ];
+
   const authorCode = country(book.author?.country?.code);
+
   // a country already on the atlas can still gain its other mark
   const gainedCodes = placeCodes.filter(
     (c) => !fresh.includes(c) && !had(c, 'set')
   );
+
   const gained = gainedCodes.map((c) => m.pin_gained_set({ country: name(c) }));
+
   if (authorCode && !fresh.includes(authorCode) && !had(authorCode, 'author')) {
     gained.push(m.pin_gained_author({ country: name(authorCode) }));
     gainedCodes.push(authorCode);
@@ -76,8 +83,10 @@ export function pinMoment(
   ]
     .filter(Boolean)
     .join(' ');
+
   // a book that adds no new mark is a return: say which, and how many times the reader has been
   const back = placeCodes[0];
+
   if (!where && back)
     where = m.pin_back_set({
       country: name(back),
@@ -92,16 +101,19 @@ export function pinMoment(
     });
 
   const first = !was.size;
+
   // the first country on a continent is a stop worth naming
   const conts = [
     ...new Set(fresh.map((c) => CONTINENT_OF[c]).filter(Boolean)),
   ].filter((cont) => [...was].every((c) => CONTINENT_OF[c] !== cont));
+
   const stop =
     !first && conts.length
       ? `${(conts.length === 1 ? m.pin_first_stop : m.pin_first_stops)({ continents: list(conts.map((c) => continentName(c))) })} `
       : '';
 
   const moved = [...fresh, ...gainedCodes];
+
   return {
     targets: (moved.length
       ? [...new Set(moved)]

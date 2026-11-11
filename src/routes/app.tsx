@@ -30,11 +30,13 @@ export const Route = createFileRoute('/app')({
   },
   loader: async ({ context }) => {
     const userId = context.auth.user!.id;
+
     const [books, goals, worlds] = await Promise.all([
       getBooks(userId),
       getGoals(userId),
       getWorlds(userId),
     ]);
+
     return { books, goals, worlds };
   },
   //   TODO: Create error component

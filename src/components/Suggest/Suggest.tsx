@@ -13,6 +13,7 @@ import * as s from './Suggest.css';
 // "hoeg" finds Høeg: accents don't block a match
 const fold = (t: string) =>
   t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
 const MAX = 60;
 
 type SuggestProps = Omit<
@@ -41,6 +42,7 @@ const Suggest = ({
   const [open, setOpen] = useState(false);
   const [at, setAt] = useState(-1);
   const q = fold(value).trim();
+
   const hits = useMemo(
     () =>
       options
@@ -53,6 +55,7 @@ const Suggest = ({
         .slice(0, MAX),
     [options, q]
   );
+
   // nothing to offer, or already exact: no menu
   const shown =
     open && hits.length > 0 && !(hits.length === 1 && fold(hits[0]) === q);
@@ -61,9 +64,11 @@ const Suggest = ({
   const place = () => {
     const m = menu.current;
     const r = field.current?.getBoundingClientRect();
+
     if (!m || !r) return;
     const below = innerHeight - r.bottom - 16;
     const up = below < 200 && r.top > below;
+
     m.style.left = `${r.left}px`;
     m.style.width = `${r.width}px`;
     m.style.maxHeight = `${Math.min(280, (up ? r.top : below) - 16)}px`;
@@ -73,11 +78,15 @@ const Suggest = ({
 
   useLayoutEffect(() => {
     const m = menu.current;
+
     if (!m) return;
+
     if (!shown) {
       if (m.matches(':popover-open')) m.hidePopover();
+
       return;
     }
+
     place();
     if (!m.matches(':popover-open')) m.showPopover();
     if (at > -1) m.children[at]?.scrollIntoView({ block: 'nearest' });
@@ -86,11 +95,15 @@ const Suggest = ({
   // the dialog scrolling under it moves the menu along; a resize closes it
   useEffect(() => {
     if (!shown) return;
+
     const onScroll = (e: Event) =>
       !menu.current?.contains(e.target as Node) && place();
+
     const close = () => setOpen(false);
+
     document.addEventListener('scroll', onScroll, true);
     addEventListener('resize', close);
+
     return () => {
       document.removeEventListener('scroll', onScroll, true);
       removeEventListener('resize', close);
@@ -106,9 +119,11 @@ const Suggest = ({
   const keys = (e: KeyboardEvent<HTMLInputElement>) => {
     onKeyDown?.(e);
     const n = hits.length;
+
     if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && n) {
       e.preventDefault();
       const d = e.key === 'ArrowDown' ? 1 : -1;
+
       setAt((i) => (!shown || i < 0 ? (d > 0 ? 0 : n - 1) : (i + d + n) % n));
       setOpen(true);
     } else if (e.key === 'Enter' && shown && at > -1) {
@@ -166,6 +181,7 @@ const Suggest = ({
           const li = (e.target as Element).closest<HTMLElement>(
             '[role="option"]'
           );
+
           if (li) pick(hits[Number(li.dataset.i)]);
         }}
       >

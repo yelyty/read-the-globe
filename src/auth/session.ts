@@ -36,11 +36,14 @@ export async function signIn(
       email,
       password,
     });
+
     // the account's language: a reader who picked Czech on another device gets Czech here too
     if (!error) {
       await adoptAccountLang(data.user.id).catch(() => false);
+
       return null;
     }
+
     return error.code === 'invalid_credentials'
       ? 'wrong-credentials'
       : 'failed';
@@ -67,11 +70,14 @@ export async function signUp(details: {
         },
       },
     });
+
     if (error) {
       const taken =
         error.code === 'user_already_exists' || error.code === 'email_exists';
+
       return { problem: taken ? 'email-taken' : 'failed', confirmEmail: false };
     }
+
     return { problem: null, confirmEmail: !data.session };
   } catch {
     return { problem: 'failed', confirmEmail: false };
@@ -80,11 +86,14 @@ export async function signUp(details: {
 
 export function seedIfWished(user: User): Promise<void> {
   if (user.user_metadata?.[SEED_FLAG] !== true) return Promise.resolve();
+
   seeding ??= (async () => {
     const { error } = await supabase.rpc('seed_example_atlas');
+
     if (error) console.error(error);
     else await supabase.auth.updateUser({ data: { [SEED_FLAG]: null } });
   })().finally(() => (seeding = undefined));
+
   return seeding;
 }
 
@@ -93,7 +102,9 @@ export async function sendPasswordReset(email: string): Promise<boolean> {
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${window.location.origin}/reset-password`,
   });
+
   if (error) console.error(error);
+
   return !error || error.code === 'user_not_found';
 }
 
@@ -105,6 +116,7 @@ export async function updateDisplayName(name: string): Promise<string | null> {
   const { error } = await supabase.auth.updateUser({
     data: { display_name: name },
   });
+
   return error ? m.auth_name_save_failed() : null;
 }
 

@@ -38,9 +38,11 @@ const GoalDialog = ({
   // a catalogue goal shows its name in the reader's language; left as it is, it keeps its stored English name
   const shownName = goal ? goalName(goal.name) : '';
   const [name, setName] = useState(shownName);
+
   const [continent, setContinent] = useState<Continent>(
     goal?.continent ?? 'EU'
   );
+
   const [codes, setCodes] = useState<string[]>(goal?.countryCodes ?? []);
   const [country, setCountry] = useState('');
   const [target, setTarget] = useState(String(goal?.target ?? 5));
@@ -55,8 +57,10 @@ const GoalDialog = ({
   const byName = Object.fromEntries(
     Object.entries(names).map(([code, n]) => [n.toLowerCase(), code])
   );
+
   const addCountry = (value: string) => {
     const code = byName[value.trim().toLowerCase()];
+
     if (!code) return;
     if (!codes.includes(code)) setCodes([...codes, code]);
     setCountry('');
@@ -66,6 +70,7 @@ const GoalDialog = ({
   const submit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     const trimmed = name.trim();
+
     if (!trimmed) return setError(m.goals_err_name());
     if (
       goals.some(
@@ -91,10 +96,13 @@ const GoalDialog = ({
       target:
         kind === 'theme' ? Math.min(200, Math.round(Number(target))) : null,
     };
+
     setSaving(true);
+
     const problem = goal
       ? await updateGoal(goal.id, draft)
       : await addGoal(draft);
+
     setSaving(false);
     if (problem) return setError(problem);
     dialog.current?.close();

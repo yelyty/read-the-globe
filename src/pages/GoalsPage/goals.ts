@@ -36,6 +36,7 @@ const draft = (
   target: null,
   ...extra,
 });
+
 const codes = (alpha2: string) => alpha2.split(' ').map((c) => toNumeric(c)!);
 
 export const CATALOGUE: CatalogueGoal[] = [
@@ -78,6 +79,7 @@ const CATALOGUE_NAME: Record<string, () => string> = {
   'Books in translation': m.goals_cat_translation,
   'Written before 1900': m.goals_cat_before_1900,
 };
+
 export const goalName = (name: string) => CATALOGUE_NAME[name]?.() ?? name;
 
 export const KIND_GROUP: Record<GoalKind, () => string> = {
@@ -109,13 +111,17 @@ export function goalProgress(
     const done = books.filter((b) =>
       b.goals?.some((g) => g.goalId === goal.id)
     ).length;
+
     return { done, total: goal.target ?? 1, all: [], reached: [] };
   }
+
   const all =
     goal.kind === 'region'
       ? Object.keys(shapes).filter((c) => CONTINENT_OF[c] === goal.continent)
       : (goal.countryCodes ?? []);
+
   const reached = all.filter((c) => marks[c]);
+
   return { done: reached.length, total: all.length, all, reached };
 }
 
@@ -134,6 +140,7 @@ export const goalHas = (goal: Goal, code: string) =>
 // the postmark's date, for a reached goal's stamp: "4 X 26"
 export const romanDate = (iso: string) => {
   const d = new Date(`${iso}T12:00:00`);
+
   const months = [
     'I',
     'II',
@@ -148,5 +155,6 @@ export const romanDate = (iso: string) => {
     'XI',
     'XII',
   ];
+
   return `${d.getDate()} ${months[d.getMonth()]} ${String(d.getFullYear()).slice(2)}`;
 };

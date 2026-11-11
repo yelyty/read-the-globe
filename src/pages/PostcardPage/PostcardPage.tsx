@@ -52,7 +52,9 @@ const DEFAULTS: CardOptions = {
 // the reader's saved set-up, field by field: an unknown or older value falls back to the default
 const oneOf = <T,>(values: readonly T[], v: unknown, fallback: T) =>
   values.find((x) => x === v) ?? fallback;
+
 const keys = <T extends object>(o: T) => Object.keys(o) as (keyof T)[];
+
 const readOptions = (saved: SavedPostcard): CardOptions => ({
   kind: oneOf(keys(KINDS), saved?.kind, DEFAULTS.kind),
   count: oneOf([0, 3, 6] as const, saved?.count, DEFAULTS.count),
@@ -69,23 +71,29 @@ const readOptions = (saved: SavedPostcard): CardOptions => ({
 
 const countLabel = (n: number) =>
   n ? m.postcard_top({ n }) : m.postcard_all();
+
 const COUNTS = [3, 6, 0] as const;
+
 const FRAMES = {
   perforated: m.postcard_frame_perforated,
   framed: m.postcard_frame_framed,
   plain: m.postcard_frame_plain,
 } as const;
+
 const lower = (t: string) => t.toLocaleLowerCase(getLocale());
 
 // the logo as a picture the canvas can draw: the same SVG the header shows, given its own size
 const logoImage = (svg: SVGSVGElement) =>
   new Promise<HTMLImageElement | null>((resolve) => {
     const copy = svg.cloneNode(true) as SVGSVGElement;
+
     copy.setAttribute('width', '604');
     copy.setAttribute('height', '610');
     const img = new Image();
+
     img.onload = () => resolve(img);
     img.onerror = () => resolve(null);
+
     img.src =
       'data:image/svg+xml;charset=utf-8,' +
       encodeURIComponent(new XMLSerializer().serializeToString(copy));
@@ -98,12 +106,14 @@ const PostcardPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const names = useCountryNames();
+
   // a reached goal's Postcard link (?goal=) or a year link (?year=) chooses that card over the saved one
   const [options, setOptions] = useState<CardOptions>(() => ({
     ...readOptions(profile?.postcard ?? null),
     ...(search.goal !== undefined && { goal: search.goal, year: null }),
     ...(search.year && { year: search.year, goal: null }),
   }));
+
   const [countries, setCountries] = useState<Map<string, Country>>();
   const [status, setStatus] = useState('');
   const [busy, setBusy] = useState<'save' | 'share' | null>(null);
@@ -111,11 +121,14 @@ const PostcardPage = () => {
   const logoRef = useRef<HTMLDivElement>(null);
 
   const marks = useMemo(() => atlasMarks(books), [books]);
+
   const counts = {
     authors: postcardStats(books, marks, KINDS.authors).countries,
     settings: postcardStats(books, marks, KINDS.settings).countries,
   };
+
   const stats = postcardStats(books, marks, KINDS[options.kind]);
+
   const firstName = String(profile?.displayName ?? user?.signUpName ?? '')
     .trim()
     .split(/\s+/)[0];
@@ -125,18 +138,23 @@ const PostcardPage = () => {
   const years = bookYears(books);
   const reached = goals.filter((g) => g.reachedOn);
   const goal = reached.find((g) => g.id === options.goal) ?? null;
+
   const year =
     !goal && options.year && years.includes(options.year) ? options.year : null;
+
   const Y = useMemo(
     () => (year ? yearSum(year, books, goals) : null),
     [year, books, goals]
   );
+
   const shapes = useMemo(
     () =>
       Object.fromEntries([...(countries ?? [])].map(([k, v]) => [k, v.shape])),
     [countries]
   );
+
   const progress = (g: Goal) => goalProgress(g, marks, books, shapes);
+
   const title = year
     ? firstName
       ? m.postcard_year_named({ name: firstName, year })
@@ -144,6 +162,7 @@ const PostcardPage = () => {
     : firstName
       ? m.postcard_atlas_named({ name: firstName })
       : m.postcard_atlas_mine();
+
   const color = options.color ?? (year ? 'green' : KINDS[options.kind].color);
   const which = goal ? `goal:${goal.id}` : year ? `year:${year}` : 'atlas';
 
@@ -164,23 +183,30 @@ const PostcardPage = () => {
 
   // the set-up saves with the reader's profile, a moment after the last change
   const savedJson = useRef(JSON.stringify(options));
+
   useEffect(() => {
     const json = JSON.stringify(options);
+
     if (json === savedJson.current || !user) return;
+
     const t = setTimeout(() => {
       savedJson.current = json;
+
       updateProfile(user.id, { postcard: options }).then(
         (problem) => problem && console.error(problem)
       );
     }, 600);
+
     return () => clearTimeout(t);
   }, [options, user]);
 
   useEffect(() => {
     const cv = canvas.current;
     const svg = logoRef.current?.querySelector('svg');
+
     if (!cv || !countries) return;
     let stale = false;
+
     (svg ? logoImage(svg) : Promise.resolve(null)).then((logo) => {
       if (stale) return;
       if (goal)
@@ -209,6 +235,7 @@ const PostcardPage = () => {
           year: Y,
         });
     });
+
     return () => {
       stale = true;
     };
@@ -231,14 +258,17 @@ const PostcardPage = () => {
         ? canvas.current.toBlob(resolve, 'image/png')
         : resolve(null)
     );
+
   const fileName = () =>
     goal
       ? goalCardName(goal)
       : year
         ? `read-the-globe-${year}-postcard.png`
         : `read-the-globe-postcard-${new Date().toISOString().slice(0, 10)}.png`;
+
   const save = (blob: Blob) => {
     const a = document.createElement('a');
+
     a.href = URL.createObjectURL(blob);
     a.download = fileName();
     a.click();
@@ -248,6 +278,7 @@ const PostcardPage = () => {
   const onSave = async () => {
     setBusy('save');
     const blob = await toBlob();
+
     setBusy(null);
     if (!blob) return;
     save(blob);
@@ -258,14 +289,18 @@ const PostcardPage = () => {
   const onShare = async () => {
     setBusy('share');
     const blob = await toBlob();
+
     setBusy(null);
     if (!blob) return;
     const file = new File([blob], fileName(), { type: 'image/png' });
+
     if (!navigator.canShare?.({ files: [file] })) {
       save(blob);
       setStatus(m.postcard_no_share_sheet());
+
       return;
     }
+
     try {
       await navigator.share({
         files: [file],
@@ -307,18 +342,22 @@ const PostcardPage = () => {
   const label = () => {
     if (goal) {
       const p = progress(goal);
+
       const of =
         goal.kind === 'theme' ? m.postcard_of_books : m.postcard_of_countries;
+
       return m.postcard_label_goal({
         goal: goalName(goal.name),
         progress: of({ done: p.done, count: p.total }),
       });
     }
+
     if (Y)
       return m.postcard_label_year({
         line: Y.line,
         books: m.count_book({ count: Y.books.length }),
       });
+
     return m.postcard_label_atlas({
       kind: lower(KINDS[options.kind].name()),
       countries: stats.countries,
@@ -368,6 +407,7 @@ const PostcardPage = () => {
                   value={which}
                   onChange={(e) => {
                     const [card, v] = e.target.value.split(':');
+
                     set({
                       goal: card === 'goal' ? Number(v) : null,
                       year: card === 'year' ? v : null,

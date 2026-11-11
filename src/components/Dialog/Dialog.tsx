@@ -19,7 +19,9 @@ const Dialog = ({
   useEffect(() => {
     if (!isOpen || !canClose) return;
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+
     document.addEventListener('keydown', onKey);
+
     return () => document.removeEventListener('keydown', onKey);
   }, [isOpen, canClose, onClose]);
 

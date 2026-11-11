@@ -63,6 +63,7 @@ export const toolbar = style({
   marginBottom: 16,
 });
 export const search = style({ position: 'relative', flex: '1 1 260px' });
+
 globalStyle(`${search} svg`, {
   position: 'absolute',
   left: 16,
@@ -73,6 +74,7 @@ globalStyle(`${search} svg`, {
   color: vars.color.textMuted,
   pointerEvents: 'none',
 });
+
 globalStyle(`${search} input`, {
   width: '100%',
   minHeight: 40,
@@ -84,10 +86,12 @@ globalStyle(`${search} input`, {
   fontSize: 15,
   color: vars.color.text,
 });
+
 globalStyle(`${search} input:focus`, {
   borderColor: vars.color.primary,
   outline: 'none',
 });
+
 globalStyle(`${search} input::-webkit-search-cancel-button`, {
   WebkitAppearance: 'none',
   appearance: 'none',
@@ -138,6 +142,7 @@ export const pick = style({
   display: 'inline-flex',
   alignItems: 'center',
 });
+
 globalStyle(`${pick} svg`, {
   position: 'absolute',
   right: 16,
@@ -146,6 +151,7 @@ globalStyle(`${pick} svg`, {
   color: vars.color.textSecondary,
   pointerEvents: 'none',
 });
+
 export const select = style({
   minHeight: 40,
   padding: '0 40px 0 16px',
@@ -204,11 +210,13 @@ export const countryMap = style({
   borderRadius: 16,
   background: band,
 });
+
 globalStyle(`${countryMap} svg`, {
   display: 'block',
   width: '100%',
   height: '100%',
 });
+
 // no outline: the fill (or the hatch, for both marks) is the country
 export const shape = style({
   selectors: {
@@ -241,17 +249,20 @@ export const countryWhy = style({
   fontSize: 15,
   color: vars.color.textSecondary,
 });
+
 globalStyle(`${countryWhy} span`, {
   display: 'inline-flex',
   alignItems: 'center',
   gap: 8,
 });
+
 const dot = {
   display: 'inline-block',
   width: 8,
   height: 8,
   borderRadius: '50%',
 } as const;
+
 export const dotSet = style({ ...dot, background: vars.color.markerSetting });
 export const dotAuthor = style({ ...dot, background: vars.color.markerAuthor });
 export const countryActions = style({
@@ -273,12 +284,14 @@ export const yearHead = style({
   padding: '16px 0 8px',
   borderBottom: `1px solid ${vars.color.border}`,
 });
+
 // the year's count sits right, opposite the year
 globalStyle(`${yearHead} p`, {
   margin: '0 0 0 auto',
   fontSize: 13,
   color: vars.color.textMuted,
 });
+
 export const yearTitle = style({
   margin: 0,
   fontFamily: vars.font.display,
@@ -301,6 +314,7 @@ export const yearToggle = style({
   ':focus-visible': { ...focusRing, outlineOffset: 4, borderRadius: 8 },
   '@media': { [coarse]: { minHeight: 44 } },
 });
+
 globalStyle(`${yearToggle} svg`, {
   width: 16,
   height: 16,
@@ -308,6 +322,7 @@ globalStyle(`${yearToggle} svg`, {
   transition: 'rotate .18s cubic-bezier(.2, .8, .25, 1)',
   '@media': { [reducedMotion]: { transition: 'none' } },
 });
+
 // folded: the caret points at the year, as a closed row
 globalStyle(`${yearToggle}[aria-expanded="false"] svg`, { rotate: '-90deg' });
 
@@ -322,6 +337,7 @@ export const emptyPanel = style({
   padding: '32px 0 40px',
   textAlign: 'center',
 });
+
 globalStyle(`${emptyPanel} h2`, {
   margin: '0 0 8px',
   fontFamily: vars.font.display,
@@ -329,11 +345,13 @@ globalStyle(`${emptyPanel} h2`, {
   fontWeight: 500,
   color: vars.color.text,
 });
+
 globalStyle(`${emptyPanel} p`, {
   margin: '0 auto',
   maxWidth: '56ch',
   color: vars.color.textSecondary,
 });
+
 // Log a book, and (step 3) the reading list import under an "or"
 export const emptyActions = style({
   display: 'flex',
@@ -362,6 +380,7 @@ export const orRule = style({
 });
 // what the CSV holds, with the example to download under it
 export const hint = style({});
+
 globalStyle(`${emptyPanel} p${hint}`, {
   maxWidth: '48ch',
   marginTop: 24,
@@ -369,11 +388,13 @@ globalStyle(`${emptyPanel} p${hint}`, {
   lineHeight: 1.6,
   color: vars.color.textMuted,
 });
+
 globalStyle(`${hint} ${linkBtn}`, {
   display: 'flex',
   margin: '8px auto 0',
   fontSize: fontSize.meta,
 });
+
 // Import a reading list (CSV) and the example, above a shelf that has books
 export const importLine = style({
   display: 'flex',
@@ -384,12 +405,14 @@ export const importLine = style({
 
 /* ---------- the stickers: a shelf with a gap (no books), a book with a ribbon (nothing saved) ---------- */
 const deepRust = `color-mix(in srgb, ${vars.color.markerAuthor} 80%, black)`;
+
 export const sticker = style({ width: 120, height: 100, marginBottom: 24 });
 export const ssPlank = style({
   stroke: vars.color.textMuted,
   strokeWidth: 2.6,
 });
 const book = { strokeWidth: 2 } as const;
+
 export const ssBookA = style({
   ...book,
   fill: vars.color.primary,
@@ -572,11 +595,13 @@ export const nextStamp = style({
   background: band,
   '@media': { [phone]: { width: 72, height: 48 } },
 });
+
 globalStyle(`${nextStamp} svg`, {
   width: 72,
   height: 45,
   '@media': { [phone]: { width: 60, height: 38 } },
 });
+
 // half strength: not on the atlas until it's read
 export const nextShape = style({
   fillOpacity: 0.5,
@@ -609,11 +634,13 @@ export const nextMeta = style({
   fontSize: 13,
   color: vars.color.textSecondary,
 });
+
 globalStyle(`${nextMeta} > span`, {
   display: 'inline-flex',
   alignItems: 'center',
   gap: 8,
 });
+
 export const fresh = style({ color: vars.color.accent, fontWeight: 500 });
 export const nextActs = style({
   display: 'flex',

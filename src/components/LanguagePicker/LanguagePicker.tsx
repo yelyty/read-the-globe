@@ -21,6 +21,7 @@ const LanguagePicker = ({
   selectClassName = s.select,
 }: LanguagePickerProps) => {
   const id = useId();
+
   return (
     <div className={className}>
       <label htmlFor={id} className={label ? labelClassName : srOnly}>

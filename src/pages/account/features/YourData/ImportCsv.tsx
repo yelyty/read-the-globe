@@ -20,19 +20,25 @@ const ImportCsv = ({ className, children, onDone }: ImportCsvProps) => {
 
   const pick = async (event: ChangeEvent<HTMLInputElement>) => {
     const chosen = event.target.files?.[0];
+
     event.target.value = '';
     if (!chosen) return;
     setBusy(true);
+
     const { books, problems } = booksFromCsv(
       await chosen.text(),
       await getCountryNames()
     );
+
     const result = await importBooks(books);
+
     if ('error' in result) {
       setBusy(false);
       onDone(result.error);
+
       return;
     }
+
     if (result.added) await router.invalidate();
     setBusy(false);
     onDone(importReport(result.added, result.duplicates, problems));

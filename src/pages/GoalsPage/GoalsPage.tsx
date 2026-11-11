@@ -63,19 +63,23 @@ const GoalsPage = () => {
   };
 
   const marks = atlasMarks(books);
+
   const progress = (g: GoalDraft & { id?: number }) =>
     goalProgress(g, marks, books, shapes ?? {});
 
   // a goal is stamped reached the first time it is seen full, and loses the stamp if a book is removed
   useEffect(() => {
     if (!shapes) return;
+
     const changes = goals
       .map((g) => ({
         g,
         done: isDone(goalProgress(g, atlasMarks(books), books, shapes)),
       }))
       .filter(({ g, done }) => done !== !!g.reachedOn);
+
     if (!changes.length) return;
+
     Promise.all(
       changes.map(({ g, done }) => markReached(g.id, done ? today() : null))
     ).then((problems) => {
@@ -91,31 +95,41 @@ const GoalsPage = () => {
 
   useEffect(() => {
     const g = goals.find((x) => x.name.toLowerCase() === focusName.current);
+
     const h =
       g && document.querySelector<HTMLElement>(`[data-goal="${g.id}"] h3`);
+
     if (!h) return;
     focusName.current = null;
+
     h.scrollIntoView({
       block: 'center',
       behavior: matchMedia(reducedMotion).matches ? 'auto' : 'smooth',
     });
+
     h.focus({ preventScroll: true });
   }, [goals, shapes]);
 
   // ?add=<slug>: a Journal article's "Add this goal" lands here and adds it once, or shows it if it's already there
   const added = useRef<string | null>(null);
+
   useEffect(() => {
     if (!addSlug || added.current === addSlug) return;
     added.current = addSlug;
     navigate({ to: '/app/goals', search: {}, replace: true });
     const c = CATALOGUE.find((x) => x.slug === addSlug);
+
     if (!c) return;
     const name = c.name.toLowerCase();
+
     if (goals.some((g) => g.name.toLowerCase() === name)) {
       focusName.current = name;
+
       return;
     }
+
     if (goals.length >= MAX_GOALS) return;
+
     addGoal(c).then((problem) => {
       if (problem) return say(problem);
       saved(m.goals_added({ goal: goalName(c.name) }), c.name);
@@ -133,18 +147,22 @@ const GoalsPage = () => {
     ),
     ...localNames,
   };
+
   const name = (code: string) => names[code] ?? code;
   const full = goals.length >= MAX_GOALS;
+
   const sorted = [
     ...goals.filter((g) => !isDone(progress(g))),
     ...goals.filter((g) => isDone(progress(g))),
   ];
+
   const nReached =
     goals.length - goals.filter((g) => !isDone(progress(g))).length;
 
   const add = async (draft: GoalDraft) => {
     if (full) return;
     const problem = await addGoal(draft);
+
     if (problem) return say(problem);
     saved(m.goals_added({ goal: goalName(draft.name) }), draft.name);
   };
@@ -153,16 +171,20 @@ const GoalsPage = () => {
     const ticked = books
       .filter((b) => b.goals.some((g) => g.goalId === goal.id))
       .map((b) => b.id);
+
     const at = sorted.indexOf(goal);
     const problem = await deleteGoal(goal.id);
+
     if (problem) return say(problem);
     await router.invalidate();
     // focus goes to the row now in its place, or to the suggestions when it was the last one
     const left = document.querySelectorAll<HTMLElement>('[data-remove-goal]');
+
     (
       left[Math.min(at, left.length - 1)] ??
       document.querySelector<HTMLElement>(`.${s.sugg} > summary`)
     )?.focus();
+
     status.show({
       text: ticked.length
         ? m.goals_removed_unticked({
@@ -175,6 +197,7 @@ const GoalsPage = () => {
         icon: <ArrowCounterClockwiseIcon aria-hidden="true" />,
         run: async () => {
           const problem = await restoreGoal(goal, ticked);
+
           if (problem) return say(problem);
           saved(m.goals_back({ goal: goalName(goal.name) }), goal.name);
         },
@@ -185,26 +208,34 @@ const GoalsPage = () => {
   // the suggestions: the ones your books already go furthest into lead as destinations (four, one row),
   // topped up with one of each kind; the rest fold under More goals
   const have = new Set(goals.map((g) => g.name.toLowerCase()));
+
   const left = CATALOGUE.filter((c) => !have.has(c.name.toLowerCase())).map(
     (c, i) => {
       const p = progress(c);
+
       return { c, i, p, score: c.kind === 'theme' ? -1 : p.done / p.total };
     }
   );
+
   const pick = !goals.length
     ? left
         .filter((x) => x.score > 0 && x.score < 1)
         .sort((a, b) => b.score - a.score || a.i - b.i)[0]
     : undefined;
+
   const offered = left.filter((x) => x !== pick);
+
   const top = offered
     .filter((x) => x.score > 0 && x.score < 1)
     .sort((a, b) => b.score - a.score || a.i - b.i)
     .slice(0, 4);
+
   for (const kind of Object.keys(KIND_GROUP) as GoalKind[]) {
     const x = offered.find((y) => y.c.kind === kind && !top.includes(y));
+
     if (x && top.length < 4 && !top.some((y) => y.c.kind === kind)) top.push(x);
   }
+
   const rest = offered.filter((x) => !top.includes(x));
 
   const suggestions = (
@@ -283,6 +314,7 @@ const GoalsPage = () => {
             </summary>
             {(Object.keys(KIND_GROUP) as GoalKind[]).map((kind) => {
               const items = rest.filter((x) => x.c.kind === kind);
+
               return items.length ? (
                 <div key={kind} className={s.group}>
                   <h3>{KIND_GROUP[kind]()}</h3>

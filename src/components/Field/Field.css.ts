@@ -20,6 +20,7 @@ export const formError = style({
   background: vars.color.rustWash,
   border: `1px solid ${vars.color.markerAuthor}`,
 });
+
 globalStyle(`${formError} svg`, {
   width: 17,
   height: 17,

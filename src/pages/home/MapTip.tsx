@@ -28,10 +28,12 @@ const MapTip = ({ tip, marks, names }: MapTipProps) => {
   // above the point, or below it when that would go under the sticky header; never off the screen's sides
   useLayoutEffect(() => {
     const el = ref.current;
+
     if (!el) return;
     const tw = el.offsetWidth;
     const th = el.offsetHeight;
     const floor = (document.querySelector('header')?.offsetHeight ?? 0) + 8;
+
     el.style.left = `${Math.max(8, Math.min(innerWidth - tw - 8, tip.x - tw / 2))}px`;
     el.style.top = `${tip.y - th - 16 < floor ? Math.min(innerHeight - th - 8, tip.bottom + 16) : tip.y - th - 16}px`;
   });
@@ -51,6 +53,7 @@ const MapTip = ({ tip, marks, names }: MapTipProps) => {
 
   const books = [...new Set([...mark.set, ...mark.author])];
   const one = books.length === 1;
+
   const foot = {
     touch: one ? m.tip_tap_one : m.tip_tap_many,
     mouse: one ? m.tip_click_one : m.tip_click_many,
@@ -67,6 +70,7 @@ const MapTip = ({ tip, marks, names }: MapTipProps) => {
         {books.slice(0, SHOWN).map((b) => {
           const set = mark.set.includes(b);
           const author = mark.author.includes(b);
+
           return (
             <li key={b.id}>
               <i

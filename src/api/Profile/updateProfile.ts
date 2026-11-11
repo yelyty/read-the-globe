@@ -21,5 +21,6 @@ export async function updateProfile(
     .eq('id', userId);
 
   if (error?.code === '23505') return m.account_handle_taken();
+
   return error?.message ?? null;
 }

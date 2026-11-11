@@ -258,5 +258,6 @@ export const toNumeric = (alpha2: string | null | undefined) =>
 const ALPHA2 = Object.fromEntries(
   Object.entries(NUMERIC).map(([a2, n]) => [n, a2])
 );
+
 // "620" → "PT"
 export const toAlpha2 = (numeric: string) => ALPHA2[numeric] ?? null;
