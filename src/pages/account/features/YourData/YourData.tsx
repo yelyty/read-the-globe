@@ -34,6 +34,7 @@ type YourDataProps = {
 const YourData = ({ userId, books, names, goals }: YourDataProps) => {
   const [status, setStatus] = useState('');
   const [imported, setImported] = useState('');
+  const [backingUp, setBackingUp] = useState(false);
 
   const onExportReadingListClick = () => {
     exportReadingList(books, names);
@@ -42,7 +43,10 @@ const YourData = ({ userId, books, names, goals }: YourDataProps) => {
 
   // the backup is read fresh, so it carries next reads and saved worlds too
   const onExportFullBackup = async () => {
+    setBackingUp(true);
     const backup = await getBackup(userId).catch(() => null);
+
+    setBackingUp(false);
 
     if (!backup) {
       setStatus(m.account_backup_failed());
@@ -68,9 +72,15 @@ const YourData = ({ userId, books, names, goals }: YourDataProps) => {
             <FileCsvIcon aria-hidden="true" />
             {m.account_reading_list_csv()}
           </Button>
-          <Button type="button" variant="quiet" onClick={onExportFullBackup}>
+          <Button
+            type="button"
+            variant="quiet"
+            disabled={backingUp}
+            aria-busy={backingUp || undefined}
+            onClick={onExportFullBackup}
+          >
             <FileCodeIcon aria-hidden="true" />
-            {m.account_full_backup()}
+            {backingUp ? m.account_backup_preparing() : m.account_full_backup()}
           </Button>
           <p className={styles.status} role="status">
             {status}

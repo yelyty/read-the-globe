@@ -183,10 +183,11 @@ const RestoreBackup = ({
             type="button"
             variant="primary"
             disabled={restoring}
+            aria-busy={restoring || undefined}
             onClick={restore}
           >
             <UploadSimpleIcon aria-hidden="true" />
-            {m.account_restore_confirm()}
+            {restoring ? m.account_restoring() : m.account_restore_confirm()}
           </Button>
         </div>
       </dialog>

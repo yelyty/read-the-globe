@@ -4,6 +4,7 @@ import { importBooks } from '../../../../api/data/data';
 import { getCountryNames } from '../../../../utils/countryNames';
 import { booksFromCsv } from '../../../../utils/readingListCsv';
 import { importReport } from './readingList';
+import { m } from '../../../../paraglide/messages.js';
 
 type ImportCsvProps = {
   className: string;
@@ -50,9 +51,10 @@ const ImportCsv = ({ className, children, onDone }: ImportCsvProps) => {
         type="button"
         className={className}
         disabled={busy}
+        aria-busy={busy || undefined}
         onClick={() => file.current?.click()}
       >
-        {children}
+        {busy ? m.account_importing() : children}
       </button>
       <input
         ref={file}

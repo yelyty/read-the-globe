@@ -37,7 +37,8 @@ const UserDetails = ({ user }: UserDetailsProps) => {
 
     setSaving(false);
     setError(problem ?? undefined);
-    if (!problem) setStatus(m.account_saved());
+    if (problem) document.getElementById('ac-name')?.focus();
+    else setStatus(m.account_saved());
   };
 
   const onNameChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -69,9 +70,13 @@ const UserDetails = ({ user }: UserDetailsProps) => {
           <Hint id="ac-email-hint">{m.account_email_hint()}</Hint>
         </Field>
         <div className={styles.row}>
-          <Button type="submit" disabled={saving}>
+          <Button
+            type="submit"
+            disabled={saving}
+            aria-busy={saving || undefined}
+          >
             <CheckIcon aria-hidden="true" />
-            {m.common_save()}
+            {saving ? m.log_saving() : m.common_save()}
           </Button>
           <p className={styles.status} role="status">
             {status}

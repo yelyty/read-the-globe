@@ -6,6 +6,7 @@ import * as accountStyles from '../account/features/DeleteAccount/DeleteAccount.
 import * as styles from './GoalsPage.css';
 import Hint from '../../components/Hint/Hint';
 import { Button } from '../../components/Button/Button';
+import { dismiss, useDirty } from '../../hooks/useUnsaved';
 import { goalName, withBold } from './goals';
 import { m } from '../../paraglide/messages.js';
 
@@ -38,6 +39,7 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
   const [query, setQuery] = useState('');
   const [error, setError] = useState<string>();
   const [saving, setSaving] = useState(false);
+  const dirty = useDirty([...picked].sort());
 
   useEffect(() => {
     dialog.current?.showModal();
@@ -78,8 +80,12 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
         className={accountStyles.dialog}
         aria-labelledby="books-dialog-title"
         onClose={onClose}
+        onCancel={(event) => {
+          event.preventDefault();
+          dismiss(dialog.current, dirty);
+        }}
         onClick={(event) =>
-          event.target === event.currentTarget && dialog.current?.close()
+          event.target === event.currentTarget && dismiss(dialog.current, dirty)
         }
       >
         <form onSubmit={submit} noValidate>
@@ -173,9 +179,13 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
               {m.common_cancel()}
             </Button>
             {books.length > 0 && (
-              <Button type="submit" disabled={saving}>
+              <Button
+                type="submit"
+                disabled={saving}
+                aria-busy={saving || undefined}
+              >
                 <CheckIcon aria-hidden="true" />
-                {m.common_save()}
+                {saving ? m.log_saving() : m.common_save()}
               </Button>
             )}
           </div>

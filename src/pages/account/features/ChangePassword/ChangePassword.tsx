@@ -38,6 +38,7 @@ const ChangePassword = ({ email }: { email: string }) => {
 
     if (problem) {
       setErrors({ first: problem });
+      document.getElementById('ac-pass1')?.focus();
 
       return;
     }
@@ -91,9 +92,13 @@ const ChangePassword = ({ email }: { email: string }) => {
           onChange={onRepeatNewPasswordChange}
         />
         <div className={styles.row}>
-          <Button type="submit" disabled={saving}>
+          <Button
+            type="submit"
+            disabled={saving}
+            aria-busy={saving || undefined}
+          >
             <LockKeyIcon aria-hidden="true" />
-            {m.account_password_title()}
+            {saving ? m.log_saving() : m.account_password_title()}
           </Button>
           <p className={styles.status} role="status">
             {status}

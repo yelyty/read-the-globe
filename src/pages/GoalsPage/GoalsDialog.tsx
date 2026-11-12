@@ -9,8 +9,10 @@ import { getLocale } from '../../paraglide/runtime.js';
 import { m } from '../../paraglide/messages.js';
 import * as accountStyles from '../account/features/DeleteAccount/DeleteAccount.css';
 import * as styles from './GoalsPage.css';
+import { fieldError } from '../../components/Field/Field.css';
 import Hint from '../../components/Hint/Hint';
 import { Button } from '../../components/Button/Button';
+import { dismiss, useDirty } from '../../hooks/useUnsaved';
 
 const NAME_HINT: Record<GoalKind, () => string> = {
   region: m.goals_cat_europe,
@@ -46,8 +48,10 @@ const GoalDialog = ({
   const [codes, setCodes] = useState<string[]>(goal?.countryCodes ?? []);
   const [country, setCountry] = useState('');
   const [target, setTarget] = useState(String(goal?.target ?? 5));
-  const [error, setError] = useState<string>();
+  // `at` names the field the error is about; without it the error is about the whole form
+  const [error, setError] = useState<{ text: string; at?: string }>();
   const [saving, setSaving] = useState(false);
+  const dirty = useDirty([kind, name, continent, codes, target]);
 
   useEffect(() => {
     dialog.current?.showModal();
@@ -70,11 +74,19 @@ const GoalDialog = ({
     setError(undefined);
   };
 
+  // the error shows next to its field, which takes focus
+  const fail = (text: string, at?: string) => {
+    setError({ text, at });
+    if (at) document.getElementById(at)?.focus();
+  };
+
+  const errorAt = (id: string) => (error?.at === id ? error.text : undefined);
+
   const submit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     const trimmed = name.trim();
 
-    if (!trimmed) return setError(m.goals_err_name());
+    if (!trimmed) return fail(m.goals_err_name(), 'g-name');
     if (
       goals.some(
         (existing) =>
@@ -84,12 +96,12 @@ const GoalDialog = ({
           )
       )
     )
-      return setError(m.goals_err_dup({ name: trimmed }));
+      return fail(m.goals_err_dup({ name: trimmed }), 'g-name');
     if (kind === 'countries' && codes.length < 2)
-      return setError(m.goals_err_two());
+      return fail(m.goals_err_two(), 'g-country');
     if (kind === 'theme' && !(Number(target) >= 1))
-      return setError(m.goals_err_target());
-    if (!goal && goals.length >= MAX_GOALS) return setError(m.goals_full());
+      return fail(m.goals_err_target(), 'g-target');
+    if (!goal && goals.length >= MAX_GOALS) return fail(m.goals_full());
 
     const draft = {
       kind,
@@ -107,7 +119,7 @@ const GoalDialog = ({
       : await addGoal(draft);
 
     setSaving(false);
-    if (problem) return setError(problem);
+    if (problem) return fail(problem);
     dialog.current?.close();
     onSaved(draft.name);
   };
@@ -120,8 +132,12 @@ const GoalDialog = ({
         className={accountStyles.dialog}
         aria-labelledby="goal-dialog-title"
         onClose={onClose}
+        onCancel={(event) => {
+          event.preventDefault();
+          dismiss(dialog.current, dirty);
+        }}
         onClick={(event) =>
-          event.target === event.currentTarget && dialog.current?.close()
+          event.target === event.currentTarget && dismiss(dialog.current, dirty)
         }
       >
         <form onSubmit={submit} noValidate>
@@ -148,9 +164,10 @@ const GoalDialog = ({
               className={styles.input}
               value={kind}
               disabled={!!goal}
-              onChange={(changeEvent) =>
-                setKind(changeEvent.target.value as GoalKind)
-              }
+              onChange={(changeEvent) => {
+                setKind(changeEvent.target.value as GoalKind);
+                setError(undefined);
+              }}
             >
               <option value="region">{m.goals_kind_region()}</option>
               <option value="countries">{m.goals_kind_countries()}</option>
@@ -165,6 +182,7 @@ const GoalDialog = ({
             placeholder={NAME_HINT[kind]()}
             autoComplete="off"
             value={name}
+            error={errorAt('g-name')}
             onChange={(changeEvent) => {
               setName(changeEvent.target.value);
               setError(undefined);
@@ -204,7 +222,12 @@ const GoalDialog = ({
                 list="g-countries"
                 placeholder={m.goals_country_placeholder()}
                 autoComplete="off"
-                aria-describedby="g-country-hint"
+                aria-describedby={
+                  errorAt('g-country')
+                    ? 'g-country-hint g-country-err'
+                    : 'g-country-hint'
+                }
+                aria-invalid={errorAt('g-country') ? true : undefined}
                 value={country}
                 onChange={(changeEvent) => {
                   setCountry(changeEvent.target.value);
@@ -230,6 +253,11 @@ const GoalDialog = ({
                   ))}
               </datalist>
               <Hint id="g-country-hint">{m.goals_country_hint()}</Hint>
+              {errorAt('g-country') && (
+                <p id="g-country-err" className={fieldError}>
+                  {errorAt('g-country')}
+                </p>
+              )}
               {codes.length > 0 && (
                 <ul className={styles.picked}>
                   {codes.map((code) => (
@@ -262,13 +290,17 @@ const GoalDialog = ({
               max={200}
               inputMode="numeric"
               value={target}
-              onChange={(changeEvent) => setTarget(changeEvent.target.value)}
+              error={errorAt('g-target')}
+              onChange={(changeEvent) => {
+                setTarget(changeEvent.target.value);
+                setError(undefined);
+              }}
             />
           )}
 
-          {error && (
+          {error && !error.at && (
             <p className={styles.formError} role="alert">
-              {error}
+              {error.text}
             </p>
           )}
 
@@ -280,13 +312,23 @@ const GoalDialog = ({
             >
               {m.common_cancel()}
             </Button>
-            <Button type="submit" disabled={saving}>
+            <Button
+              type="submit"
+              disabled={saving}
+              aria-busy={saving || undefined}
+            >
               {goal ? (
                 <CheckIcon aria-hidden="true" />
               ) : (
                 <PlusIcon aria-hidden="true" />
               )}
-              {goal ? m.goals_save_changes() : m.goals_add_goal()}
+              {saving
+                ? goal
+                  ? m.log_saving()
+                  : m.goals_adding()
+                : goal
+                  ? m.goals_save_changes()
+                  : m.goals_add_goal()}
             </Button>
           </div>
         </form>

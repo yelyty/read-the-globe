@@ -19,7 +19,9 @@ import { goalHas, goalName } from '../../GoalsPage/goals';
 import { getLocale } from '../../../paraglide/runtime.js';
 import { m } from '../../../paraglide/messages.js';
 import { useStatus } from '../../../hooks/useStatus';
+import { useDirty, useLeaveGuard } from '../../../hooks/useUnsaved';
 import * as styles from '../ShelfPage.css';
+import { fieldError } from '../../../components/Field/Field.css';
 
 type NextToReadProps = {
   items: NextRead[];
@@ -42,12 +44,15 @@ const NextToRead = ({
   const [author, setAuthor] = useState('');
   const [country, setCountry] = useState('');
   const [mark, setMark] = useState<'set' | 'author'>('author');
-  const [error, setError] = useState('');
+  // `at` names the field the error is about; without it the error is about the whole form
+  const [error, setError] = useState<{ text: string; at?: string }>();
   const [said, setSaid] = useState('');
   const status = useStatus();
   const [saving, setSaving] = useState(false);
   const [countries, setCountries] = useState<Map<string, Country>>();
   const titleRef = useRef<HTMLInputElement>(null);
+
+  useLeaveGuard(useDirty([title, author, country]));
 
   useEffect(() => {
     loadCountries().then(setCountries);
@@ -71,14 +76,18 @@ const NextToRead = ({
     const trimmed = title.trim();
 
     if (!trimmed) {
-      setError(m.next_err_title());
+      setError({ text: m.next_err_title(), at: 'n-title' });
       titleRef.current?.focus();
 
       return;
     }
 
     if (country.trim() && !code) {
-      setError(m.next_err_country({ country: country.trim() }));
+      setError({
+        text: m.next_err_country({ country: country.trim() }),
+        at: 'n-country',
+      });
+
       document.getElementById('n-country')?.focus();
 
       return;
@@ -120,7 +129,7 @@ const NextToRead = ({
     setSaving(false);
 
     if (!saved) {
-      setError(m.next_save_failed());
+      setError({ text: m.next_save_failed() });
 
       return;
     }
@@ -130,7 +139,7 @@ const NextToRead = ({
     setAuthor('');
     setCountry('');
     setMark('author');
-    setError('');
+    setError(undefined);
     setSaid(m.next_saved({ title: saved.title }));
     titleRef.current?.focus();
   };
@@ -182,12 +191,20 @@ const NextToRead = ({
             maxLength={200}
             placeholder={m.next_placeholder_title()}
             value={title}
-            aria-invalid={error && !title.trim() ? true : undefined}
+            aria-invalid={error?.at === 'n-title' || undefined}
+            aria-describedby={
+              error?.at === 'n-title' ? 'n-title-err' : undefined
+            }
             onChange={(changeEvent) => {
               setTitle(changeEvent.target.value);
-              setError('');
+              setError(undefined);
             }}
           />
+          {error?.at === 'n-title' && (
+            <p id="n-title-err" className={fieldError}>
+              {error.text}
+            </p>
+          )}
         </div>
         <div>
           <label className={styles.fieldLabel} htmlFor="n-author">
@@ -216,11 +233,20 @@ const NextToRead = ({
             placeholder={m.next_placeholder_country()}
             autoComplete="off"
             value={country}
+            aria-invalid={error?.at === 'n-country' || undefined}
+            aria-describedby={
+              error?.at === 'n-country' ? 'n-country-err' : undefined
+            }
             onChange={(changeEvent) => {
               setCountry(changeEvent.target.value);
-              setError('');
+              setError(undefined);
             }}
           />
+          {error?.at === 'n-country' && (
+            <p id="n-country-err" className={fieldError}>
+              {error.text}
+            </p>
+          )}
           <datalist id="n-countries">
             {sorted.map(([countryCode, countryName]) => (
               <option key={countryCode} value={countryName} />
@@ -248,15 +274,20 @@ const NextToRead = ({
             </span>
           </div>
         )}
-        {error && (
+        {error && !error.at && (
           <p className={`${styles.nextWide} ${styles.error}`} role="alert">
-            {error}
+            {error.text}
           </p>
         )}
         <div className={`${styles.nextWide} ${styles.formRow}`}>
-          <button type="submit" className={styles.primary} disabled={saving}>
+          <button
+            type="submit"
+            className={styles.primary}
+            disabled={saving}
+            aria-busy={saving || undefined}
+          >
             <BookmarkSimpleIcon aria-hidden="true" />
-            {m.next_save()}
+            {saving ? m.log_saving() : m.next_save()}
           </button>
           <p className={styles.status} role="status">
             {said}

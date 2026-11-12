@@ -12,6 +12,7 @@ import {
 import * as styles from '../CompanyPage.css';
 import { m } from '../../../paraglide/messages.js';
 import { getLocale } from '../../../paraglide/runtime.js';
+import { useDirty, useLeaveGuard } from '../../../hooks/useUnsaved';
 
 type Errors = Partial<Record<keyof ContactMessage, string>>;
 const FIELD_ORDER: (keyof ContactMessage)[] = ['name', 'email', 'message'];
@@ -39,6 +40,10 @@ const ContactPage = () => {
   const [sent, setSent] = useState(false);
   const sentRef = useRef<HTMLParagraphElement>(null);
   const errors = submitted ? validate(values) : {};
+  const dirty = useDirty(values);
+
+  // a sent message is safe; one still being written isn't
+  useLeaveGuard(dirty && !sent);
 
   const update =
     (key: keyof ContactMessage) =>

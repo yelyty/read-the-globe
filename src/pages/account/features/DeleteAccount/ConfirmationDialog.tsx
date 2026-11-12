@@ -113,9 +113,10 @@ const ConfirmationDialog = ({ books, names, ref }: ConfirmationDialogProps) => {
               type="submit"
               variant="danger"
               disabled={!confirmed || deleting}
+              aria-busy={deleting || undefined}
             >
               <TrashIcon aria-hidden="true" />
-              {m.account_delete()}
+              {deleting ? m.account_deleting() : m.account_delete()}
             </Button>
           </div>
         </form>

@@ -669,6 +669,7 @@ export const input = style({
     outline: 'none',
   },
   ':disabled': { color: vars.color.textMuted, cursor: 'not-allowed' },
+  selectors: { '&[aria-invalid="true"]': { borderColor: vars.color.error } },
 });
 
 export const picked = style({

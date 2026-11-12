@@ -38,6 +38,7 @@ import { getCountryNames } from '../../utils/countryNames';
 import { toAlpha2 } from '../../utils/toIsoNumeric';
 import { m } from '../../paraglide/messages.js';
 import { getLocale } from '../../paraglide/runtime.js';
+import { dismiss, useDirty } from '../../hooks/useUnsaved';
 
 const app = getRouteApi('/app');
 
@@ -339,6 +340,7 @@ const LogForm = ({
   const [formError, setFormError] = useState('');
   const [dupOk, setDupOk] = useState('');
   const [saving, setSaving] = useState(false);
+  const dirty = useDirty([title, author, country, rows, mon, year, ticks]);
 
   useEffect(() => {
     dialog.current?.showModal();
@@ -610,6 +612,10 @@ const LogForm = ({
       data-editing={Boolean(book)}
       aria-labelledby="log-title"
       onClose={onClose}
+      onCancel={(event) => {
+        event.preventDefault();
+        dismiss(dialog.current, dirty);
+      }}
     >
       <div className={styles.head}>
         <div>

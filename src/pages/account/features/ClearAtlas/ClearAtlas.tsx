@@ -161,10 +161,11 @@ const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
             type="button"
             variant="danger"
             disabled={clearing}
+            aria-busy={clearing || undefined}
             onClick={clear}
           >
             <EraserIcon aria-hidden="true" />
-            {m.account_clear()}
+            {clearing ? m.account_clearing() : m.account_clear()}
           </Button>
         </div>
       </dialog>
