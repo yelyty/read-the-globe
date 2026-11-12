@@ -6,8 +6,7 @@ import {
   toCsv,
 } from '../../../../utils/readingListCsv';
 import { m } from '../../../../paraglide/messages.js';
-
-const today = () => new Date().toISOString().slice(0, 10);
+import { localToday as today } from '../../../../utils/readDate';
 
 const download = (text: string, name: string, type: string) => {
   const link = document.createElement('a');

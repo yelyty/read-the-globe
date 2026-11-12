@@ -60,4 +60,14 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       <h1>{m.not_found_title()}</h1>
     </CompanyPage>
   ),
+  // TODO: make nice
+  errorComponent: () => (
+    <CompanyPage
+      title={m.common_try_again()}
+      description={m.common_try_again()}
+      translated
+    >
+      <h1>{m.common_try_again()}</h1>
+    </CompanyPage>
+  ),
 });

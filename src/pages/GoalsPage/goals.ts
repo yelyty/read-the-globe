@@ -134,7 +134,7 @@ export const isDone = (progress: Progress) =>
 export const plural = (count: number, one: string, many = `${one}s`) =>
   `${count} ${count === 1 ? one : many}`;
 
-export const today = () => new Date().toISOString().slice(0, 10);
+export { localToday as today } from '../../utils/readDate';
 
 export const goalHas = (goal: Goal, code: string) =>
   goal.kind === 'region'

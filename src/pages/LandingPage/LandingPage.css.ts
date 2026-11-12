@@ -86,25 +86,7 @@ globalStyle(`${page} :where(button, input, textarea)`, {
   color: 'inherit',
 });
 
-globalStyle(
-  `${page} :where(a, button, input, textarea, summary, [tabindex]):focus-visible`,
-  {
-    outline: `2px solid ${vars.color.accent}`,
-    outlineOffset: 2,
-  }
-);
-
 globalStyle(`${page} ::selection`, { background: 'rgba(74, 106, 64, 0.25)' });
-
-globalStyle(`${page} *, ${page} *::before, ${page} *::after`, {
-  '@media': {
-    [reducedMotion]: {
-      transitionDuration: '0s !important',
-      animationDuration: '0s !important',
-      animationDelay: '0s !important',
-    },
-  },
-});
 
 globalStyle('body:has(dialog[open])', { overflow: 'hidden' });
 

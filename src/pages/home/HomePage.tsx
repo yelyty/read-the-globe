@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getRouteApi, Link, useNavigate } from '@tanstack/react-router';
 import {
   ArrowsInIcon,
@@ -360,7 +360,7 @@ const HomePage = () => {
     return el && code && code !== ANTARCTICA ? { el, code } : null;
   };
 
-  const tipAt = (code: string, el: Element, by: Tip['by']) => {
+  const tipAt = useCallback((code: string, el: Element, by: Tip['by']) => {
     const rect = el.getBoundingClientRect();
 
     setTip({
@@ -370,7 +370,7 @@ const HomePage = () => {
       bottom: rect.bottom,
       by,
     });
-  };
+  }, []);
 
   const imagined = worlds.filter((world) => world.books.length).length;
 
@@ -396,6 +396,28 @@ const HomePage = () => {
         authors: stats.authors,
       })
     : m.home_map_caption_empty();
+
+  // the rows under the map, kept as one element so they don't re-render while a tip follows the pointer
+  const below = useMemo(
+    () =>
+      !blank && (
+        <>
+          <BeyondMap worlds={worlds} />
+          <RecentReads
+            books={[...shown].sort(byLogged).slice(0, RECENT)}
+            names={names}
+          />
+          <AtlasCountries
+            marks={held}
+            names={names}
+            onFocusCountry={(code, el) =>
+              el ? tipAt(code, el, 'key') : setTip(null)
+            }
+          />
+        </>
+      ),
+    [blank, worlds, shown, names, held, tipAt]
+  );
 
   return (
     <>
@@ -513,22 +535,7 @@ const HomePage = () => {
         )}
       </div>
 
-      {!blank && (
-        <>
-          <BeyondMap worlds={worlds} />
-          <RecentReads
-            books={[...shown].sort(byLogged).slice(0, RECENT)}
-            names={names}
-          />
-          <AtlasCountries
-            marks={held}
-            names={names}
-            onFocusCountry={(code, el) =>
-              el ? tipAt(code, el, 'key') : setTip(null)
-            }
-          />
-        </>
-      )}
+      {below}
 
       {tip && <MapTip tip={tip} marks={marks} names={names} />}
     </>

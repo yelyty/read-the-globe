@@ -59,3 +59,18 @@ globalStyle('html, body', {
 globalStyle('*', {
   boxSizing: 'border-box',
 });
+
+globalStyle(
+  ':where(a, button, input, select, textarea, summary, [tabindex]):focus-visible',
+  focusRing
+);
+
+globalStyle('*, *::before, *::after', {
+  '@media': {
+    [reducedMotion]: {
+      transitionDuration: '0s !important',
+      animationDuration: '0s !important',
+      animationDelay: '0s !important',
+    },
+  },
+});

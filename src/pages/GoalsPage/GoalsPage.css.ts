@@ -512,7 +512,8 @@ globalStyle(`${goalTodo} p`, {
 globalStyle(`${goalTodo} b`, { fontWeight: 500, color: vars.color.text });
 export const goalActions = style({
   display: 'flex',
-  gap: 16,
+  flexWrap: 'wrap',
+  columnGap: 16,
   marginLeft: 'auto',
 });
 export const linkBtn = style({
