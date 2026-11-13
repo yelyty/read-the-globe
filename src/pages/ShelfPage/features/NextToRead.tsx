@@ -3,7 +3,6 @@ import { Link } from '@tanstack/react-router';
 import {
   ArrowCounterClockwiseIcon,
   BookmarkSimpleIcon,
-  CaretDownIcon,
   PushPinIcon,
   TrashIcon,
 } from '@phosphor-icons/react';
@@ -21,6 +20,8 @@ import { m } from '../../../paraglide/messages.js';
 import { useStatus } from '../../../hooks/useStatus';
 import { useDirty, useLeaveGuard } from '../../../hooks/useUnsaved';
 import * as styles from '../ShelfPage.css';
+import Select from '../../../components/Select/Select';
+import Suggest from '../../../components/Suggest/Suggest';
 import { fieldError } from '../../../components/Field/Field.css';
 
 type NextToReadProps = {
@@ -225,10 +226,10 @@ const NextToRead = ({
             {m.next_label_country()}{' '}
             <span className={styles.optional}>{m.common_optional()}</span>
           </label>
-          <input
+          <Suggest
             id="n-country"
             className={styles.input}
-            list="n-countries"
+            options={sorted.map(([, countryName]) => countryName)}
             maxLength={60}
             placeholder={m.next_placeholder_country()}
             autoComplete="off"
@@ -237,8 +238,8 @@ const NextToRead = ({
             aria-describedby={
               error?.at === 'n-country' ? 'n-country-err' : undefined
             }
-            onChange={(changeEvent) => {
-              setCountry(changeEvent.target.value);
+            onValue={(value) => {
+              setCountry(value);
               setError(undefined);
             }}
           />
@@ -247,31 +248,27 @@ const NextToRead = ({
               {error.text}
             </p>
           )}
-          <datalist id="n-countries">
-            {sorted.map(([countryCode, countryName]) => (
-              <option key={countryCode} value={countryName} />
-            ))}
-          </datalist>
         </div>
         {code && (
           <div className={styles.nextWide}>
-            <label className={styles.fieldLabel} htmlFor="n-mark">
+            <label
+              className={styles.fieldLabel}
+              htmlFor="n-mark"
+              id="n-mark-label"
+            >
               {m.next_mark_label()}
             </label>
-            <span className={styles.pick}>
-              <select
-                id="n-mark"
-                className={styles.select}
-                value={mark}
-                onChange={(changeEvent) =>
-                  setMark(changeEvent.target.value as 'set' | 'author')
-                }
-              >
-                <option value="author">{m.next_mark_author()}</option>
-                <option value="set">{m.next_mark_set()}</option>
-              </select>
-              <CaretDownIcon aria-hidden="true" />
-            </span>
+            <Select<'set' | 'author'>
+              id="n-mark"
+              labelId="n-mark-label"
+              variant="pill"
+              value={mark}
+              onChange={setMark}
+              options={[
+                { value: 'author', label: m.next_mark_author() },
+                { value: 'set', label: m.next_mark_set() },
+              ]}
+            />
           </div>
         )}
         {error && !error.at && (

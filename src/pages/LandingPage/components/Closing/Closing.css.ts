@@ -1,4 +1,10 @@
-import { keyframes, style, styleVariants } from '@vanilla-extract/css';
+import {
+  globalStyle,
+  keyframes,
+  style,
+  styleVariants,
+} from '@vanilla-extract/css';
+import { vars } from '../../../../styles/theme.css';
 import { sectionTitle } from '../../LandingPage.css';
 import { easeOut, hover } from '../../../../styles/global.css';
 
@@ -43,10 +49,10 @@ export const stamp = style({
   opacity: 0,
   selectors: {
     [`${stamped} &`]: { opacity: 1 },
+    '&:hover': { zIndex: 2 }, // its name over the promise and the other stamps
   },
   '@media': {
     [motionOk]: {
-      transition: 'translate .24s ease-out, scale .24s ease-out',
       selectors: {
         [`${stamped} &`]: {
           animation: `${press} .48s ${easeOut} both`,
@@ -54,11 +60,60 @@ export const stamp = style({
         },
       },
     },
-    // pointing at one lifts it; its <title> names it
-    [`${motionOk} and ${hover}`]: {
-      selectors: { '&:hover': { translate: '0 -8px', scale: '1.06' } },
-    },
   },
+});
+
+// pointing at one lifts it (the disc only: its name stays put) and names it
+globalStyle(`${stamp} svg`, {
+  display: 'block',
+  width: '100%',
+  height: '100%',
+  '@media': {
+    [motionOk]: { transition: 'translate .24s ease-out, scale .24s ease-out' },
+  },
+});
+
+globalStyle(`${stamp}:hover svg`, {
+  '@media': {
+    [`${motionOk} and ${hover}`]: { translate: '0 -8px', scale: '1.06' },
+  },
+});
+
+/* the name: a small card like the atlas map's tip, centred on the stamp, fading in */
+const tipBase = style({
+  position: 'absolute',
+  zIndex: 2,
+  width: 'max-content',
+  maxWidth: 240,
+  padding: '8px 12px',
+  background: vars.color.surface,
+  color: vars.color.text,
+  border: `1px solid ${vars.color.border}`,
+  borderRadius: 8,
+  fontFamily: vars.font.sans,
+  fontSize: 15,
+  fontWeight: 500,
+  lineHeight: 1.3,
+  textAlign: 'center',
+  textWrap: 'balance',
+  opacity: 0,
+  visibility: 'hidden',
+  pointerEvents: 'none',
+  transition: `opacity .15s ${easeOut}, visibility .15s`,
+  selectors: {
+    [`${stamp}:hover &`]: { opacity: 1, visibility: 'visible' },
+  },
+});
+
+export const tipAlign = styleVariants({
+  center: { left: '50%', translate: '-50% 0' },
+  start: { left: 0 },
+  end: { right: 0 },
+});
+
+export const tip = styleVariants({
+  below: [tipBase, { top: 'calc(100% + 10px)' }],
+  above: [tipBase, { bottom: 'calc(100% + 16px)' }],
 });
 
 // phones keep four stamps, two above the promise and two below (!important beats the inline spot)

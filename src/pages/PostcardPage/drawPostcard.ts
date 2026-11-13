@@ -151,6 +151,7 @@ export function loadCountries() {
         });
 
       const countries = new Map<string, Country>();
+      const sizes = new Map<string, number>(); // the main landmass's area, for a code that comes twice
 
       for (const geometry of topo.objects.countries.geometries) {
         if (!geometry.id || !geometry.arcs) continue;
@@ -163,11 +164,15 @@ export function loadCountries() {
         const coordinates = polygons.map((polygon) => polygon.map(ring));
 
         // a stamp frames the country's main landmass, not the islands far out at sea
-        const main = coordinates
+        const { box: main, area } = coordinates
           .map(flatBox)
           .reduce((largest, candidate) =>
             candidate.area > largest.area ? candidate : largest
-          ).box;
+          );
+
+        // Australia's 036 also tags the Ashmore and Cartier reef: the bigger shape is the country
+        if ((sizes.get(geometry.id) ?? -1) >= area) continue;
+        sizes.set(geometry.id, area);
 
         countries.set(geometry.id, {
           shape: {

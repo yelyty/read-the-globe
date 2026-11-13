@@ -2,45 +2,45 @@ import { useId } from 'react';
 import { getLocale, locales, type Locale } from '../../paraglide/runtime.js';
 import { m } from '../../paraglide/messages.js';
 import { LANG_NAMES, pickLang } from '../../utils/lang';
-import { srOnly } from '../../styles/global.css';
-import * as styles from './LanguagePicker.css';
+import Select from '../Select/Select';
 
 type LanguagePickerProps = {
-  /** the visible label; without one the select is named "Language" for screen readers only */
+  /** the visible label; without one the picker is named "Language" for screen readers only */
   label?: string;
+  /** compact: a small box in a menu row; field: a form field; footer: outlined on the green */
+  variant?: 'compact' | 'field' | 'footer';
   className?: string;
   labelClassName?: string;
-  selectClassName?: string;
 };
 
-// a native select of the three languages; picking one reloads the page in it
+// each language in its own name; picking one reloads the page in it
 const LanguagePicker = ({
   label,
+  variant = 'compact',
   className,
   labelClassName,
-  selectClassName = styles.select,
 }: LanguagePickerProps) => {
-  const id = useId();
+  const labelId = useId();
 
   return (
     <div className={className}>
-      <label htmlFor={id} className={label ? labelClassName : srOnly}>
-        {label ?? m.language()}
-      </label>
-      <select
-        id={id}
-        className={selectClassName}
+      {label && (
+        <span id={labelId} className={labelClassName}>
+          {label}
+        </span>
+      )}
+      <Select
         value={getLocale()}
-        onChange={(changeEvent) =>
-          void pickLang(changeEvent.target.value as Locale)
-        }
-      >
-        {locales.map((option) => (
-          <option key={option} value={option} lang={option}>
-            {LANG_NAMES[option]}
-          </option>
-        ))}
-      </select>
+        options={locales.map((lang) => ({
+          value: lang,
+          label: LANG_NAMES[lang],
+          lang,
+        }))}
+        onChange={(lang: Locale) => void pickLang(lang)}
+        labelId={label ? labelId : undefined}
+        label={m.language()}
+        variant={variant}
+      />
     </div>
   );
 };

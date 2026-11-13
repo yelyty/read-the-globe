@@ -32,6 +32,7 @@ import * as styles from './PostCardPage.css';
 import PageTitle from '../../components/PageTitle/PageTitle';
 import Logo from '../../components/Logo/Logo';
 import Hint from '../../components/Hint/Hint';
+import Select from '../../components/Select/Select';
 
 const app = getRouteApi('/app');
 const route = getRouteApi('/app/postcard');
@@ -400,41 +401,40 @@ const PostcardPage = () => {
             </h2>
             <div className={styles.fields}>
               <div>
-                <label className={styles.label} htmlFor="pc-card">
+                <label
+                  className={styles.label}
+                  htmlFor="pc-card"
+                  id="pc-card-label"
+                >
                   {m.nav_postcard()}
                 </label>
-                <select
+                <Select
                   id="pc-card"
+                  labelId="pc-card-label"
                   className={styles.select}
                   value={which}
-                  onChange={(changeEvent) => {
-                    const [card, value] = changeEvent.target.value.split(':');
+                  onChange={(next) => {
+                    const [card, value] = next.split(':');
 
                     set({
                       goal: card === 'goal' ? Number(value) : null,
                       year: card === 'year' ? value : null,
                     });
                   }}
-                >
-                  <option value="atlas">
-                    {m.postcard_your_reading_atlas()}
-                  </option>
-                  {years.map((yearOption) => (
-                    <option key={yearOption} value={`year:${yearOption}`}>
-                      {m.postcard_in_books({ year: yearOption })}
-                    </option>
-                  ))}
-                  {reached.map((reachedGoal) => (
-                    <option
-                      key={reachedGoal.id}
-                      value={`goal:${reachedGoal.id}`}
-                    >
-                      {m.postcard_goal_option({
+                  options={[
+                    { value: 'atlas', label: m.postcard_your_reading_atlas() },
+                    ...years.map((yearOption) => ({
+                      value: `year:${yearOption}`,
+                      label: m.postcard_in_books({ year: yearOption }),
+                    })),
+                    ...reached.map((reachedGoal) => ({
+                      value: `goal:${reachedGoal.id}`,
+                      label: m.postcard_goal_option({
                         goal: goalName(reachedGoal.name),
-                      })}
-                    </option>
-                  ))}
-                </select>
+                      }),
+                    })),
+                  ]}
+                />
                 {!reached.length && <Hint>{m.postcard_reach_hint()}</Hint>}
               </div>
               {/* a year card takes both kinds of country; a goal's card has none */}

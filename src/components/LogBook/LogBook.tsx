@@ -37,6 +37,7 @@ import { localToday, readDate, readOnFor } from '../../utils/readDate';
 import { getCountryNames } from '../../utils/countryNames';
 import { toAlpha2 } from '../../utils/toIsoNumeric';
 import { m } from '../../paraglide/messages.js';
+import Select from '../Select/Select';
 import { getLocale } from '../../paraglide/runtime.js';
 import { dismiss, useDirty } from '../../hooks/useUnsaved';
 
@@ -944,38 +945,34 @@ const LogForm = ({
         <fieldset className={styles.set} aria-describedby="f-month-hint">
           <legend className={fieldStyles.fieldLabel}>{m.log_when()}</legend>
           <div className={styles.month}>
-            <label className={styles.srOnly} htmlFor="f-mon">
-              {m.log_month()}
-            </label>
-            <select
+            <Select
               id="f-mon"
-              className={fieldStyles.input}
+              label={m.log_month()}
+              className={styles.monthPick}
               value={mon}
-              onChange={(changeEvent) => setMon(changeEvent.target.value)}
-            >
-              <option value="">{m.log_month()}</option>
-              {MONTHS.map((mo, i) => (
-                <option key={mo} value={String(i + 1).padStart(2, '0')}>
-                  {mo}
-                </option>
-              ))}
-            </select>
-            <label className={styles.srOnly} htmlFor="f-year">
-              {m.log_year()}
-            </label>
-            <select
+              onChange={setMon}
+              options={[
+                { value: '', label: m.log_month() },
+                ...MONTHS.map((mo, i) => ({
+                  value: String(i + 1).padStart(2, '0'),
+                  label: mo,
+                })),
+              ]}
+            />
+            <Select
               id="f-year"
-              className={fieldStyles.input}
+              label={m.log_year()}
+              className={styles.yearPick}
               value={year}
-              onChange={(changeEvent) => setYear(changeEvent.target.value)}
-            >
-              <option value="">{m.log_year()}</option>
-              {YEARS.map((yearOption) => (
-                <option key={yearOption} value={yearOption}>
-                  {yearOption}
-                </option>
-              ))}
-            </select>
+              onChange={setYear}
+              options={[
+                { value: '', label: m.log_year() },
+                ...YEARS.map((yearOption) => ({
+                  value: yearOption,
+                  label: yearOption,
+                })),
+              ]}
+            />
           </div>
           <Hint id="f-month-hint">{m.log_month_hint()}</Hint>
         </fieldset>

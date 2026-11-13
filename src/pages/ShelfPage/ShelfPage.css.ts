@@ -2,13 +2,13 @@ import { globalStyle, style } from '@vanilla-extract/css';
 import { fontSize, vars } from '../../styles/theme.css';
 import {
   band,
+  buttonSize,
   coarse,
   fill,
-  fillHover,
+  focusRing,
   hover,
   phone,
   reducedMotion,
-  focusRing,
 } from '../../styles/global.css';
 
 export const tabs = style({
@@ -114,62 +114,25 @@ export const filters = style({
   },
 });
 
-export const filterBtn = style({
-  display: 'none',
-  alignItems: 'center',
-  gap: 8,
-  minHeight: 40,
-  padding: '8px 16px',
-  border: `1px solid ${vars.color.border}`,
-  borderRadius: 999,
-  background: vars.color.surface,
-  fontFamily: vars.font.sans,
-  fontSize: 15,
-  fontWeight: 500,
-  color: vars.color.text,
-  cursor: 'pointer',
-  selectors: {
-    '&[aria-expanded="true"]': { background: vars.color.backgroundDeep },
+export const filterBtn = style([
+  buttonSize,
+  {
+    display: 'none',
+    alignItems: 'center',
+    border: `1px solid ${vars.color.border}`,
+    borderRadius: 999,
+    background: vars.color.surface,
+    fontFamily: vars.font.sans,
+    fontWeight: 500,
+    color: vars.color.text,
+    cursor: 'pointer',
+    selectors: {
+      '&[aria-expanded="true"]': { background: vars.color.backgroundDeep },
+    },
+    ':focus-visible': focusRing,
+    '@media': { [phone]: { display: 'inline-flex' } },
   },
-  ':focus-visible': focusRing,
-  '@media': { [phone]: { display: 'inline-flex' } },
-});
-globalStyle(`${filterBtn} svg`, { width: 16, height: 16 });
-
-// a dropdown: a filled pill with a chevron, no outline
-export const pick = style({
-  position: 'relative',
-  display: 'inline-flex',
-  alignItems: 'center',
-});
-
-globalStyle(`${pick} svg`, {
-  position: 'absolute',
-  right: 16,
-  width: 12,
-  height: 12,
-  color: vars.color.textSecondary,
-  pointerEvents: 'none',
-});
-
-export const select = style({
-  minHeight: 40,
-  padding: '0 40px 0 16px',
-  borderRadius: 999,
-  border: 0,
-  backgroundColor: fill,
-  fontFamily: vars.font.sans,
-  fontSize: 15,
-  color: vars.color.textSecondary,
-  appearance: 'none',
-  WebkitAppearance: 'none',
-  cursor: 'pointer',
-  ':focus-visible': focusRing,
-  '@media': {
-    [hover]: { selectors: { '&:hover': { backgroundColor: fillHover } } },
-    [coarse]: { minHeight: 44 },
-  },
-});
+]);
 
 export const linkBtn = style({
   display: 'inline-flex',
@@ -467,30 +430,29 @@ export const nsPinEye = style({
 const button = {
   display: 'inline-flex',
   alignItems: 'center',
-  gap: 8,
-  minHeight: 40,
-  padding: '8px 24px',
   borderRadius: 999,
   fontFamily: vars.font.sans,
   fontWeight: 500,
-  fontSize: 15,
   textDecoration: 'none',
   cursor: 'pointer',
   ':focus-visible': focusRing,
 } as const;
 
-export const primary = style({
-  ...button,
-  marginTop: 16,
-  border: 0,
-  background: vars.color.primary,
-  color: vars.color.onAccent,
-  '@media': {
-    [hover]: {
-      selectors: { '&:hover': { background: vars.color.primaryHover } },
+export const primary = style([
+  buttonSize,
+  {
+    ...button,
+    marginTop: 16,
+    border: 0,
+    background: vars.color.primary,
+    color: vars.color.onAccent,
+    '@media': {
+      [hover]: {
+        selectors: { '&:hover': { background: vars.color.primaryHover } },
+      },
     },
   },
-});
+]);
 globalStyle(`${primary} svg`, { width: 16, height: 16 });
 
 export const emptyNote = style({
@@ -500,18 +462,21 @@ export const emptyNote = style({
 });
 globalStyle(`${emptyNote} p`, { margin: '0 0 8px' });
 
-export const moreBtn = style({
-  ...button,
-  marginTop: 16,
-  border: `1px solid ${vars.color.border}`,
-  background: vars.color.surface,
-  color: vars.color.text,
-  '@media': {
-    [hover]: {
-      selectors: { '&:hover': { background: vars.color.backgroundDeep } },
+export const moreBtn = style([
+  buttonSize,
+  {
+    ...button,
+    marginTop: 16,
+    border: `1px solid ${vars.color.border}`,
+    background: vars.color.surface,
+    color: vars.color.text,
+    '@media': {
+      [hover]: {
+        selectors: { '&:hover': { background: vars.color.backgroundDeep } },
+      },
     },
   },
-});
+]);
 globalStyle(`${moreBtn} svg`, { width: 16, height: 16 });
 
 /* ---------- Next to read ---------- */

@@ -1,24 +1,27 @@
 import { recipe, type RecipeVariants } from '@vanilla-extract/recipes';
 import { vars } from '../../styles/theme.css';
-import { focusRing, forcedColors, hover } from '../../styles/global.css';
-import { globalStyle } from '@vanilla-extract/css';
+import {
+  buttonSize,
+  focusRing,
+  forcedColors,
+  hover,
+} from '../../styles/global.css';
 
 export const button = recipe({
-  base: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: 8,
-    minHeight: 40,
-    padding: '8px 24px',
-    border: 0,
-    borderRadius: 999,
-    fontFamily: vars.font.sans,
-    fontSize: 15,
-    fontWeight: 500,
-    textDecoration: 'none',
-    cursor: 'pointer',
-    ':focus-visible': focusRing,
-  },
+  base: [
+    buttonSize,
+    {
+      display: 'inline-flex',
+      alignItems: 'center',
+      border: 0,
+      borderRadius: 999,
+      fontFamily: vars.font.sans,
+      fontWeight: 500,
+      textDecoration: 'none',
+      cursor: 'pointer',
+      ':focus-visible': focusRing,
+    },
+  ],
 
   variants: {
     variant: {
@@ -119,12 +122,6 @@ export const button = recipe({
   defaultVariants: {
     variant: 'contained',
   },
-});
-
-globalStyle(`${button.classNames.base} svg`, {
-  width: 15,
-  height: 15,
-  flex: 'none',
 });
 
 export type ButtonVariants = RecipeVariants<typeof button>;

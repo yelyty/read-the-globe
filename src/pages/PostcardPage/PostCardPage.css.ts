@@ -1,14 +1,14 @@
 import { globalStyle, keyframes, style } from '@vanilla-extract/css';
 import { vars } from '../../styles/theme.css';
-import { input as fieldInput } from '../../components/Field/Field.css';
 import {
   band,
+  buttonSize,
   coarse,
   easeOut,
+  focusRing,
   hover,
   phone,
   reducedMotion,
-  focusRing,
 } from '../../styles/global.css';
 
 const wide = 'screen and (min-width: 960px)';
@@ -384,42 +384,44 @@ export const actions = style({ display: 'flex', flexWrap: 'wrap', gap: 16 });
 const button = {
   display: 'inline-flex',
   alignItems: 'center',
-  gap: 8,
-  minHeight: 40,
-  padding: '8px 24px',
   borderRadius: 999,
   fontFamily: vars.font.sans,
   fontWeight: 500,
-  fontSize: 15,
   textDecoration: 'none',
   cursor: 'pointer',
   ':focus-visible': focusRing,
 } as const;
 
-export const primary = style({
-  ...button,
-  border: 0,
-  background: vars.color.primary,
-  color: vars.color.onAccent,
-  '@media': {
-    [hover]: {
-      selectors: { '&:hover': { background: vars.color.primaryHover } },
+export const primary = style([
+  buttonSize,
+  {
+    ...button,
+    border: 0,
+    background: vars.color.primary,
+    color: vars.color.onAccent,
+    '@media': {
+      [hover]: {
+        selectors: { '&:hover': { background: vars.color.primaryHover } },
+      },
     },
   },
-});
+]);
 
-export const quiet = style({
-  ...button,
-  border: `1px solid ${vars.color.border}`,
-  background: vars.color.surface,
-  color: vars.color.text,
-  selectors: { '&[disabled]': { cursor: 'progress', opacity: 0.72 } },
-  '@media': {
-    [hover]: {
-      selectors: { '&:hover': { background: vars.color.backgroundDeep } },
+export const quiet = style([
+  buttonSize,
+  {
+    ...button,
+    border: `1px solid ${vars.color.border}`,
+    background: vars.color.surface,
+    color: vars.color.text,
+    selectors: { '&[disabled]': { cursor: 'progress', opacity: 0.72 } },
+    '@media': {
+      [hover]: {
+        selectors: { '&:hover': { background: vars.color.backgroundDeep } },
+      },
     },
   },
-});
+]);
 
 globalStyle(`${primary} svg, ${quiet} svg`, {
   width: 16,
@@ -435,4 +437,4 @@ export const status = style({
 });
 
 // the Postcard menu: which card to make
-export const select = style([fieldInput, { marginTop: 8 }]);
+export const select = style({ marginTop: 8 });

@@ -309,7 +309,7 @@ const Hero = ({ onSignUp }: { onSignUp: () => void }) => {
         </h1>
         <p className={styles.heroSub}>{m.landing_hero_sub()}</p>
         <div className={styles.heroCta}>
-          <button type="button" className={btnPrimary} onClick={onSignUp}>
+          <button type="button" className={`${btnPrimary}`} onClick={onSignUp}>
             <PushPinIcon weight="fill" aria-hidden="true" />
             {m.landing_start()}
           </button>

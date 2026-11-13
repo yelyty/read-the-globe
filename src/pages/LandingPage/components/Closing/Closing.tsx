@@ -138,19 +138,34 @@ const Closing = ({ onSignUp }: { onSignUp: () => void }) => {
 
         const shape = shapes?.[stamp.code];
 
+        // the ones high up show their name below them, the rest above, so it stays inside the section
+        const tipSide = parseFloat(stamp.place.top) < 50 ? 'below' : 'above';
+
+        // …and the ones by an edge line it up with that edge, so it isn't cut off
+        const tipAlign =
+          parseFloat(stamp.place.left) < 15
+            ? 'start'
+            : parseFloat(stamp.place.right) < 15
+              ? 'end'
+              : 'center';
+
         return (
-          <svg
+          <div
             key={stamp.code}
             className={`${styles.stamp} ${styles.onPhone[i % 2 ? 'hide' : i % 4 ? 'low' : 'high']}`}
             style={{ ...stamp.place, '--n': String(stamp.n) } as CSSProperties}
-            viewBox="0 0 100 100"
-            role="img"
-            aria-label={label}
           >
-            <title>{label}</title>
-            <circle cx="50" cy="50" r="50" fill={stamp.wash} />
-            {shape && <path d={outline(shape)} fill={FILL[stamp.mark]} />}
-          </svg>
+            <svg viewBox="0 0 100 100" role="img" aria-label={label}>
+              <circle cx="50" cy="50" r="50" fill={stamp.wash} />
+              {shape && <path d={outline(shape)} fill={FILL[stamp.mark]} />}
+            </svg>
+            <span
+              className={`${styles.tip[tipSide]} ${styles.tipAlign[tipAlign]}`}
+              aria-hidden="true"
+            >
+              {label}
+            </span>
+          </div>
         );
       })}
       <div className={styles.inner}>

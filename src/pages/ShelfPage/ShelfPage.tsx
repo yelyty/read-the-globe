@@ -4,7 +4,6 @@ import {
   useMemo,
   useRef,
   useState,
-  type ComponentPropsWithoutRef,
   type KeyboardEvent,
 } from 'react';
 import { getRouteApi, Link, useNavigate } from '@tanstack/react-router';
@@ -42,6 +41,7 @@ import ImportCsv from '../account/features/YourData/ImportCsv';
 import { exportExample } from '../account/features/YourData/readingList';
 import { useStatus } from '../../hooks/useStatus';
 import PageTitle from '../../components/PageTitle/PageTitle';
+import Select from '../../components/Select/Select';
 
 const app = getRouteApi('/app');
 const shelfRoute = getRouteApi('/app/shelf');
@@ -62,15 +62,6 @@ const placeCodes = (book: BookEntry) =>
   (book.places ?? [])
     .map((place) => place.countryCode)
     .filter((code): code is string => !!code);
-
-const Pick = ({ children, ...props }: ComponentPropsWithoutRef<'select'>) => (
-  <span className={styles.pick}>
-    <select className={styles.select} {...props}>
-      {children}
-    </select>
-    <CaretDownIcon aria-hidden="true" />
-  </span>
-);
 
 const ShelfPage = () => {
   const { books, goals } = app.useLoaderData();
@@ -428,86 +419,91 @@ const ShelfPage = () => {
                   aria-label={m.shelf_filter_group()}
                   data-open={filtersOpen}
                 >
-                  <Pick
+                  <Select<Continent | ''>
+                    variant="pill"
                     value={continent}
-                    aria-label={m.shelf_filter_continent()}
-                    onChange={(changeEvent) => {
-                      const next = changeEvent.target.value as Continent | '';
-
+                    label={m.shelf_filter_continent()}
+                    onChange={(next) => {
                       setContinent(next);
                       if (!next && !country) setMark('');
                       reset();
                     }}
-                  >
-                    <option value="">{m.shelf_all_continents()}</option>
-                    {CONTINENTS.map((continentCode) => (
-                      <option key={continentCode} value={continentCode}>
-                        {continentName(continentCode)}
-                      </option>
-                    ))}
-                  </Pick>
+                    options={[
+                      { value: '', label: m.shelf_all_continents() },
+                      ...CONTINENTS.map((continentCode) => ({
+                        value: continentCode,
+                        label: continentName(continentCode),
+                      })),
+                    ]}
+                  />
                   {/* set in / author from only means something once a place is chosen */}
                   {(country || continent) && (
-                    <Pick
+                    <Select<Mark>
+                      variant="pill"
                       value={mark}
-                      aria-label={m.shelf_mark_label()}
-                      onChange={(changeEvent) => {
-                        setMark(changeEvent.target.value as Mark);
+                      label={m.shelf_mark_label()}
+                      onChange={(next) => {
+                        setMark(next);
                         reset();
                       }}
-                    >
-                      <option value="">{m.shelf_mark_any()}</option>
-                      <option value="set">{m.shelf_mark_set()}</option>
-                      <option value="author">{m.shelf_mark_author()}</option>
-                    </Pick>
+                      options={[
+                        { value: '', label: m.shelf_mark_any() },
+                        { value: 'set', label: m.shelf_mark_set() },
+                        { value: 'author', label: m.shelf_mark_author() },
+                      ]}
+                    />
                   )}
                   {years.length > 1 && (
-                    <Pick
+                    <Select
+                      variant="pill"
                       value={year}
-                      aria-label={m.shelf_filter_year()}
-                      onChange={(changeEvent) => {
-                        setYear(changeEvent.target.value);
+                      label={m.shelf_filter_year()}
+                      onChange={(next) => {
+                        setYear(next);
                         reset();
                       }}
-                    >
-                      <option value="">{m.shelf_all_years()}</option>
-                      {years.map((optionYear) => (
-                        <option key={optionYear} value={optionYear}>
-                          {optionYear}
-                        </option>
-                      ))}
-                    </Pick>
+                      options={[
+                        { value: '', label: m.shelf_all_years() },
+                        ...years.map((optionYear) => ({
+                          value: optionYear,
+                          label: optionYear,
+                        })),
+                      ]}
+                    />
                   )}
                   {goals.length > 0 && (
-                    <Pick
+                    <Select
+                      variant="pill"
                       value={goalId}
-                      aria-label={m.shelf_filter_goal()}
-                      onChange={(changeEvent) => {
-                        setGoalId(changeEvent.target.value);
+                      label={m.shelf_filter_goal()}
+                      onChange={(next) => {
+                        setGoalId(next);
                         reset();
                       }}
-                    >
-                      <option value="">{m.shelf_all_goals()}</option>
-                      {goals.map((option) => (
-                        <option key={option.id} value={option.id}>
-                          {goalName(option.name)}
-                        </option>
-                      ))}
-                    </Pick>
+                      options={[
+                        { value: '', label: m.shelf_all_goals() },
+                        ...goals.map((option) => ({
+                          value: String(option.id),
+                          label: goalName(option.name),
+                        })),
+                      ]}
+                    />
                   )}
                 </div>
-                <Pick
+                <Select<Sort>
+                  variant="pill"
                   value={sort}
-                  aria-label={m.shelf_sort_label()}
-                  onChange={(changeEvent) => {
-                    setSort(changeEvent.target.value as Sort);
+                  label={m.shelf_sort_label()}
+                  onChange={(next) => {
+                    setSort(next);
                     reset();
                   }}
-                >
-                  <option value="new">{m.shelf_sort_new()}</option>
-                  <option value="title">{m.shelf_sort_title()}</option>
-                  <option value="country">{m.shelf_sort_country()}</option>
-                </Pick>
+                  options={[
+                    { value: 'new', label: m.shelf_sort_new() },
+                    { value: 'title', label: m.shelf_sort_title() },
+                    { value: 'country', label: m.shelf_sort_country() },
+                  ]}
+                />
                 {canClear && (
                   <button
                     type="button"

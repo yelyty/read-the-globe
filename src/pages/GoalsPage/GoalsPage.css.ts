@@ -1,14 +1,15 @@
 import { globalStyle, keyframes, style } from '@vanilla-extract/css';
 import { fontSize, space, vars } from '../../styles/theme.css';
 import {
-  goldBand,
+  buttonSize,
   easeOut,
   easeSoft,
   focusRing,
+  forcedColors,
+  goldBand,
   hover,
   phone,
   reducedMotion,
-  forcedColors,
 } from '../../styles/global.css';
 
 const press = {
@@ -232,46 +233,48 @@ const button = {
   ...press,
   display: 'inline-flex',
   alignItems: 'center',
-  gap: 8,
-  minHeight: 40,
-  padding: '8px 24px',
   borderRadius: 999,
   fontFamily: vars.font.sans,
-  fontSize: 15,
   fontWeight: 500,
   cursor: 'pointer',
   ':focus-visible': focusRing,
   ':disabled': { opacity: 0.5, cursor: 'not-allowed' },
 } as const;
 
-export const primary = style({
-  ...button,
-  border: 0,
-  background: vars.color.primary,
-  color: vars.color.onAccent,
-  '@media': {
-    [hover]: {
-      selectors: {
-        '&:not(:disabled):hover': { background: vars.color.primaryHover },
+export const primary = style([
+  buttonSize,
+  {
+    ...button,
+    border: 0,
+    background: vars.color.primary,
+    color: vars.color.onAccent,
+    '@media': {
+      [hover]: {
+        selectors: {
+          '&:not(:disabled):hover': { background: vars.color.primaryHover },
+        },
       },
     },
   },
-});
-export const outline = style({
-  ...button,
-  marginTop: space.sp4,
-  background: vars.color.background,
-  color: vars.color.oliveInk,
-  border: 0,
-  boxShadow: `inset 0 0 0 1.5px ${vars.color.primary}`,
-  '@media': {
-    [hover]: {
-      selectors: {
-        '&:not(:disabled):hover': { background: vars.color.oliveWash },
+]);
+export const outline = style([
+  buttonSize,
+  {
+    ...button,
+    marginTop: space.sp4,
+    background: vars.color.background,
+    color: vars.color.oliveInk,
+    border: 0,
+    boxShadow: `inset 0 0 0 1.5px ${vars.color.primary}`,
+    '@media': {
+      [hover]: {
+        selectors: {
+          '&:not(:disabled):hover': { background: vars.color.oliveWash },
+        },
       },
     },
   },
-});
+]);
 
 globalStyle(`${primary} svg, ${outline} svg`, {
   width: 16,

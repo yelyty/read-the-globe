@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, type SubmitEvent } from 'react';
 import { CheckIcon, PlusIcon, XIcon } from '@phosphor-icons/react';
 import Field from '../../components/Field/Field';
+import Select from '../../components/Select/Select';
+import Suggest from '../../components/Suggest/Suggest';
 import type { Goal, GoalKind } from '../../types';
 import { continentName, type Continent } from '../../utils/continents';
 import { addGoal, updateGoal } from '../../api/goals/goals';
@@ -63,6 +65,11 @@ const GoalDialog = ({
       countryName.toLowerCase(),
       code,
     ])
+  );
+
+  // the names to suggest, in the reader's alphabet order
+  const countryNames = Object.values(names).sort((left, right) =>
+    left.localeCompare(right, getLocale())
   );
 
   const addCountry = (value: string) => {
@@ -156,23 +163,24 @@ const GoalDialog = ({
           </div>
 
           <div className={styles.field}>
-            <label className={styles.label} htmlFor="g-kind">
+            <label className={styles.label} htmlFor="g-kind" id="g-kind-label">
               {m.goals_kind_label()}
             </label>
-            <select
+            <Select<GoalKind>
               id="g-kind"
-              className={styles.input}
+              labelId="g-kind-label"
               value={kind}
               disabled={!!goal}
-              onChange={(changeEvent) => {
-                setKind(changeEvent.target.value as GoalKind);
+              onChange={(next) => {
+                setKind(next);
                 setError(undefined);
               }}
-            >
-              <option value="region">{m.goals_kind_region()}</option>
-              <option value="countries">{m.goals_kind_countries()}</option>
-              <option value="theme">{m.goals_kind_theme()}</option>
-            </select>
+              options={[
+                { value: 'region', label: m.goals_kind_region() },
+                { value: 'countries', label: m.goals_kind_countries() },
+                { value: 'theme', label: m.goals_kind_theme() },
+              ]}
+            />
           </div>
 
           <Field
@@ -191,23 +199,23 @@ const GoalDialog = ({
 
           {kind === 'region' && (
             <div className={styles.field}>
-              <label className={styles.label} htmlFor="g-region">
+              <label
+                className={styles.label}
+                htmlFor="g-region"
+                id="g-region-label"
+              >
                 {m.goals_region()}
               </label>
-              <select
+              <Select<Continent>
                 id="g-region"
-                className={styles.input}
+                labelId="g-region-label"
                 value={continent}
-                onChange={(changeEvent) =>
-                  setContinent(changeEvent.target.value as Continent)
-                }
-              >
-                {REGIONS.map((region) => (
-                  <option key={region} value={region}>
-                    {continentName(region)}
-                  </option>
-                ))}
-              </select>
+                onChange={setContinent}
+                options={REGIONS.map((region) => ({
+                  value: region,
+                  label: continentName(region),
+                }))}
+              />
             </div>
           )}
 
@@ -216,10 +224,10 @@ const GoalDialog = ({
               <label className={styles.label} htmlFor="g-country">
                 {m.goals_countries()}
               </label>
-              <input
+              <Suggest
                 id="g-country"
                 className={styles.input}
-                list="g-countries"
+                options={countryNames}
                 placeholder={m.goals_country_placeholder()}
                 autoComplete="off"
                 aria-describedby={
@@ -229,15 +237,9 @@ const GoalDialog = ({
                 }
                 aria-invalid={errorAt('g-country') ? true : undefined}
                 value={country}
-                onChange={(changeEvent) => {
-                  setCountry(changeEvent.target.value);
-                  // picking from the list fills in a whole name at once (not typed): add it straight away
-                  if (
-                    (changeEvent.nativeEvent as InputEvent).inputType !==
-                    'insertText'
-                  )
-                    addCountry(changeEvent.target.value);
-                }}
+                onValue={setCountry}
+                // a name picked from the list goes straight onto the goal
+                onPick={addCountry}
                 onKeyDown={(keyEvent) => {
                   if (keyEvent.key === 'Enter') {
                     keyEvent.preventDefault();
@@ -245,13 +247,6 @@ const GoalDialog = ({
                   }
                 }}
               />
-              <datalist id="g-countries">
-                {Object.values(names)
-                  .sort((left, right) => left.localeCompare(right, getLocale()))
-                  .map((countryName) => (
-                    <option key={countryName} value={countryName} />
-                  ))}
-              </datalist>
               <Hint id="g-country-hint">{m.goals_country_hint()}</Hint>
               {errorAt('g-country') && (
                 <p id="g-country-err" className={fieldError}>

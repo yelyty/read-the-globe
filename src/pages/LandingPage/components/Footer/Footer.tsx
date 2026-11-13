@@ -2,7 +2,6 @@ import { Link } from '@tanstack/react-router';
 import Logo from '../../../../components/Logo/Logo';
 import { SECTIONS } from '../../sections';
 import LanguagePicker from '../../../../components/LanguagePicker/LanguagePicker';
-import { footSelect } from '../../../../components/LanguagePicker/LanguagePicker.css';
 import { m } from '../../../../paraglide/messages.js';
 import * as styles from './Footer.css';
 
@@ -75,7 +74,7 @@ const Footer = () => {
         </div>
         <div className={styles.footerTail}>
           <span>{m.footer_copyright({ year: 2026 })}</span>
-          <LanguagePicker selectClassName={footSelect} />
+          <LanguagePicker variant="footer" />
         </div>
       </div>
     </footer>

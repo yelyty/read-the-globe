@@ -1,16 +1,17 @@
 import { globalStyle, keyframes, style } from '@vanilla-extract/css';
 import { vars } from '../../styles/theme.css';
 import {
-  coarse,
-  hover,
-  phone,
-  reducedMotion,
+  buttonSize,
   caps,
+  coarse,
   easeOut,
   fill,
   fillHover,
   focusRing,
   hatch,
+  hover,
+  phone,
+  reducedMotion,
 } from '../../styles/global.css';
 import { hint } from '../Hint/Hint.css';
 
@@ -302,8 +303,8 @@ export const imagined = style({
 });
 
 export const month = style({ display: 'flex', gap: 8, maxWidth: 400 });
-globalStyle(`${month} select:first-of-type`, { flex: '1.4 1 0' });
-globalStyle(`${month} select:last-of-type`, { flex: '1 1 0' });
+export const monthPick = style({ flex: '1.4 1 0', minWidth: 0 });
+export const yearPick = style({ flex: '1 1 0', minWidth: 0 });
 
 export const themes = style({ margin: '0 0 16px', padding: 0, border: 0 });
 
@@ -384,33 +385,31 @@ globalStyle(`${linkBtn} svg`, { width: 16, height: 16, flex: 'none' });
 
 export const danger = style({ marginRight: 'auto', color: vars.color.error });
 
-export const primary = style({
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: 8,
-  minHeight: 48,
-  padding: '8px 32px',
-  border: 0,
-  borderRadius: 999,
-  background: vars.color.primary,
-  color: vars.color.onAccent,
-  fontFamily: vars.font.sans,
-  fontSize: 17,
-  fontWeight: 500,
-  cursor: 'pointer',
-  transition: `scale .16s ${easeOut}, background-color .16s ${easeOut}`,
-  ':focus-visible': focusRing,
-  ':active': { scale: '.97' },
-  ':disabled': { cursor: 'progress', opacity: 0.8 },
-  '@media': {
-    [hover]: {
-      selectors: {
-        '&:hover:not(:disabled)': { background: vars.color.primaryHover },
+export const primary = style([
+  buttonSize,
+  {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    border: 0,
+    borderRadius: 999,
+    background: vars.color.primary,
+    color: vars.color.onAccent,
+    fontFamily: vars.font.sans,
+    fontWeight: 500,
+    cursor: 'pointer',
+    transition: `scale .16s ${easeOut}, background-color .16s ${easeOut}`,
+    ':focus-visible': focusRing,
+    ':active': { scale: '.97' },
+    ':disabled': { cursor: 'progress', opacity: 0.8 },
+    '@media': {
+      [hover]: {
+        selectors: {
+          '&:hover:not(:disabled)': { background: vars.color.primaryHover },
+        },
       },
+      [phone]: { flex: 1 },
+      [reducedMotion]: { transition: 'none' },
     },
-    [phone]: { flex: 1 },
-    [reducedMotion]: { transition: 'none' },
   },
-});
-globalStyle(`${primary} svg`, { width: 18, height: 18 });
+]);

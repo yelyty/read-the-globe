@@ -164,8 +164,8 @@ const dark = {
     textMuted: '#A8955F',
     textDisabled: '#5F543B',
 
-    stroke: '#36312700',
-    border: '#36312700',
+    stroke: '#363127',
+    border: '#363127',
 
     error: '#E08A7E',
     success: '#8AA85C',

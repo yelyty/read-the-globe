@@ -74,3 +74,16 @@ globalStyle('*, *::before, *::after', {
     },
   },
 });
+
+/* Every text button's size: the landing header's "Start your atlas", 18px type as it shows there. 44px tall under a finger.
+   Compose it first (style([buttonSize, { … }])) and leave height, padding, type size and gap to it. */
+export const buttonSize = style({
+  minHeight: 40,
+  gap: 8,
+  padding: '0 16px',
+  fontSize: 18,
+  lineHeight: 1,
+  '@media': { [coarse]: { minHeight: 44 } },
+});
+
+globalStyle(`${buttonSize} svg`, { width: 16, height: 16, flex: 'none' });

@@ -81,7 +81,8 @@ globalStyle(`${page} :where(a)`, {
   textDecorationSkipInk: 'auto',
 });
 
-globalStyle(`${page} :where(button, input, textarea)`, {
+// no weight at all (:where on both), so any button's own class, its size included, wins over it
+globalStyle(`:where(${page}) :where(button, input, textarea)`, {
   font: 'inherit',
   color: 'inherit',
 });

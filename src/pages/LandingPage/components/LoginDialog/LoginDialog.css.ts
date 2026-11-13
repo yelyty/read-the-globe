@@ -5,7 +5,12 @@ import {
   styleVariants,
 } from '@vanilla-extract/css';
 import { vars } from '../../../../styles/theme.css';
-import { small, easeOut, reducedMotion } from '../../../../styles/global.css';
+import {
+  buttonSize,
+  easeOut,
+  reducedMotion,
+  small,
+} from '../../../../styles/global.css';
 
 const dialogIn = keyframes({
   from: { opacity: 0, transform: 'translateY(14px) scale(.985)' },
@@ -149,27 +154,25 @@ export const strengthLabel = style({
   whiteSpace: 'nowrap',
 });
 
-const btn = style({
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: 10,
-  padding: '17px 34px',
-  border: 0,
-  borderRadius: 999,
-  fontFamily: vars.font.sans,
-  fontWeight: 500,
-  fontSize: 17,
-  textDecoration: 'none',
-  cursor: 'pointer',
-  transition: `transform .14s ${easeOut}, background .14s ${easeOut}`,
-  selectors: {
-    '&:active': { transform: 'scale(.97)' },
-    '&[disabled]': { opacity: 0.72, cursor: 'progress' },
+const btn = style([
+  buttonSize,
+  {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    border: 0,
+    borderRadius: 999,
+    fontFamily: vars.font.sans,
+    fontWeight: 500,
+    textDecoration: 'none',
+    cursor: 'pointer',
+    transition: `transform .14s ${easeOut}, background .14s ${easeOut}`,
+    selectors: {
+      '&:active': { transform: 'scale(.97)' },
+      '&[disabled]': { opacity: 0.72, cursor: 'progress' },
+    },
   },
-});
-
-globalStyle(`${btn} svg`, { width: 17, height: 17, flex: 'none' });
+]);
 
 export const btnPrimary = style([
   btn,
@@ -180,7 +183,7 @@ export const btnPrimary = style([
   },
 ]);
 
-export const btnBlock = style({ width: '100%', padding: 17, marginTop: 8 });
+export const btnBlock = style({ width: '100%', marginTop: 8 });
 
 export const altAction = style({
   margin: '16px 0 0',

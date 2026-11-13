@@ -50,6 +50,11 @@ export const panels = style({
   '@media': { [stacking]: { gap: 64, paddingBottom: 64 } },
 });
 
+// room after the last panel, so it pins under the header like the others before the pile scrolls away
+globalStyle(`${panels}::after`, {
+  '@media': { [stacking]: { content: '""', height: '30vh' } },
+});
+
 /* each panel pins under the header, 24px lower than the one before, and the next slides over it;
    the one underneath settles back a touch, where the browser can tie that to the scroll */
 const settle = keyframes({ to: { scale: '.94', filter: 'brightness(.92)' } });
@@ -65,9 +70,19 @@ const panelBase = style({
   background: 'var(--pb)',
   color: 'var(--pf)',
   '@media': {
-    [stacking]: { position: 'sticky', top: 'calc(96px + var(--i) * 24px)' },
+    [stacking]: {
+      position: 'sticky',
+      top: 'calc(96px + var(--i) * 24px)',
+      // every pinned panel ends at the same line, so the pile leaves as one (2 = the last panel's --i)
+      marginBottom: 'calc((2 - var(--i)) * 24px)',
+    },
     [narrow]: { height: 'auto', minHeight: 760, padding: '40px 24px 0' },
   },
+});
+
+// …and the next panel takes that margin back, so the gap between them stays as it was
+globalStyle(`${panelBase} + ${panelBase}`, {
+  '@media': { [stacking]: { marginTop: 'calc((var(--i) - 3) * 24px)' } },
 });
 
 globalStyle(`${panelBase}:not(:last-child)`, {

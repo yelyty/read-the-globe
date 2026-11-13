@@ -43,8 +43,7 @@ const AccountMenu = () => {
       event.preventDefault();
 
       const items = [
-        ...(list.current?.querySelectorAll<HTMLElement>('a, button, select') ??
-          []),
+        ...(list.current?.querySelectorAll<HTMLElement>('a, button') ?? []),
       ];
 
       const i = items.indexOf(document.activeElement as HTMLElement);

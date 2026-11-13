@@ -2,6 +2,7 @@ import { globalStyle, keyframes, style } from '@vanilla-extract/css';
 import { fontSize, space, vars } from '../../styles/theme.css';
 import {
   band as paperBand,
+  buttonSize,
   coarse,
   easeOut,
   easeSoft,
@@ -505,24 +506,22 @@ export const ccWhat = style({
 export const shapeSet = style({ fill: vars.color.olive });
 export const shapeAuthor = style({ fill: vars.color.markerAuthor });
 
-export const primary = style({
-  // the app mock's .btn: body size, 40px tall like the fields beside it, no hero buttons
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: 10,
-  marginTop: space.sp4,
-  minHeight: 40,
-  padding: `${space.sp2} ${space.sp5}`,
-  borderRadius: 999,
-  background: vars.color.primary,
-  color: vars.color.onAccent,
-  fontFamily: vars.font.sans,
-  fontWeight: 500,
-  fontSize: fontSize.body,
-  textDecoration: 'none',
-  ':hover': { background: vars.color.primaryHover },
-});
-globalStyle(`${primary} svg`, { width: 16, height: 16 });
+export const primary = style([
+  buttonSize,
+  {
+    // the app mock's .btn: body size, 40px tall like the fields beside it, no hero buttons
+    display: 'inline-flex',
+    alignItems: 'center',
+    marginTop: space.sp4,
+    borderRadius: 999,
+    background: vars.color.primary,
+    color: vars.color.onAccent,
+    fontFamily: vars.font.sans,
+    fontWeight: 500,
+    textDecoration: 'none',
+    ':hover': { background: vars.color.primaryHover },
+  },
+]);
 
 /* ---------- the map's tip: a marked country's books, or what a click on an unmarked one does ---------- */
 // a floating layer keeps a thin edge in place of a blurred shadow

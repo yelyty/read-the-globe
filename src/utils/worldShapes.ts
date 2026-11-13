@@ -13,9 +13,17 @@ export function worldShapes() {
       const all = feature(topo, topo.objects[Object.keys(topo.objects)[0]]);
       const byCode: Record<string, Feature> = {};
 
+      // a code can come twice (Australia's 036 also tags the Ashmore and Cartier reef): the bigger shape is the country
       if (all.type === 'FeatureCollection')
-        for (const shape of all.features)
-          if (shape.id != null) byCode[String(shape.id)] = shape;
+        for (const shape of all.features) {
+          if (shape.id == null) continue;
+
+          const code = String(shape.id);
+          const kept = byCode[code];
+
+          if (!kept || (geoArea(shape) || 0) > (geoArea(kept) || 0))
+            byCode[code] = shape;
+        }
 
       return byCode;
     });

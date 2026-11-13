@@ -33,7 +33,7 @@ const AccountPage = () => {
           label={m.language_app()}
           className={fieldStyles.field}
           labelClassName={fieldStyles.fieldLabel}
-          selectClassName={fieldStyles.input}
+          variant="field"
         />
       </Block>
       <ChangePassword email={user.email ?? ''} />

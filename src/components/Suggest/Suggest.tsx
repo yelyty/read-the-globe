@@ -24,6 +24,8 @@ type SuggestProps = Omit<
   options: string[];
   /** typed or picked */
   onValue: (value: string) => void;
+  /** picked from the menu (after onValue): for a field that adds what's picked, as the goal's countries do */
+  onPick?: (value: string) => void;
 };
 
 /* A text field with the app's own suggestion menu in place of the browser's datalist: the ARIA combobox
@@ -33,6 +35,7 @@ const Suggest = ({
   value,
   options,
   onValue,
+  onPick,
   onKeyDown,
   ...input
 }: SuggestProps) => {
@@ -115,6 +118,7 @@ const Suggest = ({
     setOpen(false);
     setAt(-1);
     onValue(option);
+    onPick?.(option);
   };
 
   const keys = (keyEvent: KeyboardEvent<HTMLInputElement>) => {
