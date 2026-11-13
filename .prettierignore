@@ -3,3 +3,4 @@ src/routeTree.gen.ts
 src/paraglide
 project.inlang/*
 !project.inlang/settings.json
+public/countries-50m.json

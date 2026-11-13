@@ -20,9 +20,9 @@ import type { Marks } from '../../utils/atlasMarks';
 import { m } from '../../paraglide/messages.js';
 import * as styles from './AtlasMap.css';
 
-// 50m, not 110m: the low-detail map leaves out small countries, which then could never be marked
-export const GEO_URL =
-  'https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json';
+// 50m, not 110m: the low-detail map leaves out small countries, which then could never be marked.
+// A local copy of world-atlas@2.0.2 countries-50m with Crimea moved from Russia back into Ukraine.
+export const GEO_URL = '/countries-50m.json';
 
 // A flat latitude/longitude grid, as in the mock: 360° across, 83°N to 57°S down (no Antarctica).
 const WIDTH = 1000;
