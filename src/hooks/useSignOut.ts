@@ -1,10 +1,9 @@
 import { useCallback, useState } from 'react';
-import { useRouter } from '@tanstack/react-router';
 
 import { signOut } from '../auth/session';
 
+// App takes the reader back to '/' once the sign-out has reached the router (see App.tsx)
 export function useSignOut() {
-  const router = useRouter();
   const [signingOut, setSigningOut] = useState(false);
 
   const handleSignOut = useCallback(async () => {
@@ -13,12 +12,10 @@ export function useSignOut() {
 
     try {
       await signOut();
-      router.clearCache();
-      await router.navigate({ to: '/' });
     } finally {
       setSigningOut(false);
     }
-  }, [router, signingOut]);
+  }, [signingOut]);
 
   return { signOut: handleSignOut, signingOut };
 }

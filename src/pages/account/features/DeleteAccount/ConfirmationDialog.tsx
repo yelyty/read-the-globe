@@ -1,5 +1,4 @@
 import { useState, type RefObject, type SubmitEvent } from 'react';
-import { useRouter } from '@tanstack/react-router';
 import { XIcon, TrashIcon } from '@phosphor-icons/react';
 import Field from '../../../../components/Field/Field';
 import { getLocale } from '../../../../paraglide/runtime.js';
@@ -18,8 +17,6 @@ type ConfirmationDialogProps = {
 };
 
 const ConfirmationDialog = ({ books, names, ref }: ConfirmationDialogProps) => {
-  const router = useRouter();
-
   const [word, setWord] = useState('');
   // a new KeepCopy each time the dialog opens, so its "Saved" line starts empty
   const [round, setRound] = useState(0);
@@ -59,9 +56,8 @@ const ConfirmationDialog = ({ books, names, ref }: ConfirmationDialogProps) => {
       return;
     }
 
+    // the account is gone and signed out: App takes the reader back to '/'
     close();
-    router.clearCache();
-    await router.navigate({ to: '/' });
   };
 
   return (
