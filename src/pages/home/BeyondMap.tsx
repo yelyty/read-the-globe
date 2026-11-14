@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type SubmitEvent } from 'react';
+import { useRef, useState, type SubmitEvent } from 'react';
 import { Link, useNavigate, useRouter } from '@tanstack/react-router';
 import {
   ArrowCounterClockwiseIcon,
@@ -13,8 +13,11 @@ import { useStatus } from '../../hooks/useStatus';
 import { coverColor } from '../../utils/coverColors';
 import { byReadDate, readDate } from '../../utils/readDate';
 import { sameWorld, type WorldRow } from '../../utils/worlds';
-import * as accountStyles from '../account/features/DeleteAccount/DeleteAccount.css';
 import { Button } from '../../components/Button/Button';
+import Dialog, {
+  DialogActions,
+  DialogText,
+} from '../../components/Dialog/Dialog';
 import * as styles from './HomePage.css';
 import { m } from '../../paraglide/messages.js';
 import { getLocale } from '../../paraglide/runtime.js';
@@ -188,48 +191,24 @@ const WorldDialog = ({
   world: WorldRow;
   onClose: () => void;
 }) => {
-  const dialog = useRef<HTMLDialogElement>(null);
   const navigate = useNavigate();
   const books = [...world.books].sort(byReadDate);
 
-  useEffect(() => {
-    dialog.current?.showModal();
-    document.getElementById('world-log')?.focus();
-  }, []);
-
   return (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- backdrop click; Esc closes it from the keyboard
-    <dialog
-      ref={dialog}
-      className={accountStyles.dialog}
-      aria-labelledby="world-title"
+    <Dialog
+      open
       onClose={onClose}
-      onClick={(clickEvent) =>
-        clickEvent.target === clickEvent.currentTarget &&
-        dialog.current?.close()
+      title={world.name}
+      sub={
+        <p className={styles.worldSub}>
+          {m.world_beyond()} ·{' '}
+          {books.length
+            ? m.count_book({ count: books.length })
+            : m.world_no_books_short()}
+        </p>
       }
+      initialFocus="world-log"
     >
-      <div className={accountStyles.dialogHead}>
-        <div>
-          <h2 className={accountStyles.dialogTitle} id="world-title">
-            {world.name}
-          </h2>
-          <p className={styles.worldSub}>
-            {m.world_beyond()} ·{' '}
-            {books.length
-              ? m.count_book({ count: books.length })
-              : m.world_no_books_short()}
-          </p>
-        </div>
-        <button
-          type="button"
-          className={accountStyles.close}
-          aria-label={m.common_close()}
-          onClick={() => dialog.current?.close()}
-        >
-          <XIcon aria-hidden="true" />
-        </button>
-      </div>
       {books.length ? (
         <ul className={styles.worldBooks}>
           {books.map((book) => (
@@ -257,7 +236,7 @@ const WorldDialog = ({
                 to="."
                 search={(prev) => ({ ...prev, edit: book.id })}
                 aria-label={m.book_edit({ title: book.title })}
-                onClick={() => dialog.current?.close()}
+                onClick={onClose}
               >
                 <PencilSimpleIcon aria-hidden="true" />
                 {m.common_edit()}
@@ -266,21 +245,17 @@ const WorldDialog = ({
           ))}
         </ul>
       ) : (
-        <p className={accountStyles.dialogText}>{m.world_no_books()}</p>
+        <DialogText>{m.world_no_books()}</DialogText>
       )}
-      <div className={accountStyles.dialogActions}>
-        <Button
-          type="button"
-          variant="text"
-          onClick={() => dialog.current?.close()}
-        >
+      <DialogActions>
+        <Button type="button" variant="text" onClick={onClose}>
           {m.common_close()}
         </Button>
         <Button
           type="button"
           id="world-log"
           onClick={() => {
-            dialog.current?.close();
+            onClose();
 
             navigate({
               to: '.',
@@ -291,8 +266,8 @@ const WorldDialog = ({
           <PushPinIcon aria-hidden="true" />
           {m.world_log_here()}
         </Button>
-      </div>
-    </dialog>
+      </DialogActions>
+    </Dialog>
   );
 };
 

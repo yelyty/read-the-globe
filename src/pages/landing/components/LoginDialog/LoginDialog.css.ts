@@ -1,63 +1,6 @@
-import {
-  globalStyle,
-  keyframes,
-  style,
-  styleVariants,
-} from '@vanilla-extract/css';
+import { globalStyle, style, styleVariants } from '@vanilla-extract/css';
 import { vars } from '../../../../styles/theme.css';
-import {
-  buttonSize,
-  easeOut,
-  reducedMotion,
-  small,
-} from '../../../../styles/global.css';
-
-const dialogIn = keyframes({
-  from: { opacity: 0, transform: 'translateY(14px) scale(.985)' },
-  to: { opacity: 1, transform: 'none' },
-});
-
-export const dialog = style({
-  width: 'min(560px, 100% - 32px)',
-  maxHeight: 'calc(100dvh - 32px)',
-  margin: 'auto',
-  background: vars.color.background,
-  color: vars.color.text,
-  border: 0,
-  borderRadius: 24,
-  padding: 0,
-  selectors: {
-    '&[open]': { animation: `${dialogIn} .2s ${easeOut}` },
-    '&::backdrop': { background: 'rgba(28, 24, 17, 0.48)' },
-  },
-  '@media': {
-    [reducedMotion]: { selectors: { '&[open]': { animation: 'none' } } },
-  },
-});
-
-export const dialogForm = style({
-  padding: 40,
-  '@media': { [small]: { padding: 24 } },
-});
-
-export const dialogHead = style({
-  display: 'flex',
-  alignItems: 'flex-start',
-  justifyContent: 'space-between',
-  gap: 16,
-  marginBottom: 24,
-});
-
-export const dialogTitle = style({
-  margin: 0,
-  fontFamily: vars.font.sans,
-  fontWeight: 800,
-  fontSize: 32,
-  lineHeight: 1.05,
-  letterSpacing: '-.025em',
-  textWrap: 'balance',
-  '@media': { [small]: { fontSize: 28 } },
-});
+import { buttonSize, easeOut } from '../../../../styles/global.css';
 
 export const dialogSub = style({
   margin: '8px 0 0',
@@ -65,22 +8,6 @@ export const dialogSub = style({
   color: vars.color.textSecondary,
   textWrap: 'pretty',
 });
-
-export const closeBtn = style({
-  flex: 'none',
-  display: 'grid',
-  placeItems: 'center',
-  width: 40,
-  height: 40,
-  margin: '-8px -8px 0 0',
-  background: vars.color.backgroundDeep,
-  border: 0,
-  borderRadius: '50%',
-  color: vars.color.textSecondary,
-  cursor: 'pointer',
-  ':hover': { color: vars.color.text },
-});
-globalStyle(`${closeBtn} svg`, { width: 18, height: 18 });
 
 const note = {
   display: 'flex',

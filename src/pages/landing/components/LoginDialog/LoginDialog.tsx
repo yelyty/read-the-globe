@@ -1,14 +1,8 @@
-import {
-  useEffect,
-  useEffectEvent,
-  useRef,
-  useState,
-  type ChangeEvent,
-  type SubmitEvent,
-} from 'react';
-import { PushPinIcon, WarningCircleIcon, XIcon } from '@phosphor-icons/react';
+import { useEffect, useState, type ChangeEvent, type SubmitEvent } from 'react';
+import { PushPinIcon, WarningCircleIcon } from '@phosphor-icons/react';
 
 import * as styles from './LoginDialog.css';
+import Dialog from '../../../../components/Dialog/Dialog';
 import Field from '../../../../components/Field/Field';
 import PasswordStrength from './PasswordStrength';
 import { sendPasswordReset, signIn, signUp } from '../../../../auth/session';
@@ -62,8 +56,6 @@ type LoginDialogProps = {
 };
 
 const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
-  const dialogRef = useRef<HTMLDialogElement>(null);
-
   const [values, setValues] = useState<Values>({
     name: '',
     email: '',
@@ -76,12 +68,8 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
   const [formError, setFormError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
+  // the first field takes focus as the dialog opens, and again when it switches between sign up, log in and reset
   useEffect(() => {
-    const dialog = dialogRef.current;
-
-    if (!dialog) return;
-    if (mode && !dialog.open) dialog.showModal();
-    if (!mode && dialog.open) dialog.close();
     if (mode)
       document
         .getElementById(mode === 'signup' ? 'au-name' : 'au-email')
@@ -106,21 +94,6 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
     clearMessages();
     onClose();
   };
-
-  // a click on the backdrop lands on the <dialog> itself; Escape is the dialog's own keyboard way out
-  const onBackdrop = useEffectEvent(close);
-
-  useEffect(() => {
-    const dialog = dialogRef.current;
-
-    const onClick = (event: MouseEvent) => {
-      if (event.target === dialog) onBackdrop();
-    };
-
-    dialog?.addEventListener('click', onClick);
-
-    return () => dialog?.removeEventListener('click', onClick);
-  }, []);
 
   const update =
     (key: keyof Values) => (event: ChangeEvent<HTMLInputElement>) =>
@@ -178,30 +151,14 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
   };
 
   return (
-    <dialog
-      ref={dialogRef}
-      className={styles.dialog}
-      aria-labelledby="au-title"
+    <Dialog
+      open={mode !== null}
       onClose={close}
+      variant="hero"
+      title={COPY[view].title()}
+      sub={<p className={styles.dialogSub}>{COPY[view].sub()}</p>}
     >
-      <form className={styles.dialogForm} onSubmit={submit} noValidate>
-        <div className={styles.dialogHead}>
-          <div>
-            <h2 className={styles.dialogTitle} id="au-title">
-              {COPY[view].title()}
-            </h2>
-            <p className={styles.dialogSub}>{COPY[view].sub()}</p>
-          </div>
-          <button
-            type="button"
-            className={styles.closeBtn}
-            onClick={close}
-            aria-label={m.common_close()}
-          >
-            <XIcon aria-hidden="true" />
-          </button>
-        </div>
-
+      <form onSubmit={submit} noValidate>
         {formError && (
           <p className={styles.formError} role="alert">
             <WarningCircleIcon aria-hidden="true" />
@@ -310,7 +267,7 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
           )}
         </div>
       </form>
-    </dialog>
+    </Dialog>
   );
 };
 

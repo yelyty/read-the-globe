@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type SubmitEvent } from 'react';
+import { useState, type SubmitEvent } from 'react';
 import { CheckIcon, PlusIcon, XIcon } from '@phosphor-icons/react';
 import Field from '../../components/Field/Field';
 import Select from '../../components/Select/Select';
@@ -9,12 +9,12 @@ import { addGoal, updateGoal } from '../../api/goals/goals';
 import { MAX_GOALS, REGIONS, goalName } from './goals';
 import { getLocale } from '../../paraglide/runtime.js';
 import { m } from '../../paraglide/messages.js';
-import * as accountStyles from '../account/features/DeleteAccount/DeleteAccount.css';
 import * as styles from './GoalsPage.css';
 import { fieldError } from '../../components/Field/Field.css';
 import Hint from '../../components/Hint/Hint';
 import { Button } from '../../components/Button/Button';
-import { dismiss, useDirty } from '../../hooks/useUnsaved';
+import { useDirty } from '../../hooks/useUnsaved';
+import Dialog, { DialogActions } from '../../components/Dialog/Dialog';
 
 const NAME_HINT: Record<GoalKind, () => string> = {
   region: m.goals_cat_europe,
@@ -37,7 +37,6 @@ const GoalDialog = ({
   onClose,
   onSaved,
 }: GoalDialogProps) => {
-  const dialog = useRef<HTMLDialogElement>(null);
   const [kind, setKind] = useState<GoalKind>(goal?.kind ?? 'region');
   // a catalogue goal shows its name in the reader's language; left as it is, it keeps its stored English name
   const shownName = goal ? goalName(goal.name) : '';
@@ -54,11 +53,6 @@ const GoalDialog = ({
   const [error, setError] = useState<{ text: string; at?: string }>();
   const [saving, setSaving] = useState(false);
   const dirty = useDirty([kind, name, continent, codes, target]);
-
-  useEffect(() => {
-    dialog.current?.showModal();
-    document.getElementById(goal ? 'g-name' : 'g-kind')?.focus();
-  }, [goal]);
 
   const byName = Object.fromEntries(
     Object.entries(names).map(([code, countryName]) => [
@@ -127,208 +121,181 @@ const GoalDialog = ({
 
     setSaving(false);
     if (problem) return fail(problem);
-    dialog.current?.close();
+    onClose();
     onSaved(draft.name);
   };
 
   return (
-    <>
-      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- backdrop click; Esc closes it from the keyboard */}
-      <dialog
-        ref={dialog}
-        className={accountStyles.dialog}
-        aria-labelledby="goal-dialog-title"
-        onClose={onClose}
-        onCancel={(event) => {
-          event.preventDefault();
-          dismiss(dialog.current, dirty);
-        }}
-        onClick={(event) =>
-          event.target === event.currentTarget && dismiss(dialog.current, dirty)
-        }
-      >
-        <form onSubmit={submit} noValidate>
-          <div className={accountStyles.dialogHead}>
-            <h2 className={accountStyles.dialogTitle} id="goal-dialog-title">
-              {goal ? m.goals_dialog_edit() : m.goals_dialog_new()}
-            </h2>
-            <button
-              type="button"
-              className={accountStyles.close}
-              aria-label={m.common_close()}
-              onClick={() => dialog.current?.close()}
-            >
-              <XIcon aria-hidden="true" />
-            </button>
-          </div>
+    <Dialog
+      open
+      onClose={onClose}
+      title={goal ? m.goals_dialog_edit() : m.goals_dialog_new()}
+      initialFocus={goal ? 'g-name' : 'g-kind'}
+      dirty={dirty}
+    >
+      <form onSubmit={submit} noValidate>
+        <div className={styles.field}>
+          <label className={styles.label} htmlFor="g-kind" id="g-kind-label">
+            {m.goals_kind_label()}
+          </label>
+          <Select<GoalKind>
+            id="g-kind"
+            labelId="g-kind-label"
+            value={kind}
+            disabled={!!goal}
+            onChange={(next) => {
+              setKind(next);
+              setError(undefined);
+            }}
+            options={[
+              { value: 'region', label: m.goals_kind_region() },
+              { value: 'countries', label: m.goals_kind_countries() },
+              { value: 'theme', label: m.goals_kind_theme() },
+            ]}
+          />
+        </div>
 
+        <Field
+          id="g-name"
+          label={m.goals_name()}
+          maxLength={80}
+          placeholder={NAME_HINT[kind]()}
+          autoComplete="off"
+          value={name}
+          error={errorAt('g-name')}
+          onChange={(changeEvent) => {
+            setName(changeEvent.target.value);
+            setError(undefined);
+          }}
+        />
+
+        {kind === 'region' && (
           <div className={styles.field}>
-            <label className={styles.label} htmlFor="g-kind" id="g-kind-label">
-              {m.goals_kind_label()}
+            <label
+              className={styles.label}
+              htmlFor="g-region"
+              id="g-region-label"
+            >
+              {m.goals_region()}
             </label>
-            <Select<GoalKind>
-              id="g-kind"
-              labelId="g-kind-label"
-              value={kind}
-              disabled={!!goal}
-              onChange={(next) => {
-                setKind(next);
-                setError(undefined);
-              }}
-              options={[
-                { value: 'region', label: m.goals_kind_region() },
-                { value: 'countries', label: m.goals_kind_countries() },
-                { value: 'theme', label: m.goals_kind_theme() },
-              ]}
+            <Select<Continent>
+              id="g-region"
+              labelId="g-region-label"
+              value={continent}
+              onChange={setContinent}
+              options={REGIONS.map((region) => ({
+                value: region,
+                label: continentName(region),
+              }))}
             />
           </div>
+        )}
 
+        {kind === 'countries' && (
+          <div className={styles.field}>
+            <label className={styles.label} htmlFor="g-country">
+              {m.goals_countries()}
+            </label>
+            <Suggest
+              id="g-country"
+              className={styles.input}
+              options={countryNames}
+              placeholder={m.goals_country_placeholder()}
+              autoComplete="off"
+              aria-describedby={
+                errorAt('g-country')
+                  ? 'g-country-hint g-country-err'
+                  : 'g-country-hint'
+              }
+              aria-invalid={errorAt('g-country') ? true : undefined}
+              value={country}
+              onValue={setCountry}
+              // a name picked from the list goes straight onto the goal
+              onPick={addCountry}
+              onKeyDown={(keyEvent) => {
+                if (keyEvent.key === 'Enter') {
+                  keyEvent.preventDefault();
+                  addCountry(country);
+                }
+              }}
+            />
+            <Hint id="g-country-hint">{m.goals_country_hint()}</Hint>
+            {errorAt('g-country') && (
+              <p id="g-country-err" className={fieldError}>
+                {errorAt('g-country')}
+              </p>
+            )}
+            {codes.length > 0 && (
+              <ul className={styles.picked}>
+                {codes.map((code) => (
+                  <li key={code}>
+                    {names[code] ?? code}
+                    <button
+                      type="button"
+                      aria-label={m.goals_remove_country({
+                        country: names[code] ?? code,
+                      })}
+                      onClick={() =>
+                        setCodes(codes.filter((other) => other !== code))
+                      }
+                    >
+                      <XIcon aria-hidden="true" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+
+        {kind === 'theme' && (
           <Field
-            id="g-name"
-            label={m.goals_name()}
-            maxLength={80}
-            placeholder={NAME_HINT[kind]()}
-            autoComplete="off"
-            value={name}
-            error={errorAt('g-name')}
+            id="g-target"
+            label={m.goals_target()}
+            type="number"
+            min={1}
+            max={200}
+            inputMode="numeric"
+            value={target}
+            error={errorAt('g-target')}
             onChange={(changeEvent) => {
-              setName(changeEvent.target.value);
+              setTarget(changeEvent.target.value);
               setError(undefined);
             }}
           />
+        )}
 
-          {kind === 'region' && (
-            <div className={styles.field}>
-              <label
-                className={styles.label}
-                htmlFor="g-region"
-                id="g-region-label"
-              >
-                {m.goals_region()}
-              </label>
-              <Select<Continent>
-                id="g-region"
-                labelId="g-region-label"
-                value={continent}
-                onChange={setContinent}
-                options={REGIONS.map((region) => ({
-                  value: region,
-                  label: continentName(region),
-                }))}
-              />
-            </div>
-          )}
+        {error && !error.at && (
+          <p className={styles.formError} role="alert">
+            {error.text}
+          </p>
+        )}
 
-          {kind === 'countries' && (
-            <div className={styles.field}>
-              <label className={styles.label} htmlFor="g-country">
-                {m.goals_countries()}
-              </label>
-              <Suggest
-                id="g-country"
-                className={styles.input}
-                options={countryNames}
-                placeholder={m.goals_country_placeholder()}
-                autoComplete="off"
-                aria-describedby={
-                  errorAt('g-country')
-                    ? 'g-country-hint g-country-err'
-                    : 'g-country-hint'
-                }
-                aria-invalid={errorAt('g-country') ? true : undefined}
-                value={country}
-                onValue={setCountry}
-                // a name picked from the list goes straight onto the goal
-                onPick={addCountry}
-                onKeyDown={(keyEvent) => {
-                  if (keyEvent.key === 'Enter') {
-                    keyEvent.preventDefault();
-                    addCountry(country);
-                  }
-                }}
-              />
-              <Hint id="g-country-hint">{m.goals_country_hint()}</Hint>
-              {errorAt('g-country') && (
-                <p id="g-country-err" className={fieldError}>
-                  {errorAt('g-country')}
-                </p>
-              )}
-              {codes.length > 0 && (
-                <ul className={styles.picked}>
-                  {codes.map((code) => (
-                    <li key={code}>
-                      {names[code] ?? code}
-                      <button
-                        type="button"
-                        aria-label={m.goals_remove_country({
-                          country: names[code] ?? code,
-                        })}
-                        onClick={() =>
-                          setCodes(codes.filter((other) => other !== code))
-                        }
-                      >
-                        <XIcon aria-hidden="true" />
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          )}
-
-          {kind === 'theme' && (
-            <Field
-              id="g-target"
-              label={m.goals_target()}
-              type="number"
-              min={1}
-              max={200}
-              inputMode="numeric"
-              value={target}
-              error={errorAt('g-target')}
-              onChange={(changeEvent) => {
-                setTarget(changeEvent.target.value);
-                setError(undefined);
-              }}
-            />
-          )}
-
-          {error && !error.at && (
-            <p className={styles.formError} role="alert">
-              {error.text}
-            </p>
-          )}
-
-          <div className={accountStyles.dialogActions}>
-            <Button
-              type="button"
-              variant="text"
-              onClick={() => dialog.current?.close()}
-            >
-              {m.common_cancel()}
-            </Button>
-            <Button
-              type="submit"
-              disabled={saving}
-              aria-busy={saving || undefined}
-            >
-              {goal ? (
-                <CheckIcon aria-hidden="true" />
-              ) : (
-                <PlusIcon aria-hidden="true" />
-              )}
-              {saving
-                ? goal
-                  ? m.log_saving()
-                  : m.goals_adding()
-                : goal
-                  ? m.goals_save_changes()
-                  : m.goals_add_goal()}
-            </Button>
-          </div>
-        </form>
-      </dialog>
-    </>
+        <DialogActions>
+          <Button type="button" variant="text" onClick={onClose}>
+            {m.common_cancel()}
+          </Button>
+          <Button
+            type="submit"
+            disabled={saving}
+            aria-busy={saving || undefined}
+          >
+            {goal ? (
+              <CheckIcon aria-hidden="true" />
+            ) : (
+              <PlusIcon aria-hidden="true" />
+            )}
+            {saving
+              ? goal
+                ? m.log_saving()
+                : m.goals_adding()
+              : goal
+                ? m.goals_save_changes()
+                : m.goals_add_goal()}
+          </Button>
+        </DialogActions>
+      </form>
+    </Dialog>
   );
 };
 

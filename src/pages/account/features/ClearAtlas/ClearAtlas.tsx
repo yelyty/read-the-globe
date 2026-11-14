@@ -1,10 +1,6 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from '@tanstack/react-router';
-import {
-  ArrowCounterClockwiseIcon,
-  EraserIcon,
-  XIcon,
-} from '@phosphor-icons/react';
+import { ArrowCounterClockwiseIcon, EraserIcon } from '@phosphor-icons/react';
 
 import type { BookEntry, Goal } from '../../../../types';
 import {
@@ -14,6 +10,10 @@ import {
 } from '../../../../api/data/data';
 import { useStatus } from '../../../../hooks/useStatus';
 import { Button } from '../../../../components/Button/Button';
+import Dialog, {
+  DialogActions,
+  DialogText,
+} from '../../../../components/Dialog/Dialog';
 import { atlasWords } from '../YourData/readingList';
 import KeepCopy from '../DeleteAccount/KeepCopy';
 import * as styles from '../DeleteAccount/DeleteAccount.css';
@@ -30,7 +30,7 @@ type ClearAtlasProps = {
 const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
   const router = useRouter();
   const status = useStatus();
-  const dialog = useRef<HTMLDialogElement>(null);
+  const [open, setOpen] = useState(false);
   const [round, setRound] = useState(0);
   const [clearing, setClearing] = useState(false);
 
@@ -38,12 +38,10 @@ const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
   const blank = !books.length && !goals.length;
   const lost = atlasWords(books.length, goals.length);
 
-  const open = () => {
-    dialog.current?.showModal();
-    document.getElementById('ac-clear-keep')?.focus(); // the safe choice takes focus
+  const close = () => {
+    setOpen(false);
+    setRound((current) => current + 1); // a fresh KeepCopy next time
   };
-
-  const close = () => dialog.current?.close();
 
   const clear = async () => {
     setClearing(true);
@@ -114,41 +112,24 @@ const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
         aria-haspopup="dialog"
         aria-describedby="ac-clear-desc"
         disabled={blank}
-        onClick={open}
+        onClick={() => setOpen(true)}
       >
         <EraserIcon aria-hidden="true" />
         {m.account_clear()}
       </Button>
 
-      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- backdrop click; Esc closes it from the keyboard */}
-      <dialog
-        ref={dialog}
-        className={styles.dialog}
-        aria-labelledby="ac-clear-title"
+      <Dialog
+        open={open}
+        onClose={close}
+        title={m.account_clear_question()}
+        initialFocus="ac-clear-keep" // the safe choice takes focus
         aria-describedby="ac-clear-q"
-        onClose={() => setRound((current) => current + 1)}
-        onClick={(event) => {
-          if (event.target === event.currentTarget) close();
-        }}
       >
-        <div className={styles.dialogHead}>
-          <h2 className={styles.dialogTitle} id="ac-clear-title">
-            {m.account_clear_question()}
-          </h2>
-          <button
-            type="button"
-            className={styles.close}
-            aria-label={m.common_close()}
-            onClick={close}
-          >
-            <XIcon aria-hidden="true" />
-          </button>
-        </div>
-        <p className={styles.dialogText} id="ac-clear-q">
+        <DialogText id="ac-clear-q">
           {m.account_clear_dialog({ what: lost })}
-        </p>
+        </DialogText>
         <KeepCopy key={round} books={books} names={names} />
-        <div className={styles.dialogActions}>
+        <DialogActions>
           <Button
             id="ac-clear-keep"
             type="button"
@@ -167,8 +148,8 @@ const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
             <EraserIcon aria-hidden="true" />
             {clearing ? m.account_clearing() : m.account_clear()}
           </Button>
-        </div>
-      </dialog>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

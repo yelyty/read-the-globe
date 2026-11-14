@@ -13,11 +13,9 @@ export const useDirty = (state: unknown) => {
   return now !== first;
 };
 
-/** Esc or a click on the scrim: the dialog closes, unless it holds changes the reader wants to keep.
+/** Esc or a click on the scrim: the dialog may close, unless it holds changes the reader wants to keep.
     Cancel, × and Close still close at once: those are a choice, not a slip. */
-export const dismiss = (dialog: HTMLDialogElement | null, dirty: boolean) => {
-  if (!dirty || !keepChanges()) dialog?.close();
-};
+export const canDiscard = (dirty: boolean) => !dirty || !keepChanges();
 
 /** a page form: leaving the page or closing the tab asks first while it holds unsaved typing */
 export const useLeaveGuard = (dirty: boolean) =>

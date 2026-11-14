@@ -1,12 +1,15 @@
-import { useEffect, useRef, useState, type SubmitEvent } from 'react';
-import { CheckIcon, MagnifyingGlassIcon, XIcon } from '@phosphor-icons/react';
+import { useState, type SubmitEvent } from 'react';
+import { CheckIcon, MagnifyingGlassIcon } from '@phosphor-icons/react';
 import type { BookEntry, Goal } from '../../types';
 import { setGoalBooks } from '../../api/goals/goals';
-import * as accountStyles from '../account/features/DeleteAccount/DeleteAccount.css';
 import * as styles from './GoalsPage.css';
 import Hint from '../../components/Hint/Hint';
 import { Button } from '../../components/Button/Button';
-import { dismiss, useDirty } from '../../hooks/useUnsaved';
+import { useDirty } from '../../hooks/useUnsaved';
+import Dialog, {
+  DialogActions,
+  DialogText,
+} from '../../components/Dialog/Dialog';
 import { goalName, withBold } from './goals';
 import { m } from '../../paraglide/messages.js';
 
@@ -22,7 +25,6 @@ const fold = (text: string) =>
 
 // A theme goal's books: search, tick, Save. Ticks are held until Save, so Cancel leaves the goal as it was.
 const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
-  const dialog = useRef<HTMLDialogElement>(null);
   const title = goalName(goal.name);
 
   const [picked, setPicked] = useState(
@@ -40,11 +42,6 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
   const [error, setError] = useState<string>();
   const [saving, setSaving] = useState(false);
   const dirty = useDirty([...picked].sort());
-
-  useEffect(() => {
-    dialog.current?.showModal();
-    document.getElementById('books-q')?.focus();
-  }, []);
 
   const needle = fold(query.trim());
 
@@ -68,130 +65,101 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
 
     setSaving(false);
     if (problem) return setError(m.goals_books_save_failed());
-    dialog.current?.close();
+    onClose();
     onSaved(picked.size);
   };
 
   return (
-    <>
-      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- backdrop click; Esc closes it from the keyboard */}
-      <dialog
-        ref={dialog}
-        className={accountStyles.dialog}
-        aria-labelledby="books-dialog-title"
-        onClose={onClose}
-        onCancel={(event) => {
-          event.preventDefault();
-          dismiss(dialog.current, dirty);
-        }}
-        onClick={(event) =>
-          event.target === event.currentTarget && dismiss(dialog.current, dirty)
-        }
-      >
-        <form onSubmit={submit} noValidate>
-          <div className={accountStyles.dialogHead}>
-            <h2 className={accountStyles.dialogTitle} id="books-dialog-title">
-              {m.goals_books_title({ goal: title })}
-            </h2>
-            <button
-              type="button"
-              className={accountStyles.close}
-              aria-label={m.common_close()}
-              onClick={() => dialog.current?.close()}
-            >
-              <XIcon aria-hidden="true" />
-            </button>
-          </div>
-
-          {books.length ? (
-            <>
-              <p className={accountStyles.dialogText}>
-                {withBold(
-                  m.goals_books_chosen({
-                    picked: picked.size,
-                    target: goal.target ?? 0,
-                    goal: title,
-                  })
-                )}
-              </p>
-              <div className={styles.search}>
-                <label className={styles.label} htmlFor="books-q">
-                  {m.goals_books_search()}
-                </label>
-                <MagnifyingGlassIcon aria-hidden="true" />
-                <input
-                  id="books-q"
-                  className={styles.input}
-                  type="search"
-                  placeholder={m.goals_books_placeholder()}
-                  autoComplete="off"
-                  value={query}
-                  onChange={(changeEvent) => setQuery(changeEvent.target.value)}
-                />
-              </div>
-              {shown.length ? (
-                <fieldset className={styles.picker}>
-                  <legend className={styles.srOnly}>
-                    {m.goals_books_legend({ goal: title })}
-                  </legend>
-                  <ul>
-                    {shown.map((book) => (
-                      <li key={book.id}>
-                        <label>
-                          <input
-                            type="checkbox"
-                            checked={picked.has(book.id)}
-                            onChange={() => toggle(book.id)}
-                          />
-                          <span className={styles.pickTitle}>{book.title}</span>
-                          <span className={styles.pickAuthor}>
-                            {book.author?.name}
-                          </span>
-                        </label>
-                      </li>
-                    ))}
-                  </ul>
-                </fieldset>
-              ) : (
-                <Hint role="status">
-                  {m.goals_books_none({ query: query.trim() })}
-                </Hint>
+    <Dialog
+      open
+      onClose={onClose}
+      title={m.goals_books_title({ goal: title })}
+      initialFocus="books-q"
+      dirty={dirty}
+    >
+      <form onSubmit={submit} noValidate>
+        {books.length ? (
+          <>
+            <DialogText>
+              {withBold(
+                m.goals_books_chosen({
+                  picked: picked.size,
+                  target: goal.target ?? 0,
+                  goal: title,
+                })
               )}
-            </>
-          ) : (
-            <p className={accountStyles.dialogText}>
-              {m.goals_books_log_first()}
-            </p>
-          )}
-
-          {error && (
-            <p className={styles.formError} role="alert">
-              {error}
-            </p>
-          )}
-
-          <div className={accountStyles.dialogActions}>
-            <Button
-              type="button"
-              variant="text"
-              onClick={() => dialog.current?.close()}
-            >
-              {m.common_cancel()}
-            </Button>
-            {books.length > 0 && (
-              <Button
-                type="submit"
-                disabled={saving}
-                aria-busy={saving || undefined}
-              >
-                <CheckIcon aria-hidden="true" />
-                {saving ? m.log_saving() : m.common_save()}
-              </Button>
+            </DialogText>
+            <div className={styles.search}>
+              <label className={styles.label} htmlFor="books-q">
+                {m.goals_books_search()}
+              </label>
+              <MagnifyingGlassIcon aria-hidden="true" />
+              <input
+                id="books-q"
+                className={styles.input}
+                type="search"
+                placeholder={m.goals_books_placeholder()}
+                autoComplete="off"
+                value={query}
+                onChange={(changeEvent) => setQuery(changeEvent.target.value)}
+              />
+            </div>
+            {shown.length ? (
+              <fieldset className={styles.picker}>
+                <legend className={styles.srOnly}>
+                  {m.goals_books_legend({ goal: title })}
+                </legend>
+                <ul>
+                  {shown.map((book) => (
+                    <li key={book.id}>
+                      <label>
+                        <input
+                          type="checkbox"
+                          checked={picked.has(book.id)}
+                          onChange={() => toggle(book.id)}
+                        />
+                        <span className={styles.pickTitle}>{book.title}</span>
+                        <span className={styles.pickAuthor}>
+                          {book.author?.name}
+                        </span>
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              </fieldset>
+            ) : (
+              <Hint role="status">
+                {m.goals_books_none({ query: query.trim() })}
+              </Hint>
             )}
-          </div>
-        </form>
-      </dialog>
-    </>
+          </>
+        ) : (
+          <DialogText>{m.goals_books_log_first()}</DialogText>
+        )}
+
+        {error && (
+          <p className={styles.formError} role="alert">
+            {error}
+          </p>
+        )}
+
+        <DialogActions>
+          <Button type="button" variant="text" onClick={onClose}>
+            {m.common_cancel()}
+          </Button>
+          {books.length > 0 && (
+            <Button
+              type="submit"
+              disabled={saving}
+              aria-busy={saving || undefined}
+            >
+              <CheckIcon aria-hidden="true" />
+              {saving ? m.log_saving() : m.common_save()}
+            </Button>
+          )}
+        </DialogActions>
+      </form>
+    </Dialog>
   );
 };
 

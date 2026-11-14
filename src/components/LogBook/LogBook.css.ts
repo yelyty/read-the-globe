@@ -1,4 +1,4 @@
-import { globalStyle, keyframes, style } from '@vanilla-extract/css';
+import { globalStyle, style } from '@vanilla-extract/css';
 import { vars } from '../../styles/theme.css';
 import {
   buttonSize,
@@ -15,13 +15,6 @@ import {
 } from '../../styles/global.css';
 import { hint } from '../Hint/Hint.css';
 
-const rise = keyframes({
-  from: { opacity: 0, translate: '0 8px', scale: '.98' },
-});
-
-const sheetUp = keyframes({ from: { translate: '0 100%' } });
-const fade = keyframes({ from: { opacity: 0 } });
-
 export const srOnly = style({
   position: 'absolute',
   width: 1,
@@ -32,56 +25,16 @@ export const srOnly = style({
   whiteSpace: 'nowrap',
 });
 
+/* the shared Dialog's sheet variant; an edit wears a gold edge so it isn't mistaken for a new book */
 export const sheet = style({
-  width: 'min(560px, 100vw - 48px)',
-  maxHeight: 'calc(100dvh - 48px)',
-  margin: 'auto',
-  padding: 24,
-  overflow: 'auto',
-  overscrollBehavior: 'contain',
-  background: vars.color.surface,
-  color: vars.color.text,
-  border: `1px solid ${vars.color.border}`,
-  borderRadius: 16,
   selectors: {
-    '&[open]': { animation: `${rise} .22s ${easeOut}` },
-    '&::backdrop': { background: `rgba(${vars.shadow.ink}, .35)` },
     '&[data-editing="true"]': {
       borderColor: vars.color.secondary,
       boxShadow: '0 0 0 3px rgba(199, 165, 54, .22)',
     },
   },
-  '@media': {
-    [phone]: {
-      width: '100%',
-      maxWidth: '100%',
-      maxHeight: '92dvh',
-      margin: 'auto 0 0',
-      padding: '24px 24px 0',
-      borderRadius: '16px 16px 0 0',
-      borderBottom: 0,
-      selectors: { '&[open]': { animation: `${sheetUp} .26s ${easeOut}` } },
-    },
-    [reducedMotion]: {
-      selectors: { '&[open]': { animation: `${fade} .2s ease-out` } },
-    },
-  },
 });
 
-export const head = style({
-  display: 'flex',
-  alignItems: 'flex-start',
-  justifyContent: 'space-between',
-  gap: 16,
-  marginBottom: 16,
-});
-export const title = style({
-  margin: 0,
-  fontFamily: vars.font.display,
-  fontSize: 26,
-  fontWeight: 500,
-  lineHeight: 1.15,
-});
 export const editing = style({
   margin: '2px 0 0',
   fontFamily: vars.font.display,

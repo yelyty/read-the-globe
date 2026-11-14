@@ -39,7 +39,8 @@ import { toAlpha2 } from '../../utils/toIsoNumeric';
 import { m } from '../../paraglide/messages.js';
 import Select from '../Select/Select';
 import { getLocale } from '../../paraglide/runtime.js';
-import { dismiss, useDirty } from '../../hooks/useUnsaved';
+import { useDirty } from '../../hooks/useUnsaved';
+import Dialog from '../Dialog/Dialog';
 
 const app = getRouteApi('/app');
 
@@ -261,7 +262,6 @@ const LogForm = ({
   onDone,
   onRemoved,
 }: LogFormProps) => {
-  const dialog = useRef<HTMLDialogElement>(null);
   const name = (code?: string | null) => (code ? (names[code] ?? '') : '');
 
   const countries = useMemo(
@@ -342,11 +342,6 @@ const LogForm = ({
   const [dupOk, setDupOk] = useState('');
   const [saving, setSaving] = useState(false);
   const dirty = useDirty([title, author, country, rows, mon, year, ticks]);
-
-  useEffect(() => {
-    dialog.current?.showModal();
-    document.getElementById('f-title')?.focus();
-  }, []);
 
   const places = rows
     .filter(
@@ -607,35 +602,23 @@ const LogForm = ({
         : m.log_pin_it();
 
   return (
-    <dialog
-      ref={dialog}
+    <Dialog
+      open
+      onClose={onClose}
+      variant="sheet"
       className={styles.sheet}
       data-editing={Boolean(book)}
-      aria-labelledby="log-title"
-      onClose={onClose}
-      onCancel={(event) => {
-        event.preventDefault();
-        dismiss(dialog.current, dirty);
-      }}
-    >
-      <div className={styles.head}>
-        <div>
-          <h2 id="log-title" className={styles.title}>
-            {book ? m.log_editing() : m.log_a_book()}
-          </h2>
+      title={book ? m.log_editing() : m.log_a_book()}
+      sub={
+        <>
           {book && <p className={styles.editing}>{book.title}</p>}
           {sub && <p className={styles.sub}>{sub}</p>}
-        </div>
-        <button
-          type="button"
-          className={styles.close}
-          aria-label={m.common_close()}
-          onClick={onClose}
-        >
-          <XIcon aria-hidden="true" />
-        </button>
-      </div>
-
+        </>
+      }
+      initialFocus="f-title"
+      dirty={dirty}
+      backdropClose={false}
+    >
       {(preview.length > 0 || imagined.length > 0) && (
         <p className={styles.preview}>
           <span className={styles.label}>{m.log_will_mark()}</span>
@@ -1054,7 +1037,7 @@ const LogForm = ({
           </button>
         </div>
       </form>
-    </dialog>
+    </Dialog>
   );
 };
 

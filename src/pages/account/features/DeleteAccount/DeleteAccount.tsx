@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useState } from 'react';
 import { TrashIcon } from '@phosphor-icons/react';
 
 import type { BookEntry } from '../../../../types';
@@ -13,12 +13,7 @@ type DeleteAccountProps = {
 };
 
 const DeleteAccount = ({ books, names }: DeleteAccountProps) => {
-  const dialog = useRef<HTMLDialogElement>(null);
-
-  const open = () => {
-    dialog.current?.showModal();
-    document.getElementById('ac-delete-word')?.focus();
-  };
+  const [open, setOpen] = useState(false);
 
   return (
     <div className={styles.dangerItem}>
@@ -28,12 +23,17 @@ const DeleteAccount = ({ books, names }: DeleteAccountProps) => {
         type="button"
         variant="dangerOutline"
         aria-haspopup="dialog"
-        onClick={open}
+        onClick={() => setOpen(true)}
       >
         <TrashIcon aria-hidden="true" />
         {m.account_delete()}
       </Button>
-      <ConfirmationDialog ref={dialog} books={books} names={names} />
+      <ConfirmationDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        books={books}
+        names={names}
+      />
     </div>
   );
 };

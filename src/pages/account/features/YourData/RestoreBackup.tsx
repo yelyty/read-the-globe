@@ -3,7 +3,6 @@ import { useRouter } from '@tanstack/react-router';
 import {
   ArrowCounterClockwiseIcon,
   UploadSimpleIcon,
-  XIcon,
 } from '@phosphor-icons/react';
 
 import type { BookEntry, Goal } from '../../../../types';
@@ -15,7 +14,10 @@ import {
 import { useStatus } from '../../../../hooks/useStatus';
 import { Button } from '../../../../components/Button/Button';
 import { button } from '../../../../components/Button/Button.css';
-import * as styles from '../DeleteAccount/DeleteAccount.css';
+import Dialog, {
+  DialogActions,
+  DialogText,
+} from '../../../../components/Dialog/Dialog';
 import { atlasWords, bookCount, goalCount } from './readingList';
 import { m } from '../../../../paraglide/messages.js';
 import { getLocale } from '../../../../paraglide/runtime.js';
@@ -38,7 +40,7 @@ const RestoreBackup = ({
   const router = useRouter();
   const status = useStatus();
   const file = useRef<HTMLInputElement>(null);
-  const dialog = useRef<HTMLDialogElement>(null);
+  const [open, setOpen] = useState(false);
   const [pending, setPending] = useState<Backup | null>(null);
   const [restoring, setRestoring] = useState(false);
 
@@ -62,11 +64,10 @@ const RestoreBackup = ({
     }
 
     setPending(data as Backup);
-    dialog.current?.showModal();
-    document.getElementById('ac-restore-keep')?.focus(); // the safe choice takes focus
+    setOpen(true);
   };
 
-  const close = () => dialog.current?.close();
+  const close = () => setOpen(false);
 
   const restore = async () => {
     if (!pending) return;
@@ -137,40 +138,24 @@ const RestoreBackup = ({
         onChange={pick}
       />
 
-      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- backdrop click; Esc closes it from the keyboard */}
-      <dialog
-        ref={dialog}
-        className={styles.dialog}
-        aria-labelledby="ac-restore-title"
+      <Dialog
+        open={open}
+        onClose={close}
+        title={m.account_restore_question()}
+        initialFocus="ac-restore-keep" // the safe choice takes focus
         aria-describedby="ac-restore-q"
-        onClick={(event) => {
-          if (event.target === event.currentTarget) close();
-        }}
       >
-        <div className={styles.dialogHead}>
-          <h2 className={styles.dialogTitle} id="ac-restore-title">
-            {m.account_restore_question()}
-          </h2>
-          <button
-            type="button"
-            className={styles.close}
-            aria-label={m.common_close()}
-            onClick={close}
-          >
-            <XIcon aria-hidden="true" />
-          </button>
-        </div>
         {pending && (
-          <p className={styles.dialogText} id="ac-restore-q">
+          <DialogText id="ac-restore-q">
             {m.account_restore_dialog({
               now: atlasWords(books.length, goals.length),
               when,
               books: bookCount(pending.books.length),
               goals: goalCount(pending.goals.length),
             })}
-          </p>
+          </DialogText>
         )}
-        <div className={styles.dialogActions}>
+        <DialogActions>
           <Button
             id="ac-restore-keep"
             type="button"
@@ -189,8 +174,8 @@ const RestoreBackup = ({
             <UploadSimpleIcon aria-hidden="true" />
             {restoring ? m.account_restoring() : m.account_restore_confirm()}
           </Button>
-        </div>
-      </dialog>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
