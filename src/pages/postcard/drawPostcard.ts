@@ -1,11 +1,12 @@
 import { geoEquirectangular, geoPath } from 'd3-geo';
 import type { Feature, MultiPolygon, Polygon, Position } from 'geojson';
+
 import type { BookEntry } from '../../types';
 import { atlasMarks, type Marks } from '../../utils/atlasMarks';
 import { CONTINENT_OF } from '../../utils/continents';
 import { light } from '../../styles/theme.css';
-import { bookCodes } from './yearSum';
 import { m } from '../../paraglide/messages.js';
+import { bookCodes } from './yearSum';
 
 export const SIZE = 1080;
 

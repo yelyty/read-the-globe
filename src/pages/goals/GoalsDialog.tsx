@@ -1,20 +1,21 @@
 import { useState, type SubmitEvent } from 'react';
 import { CheckIcon, PlusIcon, XIcon } from '@phosphor-icons/react';
+
 import Field from '../../components/Field/Field';
 import Select from '../../components/Select/Select';
 import Suggest from '../../components/Suggest/Suggest';
 import type { Goal, GoalKind } from '../../types';
 import { continentName, type Continent } from '../../utils/continents';
 import { addGoal, updateGoal } from '../../api/goals/goals';
-import { MAX_GOALS, REGIONS, goalName } from './goals';
 import { getLocale } from '../../paraglide/runtime.js';
 import { m } from '../../paraglide/messages.js';
-import * as styles from './GoalsPage.css';
 import { fieldError } from '../../components/Field/Field.css';
 import Hint from '../../components/Hint/Hint';
 import { Button } from '../../components/Button/Button';
 import { useDirty } from '../../hooks/useUnsaved';
 import Dialog, { DialogActions } from '../../components/Dialog/Dialog';
+import { MAX_GOALS, REGIONS, goalName } from './goals';
+import * as styles from './GoalsPage.css';
 
 const NAME_HINT: Record<GoalKind, () => string> = {
   region: m.goals_cat_europe,

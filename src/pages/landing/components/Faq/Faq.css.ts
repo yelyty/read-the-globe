@@ -1,5 +1,5 @@
 import { style } from '@vanilla-extract/css';
-import { sectionTitle } from '../../LandingPage.css';
+
 import {
   band,
   easeOut,
@@ -7,6 +7,7 @@ import {
   reducedMotion,
 } from '../../../../styles/global.css';
 import { vars } from '../../../../styles/theme.css';
+import { sectionTitle } from '../../LandingPage.css';
 
 export const faq = style({ marginTop: 112, background: band });
 

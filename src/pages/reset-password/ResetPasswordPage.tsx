@@ -1,16 +1,17 @@
 import { useState, type SubmitEvent } from 'react';
 import { Link } from '@tanstack/react-router';
 import { PushPinIcon, WarningCircleIcon } from '@phosphor-icons/react';
-import CompanyPage from '../company/CompanyPage';
+
 import Field from '../../components/Field/Field';
-import PasswordStrength from '../landing/components/LoginDialog/PasswordStrength';
-import { btnPrimary } from '../landing/components/LoginDialog/LoginDialog.css';
 import { formError, formNotice } from '../../components/Field/Field.css';
 import { useAuth } from '../../auth/auth-context';
 import { changePassword } from '../../auth/session';
 import { newPasswordProblem } from '../../auth/forms';
-import * as styles from '../company/CompanyPage.css';
 import { m } from '../../paraglide/messages.js';
+import CompanyPage from '../company/CompanyPage';
+import PasswordStrength from '../landing/components/LoginDialog/PasswordStrength';
+import { btnPrimary } from '../landing/components/LoginDialog/LoginDialog.css';
+import * as styles from '../company/CompanyPage.css';
 
 // Where the "Forgot your password?" email lands: Supabase signs the reader in from the link, then they pick a new one.
 const ResetPasswordPage = () => {

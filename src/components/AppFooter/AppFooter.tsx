@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router';
-import * as styles from './AppFooter.css';
+
 import { m } from '../../paraglide/messages.js';
+import * as styles from './AppFooter.css';
 
 const LINKS = [
   { label: m.footer_about, to: '/about' },

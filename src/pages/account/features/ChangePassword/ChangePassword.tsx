@@ -1,15 +1,14 @@
 import { useState, type ChangeEvent, type SubmitEvent } from 'react';
 import { LockKeyIcon } from '@phosphor-icons/react';
-import { changePassword } from '../../../../auth/session';
 
-import Block from '../../components/Block';
+import { changePassword } from '../../../../auth/session';
 import Field from '../../../../components/Field/Field';
 import Hint from '../../../../components/Hint/Hint';
 import { Button } from '../../../../components/Button/Button';
-
+import { m } from '../../../../paraglide/messages.js';
+import Block from '../../components/Block';
 import * as styles from '../../AccountPage.css';
 import { validate, type Errors } from './validate';
-import { m } from '../../../../paraglide/messages.js';
 
 const ChangePassword = ({ email }: { email: string }) => {
   const [first, setFirst] = useState('');

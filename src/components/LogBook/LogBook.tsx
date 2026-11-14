@@ -13,6 +13,7 @@ import {
   XIcon,
 } from '@phosphor-icons/react';
 import type { Feature } from 'geojson';
+
 import { useStatus } from '../../hooks/useStatus';
 import { useLanding, type Landing } from '../../hooks/useLanding';
 import type { BookEntry, Goal, NextRead } from '../../types';
@@ -29,18 +30,18 @@ import {
   type CountryMatch,
 } from '../../utils/countryFrom';
 import { goalProgress, isDone } from '../../pages/goals/goals';
-import * as fieldStyles from '../Field/Field.css';
-import * as styles from './LogBook.css';
-import Hint from '../Hint/Hint';
-import Suggest from '../Suggest/Suggest';
 import { localToday, readDate, readOnFor } from '../../utils/readDate';
 import { getCountryNames } from '../../utils/countryNames';
 import { toAlpha2 } from '../../utils/toIsoNumeric';
 import { m } from '../../paraglide/messages.js';
-import Select from '../Select/Select';
 import { getLocale } from '../../paraglide/runtime.js';
 import { useDirty } from '../../hooks/useUnsaved';
+import * as fieldStyles from '../Field/Field.css';
+import Hint from '../Hint/Hint';
+import Suggest from '../Suggest/Suggest';
+import Select from '../Select/Select';
 import Dialog from '../Dialog/Dialog';
+import * as styles from './LogBook.css';
 
 const app = getRouteApi('/app');
 

@@ -1,4 +1,5 @@
 import { createRouter } from '@tanstack/react-router';
+
 import { routeTree } from './routeTree.gen';
 import { deLocalizeUrl, localizeUrl } from './paraglide/runtime.js';
 

@@ -6,27 +6,27 @@ import {
   FlagIcon,
   PushPinIcon,
 } from '@phosphor-icons/react';
+
 import AtlasMap, {
   ANTARCTICA,
   type Show,
 } from '../../components/AtlasMap/AtlasMap.tsx';
 import { atlasMarks, atlasStats } from '../../utils/atlasMarks';
 import { worldsOf } from '../../utils/worlds';
-
-import * as styles from './HomePage.css';
 import { useAuth } from '../../auth/auth-context.ts';
 import { useCountryNames } from '../../hooks/useCountryNames.ts';
 import { useLanding } from '../../hooks/useLanding.ts';
 import { useStatus } from '../../hooks/useStatus.ts';
+import PageTitle from '../../components/PageTitle/PageTitle.tsx';
+import { byLogged } from '../../utils/readDate';
+import { m } from '../../paraglide/messages.js';
+import * as styles from './HomePage.css';
 import AtlasCountries from './AtlasCountries.tsx';
 import BeyondMap from './BeyondMap.tsx';
 import Cartouche from './features/Cartouche.tsx';
 import MapKey from './MapKey.tsx';
 import MapTip, { type Tip } from './MapTip.tsx';
 import RecentReads from './features/RecentReads.tsx';
-import PageTitle from '../../components/PageTitle/PageTitle.tsx';
-import { byLogged } from '../../utils/readDate';
-import { m } from '../../paraglide/messages.js';
 
 const app = getRouteApi('/app');
 const RECENT = 3;

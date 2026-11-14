@@ -7,6 +7,7 @@ import {
   PushPinIcon,
   XIcon,
 } from '@phosphor-icons/react';
+
 import type { World } from '../../types';
 import { addWorld, removeWorld } from '../../api/worlds/worlds';
 import { useStatus } from '../../hooks/useStatus';
@@ -18,9 +19,9 @@ import Dialog, {
   DialogActions,
   DialogText,
 } from '../../components/Dialog/Dialog';
-import * as styles from './HomePage.css';
 import { m } from '../../paraglide/messages.js';
 import { getLocale } from '../../paraglide/runtime.js';
+import * as styles from './HomePage.css';
 
 const OPEN = 'rtg-beyond';
 

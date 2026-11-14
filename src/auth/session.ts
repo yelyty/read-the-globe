@@ -1,4 +1,5 @@
 import type { User } from '@supabase/supabase-js';
+
 import { supabase } from '../utils/supabase';
 import { adoptAccountLang } from '../utils/lang';
 import { m } from '../paraglide/messages.js';

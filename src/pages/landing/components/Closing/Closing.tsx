@@ -2,13 +2,14 @@ import { useEffect, useState, type CSSProperties } from 'react';
 import type { Feature } from 'geojson';
 import { geoEquirectangular, geoPath } from 'd3-geo';
 import { PushPinIcon } from '@phosphor-icons/react';
+
 import { useReveal } from '../../../../hooks/useReveal';
 import { mainPiece, worldShapes } from '../../../../utils/worldShapes';
-import { btnPrimary } from '../LoginDialog/LoginDialog.css';
-import * as styles from './Closing.css';
 import { m } from '../../../../paraglide/messages.js';
 import { getLocale } from '../../../../paraglide/runtime.js';
 import { toAlpha2 } from '../../../../utils/toIsoNumeric';
+import { btnPrimary } from '../LoginDialog/LoginDialog.css';
+import * as styles from './Closing.css';
 
 type Mark = 'set' | 'author' | 'both';
 type Stamp = {

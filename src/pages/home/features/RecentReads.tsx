@@ -4,8 +4,8 @@ import { ArrowRightIcon, MapPinIcon } from '@phosphor-icons/react';
 import BookRow from '../../../components/BookRow/BookRow';
 import { list } from '../../../components/BookRow/BookRow.css';
 import type { BookEntry } from '../../../types';
-import * as styles from '../HomePage.css';
 import { m } from '../../../paraglide/messages.js';
+import * as styles from '../HomePage.css';
 
 type RecentReadsProps = { books: BookEntry[]; names: Record<string, string> };
 

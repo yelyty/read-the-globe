@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useBlocker } from '@tanstack/react-router';
+
 import { m } from '../paraglide/messages.js';
 
 // ponytail: the browser's own confirm; swap in a styled dialog if it ever jars

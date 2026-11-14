@@ -18,6 +18,7 @@ import {
   UploadSimpleIcon,
   XIcon,
 } from '@phosphor-icons/react';
+
 import { useCountryNames } from '../../hooks/useCountryNames';
 import type { BookEntry } from '../../types';
 import { list as bookList } from '../../components/BookRow/BookRow.css';
@@ -30,18 +31,18 @@ import {
 } from '../../utils/continents';
 import { atlasMarks } from '../../utils/atlasMarks';
 import { countryFrom, PARENT } from '../../utils/countryFrom';
-import { countryStamp, loadCountries } from '../postcard/drawPostcard';
-import { goalHas, goalName } from '../goals/goals';
 import { getLocale } from '../../paraglide/runtime.js';
 import { m } from '../../paraglide/messages.js';
-import * as styles from './ShelfPage.css';
 import BookRow from '../../components/BookRow/BookRow';
-import NextToRead from './features/NextToRead';
-import ImportCsv from '../account/features/YourData/ImportCsv';
-import { exportExample } from '../account/features/YourData/readingList';
 import { useStatus } from '../../hooks/useStatus';
 import PageTitle from '../../components/PageTitle/PageTitle';
 import Select from '../../components/Select/Select';
+import { countryStamp, loadCountries } from '../postcard/drawPostcard';
+import { goalHas, goalName } from '../goals/goals';
+import ImportCsv from '../account/features/YourData/ImportCsv';
+import { exportExample } from '../account/features/YourData/readingList';
+import * as styles from './ShelfPage.css';
+import NextToRead from './features/NextToRead';
 
 const app = getRouteApi('/app');
 const shelfRoute = getRouteApi('/app/shelf');

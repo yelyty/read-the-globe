@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+
 import * as styles from '../CompanyPage.css';
 import CompanyPage from '../CompanyPage';
 

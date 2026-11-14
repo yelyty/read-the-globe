@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+
 import GoalsPage from '../pages/goals/GoalsPage';
 
 type GoalsSearch = { add?: string };

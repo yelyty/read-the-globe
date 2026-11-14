@@ -1,6 +1,7 @@
 import { PlusIcon } from '@phosphor-icons/react';
-import * as styles from './Faq.css';
+
 import { m } from '../../../../paraglide/messages.js';
+import * as styles from './Faq.css';
 
 const QUESTIONS = [
   { q: m.landing_faq_q1, a: m.landing_faq_a1 },

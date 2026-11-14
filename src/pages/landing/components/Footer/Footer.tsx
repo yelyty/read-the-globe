@@ -1,8 +1,9 @@
 import { Link } from '@tanstack/react-router';
+
 import Logo from '../../../../components/Logo/Logo';
-import { SECTIONS } from '../../sections';
 import LanguagePicker from '../../../../components/LanguagePicker/LanguagePicker';
 import { m } from '../../../../paraglide/messages.js';
+import { SECTIONS } from '../../sections';
 import * as styles from './Footer.css';
 
 const COLUMNS = [

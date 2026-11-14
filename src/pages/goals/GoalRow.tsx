@@ -7,6 +7,7 @@ import {
 } from '@phosphor-icons/react';
 import { Link } from '@tanstack/react-router';
 import type { Feature } from 'geojson';
+
 import type { Goal } from '../../types';
 import type { Marks } from '../../utils/atlasMarks';
 import { continentName } from '../../utils/continents';

@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Feature } from 'geojson';
 import { geoEquirectangular, geoPath } from 'd3-geo';
+
 import { mainPiece, worldShapes } from '../../../../utils/worldShapes';
 import { toNumeric } from '../../../../utils/toIsoNumeric';
-import { atlasAfter, BOOKS } from './miraAtlas';
 import { srOnly } from '../../../../styles/global.css';
-import * as styles from './LiveAtlas.css';
 import { m } from '../../../../paraglide/messages.js';
+import { atlasAfter, BOOKS } from './miraAtlas';
+import * as styles from './LiveAtlas.css';
 
 // the app's own flat map (AtlasMap): 360° across, 83°N to 57°S down, no Antarctica
 const WIDTH = 1000;

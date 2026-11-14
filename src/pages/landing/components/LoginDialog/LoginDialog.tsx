@@ -1,13 +1,13 @@
 import { useEffect, useState, type ChangeEvent, type SubmitEvent } from 'react';
 import { PushPinIcon, WarningCircleIcon } from '@phosphor-icons/react';
 
-import * as styles from './LoginDialog.css';
 import Dialog from '../../../../components/Dialog/Dialog';
 import Field from '../../../../components/Field/Field';
-import PasswordStrength from './PasswordStrength';
 import { sendPasswordReset, signIn, signUp } from '../../../../auth/session';
 import { isEmail, newPasswordProblem } from '../../../../auth/forms';
 import { m } from '../../../../paraglide/messages.js';
+import * as styles from './LoginDialog.css';
+import PasswordStrength from './PasswordStrength';
 
 export type AuthMode = 'signup' | 'login' | 'reset';
 

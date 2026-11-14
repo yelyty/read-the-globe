@@ -18,9 +18,9 @@ import Dialog, {
   DialogActions,
   DialogText,
 } from '../../../../components/Dialog/Dialog';
-import { atlasWords, bookCount, goalCount } from './readingList';
 import { m } from '../../../../paraglide/messages.js';
 import { getLocale } from '../../../../paraglide/runtime.js';
+import { atlasWords, bookCount, goalCount } from './readingList';
 
 type RestoreBackupProps = {
   userId: string;

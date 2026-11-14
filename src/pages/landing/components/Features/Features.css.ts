@@ -4,9 +4,10 @@ import {
   style,
   styleVariants,
 } from '@vanilla-extract/css';
-import { sectionTitle } from '../../LandingPage.css';
+
 import { band as bandFill } from '../../../../styles/global.css';
 import { vars } from '../../../../styles/theme.css';
+import { sectionTitle } from '../../LandingPage.css';
 
 const narrow = 'screen and (max-width: 799px)';
 // the panels stack only where a panel fits under the header with room to spare

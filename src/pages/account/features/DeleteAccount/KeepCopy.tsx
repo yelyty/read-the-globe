@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { DownloadSimpleIcon } from '@phosphor-icons/react';
+
 import type { BookEntry } from '../../../../types';
 import { Button } from '../../../../components/Button/Button';
-import { exportReadingList } from '../YourData/readingList';
 import { m } from '../../../../paraglide/messages.js';
-
+import { exportReadingList } from '../YourData/readingList';
 import * as styles from './DeleteAccount.css';
 
 type KeepCopyProps = {

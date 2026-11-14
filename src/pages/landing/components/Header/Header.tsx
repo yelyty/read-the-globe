@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { ListIcon, PushPinIcon } from '@phosphor-icons/react';
-import * as styles from './Header.css';
-import { skip } from '../../LandingPage.css';
+
 import { useAuth } from '../../../../auth/auth-context';
-import { SECTIONS } from '../../sections';
 import ThemeButton from '../../../../components/ThemeButton/ThemeButton';
 import Logo from '../../../../components/Logo/Logo';
 import { m } from '../../../../paraglide/messages.js';
+import { skip } from '../../LandingPage.css';
+import { SECTIONS } from '../../sections';
+import * as styles from './Header.css';
 
 // the section on screen: the one crossing a thin line just under the middle of the viewport
 const useCurrentSection = () => {

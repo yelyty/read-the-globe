@@ -8,6 +8,7 @@ import {
   type ComponentPropsWithoutRef,
   type KeyboardEvent,
 } from 'react';
+
 import * as styles from './Suggest.css';
 
 // "hoeg" finds Høeg: accents don't block a match

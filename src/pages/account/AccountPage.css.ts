@@ -1,4 +1,5 @@
 import { globalStyle, style } from '@vanilla-extract/css';
+
 import { vars } from '../../styles/theme.css';
 import { band } from '../../styles/global.css';
 import { phone } from '../landing/LandingPage.css';

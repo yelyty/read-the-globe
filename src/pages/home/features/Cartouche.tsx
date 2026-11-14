@@ -1,8 +1,9 @@
 import { useId } from 'react';
+
 import type { Show } from '../../../components/AtlasMap/AtlasMap.tsx';
 import type { atlasStats } from '../../../utils/atlasMarks';
-import * as styles from '../HomePage.css';
 import { m } from '../../../paraglide/messages.js';
+import * as styles from '../HomePage.css';
 
 const CAPTION: Record<Show, () => string> = {
   all: m.home_cap_all,

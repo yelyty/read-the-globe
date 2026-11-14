@@ -8,7 +8,6 @@ import {
 } from 'react';
 import { ArrowLeftIcon, ArrowRightIcon } from '@phosphor-icons/react';
 import { geoEquirectangular } from 'd3-geo';
-import type { Geo } from '../../types';
 import {
   ComposableMap,
   Geographies,
@@ -16,6 +15,8 @@ import {
   Marker,
   type ProjectionFunction,
 } from 'react-simple-maps';
+
+import type { Geo } from '../../types';
 import type { Marks } from '../../utils/atlasMarks';
 import { m } from '../../paraglide/messages.js';
 import * as styles from './AtlasMap.css';

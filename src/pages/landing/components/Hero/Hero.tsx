@@ -1,8 +1,9 @@
 import type { CSSProperties } from 'react';
 import { PushPinIcon } from '@phosphor-icons/react';
-import * as styles from './Hero.css';
-import { btnPrimary } from '../LoginDialog/LoginDialog.css';
+
 import { m } from '../../../../paraglide/messages.js';
+import { btnPrimary } from '../LoginDialog/LoginDialog.css';
+import * as styles from './Hero.css';
 
 // each sticker is placed by its centre (--x, --y), sized (--s), tilted (--r) and staggered (--n)
 const sticker = (props: Record<string, string>) => props as CSSProperties;

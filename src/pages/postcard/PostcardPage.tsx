@@ -5,12 +5,20 @@ import {
   PushPinIcon,
   ShareFatIcon,
 } from '@phosphor-icons/react';
+
 import { useAuth } from '../../auth/auth-context';
 import { useCountryNames } from '../../hooks/useCountryNames';
 import { atlasMarks } from '../../utils/atlasMarks';
 import { updateProfile } from '../../api/Profile/updateProfile';
 import type { SavedPostcard } from '../../api/Profile/getProfile';
 import type { Goal } from '../../types';
+import { m } from '../../paraglide/messages.js';
+import { getLocale } from '../../paraglide/runtime.js';
+import PageTitle from '../../components/PageTitle/PageTitle';
+import Logo from '../../components/Logo/Logo';
+import Hint from '../../components/Hint/Hint';
+import Select from '../../components/Select/Select';
+import { goalName, goalProgress } from '../goals/goals';
 import {
   COLORS,
   KINDS,
@@ -25,14 +33,7 @@ import {
 } from './drawPostcard';
 import { GOAL_H, GOAL_W, drawGoalCard, goalCardName } from './drawGoalCard';
 import { bookYears, yearSum } from './yearSum';
-import { goalName, goalProgress } from '../goals/goals';
-import { m } from '../../paraglide/messages.js';
-import { getLocale } from '../../paraglide/runtime.js';
 import * as styles from './PostCardPage.css';
-import PageTitle from '../../components/PageTitle/PageTitle';
-import Logo from '../../components/Logo/Logo';
-import Hint from '../../components/Hint/Hint';
-import Select from '../../components/Select/Select';
 
 const app = getRouteApi('/app');
 const route = getRouteApi('/app/postcard');

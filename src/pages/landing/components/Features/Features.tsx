@@ -1,6 +1,6 @@
 import { useTheme } from '../../../../hooks/useTheme';
-import * as styles from './Features.css';
 import { m } from '../../../../paraglide/messages.js';
+import * as styles from './Features.css';
 
 const PANELS = [
   {

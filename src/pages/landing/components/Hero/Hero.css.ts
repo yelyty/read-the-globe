@@ -1,7 +1,8 @@
 import { keyframes, style } from '@vanilla-extract/css';
-import { headline } from '../../LandingPage.css';
+
 import { vars } from '../../../../styles/theme.css';
 import { reducedMotion } from '../../../../styles/global.css';
+import { headline } from '../../LandingPage.css';
 
 const settle = 'cubic-bezier(.16, 1, .3, 1)'; // one-time set-in, a longer tail than the UI's ease-out
 const motionOk = '(prefers-reduced-motion: no-preference)';

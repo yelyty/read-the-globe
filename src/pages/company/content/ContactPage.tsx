@@ -1,18 +1,19 @@
 import { useRef, useState, type ChangeEvent, type SubmitEvent } from 'react';
 import { WarningCircleIcon } from '@phosphor-icons/react';
-import CompanyPage from '../CompanyPage';
+
 import Field from '../../../components/Field/Field';
 import * as fieldStyles from '../../../components/Field/Field.css';
-import { btnPrimary } from '../../landing/components/LoginDialog/LoginDialog.css';
 import { isEmail } from '../../../auth/forms';
 import {
   sendContactMessage,
   type ContactMessage,
 } from '../../../api/contact/contact';
-import * as styles from '../CompanyPage.css';
 import { m } from '../../../paraglide/messages.js';
 import { getLocale } from '../../../paraglide/runtime.js';
 import { useDirty, useLeaveGuard } from '../../../hooks/useUnsaved';
+import { btnPrimary } from '../../landing/components/LoginDialog/LoginDialog.css';
+import CompanyPage from '../CompanyPage';
+import * as styles from '../CompanyPage.css';
 
 type Errors = Partial<Record<keyof ContactMessage, string>>;
 const FIELD_ORDER: (keyof ContactMessage)[] = ['name', 'email', 'message'];

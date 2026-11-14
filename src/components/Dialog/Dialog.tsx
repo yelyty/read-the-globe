@@ -6,9 +6,10 @@ import {
   type ReactNode,
 } from 'react';
 import { XIcon } from '@phosphor-icons/react';
+
 import { canDiscard } from '../../hooks/useUnsaved';
-import * as styles from './Dialog.css';
 import { m } from '../../paraglide/messages.js';
+import * as styles from './Dialog.css';
 
 type DialogProps = Omit<
   ComponentProps<'dialog'>,

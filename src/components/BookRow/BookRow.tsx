@@ -1,12 +1,13 @@
 import { Fragment } from 'react';
-import type { BookEntry } from '../../types';
-import { coverColor } from '../../utils/coverColors';
-import * as styles from './BookRow.css';
 import { PencilSimpleIcon } from '@phosphor-icons/react';
 import { Link } from '@tanstack/react-router';
+
+import type { BookEntry } from '../../types';
+import { coverColor } from '../../utils/coverColors';
 import { readDate } from '../../utils/readDate';
 import { m } from '../../paraglide/messages.js';
 import { getLocale } from '../../paraglide/runtime.js';
+import * as styles from './BookRow.css';
 
 const formatMonth = (day: string) =>
   new Date(`${day}T12:00:00`).toLocaleDateString(getLocale(), {

@@ -1,8 +1,9 @@
 import { useLayoutEffect, useRef } from 'react';
+
 import type { Marks } from '../../utils/atlasMarks';
 import { coverColor } from '../../utils/coverColors';
-import * as styles from './HomePage.css';
 import { m } from '../../paraglide/messages.js';
+import * as styles from './HomePage.css';
 
 export type Tip = {
   code: string;

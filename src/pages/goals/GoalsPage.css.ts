@@ -1,4 +1,5 @@
 import { globalStyle, keyframes, style } from '@vanilla-extract/css';
+
 import { fontSize, space, vars } from '../../styles/theme.css';
 import {
   buttonSize,

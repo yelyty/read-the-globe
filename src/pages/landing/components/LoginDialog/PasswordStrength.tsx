@@ -1,5 +1,5 @@
-import * as styles from './LoginDialog.css';
 import { passwordStrength, STRENGTH_LABELS } from '../../../../auth/forms';
+import * as styles from './LoginDialog.css';
 
 type PasswordStrengthProps = {
   /** the label's id: point the password input's aria-describedby at it */

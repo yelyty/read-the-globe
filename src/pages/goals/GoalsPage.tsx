@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { getRouteApi, useNavigate, useRouter } from '@tanstack/react-router';
 import type { Feature } from 'geojson';
-import type { Goal, GoalKind } from '../../types';
 import { ArrowCounterClockwiseIcon, PlusIcon } from '@phosphor-icons/react';
+
+import type { Goal, GoalKind } from '../../types';
 import { atlasMarks } from '../../utils/atlasMarks';
 import { worldShapes } from '../../utils/worldShapes';
 import {
@@ -13,6 +14,9 @@ import {
 } from '../../api/goals/goals';
 import { useStatus } from '../../hooks/useStatus';
 import { reducedMotion } from '../../styles/global.css';
+import { useCountryNames } from '../../hooks/useCountryNames';
+import { m } from '../../paraglide/messages.js';
+import PageTitle from '../../components/PageTitle/PageTitle';
 import {
   CATALOGUE,
   KIND_GROUP,
@@ -24,14 +28,11 @@ import {
   withBold,
   type GoalDraft,
 } from './goals';
-import { useCountryNames } from '../../hooks/useCountryNames';
-import { m } from '../../paraglide/messages.js';
 import { GoalPlate, GoalShelf } from './GoalPlate';
 import GoalRow from './GoalRow';
 import GoalDialog from './GoalsDialog';
 import BooksDialog from './BooksDialog';
 import * as styles from './GoalsPage.css';
-import PageTitle from '../../components/PageTitle/PageTitle';
 
 const app = getRouteApi('/app');
 const route = getRouteApi('/app/goals');

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+
 import * as styles from './Hint.css';
 
 type HintProp = {

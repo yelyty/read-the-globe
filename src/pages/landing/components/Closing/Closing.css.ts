@@ -4,9 +4,10 @@ import {
   style,
   styleVariants,
 } from '@vanilla-extract/css';
+
 import { vars } from '../../../../styles/theme.css';
-import { sectionTitle } from '../../LandingPage.css';
 import { easeOut, hover } from '../../../../styles/global.css';
+import { sectionTitle } from '../../LandingPage.css';
 
 const narrow = 'screen and (max-width: 799px)';
 const motionOk = '(prefers-reduced-motion: no-preference)';

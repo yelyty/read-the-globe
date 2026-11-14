@@ -1,8 +1,9 @@
+import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from '@tanstack/react-router';
+
+import { useAuth } from '../../auth/auth-context';
 import * as styles from './LandingPage.css';
 import Hero from './components/Hero/Hero';
-import { useCallback, useEffect, useState } from 'react';
-import { useAuth } from '../../auth/auth-context';
-import { useNavigate } from '@tanstack/react-router';
 import Header from './components/Header/Header';
 import LoginDialog, {
   type AuthMode,

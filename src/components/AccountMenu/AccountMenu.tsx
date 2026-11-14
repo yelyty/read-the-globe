@@ -3,10 +3,10 @@ import { CaretDownIcon } from '@phosphor-icons/react';
 import { Link, useMatchRoute } from '@tanstack/react-router';
 
 import { useSignOut } from '../../hooks/useSignOut';
-import * as styles from './AccountMenu.css';
 import { m } from '../../paraglide/messages.js';
 import LanguagePicker from '../LanguagePicker/LanguagePicker';
 import { menuRow } from '../LanguagePicker/LanguagePicker.css';
+import * as styles from './AccountMenu.css';
 
 const AccountMenu = () => {
   const [open, setOpen] = useState(false);

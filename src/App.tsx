@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { RouterProvider } from '@tanstack/react-router';
+
 import { useAuth } from './auth/auth-context';
 import { router } from './router';
 

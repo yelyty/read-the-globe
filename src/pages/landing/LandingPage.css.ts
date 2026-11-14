@@ -1,4 +1,5 @@
 import { style, globalStyle } from '@vanilla-extract/css';
+
 import { vars } from '../../styles/theme.css';
 import { band, reducedMotion } from '../../styles/global.css';
 

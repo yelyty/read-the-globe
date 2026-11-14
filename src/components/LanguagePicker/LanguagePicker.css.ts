@@ -1,4 +1,5 @@
 import { style } from '@vanilla-extract/css';
+
 import { vars } from '../../styles/theme.css';
 
 // a row in the account menu: the label, then the picker; its label lines up with the menu items' text (12px in)

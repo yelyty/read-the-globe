@@ -1,17 +1,17 @@
 import { useState, type SubmitEvent } from 'react';
 import { TrashIcon } from '@phosphor-icons/react';
+
 import Field from '../../../../components/Field/Field';
 import { getLocale } from '../../../../paraglide/runtime.js';
 import { deleteAccount } from '../../../../api/Profile/deleteAccount';
-
 import type { BookEntry } from '../../../../types';
 import { Button } from '../../../../components/Button/Button';
 import Dialog, {
   DialogActions,
   DialogText,
 } from '../../../../components/Dialog/Dialog';
-import KeepCopy from './KeepCopy';
 import { m } from '../../../../paraglide/messages.js';
+import KeepCopy from './KeepCopy';
 
 type ConfirmationDialogProps = {
   books: BookEntry[];

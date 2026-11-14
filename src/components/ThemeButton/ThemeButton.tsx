@@ -1,7 +1,8 @@
 import { SunIcon, MoonStarsIcon } from '@phosphor-icons/react';
+
 import { useTheme } from '../../hooks/useTheme';
-import * as styles from './ThemeButton.css';
 import { m } from '../../paraglide/messages.js';
+import * as styles from './ThemeButton.css';
 
 const THEME_KEY = 'rtg-theme';
 

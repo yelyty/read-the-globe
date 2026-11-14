@@ -3,15 +3,13 @@ import { Link, Outlet, useRouterState } from '@tanstack/react-router';
 import { PushPinIcon } from '@phosphor-icons/react';
 
 import '../../App.css';
-
+import { LandingContext, type Landing } from '../../hooks/useLanding';
+import { m } from '../../paraglide/messages.js';
 import AppHeader from '../AppHeader/AppHeader';
 import AppFooter from '../AppFooter/AppFooter';
 import StatusBar from '../StatusBar/StatusBar';
-import { LandingContext, type Landing } from '../../hooks/useLanding';
-
-import * as styles from './AppLayout.css';
 import LogBook from '../LogBook/LogBook';
-import { m } from '../../paraglide/messages.js';
+import * as styles from './AppLayout.css';
 
 const TITLES: Record<string, () => string> = {
   '/app': m.nav_home,

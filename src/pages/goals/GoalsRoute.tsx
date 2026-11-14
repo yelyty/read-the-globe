@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+
 import * as styles from './GoalsPage.css';
 
 type GoalRouteProps = { done: number; total: number; theme?: boolean };

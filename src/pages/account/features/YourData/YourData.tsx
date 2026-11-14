@@ -8,11 +8,11 @@ import {
 
 import type { BookEntry, Goal } from '../../../../types';
 import { getBackup } from '../../../../api/data/data';
-import * as styles from '../../AccountPage.css';
-import Block from '../../components/Block';
 import { Button } from '../../../../components/Button/Button';
 import { button } from '../../../../components/Button/Button.css';
-
+import { m } from '../../../../paraglide/messages.js';
+import * as styles from '../../AccountPage.css';
+import Block from '../../components/Block';
 import {
   bookCount,
   exportBackup,
@@ -20,8 +20,6 @@ import {
   exportReadingList,
 } from './readingList';
 import ImportCsv from './ImportCsv';
-import { m } from '../../../../paraglide/messages.js';
-
 import RestoreBackup from './RestoreBackup';
 
 type YourDataProps = {

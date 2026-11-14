@@ -1,12 +1,13 @@
 import { globalStyle, style, keyframes } from '@vanilla-extract/css';
+
 import { vars } from '../../../../styles/theme.css';
-import { phone, wrap } from '../../LandingPage.css';
 import {
   buttonSize,
   coarse,
   hover,
   reducedMotion,
 } from '../../../../styles/global.css';
+import { phone, wrap } from '../../LandingPage.css';
 
 export const header = style({
   position: 'sticky',

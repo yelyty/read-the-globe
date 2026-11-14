@@ -1,8 +1,9 @@
 import { feature } from 'topojson-client';
 import type { Topology } from 'topojson-specification';
 import type { Feature, Polygon } from 'geojson';
-import { GEO_URL } from '../components/AtlasMap/AtlasMap';
 import { geoArea } from 'd3-geo';
+
+import { GEO_URL } from '../components/AtlasMap/AtlasMap';
 
 let shapes: Promise<Record<string, Feature>> | undefined;
 

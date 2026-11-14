@@ -3,6 +3,7 @@ import {
   Outlet,
   redirect,
 } from '@tanstack/react-router';
+
 import {
   baseLocale,
   extractLocaleFromNavigator,

@@ -3,12 +3,11 @@ import { CheckIcon } from '@phosphor-icons/react';
 
 import Field from '../../../components/Field/Field';
 import { updateDisplayName, type Reader } from '../../../auth/session';
-import * as styles from '../AccountPage.css';
-
-import Block from '../components/Block';
 import Hint from '../../../components/Hint/Hint';
 import { Button } from '../../../components/Button/Button';
 import { m } from '../../../paraglide/messages.js';
+import * as styles from '../AccountPage.css';
+import Block from '../components/Block';
 
 type UserDetailsProps = {
   user: Reader;

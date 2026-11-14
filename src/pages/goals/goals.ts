@@ -1,5 +1,6 @@
 import { createElement, type ReactNode } from 'react';
 import type { Feature } from 'geojson';
+
 import type { BookEntry, Goal, GoalKind } from '../../types';
 import type { Marks } from '../../utils/atlasMarks';
 import {

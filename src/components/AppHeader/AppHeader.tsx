@@ -1,11 +1,12 @@
 import { Link } from '@tanstack/react-router';
 import { PushPinIcon } from '@phosphor-icons/react';
+
 import * as headerStyles from '../../pages/landing/components/Header/Header.css';
-import * as styles from './AppHeader.css';
+import { m } from '../../paraglide/messages.js';
 import ThemeButton from '../ThemeButton/ThemeButton';
 import Logo from '../Logo/Logo';
 import AccountMenu from '../AccountMenu/AccountMenu';
-import { m } from '../../paraglide/messages.js';
+import * as styles from './AppHeader.css';
 
 const AppHeader = () => {
   return (

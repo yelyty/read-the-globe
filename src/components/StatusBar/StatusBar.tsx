@@ -5,6 +5,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+
 import { StatusContext, type Status } from '../../hooks/useStatus';
 import * as styles from './StatusBar.css';
 

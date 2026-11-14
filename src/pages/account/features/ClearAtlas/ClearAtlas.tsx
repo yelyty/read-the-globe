@@ -14,10 +14,10 @@ import Dialog, {
   DialogActions,
   DialogText,
 } from '../../../../components/Dialog/Dialog';
+import { m } from '../../../../paraglide/messages.js';
 import { atlasWords } from '../YourData/readingList';
 import KeepCopy from '../DeleteAccount/KeepCopy';
 import * as styles from '../DeleteAccount/DeleteAccount.css';
-import { m } from '../../../../paraglide/messages.js';
 
 type ClearAtlasProps = {
   userId: string;

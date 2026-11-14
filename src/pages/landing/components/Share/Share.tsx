@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { PushPinIcon } from '@phosphor-icons/react';
-import { btnPrimary } from '../LoginDialog/LoginDialog.css';
+
 import { srOnly } from '../../../../styles/global.css';
-import * as styles from './Share.css';
 import { m } from '../../../../paraglide/messages.js';
+import { btnPrimary } from '../LoginDialog/LoginDialog.css';
+import * as styles from './Share.css';
 
 const KINDS = [
   {

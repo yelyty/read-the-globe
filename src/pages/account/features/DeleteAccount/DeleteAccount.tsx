@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { TrashIcon } from '@phosphor-icons/react';
 
 import type { BookEntry } from '../../../../types';
-import * as styles from './DeleteAccount.css';
 import { Button } from '../../../../components/Button/Button';
-import ConfirmationDialog from './ConfirmationDialog';
 import { m } from '../../../../paraglide/messages.js';
+import * as styles from './DeleteAccount.css';
+import ConfirmationDialog from './ConfirmationDialog';
 
 type DeleteAccountProps = {
   books: BookEntry[];

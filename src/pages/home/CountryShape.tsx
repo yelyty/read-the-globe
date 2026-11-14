@@ -1,6 +1,7 @@
 import { useEffect, useId, useState } from 'react';
 import { geoArea, geoEquirectangular, geoPath } from 'd3-geo';
 import type { Feature, Polygon } from 'geojson';
+
 import type { Mark } from '../../utils/atlasMarks';
 import { worldShapes } from '../../utils/worldShapes';
 import * as styles from './HomePage.css';

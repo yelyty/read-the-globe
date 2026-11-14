@@ -1,8 +1,8 @@
 import { useState, type SubmitEvent } from 'react';
 import { CheckIcon, MagnifyingGlassIcon } from '@phosphor-icons/react';
+
 import type { BookEntry, Goal } from '../../types';
 import { setGoalBooks } from '../../api/goals/goals';
-import * as styles from './GoalsPage.css';
 import Hint from '../../components/Hint/Hint';
 import { Button } from '../../components/Button/Button';
 import { useDirty } from '../../hooks/useUnsaved';
@@ -10,8 +10,9 @@ import Dialog, {
   DialogActions,
   DialogText,
 } from '../../components/Dialog/Dialog';
-import { goalName, withBold } from './goals';
 import { m } from '../../paraglide/messages.js';
+import * as styles from './GoalsPage.css';
+import { goalName, withBold } from './goals';
 
 type BooksDialogProps = {
   goal: Goal;

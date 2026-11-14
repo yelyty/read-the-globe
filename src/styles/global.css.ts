@@ -1,4 +1,5 @@
 import { globalStyle, style } from '@vanilla-extract/css';
+
 import { fontSize, vars } from './theme.css';
 
 export const hover = '(hover: hover)';

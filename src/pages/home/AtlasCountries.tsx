@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { MapTrifoldIcon } from '@phosphor-icons/react';
+
 import { counted, type Mark, type Marks } from '../../utils/atlasMarks';
 import {
   CONTINENT_NAMES,
@@ -7,11 +8,10 @@ import {
   continentName,
   type Continent,
 } from '../../utils/continents';
-
-import * as styles from './HomePage.css';
-import CountryShape from './CountryShape';
 import { m } from '../../paraglide/messages.js';
 import { getLocale } from '../../paraglide/runtime.js';
+import * as styles from './HomePage.css';
+import CountryShape from './CountryShape';
 
 const PEEK = 6;
 

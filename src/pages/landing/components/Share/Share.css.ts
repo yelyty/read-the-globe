@@ -1,7 +1,8 @@
 import { globalStyle, style } from '@vanilla-extract/css';
-import { sectionTitle, wrap } from '../../LandingPage.css';
+
 import { band, easeOut, hover } from '../../../../styles/global.css';
 import { vars } from '../../../../styles/theme.css';
+import { sectionTitle, wrap } from '../../LandingPage.css';
 
 const narrow = 'screen and (max-width: 899px)';
 

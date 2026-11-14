@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { useNavigate } from '@tanstack/react-router';
+
 import { useAuth } from '../../auth/auth-context';
 import Footer from '../landing/components/Footer/Footer';
 import Header from '../landing/components/Header/Header';

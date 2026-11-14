@@ -1,8 +1,8 @@
 import type { BookEntry, Goal } from '../../types';
 import { CONTINENT_OF } from '../../utils/continents';
-import { goalName } from '../goals/goals';
 import { m } from '../../paraglide/messages.js';
 import { getLocale } from '../../paraglide/runtime.js';
+import { goalName } from '../goals/goals';
 
 // when a book was read; rows saved before read_on fall back to the day they were logged
 export const readDate = (book: BookEntry) =>

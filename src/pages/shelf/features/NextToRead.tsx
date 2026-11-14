@@ -6,23 +6,24 @@ import {
   PushPinIcon,
   TrashIcon,
 } from '@phosphor-icons/react';
+
 import type { Goal, NextRead } from '../../../types';
 import type { Marks } from '../../../utils/atlasMarks';
 import { addNextRead, removeNextRead } from '../../../api/nextReads/nextReads';
+import { getLocale } from '../../../paraglide/runtime.js';
+import { m } from '../../../paraglide/messages.js';
+import { useStatus } from '../../../hooks/useStatus';
+import { useDirty, useLeaveGuard } from '../../../hooks/useUnsaved';
+import Select from '../../../components/Select/Select';
+import Suggest from '../../../components/Suggest/Suggest';
+import { fieldError } from '../../../components/Field/Field.css';
 import {
   countryStamp,
   loadCountries,
   type Country,
 } from '../../postcard/drawPostcard';
 import { goalHas, goalName } from '../../goals/goals';
-import { getLocale } from '../../../paraglide/runtime.js';
-import { m } from '../../../paraglide/messages.js';
-import { useStatus } from '../../../hooks/useStatus';
-import { useDirty, useLeaveGuard } from '../../../hooks/useUnsaved';
 import * as styles from '../ShelfPage.css';
-import Select from '../../../components/Select/Select';
-import Suggest from '../../../components/Suggest/Suggest';
-import { fieldError } from '../../../components/Field/Field.css';
 
 type NextToReadProps = {
   items: NextRead[];

@@ -7,6 +7,7 @@ import {
   type KeyboardEvent,
 } from 'react';
 import { CaretDownIcon, CheckIcon } from '@phosphor-icons/react';
+
 import { srOnly } from '../../styles/global.css';
 import * as styles from './Select.css';
 

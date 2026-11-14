@@ -1,4 +1,5 @@
 import { globalStyle, style } from '@vanilla-extract/css';
+
 import { fontSize, space, vars } from '../../../styles/theme.css';
 
 const wide = 'screen and (min-width: 800px)';

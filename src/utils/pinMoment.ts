@@ -1,9 +1,9 @@
 import type { BookEntry } from '../types';
+import { m } from '../paraglide/messages.js';
+import { getLocale } from '../paraglide/runtime.js';
 import { counted, type Marks } from './atlasMarks';
 import { CONTINENT_OF, continentName } from './continents';
 import { PARENT } from './countryFrom';
-import { m } from '../paraglide/messages.js';
-import { getLocale } from '../paraglide/runtime.js';
 
 // English ordinals; Czech and Ukrainian say the number ("2.", "2-та")
 const ORD = [

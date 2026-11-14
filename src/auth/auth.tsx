@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { User } from '@supabase/supabase-js';
+
 import { supabase } from '../utils/supabase';
 import { AuthContext } from './auth-context';
 import { seedIfWished, toReader, type Reader } from './session';

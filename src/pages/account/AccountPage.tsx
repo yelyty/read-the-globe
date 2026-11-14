@@ -1,19 +1,18 @@
 import { getRouteApi } from '@tanstack/react-router';
+
 import { useAuth } from '../../auth/auth-context';
 import { useCountryNames } from '../../hooks/useCountryNames';
-
+import LanguagePicker from '../../components/LanguagePicker/LanguagePicker';
+import * as fieldStyles from '../../components/Field/Field.css';
+import { m } from '../../paraglide/messages.js';
+import PageTitle from '../../components/PageTitle/PageTitle';
 import UserDetails from './features/UserDetails';
 import ChangePassword from './features/ChangePassword/ChangePassword';
 import DeleteAccount from './features/DeleteAccount/DeleteAccount';
 import YourData from './features/YourData/YourData';
 import ClearAtlas from './features/ClearAtlas/ClearAtlas';
 import Block from './components/Block';
-import LanguagePicker from '../../components/LanguagePicker/LanguagePicker';
-import * as fieldStyles from '../../components/Field/Field.css';
-import { m } from '../../paraglide/messages.js';
-
 import * as styles from './AccountPage.css';
-import PageTitle from '../../components/PageTitle/PageTitle';
 
 const app = getRouteApi('/app');
 

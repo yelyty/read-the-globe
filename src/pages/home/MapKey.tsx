@@ -1,6 +1,6 @@
 import type { Show } from '../../components/AtlasMap/AtlasMap.tsx';
-import * as styles from './HomePage.css';
 import { m } from '../../paraglide/messages.js';
+import * as styles from './HomePage.css';
 
 const SHOW: [Show, () => string, (() => string)?][] = [
   ['all', m.map_key_both],
