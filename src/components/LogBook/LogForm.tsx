@@ -1,6 +1,5 @@
 import { useMemo, useState, type ChangeEvent, type SubmitEvent } from 'react';
 import { PlusIcon, PushPinIcon, TrashIcon } from '@phosphor-icons/react';
-import type { Feature } from 'geojson';
 
 import { type Landing } from '../../hooks/useLanding';
 import type { BookEntry, Goal, NextRead } from '../../types';
@@ -59,7 +58,6 @@ type LogFormProps = {
   setIn?: string;
   /** an imagined world to start with as a place */
   world?: string;
-  shapes: Record<string, Feature>;
   names: Record<string, string>;
   books: BookEntry[];
   goals: Goal[];
@@ -75,7 +73,6 @@ const LogForm = ({
   nextItem,
   setIn,
   world,
-  shapes,
   names,
   books,
   goals,
@@ -370,14 +367,13 @@ const LogForm = ({
     const reached = goals.filter(
       (goal) =>
         !goal.reachedOn &&
-        !isDone(goalProgress(goal, before, books, shapes)) &&
-        isDone(goalProgress(goal, after, all, shapes))
+        !isDone(goalProgress(goal, before, books)) &&
+        isDone(goalProgress(goal, after, all))
     );
 
     const firstGoal = reached[0];
 
-    const total =
-      firstGoal && goalProgress(firstGoal, after, all, shapes).total;
+    const total = firstGoal && goalProgress(firstGoal, after, all).total;
 
     return {
       ...pinMoment(added, before, after, names),

@@ -3,11 +3,11 @@ import type { Feature, MultiPolygon, Polygon, Position } from 'geojson';
 
 import type { BookEntry } from '../../types';
 import { atlasMarks, type Marks } from '../../utils/atlasMarks';
+import { authorCountry, bookCountries, storyCountries } from '../../utils/book';
 import { CONTINENT_OF } from '../../utils/continents';
 import { worldShapes } from '../../utils/world';
 import { light } from '../../styles/theme.css';
 import { m } from '../../paraglide/messages.js';
-import { bookCodes } from './yearSum';
 
 export const SIZE = 1080;
 
@@ -157,7 +157,7 @@ export const COLORS = {
    Its words, colour and numbers all follow that choice. */
 export const KINDS = {
   authors: {
-    codes: (book: BookEntry) => [book.author?.country?.code],
+    codes: (book: BookEntry) => [authorCountry(book)],
     count: (mark: Marks[string]) => mark.author.length,
     color: 'rust',
     caption: m.postcard_caption_authors,
@@ -166,8 +166,7 @@ export const KINDS = {
     share: (count: number) => m.postcard_share_authors({ n: count }),
   },
   settings: {
-    codes: (book: BookEntry) =>
-      (book.places ?? []).map((place) => place.countryCode),
+    codes: storyCountries,
     count: (mark: Marks[string]) => mark.set.length,
     color: 'olive',
     caption: m.postcard_caption_settings,
@@ -179,7 +178,7 @@ export const KINDS = {
 
 // a year-end card counts every country of that year's books, both marks, in the goal Green unless a colour is chosen
 export const YEAR = {
-  codes: bookCodes,
+  codes: bookCountries,
   count: (mark: Marks[string]) => new Set([...mark.set, ...mark.author]).size,
   color: 'green',
   stat: m.label_country,

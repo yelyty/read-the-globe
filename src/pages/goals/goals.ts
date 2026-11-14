@@ -1,5 +1,4 @@
 import { createElement, type ReactNode } from 'react';
-import type { Feature } from 'geojson';
 
 import type { BookEntry, Goal, GoalKind } from '../../types';
 import type { Marks } from '../../utils/atlasMarks';
@@ -9,6 +8,7 @@ import {
   type Continent,
 } from '../../utils/continents';
 import { toNumeric } from '../../utils/toIsoNumeric';
+import { MAP_CODES } from '../../utils/world';
 import { m } from '../../paraglide/messages.js';
 import { getLocale } from '../../paraglide/runtime.js';
 
@@ -104,17 +104,22 @@ export const withBold = (text: string): ReactNode[] =>
     .map((part, i) => (i % 2 ? createElement('b', { key: i }, part) : part));
 
 export type Progress = {
+  /** books counted (a theme), or countries marked (a place goal) */
   done: number;
+  /** what reaching it takes */
   total: number;
+  /** a place goal's countries, marked or not; [] for a theme */
   all: string[];
+  /** the ones already marked */
   reached: string[];
 };
 
+/** How far the reader's books go into a goal. A theme counts the books ticked toward it; a region counts the countries
+    on the map in that continent, a list goal its own countries, and either is reached when every one is marked. */
 export function goalProgress(
   goal: GoalDraft & { id?: number },
   marks: Marks,
-  books: BookEntry[],
-  shapes: Record<string, Feature>
+  books: BookEntry[]
 ): Progress {
   if (goal.kind === 'theme') {
     const done = books.filter((book) =>
@@ -126,9 +131,7 @@ export function goalProgress(
 
   const all =
     goal.kind === 'region'
-      ? Object.keys(shapes).filter(
-          (code) => CONTINENT_OF[code] === goal.continent
-        )
+      ? MAP_CODES.filter((code) => CONTINENT_OF[code] === goal.continent)
       : (goal.countryCodes ?? []);
 
   const reached = all.filter((code) => marks[code]);

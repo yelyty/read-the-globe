@@ -4,7 +4,7 @@ import map from '../../public/countries-50m.json?raw';
 import { getCountryNames } from './countryNames';
 import { countryFrom } from './countryFrom';
 import { CONTINENT_OF } from './continents';
-import { GEO_URL, worldNames, worldShapes } from './world';
+import { GEO_URL, MAP_CODES, worldNames, worldShapes } from './world';
 
 // the real map file, as the app serves it from /public
 const fetchMap = vi.fn<(url: string) => Promise<Response>>(() =>
@@ -29,6 +29,13 @@ describe('world', () => {
 
     expect(Object.keys(shapes).length).toBeGreaterThan(0);
     expect(Object.keys(names).sort()).toEqual(Object.keys(shapes).sort());
+  });
+
+  // the list goals count from, kept in step with the map file
+  it('lists every country it draws in MAP_CODES, and nothing else', async () => {
+    const codes = Object.keys(await worldShapes());
+
+    expect([...MAP_CODES].sort()).toEqual(codes.sort());
   });
 
   it('puts every country it draws on a continent', async () => {

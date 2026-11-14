@@ -5,6 +5,9 @@ import { isoDay, isoYear, isoYearMonth } from './isoDate';
 export const readDate = (book: BookEntry) =>
   book.readOn ?? isoDay(book.createdAt ?? '');
 
+// the year it was read, YYYY
+export const readYear = (book: BookEntry) => isoYear(readDate(book));
+
 // newest read first; ties keep the order they came in
 export const byReadDate = (left: BookEntry, right: BookEntry) =>
   readDate(right).localeCompare(readDate(left));

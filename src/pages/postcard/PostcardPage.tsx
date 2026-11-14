@@ -107,15 +107,7 @@ const PostcardPage = () => {
     [year, books, goals]
   );
 
-  const shapes = useMemo(
-    () =>
-      Object.fromEntries(
-        [...(countries ?? [])].map(([code, country]) => [code, country.shape])
-      ),
-    [countries]
-  );
-
-  const progress = (target: Goal) => goalProgress(target, marks, books, shapes);
+  const progress = (target: Goal) => goalProgress(target, marks, books);
 
   const title = year
     ? firstName
@@ -175,7 +167,7 @@ const PostcardPage = () => {
         drawGoalCard({
           canvas: cv,
           goal,
-          progress: goalProgress(goal, marks, books, shapes),
+          progress: goalProgress(goal, marks, books),
           books,
           marks,
           names,
@@ -208,7 +200,6 @@ const PostcardPage = () => {
     options,
     title,
     countries,
-    shapes,
     goal,
     yearSummary,
     firstName,

@@ -22,7 +22,7 @@ import {
 import { useCountryNames } from '../../hooks/useCountryNames';
 import type { BookEntry } from '../../types';
 import { list as bookList } from '../../components/BookRow/BookRow.css';
-import { byReadDate } from '../../utils/readDate';
+import { byReadDate, readYear } from '../../utils/readDate';
 import {
   CONTINENT_NAMES,
   CONTINENT_OF,
@@ -37,6 +37,7 @@ import BookRow from '../../components/BookRow/BookRow';
 import { useStatus } from '../../hooks/useStatus';
 import PageTitle from '../../components/PageTitle/PageTitle';
 import Select from '../../components/Select/Select';
+import { authorCountry, storyCountries } from '../../utils/book';
 import { countryStamp, loadCountries } from '../postcard/drawPostcard';
 import { goalHas, goalName } from '../goals/goals';
 import ImportCsv from '../account/features/YourData/ImportCsv';
@@ -45,7 +46,6 @@ import * as styles from './ShelfPage.css';
 import NextToRead from './features/NextToRead';
 import YearHead from './YearHead';
 import { hatchSize } from './hatch';
-import { authorCode, yearOf, placeCodes } from './bookFields';
 
 const app = getRouteApi('/app');
 const shelfRoute = getRouteApi('/app/shelf');
@@ -82,7 +82,7 @@ const ShelfPage = () => {
   const marks = useMemo(() => atlasMarks(books), [books]);
 
   const years = useMemo(
-    () => [...new Set(books.map(yearOf).filter(Boolean))].sort().reverse(),
+    () => [...new Set(books.map(readYear).filter(Boolean))].sort().reverse(),
     [books]
   );
 
@@ -100,11 +100,11 @@ const ShelfPage = () => {
 
   // a place filter can count where the story is set, where the author is from, or either
   const hits = (book: BookEntry, test: (code: string) => boolean) => {
-    const authorCountry = authorCode(book);
+    const author = authorCountry(book);
 
     return (
-      (mark !== 'author' && placeCodes(book).some(test)) ||
-      (mark !== 'set' && !!authorCountry && test(authorCountry))
+      (mark !== 'author' && storyCountries(book).some(test)) ||
+      (mark !== 'set' && !!author && test(author))
     );
   };
 
@@ -115,7 +115,7 @@ const ShelfPage = () => {
     if (country && !hits(book, (code) => code === country)) return false;
     if (continent && !hits(book, (code) => CONTINENT_OF[code] === continent))
       return false;
-    if (year && yearOf(book) !== year) return false;
+    if (year && readYear(book) !== year) return false;
     if (
       goal &&
       !(goal.kind === 'theme'
@@ -128,7 +128,7 @@ const ShelfPage = () => {
     const hay = [
       book.title,
       book.author?.name,
-      name(authorCode(book)),
+      name(authorCountry(book)),
       ...(book.places ?? []).flatMap((place) => [
         place.name,
         name(place.countryCode ?? undefined),
@@ -148,8 +148,8 @@ const ShelfPage = () => {
   if (sort === 'country')
     list.sort(
       (first, second) =>
-        name(authorCode(first)).localeCompare(
-          name(authorCode(second)),
+        name(authorCountry(first)).localeCompare(
+          name(authorCountry(second)),
           locale
         ) || first.title.localeCompare(second.title, locale)
     );
@@ -167,10 +167,10 @@ const ShelfPage = () => {
     const by: Record<string, { books: number; codes: Set<string> }> = {};
 
     for (const book of books) {
-      const note = (by[yearOf(book)] ??= { books: 0, codes: new Set() });
+      const note = (by[readYear(book)] ??= { books: 0, codes: new Set() });
 
       note.books++;
-      for (const code of [authorCode(book), ...placeCodes(book)])
+      for (const code of [authorCountry(book), ...storyCountries(book)])
         if (code) note.codes.add(code);
     }
 
@@ -313,9 +313,9 @@ const ShelfPage = () => {
 
   // newest first, a year's first book comes under its heading; a folded year hides its books
   const renderBook = (book: BookEntry, i: number) => {
-    const bookYear = sort === 'new' ? yearOf(book) : '';
+    const bookYear = sort === 'new' ? readYear(book) : '';
     const isFolded = !!bookYear && unfiltered && folded.has(bookYear);
-    const firstOfYear = i === 0 || yearOf(list[i - 1]) !== bookYear;
+    const firstOfYear = i === 0 || readYear(list[i - 1]) !== bookYear;
 
     return (
       <Fragment key={book.id}>

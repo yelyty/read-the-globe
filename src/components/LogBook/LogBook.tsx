@@ -6,13 +6,11 @@ import {
   useRouterState,
 } from '@tanstack/react-router';
 import { ArrowCounterClockwiseIcon } from '@phosphor-icons/react';
-import type { Feature } from 'geojson';
 
 import { useStatus } from '../../hooks/useStatus';
 import { useLanding, type Landing } from '../../hooks/useLanding';
 import type { BookEntry, NextRead } from '../../types';
 import { saveBook } from '../../api/books/books';
-import { worldShapes } from '../../utils/world';
 import { worldsOf } from '../../utils/worlds';
 import { readDate } from '../../utils/readDate';
 import { getCountryNames } from '../../utils/countryNames';
@@ -29,7 +27,6 @@ const LogBook = () => {
   const { books, goals, worlds } = app.useLoaderData();
   const navigate = useNavigate();
   const router = useRouter();
-  const [shapes, setShapes] = useState<Record<string, Feature>>();
   const [names, setNames] = useState<Record<string, string>>();
   const [said, setSaid] = useState('');
   const [, setLanding] = useLanding();
@@ -51,13 +48,11 @@ const LogBook = () => {
       )?.items.find((it) => it.id === next),
   });
 
-  // the shapes size up a region goal, to tell whether this book reached it; the names are the same countries, in
-  // the reader's language, with the English ones kept so a country typed in English still matches
+  // the countries in the reader's language, with the English ones kept so a country typed in English still matches
   useEffect(() => {
-    if (!open || shapes) return;
-    worldShapes().then(setShapes);
+    if (!open || names) return;
     getCountryNames().then(setNames);
-  }, [open, shapes]);
+  }, [open, names]);
 
   const close = () =>
     navigate({
@@ -122,14 +117,13 @@ const LogBook = () => {
 
   return (
     <>
-      {open && shapes && names && (
+      {open && names && (
         <LogForm
           key={edit ?? 'new'}
           book={book}
           nextItem={nextItem}
           setIn={country}
           world={world}
-          shapes={shapes}
           names={names}
           books={books}
           goals={goals}

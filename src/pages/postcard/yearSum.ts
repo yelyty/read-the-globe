@@ -2,29 +2,13 @@ import type { BookEntry, Goal } from '../../types';
 import { CONTINENT_OF } from '../../utils/continents';
 import { m } from '../../paraglide/messages.js';
 import { getLocale } from '../../paraglide/runtime.js';
-import { isoDay, isoYear } from '../../utils/isoDate';
+import { bookCountries } from '../../utils/book';
+import { readDate, readYear } from '../../utils/readDate';
 import { goalName } from '../goals/goals';
-
-// when a book was read; rows saved before read_on fall back to the day they were logged
-export const readDate = (book: BookEntry) =>
-  book.readOn ?? isoDay(book.createdAt ?? '');
-
-// a book's countries, both marks: its author's, then its story's
-export const bookCodes = (book: BookEntry) =>
-  [
-    book.author?.country?.code,
-    ...(book.places ?? []).map((place) => place.countryCode),
-  ].filter((code): code is string => !!code);
 
 // the years that have books, newest first: one year-end card each
 export const bookYears = (books: BookEntry[]) =>
-  [
-    ...new Set(
-      books
-        .map((book) => isoYear(readDate(book)))
-        .filter((year) => /^\d{4}$/.test(year))
-    ),
-  ]
+  [...new Set(books.map(readYear).filter((year) => /^\d{4}$/.test(year)))]
     .sort()
     .reverse();
 
@@ -32,7 +16,7 @@ export const bookYears = (books: BookEntry[]) =>
    year fed most (on a tie a "Stories set in…" theme, then the goal added first), else how many countries were new. */
 export function yearSum(year: string, books: BookEntry[], goals: Goal[]) {
   const yb = books.filter((book) => readDate(book).startsWith(year));
-  const codes = [...new Set(yb.flatMap(bookCodes))];
+  const codes = [...new Set(yb.flatMap(bookCountries))];
 
   const continents = new Set(
     codes.map((code) => CONTINENT_OF[code]).filter(Boolean)
@@ -58,7 +42,7 @@ export function yearSum(year: string, books: BookEntry[], goals: Goal[]) {
     )[0];
 
   const before = new Set(
-    books.filter((book) => readDate(book) < year).flatMap(bookCodes)
+    books.filter((book) => readDate(book) < year).flatMap(bookCountries)
   );
 
   const fresh = codes.filter((code) => !before.has(code)).length;

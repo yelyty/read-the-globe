@@ -71,16 +71,14 @@ const GoalsPage = () => {
   const marks = atlasMarks(books);
 
   const progress = (draft: GoalDraft & { id?: number }) =>
-    goalProgress(draft, marks, books, shapes ?? {});
+    goalProgress(draft, marks, books);
 
   // a goal is stamped reached the first time it is seen full, and loses the stamp if a book is removed
   useEffect(() => {
-    if (!shapes) return;
-
     const changes = goals
       .map((goal) => ({
         g: goal,
-        done: isDone(goalProgress(goal, atlasMarks(books), books, shapes)),
+        done: isDone(goalProgress(goal, atlasMarks(books), books)),
       }))
       .filter(({ g, done }) => done !== !!g.reachedOn);
 
@@ -99,7 +97,7 @@ const GoalsPage = () => {
         ]);
       router.invalidate();
     });
-  }, [goals, books, shapes, router]);
+  }, [goals, books, router]);
 
   useEffect(() => {
     const focused = goals.find(

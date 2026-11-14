@@ -3,6 +3,8 @@ import { geoPath } from 'd3-geo';
 import type { BookEntry, Goal } from '../../types';
 import type { Marks } from '../../utils/atlasMarks';
 import { light } from '../../styles/theme.css';
+import { bookCountries } from '../../utils/book';
+import { readDate } from '../../utils/readDate';
 import { m } from '../../paraglide/messages.js';
 import { getLocale } from '../../paraglide/runtime.js';
 import { goalName, romanDate, today, type Progress } from '../goals/goals';
@@ -15,7 +17,6 @@ import {
   projection,
   type Country,
 } from './drawPostcard';
-import { bookCodes, readDate } from './yearSum';
 
 export const GOAL_W = 1500;
 export const GOAL_H = 1000;
@@ -229,7 +230,7 @@ export async function drawGoalCard({
 
   const stampCode =
     last && !theme
-      ? bookCodes(last).find((code) => progress.reached.includes(code))
+      ? bookCountries(last).find((code) => progress.reached.includes(code))
       : undefined;
 
   const date = goal.reachedOn ?? today();

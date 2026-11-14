@@ -1,6 +1,7 @@
 import type { BookEntry } from '../types';
 import { m } from '../paraglide/messages.js';
 import { getLocale } from '../paraglide/runtime.js';
+import { authorCountry, storyCountries } from './book';
 import { counted, type Marks } from './atlasMarks';
 import { CONTINENT_OF, continentName } from './continents';
 import { PARENT } from './countryFrom';
@@ -70,13 +71,13 @@ export function pinMoment(
 
   const placeCodes = [
     ...new Set(
-      book.places
-        .map((place) => country(place.countryCode))
+      storyCountries(book)
+        .map(country)
         .filter((code): code is string => !!code)
     ),
   ];
 
-  const authorCode = country(book.author?.country?.code);
+  const authorCode = country(authorCountry(book));
 
   // a country already on the atlas can still gain its other mark
   const gainedCodes = placeCodes.filter(

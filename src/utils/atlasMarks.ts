@@ -1,4 +1,5 @@
 import type { BookEntry } from '../types';
+import { authorCountry, storyCountries } from './book';
 import { CONTINENT_OF } from './continents';
 import { PARENT } from './countryFrom';
 
@@ -15,16 +16,12 @@ export function atlasMarks(books: BookEntry[]): Marks {
     PARENT[code] ? [code, PARENT[code]] : [code];
 
   for (const book of books) {
-    const authorCountry = book.author?.country?.code;
+    const author = authorCountry(book);
 
-    if (authorCountry)
-      for (const code of withParent(authorCountry)) at(code).author.push(book);
+    if (author)
+      for (const code of withParent(author)) at(code).author.push(book);
 
-    const setIn = new Set(
-      (book.places ?? []).flatMap((place) =>
-        place.countryCode ? withParent(place.countryCode) : []
-      )
-    );
+    const setIn = new Set(storyCountries(book).flatMap(withParent));
 
     for (const code of setIn) at(code).set.push(book);
   }
