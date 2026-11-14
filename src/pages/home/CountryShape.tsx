@@ -3,7 +3,7 @@ import { geoEquirectangular, geoPath } from 'd3-geo';
 import type { Feature } from 'geojson';
 
 import type { Mark } from '../../utils/atlasMarks';
-import { mainPiece, worldShapes } from '../../utils/worldShapes';
+import { mainPiece, worldShapes } from '../../utils/world';
 import * as styles from './HomePage.css';
 
 // the space round a country's shape, as a share of its box's shorter side

@@ -4,7 +4,7 @@ import type { Feature, FeatureCollection } from 'geojson';
 
 import type { Marks } from '../../utils/atlasMarks';
 import type { Continent } from '../../utils/continents';
-import { mainPiece } from '../../utils/worldShapes';
+import { mainPiece } from '../../utils/world';
 import { HEIGHT, INSET, WIDTH } from './plate';
 import * as styles from './GoalsPage.css';
 import PlateCountry from './PlateCountry';

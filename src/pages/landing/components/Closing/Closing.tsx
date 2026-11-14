@@ -3,7 +3,7 @@ import type { Feature } from 'geojson';
 import { PushPinIcon } from '@phosphor-icons/react';
 
 import { useReveal } from '../../../../hooks/useReveal';
-import { worldShapes } from '../../../../utils/worldShapes';
+import { worldShapes } from '../../../../utils/world';
 import { m } from '../../../../paraglide/messages.js';
 import { getLocale } from '../../../../paraglide/runtime.js';
 import { toAlpha2 } from '../../../../utils/toIsoNumeric';

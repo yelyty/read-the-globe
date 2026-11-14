@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   getRouteApi,
   useNavigate,
@@ -12,13 +12,11 @@ import { useStatus } from '../../hooks/useStatus';
 import { useLanding, type Landing } from '../../hooks/useLanding';
 import type { BookEntry, NextRead } from '../../types';
 import { saveBook } from '../../api/books/books';
-import { worldShapes } from '../../utils/worldShapes';
+import { worldShapes } from '../../utils/world';
 import { worldsOf } from '../../utils/worlds';
 import { readDate } from '../../utils/readDate';
 import { getCountryNames } from '../../utils/countryNames';
-import { toAlpha2 } from '../../utils/toIsoNumeric';
 import { m } from '../../paraglide/messages.js';
-import { getLocale } from '../../paraglide/runtime.js';
 import * as styles from './LogBook.css';
 import LogForm from './LogForm';
 
@@ -32,6 +30,7 @@ const LogBook = () => {
   const navigate = useNavigate();
   const router = useRouter();
   const [shapes, setShapes] = useState<Record<string, Feature>>();
+  const [names, setNames] = useState<Record<string, string>>();
   const [said, setSaid] = useState('');
   const [, setLanding] = useLanding();
 
@@ -52,39 +51,13 @@ const LogBook = () => {
       )?.items.find((it) => it.id === next),
   });
 
-  // country names from the 50m map, the same list as the countries table (the 110m one misses small countries);
-  // the shapes themselves size up a region goal, to tell whether this book reached it
+  // the shapes size up a region goal, to tell whether this book reached it; the names are the same countries, in
+  // the reader's language, with the English ones kept so a country typed in English still matches
   useEffect(() => {
     if (!open || shapes) return;
     worldShapes().then(setShapes);
-    // the English names, so a country typed in English still matches in Czech or Ukrainian
-    void getCountryNames();
+    getCountryNames().then(setNames);
   }, [open, shapes]);
-
-  const names = useMemo(() => {
-    if (!shapes) return undefined;
-    let dn: Intl.DisplayNames | null = null;
-
-    try {
-      if (getLocale() !== 'en')
-        dn = new Intl.DisplayNames([getLocale()], { type: 'region' });
-    } catch {
-      // an old browser: the map's English names
-    }
-
-    // in the reader's language where the browser knows the country, else the map's English name
-    return Object.fromEntries(
-      Object.entries(shapes).map(([code, shape]) => {
-        const a2 = toAlpha2(code);
-        const local = a2 && dn?.of(a2);
-
-        return [
-          code,
-          local && local !== a2 ? local : String(shape.properties?.name ?? ''),
-        ];
-      })
-    );
-  }, [shapes]);
 
   const close = () =>
     navigate({

@@ -5,7 +5,7 @@ import { ArrowCounterClockwiseIcon, PlusIcon } from '@phosphor-icons/react';
 
 import type { Goal, GoalKind } from '../../types';
 import { atlasMarks } from '../../utils/atlasMarks';
-import { worldShapes } from '../../utils/worldShapes';
+import { worldShapes } from '../../utils/world';
 import {
   addGoal,
   deleteGoal,
@@ -49,7 +49,7 @@ const GoalsPage = () => {
   const [editing, setEditing] = useState<Goal | 'new' | null>(null);
   const [choosing, setChoosing] = useState<Goal | null>(null);
   const status = useStatus();
-  const localNames = useCountryNames();
+  const names = useCountryNames();
   const say = (text: string) => status.show({ text });
   const { add: addSlug } = route.useSearch();
   const navigate = useNavigate();
@@ -147,17 +147,8 @@ const GoalsPage = () => {
     });
   });
 
-  if (!shapes) return <div />;
-
-  // the map's own names, in the reader's language once those have loaded
-  const names: Record<string, string> = {
-    ...Object.fromEntries(
-      Object.entries(shapes)
-        .filter(([, feature]) => feature.properties?.name)
-        .map(([code, feature]) => [code, feature.properties!.name as string])
-    ),
-    ...localNames,
-  };
+  // both come from the one map, a moment apart: wait for the names too, so no country shows as a bare code
+  if (!shapes || !Object.keys(names).length) return <div />;
 
   const name = (code: string) => names[code] ?? code;
   const full = goals.length >= MAX_GOALS;

@@ -1,7 +1,7 @@
 import type { Feature } from 'geojson';
 import { geoEquirectangular, geoPath } from 'd3-geo';
 
-import { mainPiece } from '../../../../utils/worldShapes';
+import { mainPiece } from '../../../../utils/world';
 
 // a stamp is drawn on a 100×100 grid; its country sits inside this margin
 const STAMP_SIZE = 100;

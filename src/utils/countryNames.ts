@@ -1,8 +1,6 @@
 import { getLocale } from '../paraglide/runtime.js';
 import { toAlpha2 } from './toIsoNumeric';
-
-const GEO_URL =
-  'https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json';
+import { worldNames } from './world';
 
 let english: Record<string, string> | null = null;
 let cache: Record<string, string> | null = null;
@@ -14,21 +12,8 @@ export const englishName = (code: string) => english?.[code];
 export async function getCountryNames(): Promise<Record<string, string>> {
   if (cache) return cache;
 
-  const topo = (await fetch(GEO_URL).then((response) => response.json())) as {
-    objects: {
-      countries: {
-        geometries: Array<{ id: string; properties: { name: string } }>;
-      };
-    };
-  };
-
-  const geometries = topo.objects.countries.geometries;
-
-  english = Object.fromEntries(
-    geometries
-      .filter((geometry) => geometry.id)
-      .map((geometry) => [geometry.id, geometry.properties.name])
-  );
+  // the map's own names, so every country it draws has one
+  english = await worldNames();
 
   const locale = getLocale();
 

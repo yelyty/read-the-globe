@@ -21,14 +21,11 @@ import {
   MAP_HEIGHT as HEIGHT,
   MAP_WIDTH as WIDTH,
 } from '../../utils/flatMap';
+import { GEO_URL } from '../../utils/world';
 import { m } from '../../paraglide/messages.js';
 import * as styles from './AtlasMap.css';
 import { Drawn } from './Drawn';
 import MapCountry from './MapCountry';
-
-// 50m, not 110m: the low-detail map leaves out small countries, which then could never be marked.
-// A local copy of world-atlas@2.0.2 countries-50m with Crimea moved from Russia back into Ukraine.
-export const GEO_URL = '/countries-50m.json';
 
 const projection = flatProjection();
 

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Feature } from 'geojson';
 import { geoPath } from 'd3-geo';
 
-import { mainPiece, worldShapes } from '../../../../utils/worldShapes';
+import { mainPiece, worldShapes } from '../../../../utils/world';
 import { toNumeric } from '../../../../utils/toIsoNumeric';
 import { srOnly } from '../../../../styles/global.css';
 import {

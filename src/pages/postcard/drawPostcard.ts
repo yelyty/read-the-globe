@@ -4,6 +4,7 @@ import type { Feature, MultiPolygon, Polygon, Position } from 'geojson';
 import type { BookEntry } from '../../types';
 import { atlasMarks, type Marks } from '../../utils/atlasMarks';
 import { CONTINENT_OF } from '../../utils/continents';
+import { worldShapes } from '../../utils/world';
 import { light } from '../../styles/theme.css';
 import { m } from '../../paraglide/messages.js';
 import { bookCodes } from './yearSum';
@@ -19,9 +20,6 @@ const DEGREES_ACROSS = 360;
 const UNITS_PER_DEGREE = WORLD_WIDTH / DEGREES_ACROSS;
 // a ring spanning more than half the world wraps the date line
 const HALF_WORLD_DEG = DEGREES_ACROSS / 2;
-
-// the map's own world shapes (Crimea in Ukraine), see AtlasMap
-const GEO_URL = '/countries-50m.json';
 
 export const projection = geoEquirectangular()
   .scale(WORLD_WIDTH / (2 * Math.PI))
@@ -228,87 +226,48 @@ export function postcardStats(books: BookEntry[], marks: Marks, spec: Spec) {
   };
 }
 
-/* ---------- the world, decoded once from the map's TopoJSON ---------- */
-type Topology = {
-  transform: { scale: [number, number]; translate: [number, number] };
-  arcs: [number, number][][];
-  objects: {
-    countries: {
-      geometries: {
-        id?: string;
-        type: string;
-        arcs?: number[][] | number[][][];
-      }[];
-    };
-  };
-};
+/* ---------- the world's countries, framed for stamps ---------- */
 type Box = [[number, number], [number, number]];
 
-let world: Promise<Map<string, Country>> | null = null;
+let stamped: Promise<Map<string, Country>> | null = null;
 
-// ponytail: a 20-line TopoJSON reader instead of topojson-client; world-atlas is always quantized, so only that case is handled
+// the map's shapes (from the one world loader), each with the frame of its main landmass
 export function loadCountries() {
-  world ??= fetch(GEO_URL)
-    .then((response) => response.json() as Promise<Topology>)
-    .then((topo) => {
-      const [sx, sy] = topo.transform.scale;
-      const [tx, ty] = topo.transform.translate;
+  stamped ??= worldShapes().then((shapes) => {
+    const countries = new Map<string, Country>();
 
-      const arcs = topo.arcs.map((arc) => {
-        let arcX = 0;
-        let arcY = 0;
+    for (const [code, shape] of Object.entries(shapes)) {
+      const { geometry } = shape;
 
-        return arc.map(([dx, dy]): Position => [
-          (arcX += dx) * sx + tx,
-          (arcY += dy) * sy + ty,
-        ]);
+      if (geometry.type !== 'Polygon' && geometry.type !== 'MultiPolygon')
+        continue;
+
+      const coordinates =
+        geometry.type === 'Polygon'
+          ? [geometry.coordinates]
+          : geometry.coordinates;
+
+      // a stamp frames the country's main landmass, not the islands far out at sea
+      const { box: main } = coordinates
+        .map(flatBox)
+        .reduce((largest, candidate) =>
+          candidate.area > largest.area ? candidate : largest
+        );
+
+      countries.set(code, {
+        shape: {
+          type: 'Feature',
+          properties: {},
+          geometry: { type: 'MultiPolygon', coordinates },
+        },
+        main,
       });
+    }
 
-      const ring = (ids: number[]) =>
-        ids.flatMap((i, position) => {
-          const arc = i < 0 ? [...arcs[~i]].reverse() : arcs[i];
+    return countries;
+  });
 
-          return position ? arc.slice(1) : arc;
-        });
-
-      const countries = new Map<string, Country>();
-      const sizes = new Map<string, number>(); // the main landmass's area, for a code that comes twice
-
-      for (const geometry of topo.objects.countries.geometries) {
-        if (!geometry.id || !geometry.arcs) continue;
-
-        const polygons =
-          geometry.type === 'Polygon'
-            ? [geometry.arcs as number[][]]
-            : (geometry.arcs as number[][][]);
-
-        const coordinates = polygons.map((polygon) => polygon.map(ring));
-
-        // a stamp frames the country's main landmass, not the islands far out at sea
-        const { box: main, area } = coordinates
-          .map(flatBox)
-          .reduce((largest, candidate) =>
-            candidate.area > largest.area ? candidate : largest
-          );
-
-        // Australia's 036 also tags the Ashmore and Cartier reef: the bigger shape is the country
-        if ((sizes.get(geometry.id) ?? -1) >= area) continue;
-        sizes.set(geometry.id, area);
-
-        countries.set(geometry.id, {
-          shape: {
-            type: 'Feature',
-            properties: {},
-            geometry: { type: 'MultiPolygon', coordinates },
-          },
-          main,
-        });
-      }
-
-      return countries;
-    });
-
-  return world;
+  return stamped;
 }
 
 // a ring's size and frame on the flat map. ponytail: planar on purpose; d3's spherical area and bounds read
