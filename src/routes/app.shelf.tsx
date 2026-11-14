@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import ShelfPage from '../pages/ShelfPage/ShelfPage';
+import ShelfPage from '../pages/shelf/ShelfPage';
 import { getNextReads } from '../api/nextReads/nextReads';
 
 type ShelfSearch = { country?: string; tab?: 'next'; q?: string };

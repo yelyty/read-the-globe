@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import PostcardPage from '../pages/PostcardPage/PostcardPage';
+import PostcardPage from '../pages/postcard/PostcardPage';
 import { getProfile } from '../api/Profile/getProfile';
 
 type PostcardSearch = { goal?: number; year?: string };

@@ -1,6 +1,6 @@
 import type { BookEntry, Goal } from '../../types';
 import { CONTINENT_OF } from '../../utils/continents';
-import { goalName } from '../GoalsPage/goals';
+import { goalName } from '../goals/goals';
 import { m } from '../../paraglide/messages.js';
 import { getLocale } from '../../paraglide/runtime.js';
 

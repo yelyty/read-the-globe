@@ -30,8 +30,8 @@ import {
 } from '../../utils/continents';
 import { atlasMarks } from '../../utils/atlasMarks';
 import { countryFrom, PARENT } from '../../utils/countryFrom';
-import { countryStamp, loadCountries } from '../PostcardPage/drawPostcard';
-import { goalHas, goalName } from '../GoalsPage/goals';
+import { countryStamp, loadCountries } from '../postcard/drawPostcard';
+import { goalHas, goalName } from '../goals/goals';
 import { getLocale } from '../../paraglide/runtime.js';
 import { m } from '../../paraglide/messages.js';
 import * as styles from './ShelfPage.css';

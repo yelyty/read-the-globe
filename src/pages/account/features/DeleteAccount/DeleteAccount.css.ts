@@ -1,6 +1,6 @@
 import { globalStyle, keyframes, style } from '@vanilla-extract/css';
 import { vars } from '../../../../styles/theme.css';
-import { phone } from '../../../LandingPage/LandingPage.css';
+import { phone } from '../../../landing/LandingPage.css';
 import {
   band,
   focusRing,

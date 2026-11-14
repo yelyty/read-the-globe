@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
-import TermsPage from "../pages/CompanyPage/content/TermsPage";
+import { createFileRoute } from '@tanstack/react-router';
+import TermsPage from '../pages/company/content/TermsPage';
 
-export const Route = createFileRoute("/terms")({
+export const Route = createFileRoute('/terms')({
   component: TermsPage,
 });

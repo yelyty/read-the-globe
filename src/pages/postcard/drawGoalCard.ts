@@ -2,7 +2,7 @@ import { geoPath } from 'd3-geo';
 import type { BookEntry, Goal } from '../../types';
 import type { Marks } from '../../utils/atlasMarks';
 import { light } from '../../styles/theme.css';
-import { goalName, romanDate, today, type Progress } from '../GoalsPage/goals';
+import { goalName, romanDate, today, type Progress } from '../goals/goals';
 import { m } from '../../paraglide/messages.js';
 import { getLocale } from '../../paraglide/runtime.js';
 import {

@@ -25,7 +25,7 @@ import {
 } from './drawPostcard';
 import { GOAL_H, GOAL_W, drawGoalCard, goalCardName } from './drawGoalCard';
 import { bookYears, yearSum } from './yearSum';
-import { goalName, goalProgress } from '../GoalsPage/goals';
+import { goalName, goalProgress } from '../goals/goals';
 import { m } from '../../paraglide/messages.js';
 import { getLocale } from '../../paraglide/runtime.js';
 import * as styles from './PostCardPage.css';

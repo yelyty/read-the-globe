@@ -1,12 +1,12 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useAuth } from '../../auth/auth-context';
-import Footer from '../LandingPage/components/Footer/Footer';
-import Header from '../LandingPage/components/Header/Header';
+import Footer from '../landing/components/Footer/Footer';
+import Header from '../landing/components/Header/Header';
 import LoginDialog, {
   type AuthMode,
-} from '../LandingPage/components/LoginDialog/LoginDialog';
-import { page } from '../LandingPage/LandingPage.css';
+} from '../landing/components/LoginDialog/LoginDialog';
+import { page } from '../landing/LandingPage.css';
 import * as styles from './CompanyPage.css';
 
 type CompanyPageProps = {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { BookEntry, Goal } from '../../types';
-import { romanDate } from '../GoalsPage/goals';
+import { romanDate } from '../goals/goals';
 import { bookYears, yearSum } from './yearSum';
 
 const book = (

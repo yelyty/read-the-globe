@@ -28,7 +28,7 @@ import {
   tidy,
   type CountryMatch,
 } from '../../utils/countryFrom';
-import { goalProgress, isDone } from '../../pages/GoalsPage/goals';
+import { goalProgress, isDone } from '../../pages/goals/goals';
 import * as fieldStyles from '../Field/Field.css';
 import * as styles from './LogBook.css';
 import Hint from '../Hint/Hint';

@@ -1,10 +1,10 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
-import LandingPage from "../pages/LandingPage/LandingPage";
+import { createFileRoute, redirect } from '@tanstack/react-router';
+import LandingPage from '../pages/landing/LandingPage';
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute('/')({
   beforeLoad: ({ context }) => {
     if (context.auth.isAuthenticated) {
-      throw redirect({ to: "/app" });
+      throw redirect({ to: '/app' });
     }
   },
   component: LandingPage,

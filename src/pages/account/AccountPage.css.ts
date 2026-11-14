@@ -1,7 +1,7 @@
 import { globalStyle, style } from '@vanilla-extract/css';
 import { vars } from '../../styles/theme.css';
 import { band } from '../../styles/global.css';
-import { phone } from '../LandingPage/LandingPage.css';
+import { phone } from '../landing/LandingPage.css';
 
 export const item = style({
   marginTop: 16,

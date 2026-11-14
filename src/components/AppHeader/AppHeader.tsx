@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { PushPinIcon } from '@phosphor-icons/react';
-import * as headerStyles from '../../pages/LandingPage/components/Header/Header.css';
+import * as headerStyles from '../../pages/landing/components/Header/Header.css';
 import * as styles from './AppHeader.css';
 import ThemeButton from '../ThemeButton/ThemeButton';
 import Logo from '../Logo/Logo';

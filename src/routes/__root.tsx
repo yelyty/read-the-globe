@@ -14,7 +14,7 @@ import {
 } from '../paraglide/runtime.js';
 import { m } from '../paraglide/messages.js';
 import type { AuthContextValue } from '../auth/auth-context';
-import CompanyPage from '../pages/CompanyPage/CompanyPage';
+import CompanyPage from '../pages/company/CompanyPage';
 
 export interface RouterContext {
   auth: AuthContextValue;

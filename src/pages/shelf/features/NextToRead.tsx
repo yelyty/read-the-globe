@@ -13,8 +13,8 @@ import {
   countryStamp,
   loadCountries,
   type Country,
-} from '../../PostcardPage/drawPostcard';
-import { goalHas, goalName } from '../../GoalsPage/goals';
+} from '../../postcard/drawPostcard';
+import { goalHas, goalName } from '../../goals/goals';
 import { getLocale } from '../../../paraglide/runtime.js';
 import { m } from '../../../paraglide/messages.js';
 import { useStatus } from '../../../hooks/useStatus';

@@ -3,7 +3,7 @@ import { WarningCircleIcon } from '@phosphor-icons/react';
 import CompanyPage from '../CompanyPage';
 import Field from '../../../components/Field/Field';
 import * as fieldStyles from '../../../components/Field/Field.css';
-import { btnPrimary } from '../../LandingPage/components/LoginDialog/LoginDialog.css';
+import { btnPrimary } from '../../landing/components/LoginDialog/LoginDialog.css';
 import { isEmail } from '../../../auth/forms';
 import {
   sendContactMessage,

@@ -9,7 +9,7 @@ import {
   reducedMotion,
   tiny,
 } from '../../styles/global.css';
-import { wrap } from '../../pages/LandingPage/LandingPage.css';
+import { wrap } from '../../pages/landing/LandingPage.css';
 
 const wide = 'screen and (min-width: 1120px)';
 
