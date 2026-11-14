@@ -9,37 +9,9 @@ import { m } from '../../../../paraglide/messages.js';
 import { skip } from '../../LandingPage.css';
 import { SECTIONS } from '../../sections';
 import * as styles from './Header.css';
+import { useCurrentSection } from './useCurrentSection';
 
-// the section on screen: the one crossing a thin line just under the middle of the viewport
-const useCurrentSection = () => {
-  const [current, setCurrent] = useState<string | null>(null);
-
-  useEffect(() => {
-    const sections = SECTIONS.map(({ hash }) =>
-      document.getElementById(hash)
-    ).filter((el) => el !== null);
-
-    if (!sections.length) return;
-    const seen = new Map<Element, boolean>();
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) =>
-          seen.set(entry.target, entry.isIntersecting)
-        );
-
-        setCurrent(sections.filter((el) => seen.get(el)).pop()?.id ?? null);
-      },
-      { rootMargin: '-45% 0px -50% 0px' }
-    );
-
-    sections.forEach((el) => io.observe(el));
-
-    return () => io.disconnect();
-  }, []);
-
-  return current;
-};
+type Section = (typeof SECTIONS)[number];
 
 type HeaderProps = {
   onLogIn: () => void;
@@ -90,6 +62,38 @@ const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
     };
   }, [menuOpen]);
 
+  const handleMenuToggle = () => setMenuOpen((open) => !open);
+  const handleMenuClose = () => setMenuOpen(false);
+
+  const handleMenuLogIn = () => {
+    setMenuOpen(false);
+    onLogIn();
+  };
+
+  // the bar's section links mark the one on screen
+  const renderTrackLink = (section: Section) => (
+    <a
+      key={section.hash}
+      className={styles.trackLink}
+      href={`/#${section.hash}`}
+      aria-current={current === section.hash ? 'true' : undefined}
+    >
+      {section.label()}
+    </a>
+  );
+
+  // the phone menu's section links close the menu
+  const renderMenuLink = (section: Section) => (
+    <a
+      key={section.hash}
+      className={styles.menuItem}
+      href={`/#${section.hash}`}
+      onClick={handleMenuClose}
+    >
+      {section.label()}
+    </a>
+  );
+
   return (
     <>
       <a className={skip} href="#main">
@@ -103,16 +107,7 @@ const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
           </a>
 
           <nav className={styles.track} aria-label={m.landing_sections()}>
-            {SECTIONS.map((section) => (
-              <a
-                key={section.hash}
-                className={styles.trackLink}
-                href={`/#${section.hash}`}
-                aria-current={current === section.hash ? 'true' : undefined}
-              >
-                {section.label()}
-              </a>
-            ))}
+            {SECTIONS.map(renderTrackLink)}
           </nav>
           <div className={styles.tools}>
             <ThemeButton />
@@ -138,7 +133,7 @@ const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
             aria-expanded={menuOpen}
             aria-controls="header-menu"
             aria-label={m.landing_menu()}
-            onClick={() => setMenuOpen((open) => !open)}
+            onClick={handleMenuToggle}
           >
             <ListIcon aria-hidden="true" />
           </button>
@@ -149,16 +144,7 @@ const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
             aria-label={m.landing_menu()}
             hidden={!menuOpen}
           >
-            {SECTIONS.map((section) => (
-              <a
-                key={section.hash}
-                className={styles.menuItem}
-                href={`/#${section.hash}`}
-                onClick={() => setMenuOpen(false)}
-              >
-                {section.label()}
-              </a>
-            ))}
+            {SECTIONS.map(renderMenuLink)}
             {isAuthenticated ? (
               <Link
                 to="/app"
@@ -170,10 +156,7 @@ const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
               <button
                 type="button"
                 className={`${styles.menuItem} ${styles.menuLogin}`}
-                onClick={() => {
-                  setMenuOpen(false);
-                  onLogIn();
-                }}
+                onClick={handleMenuLogIn}
               >
                 {m.landing_log_in()}
               </button>

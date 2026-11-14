@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 
+import { prefersReducedMotion } from '../utils/motion';
+
 const canAnimate = () => {
-  return (
-    'IntersectionObserver' in window &&
-    !window.matchMedia('(prefers-reduced-motion:reduce)').matches
-  );
+  return 'IntersectionObserver' in window && !prefersReducedMotion();
 };
 
 /**

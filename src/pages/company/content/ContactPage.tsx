@@ -3,7 +3,6 @@ import { WarningCircleIcon } from '@phosphor-icons/react';
 
 import Field from '../../../components/Field/Field';
 import * as fieldStyles from '../../../components/Field/Field.css';
-import { isEmail } from '../../../auth/forms';
 import {
   sendContactMessage,
   type ContactMessage,
@@ -14,19 +13,9 @@ import { useDirty, useLeaveGuard } from '../../../hooks/useUnsaved';
 import { btnPrimary } from '../../landing/components/LoginDialog/LoginDialog.css';
 import CompanyPage from '../CompanyPage';
 import * as styles from '../CompanyPage.css';
+import { validate } from './validateContact';
 
-type Errors = Partial<Record<keyof ContactMessage, string>>;
 const FIELD_ORDER: (keyof ContactMessage)[] = ['name', 'email', 'message'];
-
-const validate = (values: ContactMessage): Errors => {
-  const errors: Errors = {};
-
-  if (!values.name.trim()) errors.name = m.auth_name_missing();
-  if (!isEmail(values.email)) errors.email = m.contact_email_invalid();
-  if (!values.message.trim()) errors.message = m.contact_message_missing();
-
-  return errors;
-};
 
 const ContactPage = () => {
   const [values, setValues] = useState<ContactMessage>({

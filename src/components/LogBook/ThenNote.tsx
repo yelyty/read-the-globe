@@ -37,6 +37,29 @@ const ThenNote = ({
   const name = tidy(typed);
   const states = splitStates(typed);
   const match = countryFrom(typed, names, pick);
+
+  // after Change the chosen pill takes focus; after a pick, Change does
+  const handleChange = () => {
+    onChange();
+    focusIn('[aria-pressed="true"], button');
+  };
+
+  const handlePick = (code: string) => () => {
+    onPick(code);
+    focusIn('button');
+  };
+
+  const renderPick = (code: string) => (
+    <button
+      key={code}
+      type="button"
+      aria-pressed={pick === code}
+      onClick={handlePick(code)}
+    >
+      {names[code]}
+    </button>
+  );
+
   let content = null;
 
   if (states && match && !open)
@@ -49,10 +72,7 @@ const ThenNote = ({
         <button
           type="button"
           className={styles.thenChange}
-          onClick={() => {
-            onChange();
-            focusIn('[aria-pressed="true"], button');
-          }}
+          onClick={handleChange}
         >
           {m.common_change()}
         </button>
@@ -68,21 +88,7 @@ const ThenNote = ({
           })}{' '}
           {author ? m.log_then_author() : m.log_then_place()}
         </p>
-        <div className={styles.thenPicks}>
-          {states.map((code) => (
-            <button
-              key={code}
-              type="button"
-              aria-pressed={pick === code}
-              onClick={() => {
-                onPick(code);
-                focusIn('button');
-              }}
-            >
-              {names[code]}
-            </button>
-          ))}
-        </div>
+        <div className={styles.thenPicks}>{states.map(renderPick)}</div>
       </>
     );
   else if (match?.then)

@@ -53,6 +53,28 @@ export default defineConfig([
     },
   },
   {
+    files: ['**/*.tsx'],
+    rules: {
+      // event handlers are named functions declared before the JSX, not written inline in it
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector:
+            'JSXAttribute[name.name=/^on[A-Z]/] > JSXExpressionContainer > :matches(ArrowFunctionExpression, FunctionExpression)',
+          message:
+            'Declare the handler as a named function before the return (e.g. const handleClick = …) and pass it by name.',
+        },
+        {
+          // {books.map((book) => <li>…</li>)} → {books.map(renderBook)}, or an item component when it's big
+          selector:
+            'JSXExpressionContainer CallExpression[callee.property.name=/^(map|flatMap|filter|sort|find|some|every|reduce)$/] > :matches(ArrowFunctionExpression, FunctionExpression)',
+          message:
+            'Name the list callback before the return (const renderItem = …, or const options = list.map(…)); a big item gets its own component.',
+        },
+      ],
+    },
+  },
+  {
     // components and functions name their numbers; styles and tests may write them as they are
     files: ['**/*.{ts,tsx}'],
     ignores: ['**/*.css.ts', '**/*.test.ts', '**/*.test.tsx'],

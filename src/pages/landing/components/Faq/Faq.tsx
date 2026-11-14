@@ -13,25 +13,27 @@ const QUESTIONS = [
 ];
 
 // A big heading on the left, the questions as rows on the grey band, each opening in place.
-const Faq = () => (
-  <section className={styles.faq} id="faq" aria-labelledby="faq-h">
-    <div className={styles.inner}>
-      <h2 className={styles.title} id="faq-h">
-        {m.landing_faq_title()}
-      </h2>
-      <div className={styles.list}>
-        {QUESTIONS.map(({ q, a }, i) => (
-          <details key={i} className={styles.item}>
-            <summary className={styles.summary}>
-              {q()}
-              <PlusIcon className={styles.plus} aria-hidden="true" />
-            </summary>
-            <p className={styles.answer}>{a()}</p>
-          </details>
-        ))}
+const Faq = () => {
+  const renderQuestion = ({ q, a }: (typeof QUESTIONS)[number], i: number) => (
+    <details key={i} className={styles.item}>
+      <summary className={styles.summary}>
+        {q()}
+        <PlusIcon className={styles.plus} aria-hidden="true" />
+      </summary>
+      <p className={styles.answer}>{a()}</p>
+    </details>
+  );
+
+  return (
+    <section className={styles.faq} id="faq" aria-labelledby="faq-h">
+      <div className={styles.inner}>
+        <h2 className={styles.title} id="faq-h">
+          {m.landing_faq_title()}
+        </h2>
+        <div className={styles.list}>{QUESTIONS.map(renderQuestion)}</div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 export default Faq;

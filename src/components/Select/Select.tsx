@@ -4,12 +4,14 @@ import {
   useLayoutEffect,
   useRef,
   useState,
+  type FocusEvent,
   type KeyboardEvent,
 } from 'react';
-import { CaretDownIcon, CheckIcon } from '@phosphor-icons/react';
+import { CaretDownIcon } from '@phosphor-icons/react';
 
 import { srOnly } from '../../styles/global.css';
 import * as styles from './Select.css';
+import SelectItem from './SelectItem';
 
 // keys typed within this long of each other spell one word (type-ahead)
 const TYPE_AHEAD_MS = 600;
@@ -212,15 +214,35 @@ const Select = <T extends string>({
     }
   };
 
+  // focus leaving the select altogether closes its list
+  const handleBlur = (event: FocusEvent<HTMLDivElement>) => {
+    if (!root.current?.contains(event.relatedTarget)) setOpen(false);
+  };
+
+  const handleButtonClick = () => (open ? setOpen(false) : show());
+  const handleOptionClick = (index: number) => () => choose(index);
+  const handleOptionPointerMove = (index: number) => () => setActive(index);
+
+  const renderOption = (option: SelectOption<T>, index: number) => (
+    <SelectItem
+      key={option.value}
+      id={optionId(index)}
+      label={option.label}
+      lang={option.lang}
+      selected={index === chosen}
+      active={index === active}
+      onClick={handleOptionClick(index)}
+      onPointerMove={handleOptionPointerMove(index)}
+    />
+  );
+
   const current = options[chosen];
 
   return (
     <div
       ref={root}
       className={[styles.wrap[variant], className].filter(Boolean).join(' ')}
-      onBlur={(event) => {
-        if (!root.current?.contains(event.relatedTarget)) setOpen(false);
-      }}
+      onBlur={handleBlur}
     >
       {!labelId && (
         <span id={ownLabelId} className={srOnly}>
@@ -238,7 +260,7 @@ const Select = <T extends string>({
         aria-controls={listId}
         aria-labelledby={`${labelId ?? ownLabelId} ${buttonId}`}
         aria-describedby={describedBy}
-        onClick={() => (open ? setOpen(false) : show())}
+        onClick={handleButtonClick}
         onKeyDown={onButtonKeyDown}
       >
         <span className={styles.value} lang={current?.lang}>
@@ -257,25 +279,7 @@ const Select = <T extends string>({
         className={styles.list}
         onKeyDown={onListKeyDown}
       >
-        {options.map((option, index) => (
-          // eslint-disable-next-line jsx-a11y/click-events-have-key-events -- the listbox owns the keys, via aria-activedescendant
-          <li
-            key={option.value}
-            id={optionId(index)}
-            role="option"
-            lang={option.lang}
-            aria-selected={index === chosen}
-            data-active={index === active || undefined}
-            className={styles.option}
-            onClick={() => choose(index)}
-            onPointerMove={() => setActive(index)}
-          >
-            {option.label}
-            {index === chosen && (
-              <CheckIcon className={styles.check} aria-hidden="true" />
-            )}
-          </li>
-        ))}
+        {options.map(renderOption)}
       </ul>
     </div>
   );

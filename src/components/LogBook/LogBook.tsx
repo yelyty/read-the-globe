@@ -143,6 +143,10 @@ const LogBook = () => {
     });
   };
 
+  const worldNames = worldsOf(books, worlds).map(
+    (worldEntry) => worldEntry.name
+  );
+
   return (
     <>
       {open && shapes && names && (
@@ -156,7 +160,7 @@ const LogBook = () => {
           names={names}
           books={books}
           goals={goals}
-          worlds={worldsOf(books, worlds).map((worldEntry) => worldEntry.name)}
+          worlds={worldNames}
           onClose={close}
           onDone={done}
           onRemoved={removed}

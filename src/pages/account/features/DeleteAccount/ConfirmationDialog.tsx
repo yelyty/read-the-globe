@@ -1,4 +1,4 @@
-import { useState, type SubmitEvent } from 'react';
+import { useState, type ChangeEvent, type SubmitEvent } from 'react';
 import { TrashIcon } from '@phosphor-icons/react';
 
 import Field from '../../../../components/Field/Field';
@@ -68,6 +68,9 @@ const ConfirmationDialog = ({
     close();
   };
 
+  const handleWordChange = (event: ChangeEvent<HTMLInputElement>) =>
+    setWord(event.target.value);
+
   return (
     <Dialog
       open={open}
@@ -89,7 +92,7 @@ const ConfirmationDialog = ({
           autoCapitalize="off"
           value={word}
           error={error}
-          onChange={(event) => setWord(event.target.value)}
+          onChange={handleWordChange}
         />
         <DialogActions>
           <Button type="button" variant="text" onClick={close}>

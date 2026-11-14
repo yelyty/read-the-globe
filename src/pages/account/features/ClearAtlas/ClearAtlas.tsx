@@ -99,6 +99,8 @@ const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
     });
   };
 
+  const handleOpen = () => setOpen(true);
+
   return (
     <div className={styles.dangerItem}>
       <h3 className={styles.itemTitle}>{m.account_clear()}</h3>
@@ -111,7 +113,7 @@ const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
         aria-haspopup="dialog"
         aria-describedby="ac-clear-desc"
         disabled={blank}
-        onClick={() => setOpen(true)}
+        onClick={handleOpen}
       >
         <EraserIcon aria-hidden="true" />
         {m.account_clear()}

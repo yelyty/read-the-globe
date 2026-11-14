@@ -1,10 +1,13 @@
-import { useEffect, useRef, useState, type SubmitEvent } from 'react';
-import { Link } from '@tanstack/react-router';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type SubmitEvent,
+} from 'react';
 import {
   ArrowCounterClockwiseIcon,
   BookmarkSimpleIcon,
-  PushPinIcon,
-  TrashIcon,
 } from '@phosphor-icons/react';
 
 import type { Goal, NextRead } from '../../../types';
@@ -22,8 +25,9 @@ import {
   loadCountries,
   type Country,
 } from '../../postcard/drawPostcard';
-import { goalHas, goalName } from '../../goals/goals';
+import { goalHas } from '../../goals/goals';
 import * as styles from '../ShelfPage.css';
+import NextItem from './NextItem';
 
 type NextToReadProps = {
   items: NextRead[];
@@ -179,6 +183,41 @@ const NextToRead = ({
     titleRef.current?.focus();
   };
 
+  const handleTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setTitle(event.target.value);
+    setError(undefined);
+  };
+
+  const handleAuthorChange = (event: ChangeEvent<HTMLInputElement>) =>
+    setAuthor(event.target.value);
+
+  const handleCountryValue = (value: string) => {
+    setCountry(value);
+    setError(undefined);
+  };
+
+  /* ---------- lists ---------- */
+  const countryNames = sorted.map(([, countryName]) => countryName);
+
+  const renderItem = (item: NextRead) => {
+    const code = item.countryCode;
+    const countryInfo = code && countries?.get(code);
+    // the goals this book would move along
+    const itemGoals = code ? goals.filter((goal) => goalHas(goal, code)) : [];
+
+    return (
+      <NextItem
+        key={item.id}
+        item={item}
+        stamp={countryInfo ? countryStamp(countryInfo) : null}
+        place={code ? (names[code] ?? '') : ''}
+        fresh={Boolean(code && !marks[code])}
+        goals={itemGoals}
+        onRemove={remove}
+      />
+    );
+  };
+
   return (
     <div>
       <form className={styles.nextForm} onSubmit={submit} noValidate>
@@ -197,10 +236,7 @@ const NextToRead = ({
             aria-describedby={
               error?.at === 'n-title' ? 'n-title-err' : undefined
             }
-            onChange={(changeEvent) => {
-              setTitle(changeEvent.target.value);
-              setError(undefined);
-            }}
+            onChange={handleTitleChange}
           />
           {error?.at === 'n-title' && (
             <p id="n-title-err" className={fieldError}>
@@ -219,7 +255,7 @@ const NextToRead = ({
             maxLength={120}
             placeholder={m.next_placeholder_author()}
             value={author}
-            onChange={(changeEvent) => setAuthor(changeEvent.target.value)}
+            onChange={handleAuthorChange}
           />
         </div>
         <div>
@@ -230,7 +266,7 @@ const NextToRead = ({
           <Suggest
             id="n-country"
             className={styles.input}
-            options={sorted.map(([, countryName]) => countryName)}
+            options={countryNames}
             maxLength={60}
             placeholder={m.next_placeholder_country()}
             autoComplete="off"
@@ -239,10 +275,7 @@ const NextToRead = ({
             aria-describedby={
               error?.at === 'n-country' ? 'n-country-err' : undefined
             }
-            onValue={(value) => {
-              setCountry(value);
-              setError(undefined);
-            }}
+            onValue={handleCountryValue}
           />
           {error?.at === 'n-country' && (
             <p id="n-country-err" className={fieldError}>
@@ -295,92 +328,7 @@ const NextToRead = ({
 
       {failed && <p className={styles.emptyNote}>{m.next_load_failed()}</p>}
       {items.length > 0 ? (
-        <ul className={styles.nextList}>
-          {items.map((it) => {
-            const countryInfo =
-              it.countryCode && countries?.get(it.countryCode);
-
-            const stamp = countryInfo ? countryStamp(countryInfo) : null;
-            const place = it.countryCode ? (names[it.countryCode] ?? '') : '';
-
-            return (
-              <li
-                key={it.id}
-                id={`next-${it.id}`}
-                tabIndex={-1}
-                className={styles.nextItem}
-              >
-                {/* the country it would mark, still pale: it isn't on the atlas until it's read */}
-                <span className={styles.nextStamp} aria-hidden="true">
-                  {stamp ? (
-                    <svg viewBox={stamp.viewBox} focusable="false">
-                      <path
-                        className={styles.nextShape}
-                        d={stamp.d}
-                        data-mark={it.mark}
-                      />
-                    </svg>
-                  ) : (
-                    <BookmarkSimpleIcon className={styles.nextMark} />
-                  )}
-                </span>
-                <div className={styles.nextBody}>
-                  <span className={styles.nextTitle}>{it.title}</span>
-                  {it.author && (
-                    <span className={styles.nextAuthor}>{it.author}</span>
-                  )}
-                  {it.countryCode && (
-                    <div className={styles.nextMeta}>
-                      <span>
-                        <i
-                          className={
-                            it.mark === 'set' ? styles.dotSet : styles.dotAuthor
-                          }
-                          aria-hidden="true"
-                        />
-                        {it.mark === 'set'
-                          ? m.next_set_in({ country: place })
-                          : m.next_author_from({ country: place })}
-                      </span>
-                      {!marks[it.countryCode] && (
-                        <span className={styles.fresh}>
-                          {m.next_new_ground({ country: place })}
-                        </span>
-                      )}
-                      {/* the goals this book would move along */}
-                      {goals
-                        .filter((goal) => goalHas(goal, it.countryCode!))
-                        .map((goal) => (
-                          <span key={goal.id} className={styles.nextGoal}>
-                            {goalName(goal.name)}
-                          </span>
-                        ))}
-                    </div>
-                  )}
-                </div>
-                <div className={styles.nextActs}>
-                  <Link
-                    className={styles.linkBtn}
-                    to="."
-                    search={(prev) => ({ ...prev, log: true, next: it.id })}
-                  >
-                    <PushPinIcon aria-hidden="true" />
-                    {m.next_log_it()}
-                  </Link>
-                  <button
-                    type="button"
-                    className={styles.linkBtn}
-                    aria-label={m.next_remove_label({ title: it.title })}
-                    onClick={() => remove(it)}
-                  >
-                    <TrashIcon aria-hidden="true" />
-                    {m.common_remove()}
-                  </button>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
+        <ul className={styles.nextList}>{items.map(renderItem)}</ul>
       ) : (
         !failed && (
           <div className={styles.nextEmpty}>

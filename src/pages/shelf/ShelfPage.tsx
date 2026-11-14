@@ -4,13 +4,13 @@ import {
   useMemo,
   useRef,
   useState,
+  type ChangeEvent,
   type KeyboardEvent,
 } from 'react';
 import { getRouteApi, Link, useNavigate } from '@tanstack/react-router';
 import {
   ArrowDownIcon,
   BooksIcon,
-  CaretDownIcon,
   DownloadSimpleIcon,
   FunnelSimpleIcon,
   MagnifyingGlassIcon,
@@ -22,7 +22,7 @@ import {
 import { useCountryNames } from '../../hooks/useCountryNames';
 import type { BookEntry } from '../../types';
 import { list as bookList } from '../../components/BookRow/BookRow.css';
-import { byReadDate, readDate } from '../../utils/readDate';
+import { byReadDate } from '../../utils/readDate';
 import {
   CONTINENT_NAMES,
   CONTINENT_OF,
@@ -37,20 +37,15 @@ import BookRow from '../../components/BookRow/BookRow';
 import { useStatus } from '../../hooks/useStatus';
 import PageTitle from '../../components/PageTitle/PageTitle';
 import Select from '../../components/Select/Select';
-import { isoYear } from '../../utils/isoDate';
 import { countryStamp, loadCountries } from '../postcard/drawPostcard';
 import { goalHas, goalName } from '../goals/goals';
 import ImportCsv from '../account/features/YourData/ImportCsv';
 import { exportExample } from '../account/features/YourData/readingList';
 import * as styles from './ShelfPage.css';
 import NextToRead from './features/NextToRead';
-
-// a stamp's hatch is drawn for a 128px stamp: two 3px stripes, olive and rust, repeating every 6px
-const STAMP_PX = 128;
-const HATCH_PERIOD = 6;
-
-const hatchSize = (stampWidth: number) =>
-  (stampWidth / STAMP_PX) * HATCH_PERIOD;
+import YearHead from './YearHead';
+import { hatchSize } from './hatch';
+import { authorCode, yearOf, placeCodes } from './bookFields';
 
 const app = getRouteApi('/app');
 const shelfRoute = getRouteApi('/app/shelf');
@@ -63,14 +58,6 @@ const CONTINENTS = (Object.keys(CONTINENT_NAMES) as Continent[]).filter(
 );
 
 const PAGE = 100;
-
-const authorCode = (book: BookEntry) => book.author?.country?.code;
-const yearOf = (book: BookEntry) => isoYear(readDate(book));
-
-const placeCodes = (book: BookEntry) =>
-  (book.places ?? [])
-    .map((place) => place.countryCode)
-    .filter((code): code is string => !!code);
 
 const ShelfPage = () => {
   const { books, goals } = app.useLoaderData();
@@ -261,6 +248,91 @@ const ShelfPage = () => {
       openTab(tab === 'next' ? 'read' : 'next');
   };
 
+  /* ---------- handlers: a new search, filter or sort starts the list from the top ---------- */
+  const handleTab = (to: 'read' | 'next') => () => openTab(to);
+
+  const handleQueryChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setQuery(event.target.value);
+    reset();
+  };
+
+  const handleFiltersToggle = () => setFiltersOpen((wasOpen) => !wasOpen);
+
+  // with no continent and no country, the mark filter has nothing to narrow
+  const handleContinentChange = (next: Continent | '') => {
+    setContinent(next);
+    if (!next && !country) setMark('');
+    reset();
+  };
+
+  const handleMarkChange = (next: Mark) => {
+    setMark(next);
+    reset();
+  };
+
+  const handleYearChange = (next: string) => {
+    setYear(next);
+    reset();
+  };
+
+  const handleGoalChange = (next: string) => {
+    setGoalId(next);
+    reset();
+  };
+
+  const handleSortChange = (next: Sort) => {
+    setSort(next);
+    reset();
+  };
+
+  const handleYearToggle = (bookYear: string) => () => toggleYear(bookYear);
+  const handleShowMore = () => setShown(shown + PAGE);
+
+  /* ---------- lists ---------- */
+  // each filter's menu starts with "all"
+  const continentOptions = [
+    { value: '' as const, label: m.shelf_all_continents() },
+    ...CONTINENTS.map((continentCode) => ({
+      value: continentCode,
+      label: continentName(continentCode),
+    })),
+  ];
+
+  const yearOptions = [
+    { value: '', label: m.shelf_all_years() },
+    ...years.map((optionYear) => ({ value: optionYear, label: optionYear })),
+  ];
+
+  const goalOptions = [
+    { value: '', label: m.shelf_all_goals() },
+    ...goals.map((option) => ({
+      value: String(option.id),
+      label: goalName(option.name),
+    })),
+  ];
+
+  // newest first, a year's first book comes under its heading; a folded year hides its books
+  const renderBook = (book: BookEntry, i: number) => {
+    const bookYear = sort === 'new' ? yearOf(book) : '';
+    const isFolded = !!bookYear && unfiltered && folded.has(bookYear);
+    const firstOfYear = i === 0 || yearOf(list[i - 1]) !== bookYear;
+
+    return (
+      <Fragment key={book.id}>
+        {bookYear && firstOfYear && (
+          <YearHead
+            year={bookYear}
+            foldable={unfiltered}
+            folded={isFolded}
+            note={yearNotes[bookYear]}
+            onToggle={handleYearToggle(bookYear)}
+          />
+        )}
+        {!isFolded && <BookRow book={book} names={names} />}
+      </Fragment>
+    );
+  };
+
   return (
     <>
       <PageTitle>{m.nav_shelf()}</PageTitle>
@@ -275,7 +347,7 @@ const ShelfPage = () => {
           aria-selected={tab !== 'next'}
           aria-controls="shelf-read"
           tabIndex={tab !== 'next' ? 0 : -1}
-          onClick={() => openTab('read')}
+          onClick={handleTab('read')}
           onKeyDown={onTabKey}
         >
           {m.shelf_tab_read()}{' '}
@@ -289,7 +361,7 @@ const ShelfPage = () => {
           aria-selected={tab === 'next'}
           aria-controls="shelf-next"
           tabIndex={tab === 'next' ? 0 : -1}
-          onClick={() => openTab('next')}
+          onClick={handleTab('next')}
           onKeyDown={onTabKey}
         >
           {m.shelf_tab_next()}{' '}
@@ -401,10 +473,7 @@ const ShelfPage = () => {
                     ref={search}
                     type="search"
                     value={query}
-                    onChange={(changeEvent) => {
-                      setQuery(changeEvent.target.value);
-                      reset();
-                    }}
+                    onChange={handleQueryChange}
                     placeholder={m.shelf_search_placeholder()}
                     aria-label={m.shelf_search_label()}
                     autoComplete="off"
@@ -416,7 +485,7 @@ const ShelfPage = () => {
                   className={styles.filterBtn}
                   aria-expanded={filtersOpen}
                   aria-controls="shelf-filters"
-                  onClick={() => setFiltersOpen((wasOpen) => !wasOpen)}
+                  onClick={handleFiltersToggle}
                 >
                   <FunnelSimpleIcon aria-hidden="true" />
                   {m.shelf_filters()}
@@ -432,18 +501,8 @@ const ShelfPage = () => {
                     variant="pill"
                     value={continent}
                     label={m.shelf_filter_continent()}
-                    onChange={(next) => {
-                      setContinent(next);
-                      if (!next && !country) setMark('');
-                      reset();
-                    }}
-                    options={[
-                      { value: '', label: m.shelf_all_continents() },
-                      ...CONTINENTS.map((continentCode) => ({
-                        value: continentCode,
-                        label: continentName(continentCode),
-                      })),
-                    ]}
+                    onChange={handleContinentChange}
+                    options={continentOptions}
                   />
                   {/* set in / author from only means something once a place is chosen */}
                   {(country || continent) && (
@@ -451,10 +510,7 @@ const ShelfPage = () => {
                       variant="pill"
                       value={mark}
                       label={m.shelf_mark_label()}
-                      onChange={(next) => {
-                        setMark(next);
-                        reset();
-                      }}
+                      onChange={handleMarkChange}
                       options={[
                         { value: '', label: m.shelf_mark_any() },
                         { value: 'set', label: m.shelf_mark_set() },
@@ -467,17 +523,8 @@ const ShelfPage = () => {
                       variant="pill"
                       value={year}
                       label={m.shelf_filter_year()}
-                      onChange={(next) => {
-                        setYear(next);
-                        reset();
-                      }}
-                      options={[
-                        { value: '', label: m.shelf_all_years() },
-                        ...years.map((optionYear) => ({
-                          value: optionYear,
-                          label: optionYear,
-                        })),
-                      ]}
+                      onChange={handleYearChange}
+                      options={yearOptions}
                     />
                   )}
                   {goals.length > 0 && (
@@ -485,17 +532,8 @@ const ShelfPage = () => {
                       variant="pill"
                       value={goalId}
                       label={m.shelf_filter_goal()}
-                      onChange={(next) => {
-                        setGoalId(next);
-                        reset();
-                      }}
-                      options={[
-                        { value: '', label: m.shelf_all_goals() },
-                        ...goals.map((option) => ({
-                          value: String(option.id),
-                          label: goalName(option.name),
-                        })),
-                      ]}
+                      onChange={handleGoalChange}
+                      options={goalOptions}
                     />
                   )}
                 </div>
@@ -503,10 +541,7 @@ const ShelfPage = () => {
                   variant="pill"
                   value={sort}
                   label={m.shelf_sort_label()}
-                  onChange={(next) => {
-                    setSort(next);
-                    reset();
-                  }}
+                  onChange={handleSortChange}
                   options={[
                     { value: 'new', label: m.shelf_sort_new() },
                     { value: 'title', label: m.shelf_sort_title() },
@@ -636,45 +671,7 @@ const ShelfPage = () => {
 
               {list.length ? (
                 <ul className={`${bookList} ${styles.shelfList}`}>
-                  {list.slice(0, shown).map((book, i) => {
-                    const bookYear = sort === 'new' ? yearOf(book) : '';
-
-                    const isFolded =
-                      !!bookYear && unfiltered && folded.has(bookYear);
-
-                    const heading =
-                      bookYear &&
-                      (i === 0 || yearOf(list[i - 1]) !== bookYear) ? (
-                        <li className={styles.yearHead}>
-                          <h2 className={styles.yearTitle}>
-                            {/* years only fold on the whole shelf; a search or filter shows every match */}
-                            {unfiltered ? (
-                              <button
-                                type="button"
-                                className={styles.yearToggle}
-                                aria-expanded={!isFolded}
-                                onClick={() => toggleYear(bookYear)}
-                              >
-                                <CaretDownIcon aria-hidden="true" />
-                                {bookYear}
-                              </button>
-                            ) : (
-                              bookYear
-                            )}
-                          </h2>
-                          {unfiltered && yearNotes[bookYear] && (
-                            <p>{yearNotes[bookYear]}</p>
-                          )}
-                        </li>
-                      ) : null;
-
-                    return (
-                      <Fragment key={book.id}>
-                        {heading}
-                        {!isFolded && <BookRow book={book} names={names} />}
-                      </Fragment>
-                    );
-                  })}
+                  {list.slice(0, shown).map(renderBook)}
                 </ul>
               ) : invite ? (
                 <div className={styles.emptyNote}>
@@ -699,7 +696,7 @@ const ShelfPage = () => {
                 <button
                   type="button"
                   className={styles.moreBtn}
-                  onClick={() => setShown(shown + PAGE)}
+                  onClick={handleShowMore}
                 >
                   <ArrowDownIcon aria-hidden="true" />
                   {m.shelf_show_more({

@@ -4,12 +4,10 @@ import { PushPinIcon, WarningCircleIcon } from '@phosphor-icons/react';
 import Dialog from '../../../../components/Dialog/Dialog';
 import Field from '../../../../components/Field/Field';
 import { sendPasswordReset, signIn, signUp } from '../../../../auth/session';
-import { isEmail, newPasswordProblem } from '../../../../auth/forms';
 import { m } from '../../../../paraglide/messages.js';
 import * as styles from './LoginDialog.css';
 import PasswordStrength from './PasswordStrength';
-
-export type AuthMode = 'signup' | 'login' | 'reset';
+import { type AuthMode, type Values, validate } from './validate';
 
 const COPY = {
   signup: {
@@ -29,24 +27,7 @@ const COPY = {
   },
 };
 
-type Values = { name: string; email: string; password: string };
-type Errors = Partial<Record<keyof Values, string>>;
-
 const FIELD_ORDER: (keyof Values)[] = ['name', 'email', 'password'];
-
-const validate = (mode: AuthMode, values: Values): Errors => {
-  const errors: Errors = {};
-
-  if (mode === 'signup' && !values.name.trim())
-    errors.name = m.auth_name_missing();
-  if (!isEmail(values.email)) errors.email = m.auth_email_invalid();
-  if (mode === 'signup')
-    errors.password = newPasswordProblem(values.password) ?? undefined;
-  if (mode === 'login' && !values.password)
-    errors.password = m.auth_password_missing();
-
-  return errors;
-};
 
 type LoginDialogProps = {
   /** null keeps the dialog closed */
@@ -150,6 +131,16 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
     setPending(false);
   };
 
+  const handleExampleChange = (event: ChangeEvent<HTMLInputElement>) =>
+    setExample(event.target.checked);
+
+  // sign up ⇄ log in, and log in ⇄ reset the password
+  const handleSwitchAccount = () =>
+    switchTo(view === 'signup' ? 'login' : 'signup');
+
+  const handleSwitchReset = () =>
+    switchTo(view === 'login' ? 'reset' : 'login');
+
   return (
     <Dialog
       open={mode !== null}
@@ -228,7 +219,7 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
             <input
               type="checkbox"
               checked={example}
-              onChange={(event) => setExample(event.target.checked)}
+              onChange={handleExampleChange}
             />
             {m.auth_example()}
             <span className={styles.exampleHint}>{m.auth_example_hint()}</span>
@@ -249,7 +240,7 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
             <button
               type="button"
               className={styles.altLink}
-              onClick={() => switchTo(view === 'signup' ? 'login' : 'signup')}
+              onClick={handleSwitchAccount}
             >
               {view === 'signup' ? m.landing_log_in() : m.auth_create_account()}
             </button>
@@ -259,7 +250,7 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
               <button
                 type="button"
                 className={styles.altLink}
-                onClick={() => switchTo(view === 'login' ? 'reset' : 'login')}
+                onClick={handleSwitchReset}
               >
                 {view === 'login' ? m.auth_forgot() : m.auth_back_to_login()}
               </button>

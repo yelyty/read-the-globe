@@ -23,27 +23,29 @@ const POSTS = [
 ];
 
 // ponytail: three teasers, no post pages yet; add a /journal/$post route when there's a post to read
-const JournalPage = () => (
-  <CompanyPage
-    title="Journal"
-    description="Notes on reading the world: what’s new in the atlas, and ideas for where to read next."
-    draft
-  >
-    <h1>Journal</h1>
-    <p className={styles.lede}>
-      Notes on reading the world: what’s new in the atlas, and ideas for where
-      to read next.
-    </p>
-    <ul className={styles.posts}>
-      {POSTS.map((post) => (
-        <li key={post.date} className={styles.post}>
-          <time dateTime={post.date}>{post.shown}</time>
-          <h2>{post.title}</h2>
-          <p>{post.text}</p>
-        </li>
-      ))}
-    </ul>
-  </CompanyPage>
-);
+const JournalPage = () => {
+  const renderPost = (post: (typeof POSTS)[number]) => (
+    <li key={post.date} className={styles.post}>
+      <time dateTime={post.date}>{post.shown}</time>
+      <h2>{post.title}</h2>
+      <p>{post.text}</p>
+    </li>
+  );
+
+  return (
+    <CompanyPage
+      title="Journal"
+      description="Notes on reading the world: what’s new in the atlas, and ideas for where to read next."
+      draft
+    >
+      <h1>Journal</h1>
+      <p className={styles.lede}>
+        Notes on reading the world: what’s new in the atlas, and ideas for where
+        to read next.
+      </p>
+      <ul className={styles.posts}>{POSTS.map(renderPost)}</ul>
+    </CompanyPage>
+  );
+};
 
 export default JournalPage;

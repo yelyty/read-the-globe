@@ -23,6 +23,15 @@ const LanguagePicker = ({
 }: LanguagePickerProps) => {
   const labelId = useId();
 
+  const handleChange = (lang: Locale) => void pickLang(lang);
+
+  // each language in its own name and language, so a screen reader pronounces it right
+  const options = locales.map((lang) => ({
+    value: lang,
+    label: LANG_NAMES[lang],
+    lang,
+  }));
+
   return (
     <div className={className}>
       {label && (
@@ -32,12 +41,8 @@ const LanguagePicker = ({
       )}
       <Select
         value={getLocale()}
-        options={locales.map((lang) => ({
-          value: lang,
-          label: LANG_NAMES[lang],
-          lang,
-        }))}
-        onChange={(lang: Locale) => void pickLang(lang)}
+        options={options}
+        onChange={handleChange}
         labelId={label ? labelId : undefined}
         label={m.language()}
         variant={variant}

@@ -1,23 +1,16 @@
-import { Link, useNavigate } from '@tanstack/react-router';
-import { PencilSimpleIcon, PushPinIcon } from '@phosphor-icons/react';
+import { useNavigate } from '@tanstack/react-router';
+import { PushPinIcon } from '@phosphor-icons/react';
 
-import { coverColor } from '../../utils/coverColors';
-import { byReadDate, readDate } from '../../utils/readDate';
+import type { BookEntry } from '../../types';
+import { byReadDate } from '../../utils/readDate';
 import { type WorldRow } from '../../utils/worlds';
 import { Button } from '../../components/Button/Button';
 import Dialog from '../../components/Dialog/Dialog';
 import DialogActions from '../../components/Dialog/DialogActions';
 import DialogText from '../../components/Dialog/DialogText';
 import { m } from '../../paraglide/messages.js';
-import { getLocale } from '../../paraglide/runtime.js';
 import * as styles from './HomePage.css';
-
-const formatDay = (day: string) =>
-  new Date(`${day}T12:00:00`).toLocaleDateString(getLocale(), {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
+import WorldBook from './WorldBook';
 
 // a world's box opens its books in a dialog, with the way to log another one set there
 const WorldDialog = ({
@@ -29,6 +22,20 @@ const WorldDialog = ({
 }) => {
   const navigate = useNavigate();
   const books = [...world.books].sort(byReadDate);
+
+  // log a book set in this world, from the log form opened over Home
+  const handleLogHere = () => {
+    onClose();
+
+    navigate({
+      to: '.',
+      search: (prev) => ({ ...prev, log: true, world: world.name }),
+    });
+  };
+
+  const renderBook = (book: BookEntry) => (
+    <WorldBook key={book.id} book={book} onEdit={onClose} />
+  );
 
   return (
     <Dialog
@@ -46,40 +53,7 @@ const WorldDialog = ({
       initialFocus="world-log"
     >
       {books.length ? (
-        <ul className={styles.worldBooks}>
-          {books.map((book) => (
-            <li key={book.id}>
-              <i
-                className={styles.tipCover}
-                style={{
-                  background: coverColor(
-                    book.title + (book.author?.name ?? '')
-                  ),
-                }}
-                aria-hidden="true"
-              />
-              <div>
-                <span className={styles.tipTitle}>{book.title}</span>
-                <span>{book.author?.name}</span>
-                {readDate(book) && (
-                  <time dateTime={readDate(book)}>
-                    {formatDay(readDate(book))}
-                  </time>
-                )}
-              </div>
-              <Link
-                className={styles.more}
-                to="."
-                search={(prev) => ({ ...prev, edit: book.id })}
-                aria-label={m.book_edit({ title: book.title })}
-                onClick={onClose}
-              >
-                <PencilSimpleIcon aria-hidden="true" />
-                {m.common_edit()}
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <ul className={styles.worldBooks}>{books.map(renderBook)}</ul>
       ) : (
         <DialogText>{m.world_no_books()}</DialogText>
       )}
@@ -87,18 +61,7 @@ const WorldDialog = ({
         <Button type="button" variant="text" onClick={onClose}>
           {m.common_close()}
         </Button>
-        <Button
-          type="button"
-          id="world-log"
-          onClick={() => {
-            onClose();
-
-            navigate({
-              to: '.',
-              search: (prev) => ({ ...prev, log: true, world: world.name }),
-            });
-          }}
-        >
+        <Button type="button" id="world-log" onClick={handleLogHere}>
           <PushPinIcon aria-hidden="true" />
           {m.world_log_here()}
         </Button>

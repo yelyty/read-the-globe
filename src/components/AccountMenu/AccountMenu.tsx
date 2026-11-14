@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type FocusEvent,
+  type KeyboardEvent,
+} from 'react';
 import { CaretDownIcon } from '@phosphor-icons/react';
 import { Link, useMatchRoute } from '@tanstack/react-router';
 
@@ -53,15 +59,26 @@ const AccountMenu = () => {
     }
   };
 
+  // focus leaving the menu altogether closes it
+  const handleBlur = (event: FocusEvent<HTMLDivElement>) => {
+    if (!root.current?.contains(event.relatedTarget)) setOpen(false);
+  };
+
+  const handleToggle = () => setOpen((current) => !current);
+  const handleClose = () => setOpen(false);
+
+  const handleSignOut = async () => {
+    setOpen(false);
+    await signOut();
+  };
+
   return (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions -- keys and focus-out bubble up from the button and items
     <div
       ref={root}
       className={styles.menu}
       onKeyDown={onKeyDown}
-      onBlur={(event) => {
-        if (!root.current?.contains(event.relatedTarget)) setOpen(false);
-      }}
+      onBlur={handleBlur}
     >
       <button
         ref={button}
@@ -71,18 +88,14 @@ const AccountMenu = () => {
         aria-haspopup="true"
         aria-expanded={open}
         aria-controls="account-menu"
-        onClick={() => setOpen((current) => !current)}
+        onClick={handleToggle}
       >
         {m.nav_account()}{' '}
         <CaretDownIcon className={styles.caret} aria-hidden="true" />
       </button>
       <ul ref={list} id="account-menu" className={styles.list} hidden={!open}>
         <li>
-          <Link
-            className={styles.item}
-            to="/app/account"
-            onClick={() => setOpen(false)}
-          >
+          <Link className={styles.item} to="/app/account" onClick={handleClose}>
             {m.nav_your_account()}
           </Link>
         </li>
@@ -90,14 +103,7 @@ const AccountMenu = () => {
           <LanguagePicker label={m.language()} className={menuRow} />
         </li>
         <li>
-          <button
-            type="button"
-            className={styles.item}
-            onClick={async () => {
-              setOpen(false);
-              await signOut();
-            }}
-          >
+          <button type="button" className={styles.item} onClick={handleSignOut}>
             {m.nav_sign_out()}
           </button>
         </li>

@@ -4,9 +4,8 @@ import { useNavigate } from '@tanstack/react-router';
 import { useAuth } from '../../auth/auth-context';
 import Footer from '../landing/components/Footer/Footer';
 import Header from '../landing/components/Header/Header';
-import LoginDialog, {
-  type AuthMode,
-} from '../landing/components/LoginDialog/LoginDialog';
+import LoginDialog from '../landing/components/LoginDialog/LoginDialog';
+import type { AuthMode } from '../landing/components/LoginDialog/validate';
 import { page } from '../landing/LandingPage.css';
 import * as styles from './CompanyPage.css';
 
@@ -42,12 +41,13 @@ const CompanyPage = ({
       ?.setAttribute('content', description);
   }, [title, description]);
 
+  const handleLogIn = () => setAuth('login');
+  const handleSignUp = () => setAuth('signup');
+  const handleAuthClose = () => setAuth(null);
+
   return (
     <div className={page}>
-      <Header
-        onLogIn={() => setAuth('login')}
-        onSignUp={() => setAuth('signup')}
-      />
+      <Header onLogIn={handleLogIn} onSignUp={handleSignUp} />
       <main
         id="main"
         tabIndex={-1}
@@ -56,7 +56,7 @@ const CompanyPage = ({
       >
         {children}
       </main>
-      <LoginDialog mode={auth} onMode={setAuth} onClose={() => setAuth(null)} />
+      <LoginDialog mode={auth} onMode={setAuth} onClose={handleAuthClose} />
       <Footer />
     </div>
   );

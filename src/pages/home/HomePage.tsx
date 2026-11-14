@@ -1,4 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type MouseEvent,
+  type PointerEvent,
+} from 'react';
 import { getRouteApi, Link, useNavigate } from '@tanstack/react-router';
 import {
   ArrowsInIcon,
@@ -10,42 +18,32 @@ import {
 import AtlasMap, {
   ANTARCTICA,
   type Show,
-} from '../../components/AtlasMap/AtlasMap.tsx';
+} from '../../components/AtlasMap/AtlasMap';
 import { atlasMarks, atlasStats } from '../../utils/atlasMarks';
 import { worldsOf } from '../../utils/worlds';
-import { useAuth } from '../../auth/auth-context.ts';
-import { useCountryNames } from '../../hooks/useCountryNames.ts';
-import { useLanding } from '../../hooks/useLanding.ts';
-import { useStatus } from '../../hooks/useStatus.ts';
-import PageTitle from '../../components/PageTitle/PageTitle.tsx';
+import { useAuth } from '../../auth/auth-context';
+import { useCountryNames } from '../../hooks/useCountryNames';
+import { useLanding } from '../../hooks/useLanding';
+import { useStatus } from '../../hooks/useStatus';
+import PageTitle from '../../components/PageTitle/PageTitle';
 import { byLogged } from '../../utils/readDate';
+import { prefersReducedMotion } from '../../utils/motion';
 import { m } from '../../paraglide/messages.js';
 import * as styles from './HomePage.css';
-import AtlasCountries from './AtlasCountries.tsx';
-import BeyondMap from './BeyondMap.tsx';
-import Cartouche from './features/Cartouche.tsx';
-import MapKey from './MapKey.tsx';
-import MapTip, { type Tip } from './MapTip.tsx';
-import RecentReads from './features/RecentReads.tsx';
+import AtlasCountries from './AtlasCountries';
+import BeyondMap from './BeyondMap';
+import Cartouche from './features/Cartouche';
+import MapKey from './MapKey';
+import MapTip, { type Tip } from './MapTip';
+import RecentReads from './features/RecentReads';
+import { ringAt, plateInView, drawn } from './pinFlight';
 
 const app = getRouteApi('/app');
 const RECENT = 3;
-const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const PIN =
   '<svg viewBox="0 0 24 24"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"/><circle cx="12" cy="9" r="2.8"/></svg>';
 
-// the gold ring round a country too small to see fill
-const RING_MS = 750;
-// the plate counts as in view with its top this share down the screen at most (and the header's height,
-// give or take a few pixels, at least); a scroll to it leaves a gap under the header
-const VIEW_TOP_SHARE = 0.35;
-const HEADER_SLACK = 4;
-const SCROLL_GAP = 24;
-// a smooth scroll that never says it ended is taken as done after this long
-const SCROLL_SETTLE_MS = 650;
-// frames to wait for the map's shapes: about two seconds
-const MAX_DRAW_FRAMES = 120;
 // the line said when the pins land
 const SAID_MS = 6000;
 // a goal reached is announced after the pins settle
@@ -62,59 +60,6 @@ const PIN_STAGGER_MS = 110;
 const TINY_COUNTRY = 24;
 // a beat after the last pin lands before what comes next
 const LAND_PAUSE_MS = 260;
-
-// a country too small to see fill gets a gold ring where the pin landed
-const ringAt = (rect: DOMRect) => {
-  const ring = document.createElement('div');
-
-  ring.className = styles.landRing;
-  ring.setAttribute('aria-hidden', 'true');
-  ring.style.left = `${rect.left + rect.width / 2}px`;
-  ring.style.top = `${rect.top + rect.height / 2}px`;
-  document.body.appendChild(ring);
-
-  ring.animate(
-    [
-      { transform: 'translate(-50%, -50%) scale(.4)', opacity: 1 },
-      { transform: 'translate(-50%, -50%) scale(1.7)', opacity: 0 },
-    ],
-    { duration: RING_MS, easing: 'cubic-bezier(.2,.8,.25,1)' }
-  ).onfinish = () => ring.remove();
-};
-
-// Home, with the plate in view: scroll only if it isn't already, and let the scroll settle before anything flies
-const plateInView = (plate: Element) =>
-  new Promise<void>((done) => {
-    const top = plate.getBoundingClientRect().top;
-    const head = document.querySelector('header')?.offsetHeight ?? 0;
-
-    if (top >= head - HEADER_SLACK && top < innerHeight * VIEW_TOP_SHARE)
-      return requestAnimationFrame(() => done());
-    const to = Math.max(0, top + scrollY - head - SCROLL_GAP);
-
-    if (reduced()) {
-      scrollTo({ top: to, behavior: 'instant' });
-
-      return requestAnimationFrame(() => done());
-    }
-
-    addEventListener('scrollend', () => done(), { once: true });
-    setTimeout(done, SCROLL_SETTLE_MS);
-    scrollTo({ top: to, behavior: 'smooth' });
-  });
-
-// the map's countries are drawn once its shapes arrive: wait for them (two seconds at most)
-const drawn = (plate: Element) =>
-  new Promise<void>((done) => {
-    let tries = 0;
-
-    const look = () =>
-      plate.querySelector('[data-code]') || ++tries > MAX_DRAW_FRAMES
-        ? done()
-        : requestAnimationFrame(look);
-
-    look();
-  });
 
 const HomePage = () => {
   const [show, setShow] = useState<Show>('all');
@@ -255,7 +200,7 @@ const HomePage = () => {
                 run: () => navigate({ to: '/app/goals' }),
               },
             }),
-          reduced() ? 0 : GOAL_SAY_MS
+          prefersReducedMotion() ? 0 : GOAL_SAY_MS
         );
     };
 
@@ -271,7 +216,7 @@ const HomePage = () => {
         )
         .filter((path): path is SVGPathElement => !!path);
 
-      if (reduced() || !paths.length) return land();
+      if (prefersReducedMotion() || !paths.length) return land();
       // phones: bring the first country into view before anything lands on it
       const scroller = paths[0].ownerSVGElement?.parentElement;
 
@@ -401,6 +346,13 @@ const HomePage = () => {
     });
   }, []);
 
+  // a country chip reached from the keyboard shows the map's tip for it; leaving the chips hides it
+  const handleFocusCountry = useCallback(
+    (code: string, el: Element | null) =>
+      el ? tipAt(code, el, 'key') : setTip(null),
+    [tipAt]
+  );
+
   const imagined = worlds.filter((world) => world.books.length).length;
 
   // laid over the map; kept as one element so the map itself doesn't redraw while a tip follows the pointer
@@ -439,14 +391,82 @@ const HomePage = () => {
           <AtlasCountries
             marks={held}
             names={names}
-            onFocusCountry={(code, el) =>
-              el ? tipAt(code, el, 'key') : setTip(null)
-            }
+            onFocusCountry={handleFocusCountry}
           />
         </>
       ),
-    [blank, worlds, shown, names, held, tipAt]
+    [blank, worlds, shown, names, held, handleFocusCountry]
   );
+
+  /* ---------- the plate's mouse shortcuts ---------- */
+  // a pen counts as touch: no hover tips, and a tap shows the card first
+  const handlePlatePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    pointer.current =
+      event.pointerType === 'touch' || event.pointerType === 'pen'
+        ? 'touch'
+        : 'mouse';
+  };
+
+  const handlePlateMouseMove = (event: MouseEvent<HTMLDivElement>) => {
+    if (pointer.current === 'touch') return;
+    const at = codeAt(event.target);
+
+    setTip(
+      at
+        ? {
+            code: at.code,
+            x: event.clientX,
+            y: event.clientY,
+            bottom: event.clientY,
+            by: 'mouse',
+          }
+        : null
+    );
+  };
+
+  const handlePlateMouseLeave = () => {
+    if (pointer.current !== 'touch') setTip(null);
+  };
+
+  const handlePlateClick = (event: MouseEvent<HTMLDivElement>) => {
+    const at = codeAt(event.target);
+
+    if (!at) {
+      setTip(null);
+      // anywhere but a country opens the full screen map
+      if (
+        !full &&
+        (event.target as Element).closest('.rsm-svg') &&
+        !(event.target as Element).closest('[data-code]')
+      )
+        setFull(true);
+
+      return;
+    }
+
+    // on touch, a tap shows the country's card first; a second tap on the same country acts
+    if (pointer.current === 'touch' && tip?.code !== at.code)
+      return tipAt(at.code, at.el, 'touch');
+    setTip(null);
+    if (marks[at.code])
+      return navigate({
+        to: '/app/shelf',
+        search: { country: at.code },
+      });
+    // an unmarked country opens Log a book with it as a place
+    setFull(false);
+
+    navigate({
+      to: '.',
+      search: (prev) => ({ ...prev, log: true, country: at.code }),
+    });
+  };
+
+  // the button sits on the plate: its click mustn't reach the plate's own
+  const handleFullToggle = (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    setFull(!full);
+  };
 
   return (
     <>
@@ -472,63 +492,10 @@ const HomePage = () => {
         className={styles.plate}
         data-full={full || undefined}
         data-tips
-        onPointerDown={(pointerEvent) => {
-          pointer.current =
-            pointerEvent.pointerType === 'touch' ||
-            pointerEvent.pointerType === 'pen'
-              ? 'touch'
-              : 'mouse';
-        }}
-        onMouseMove={(mouseEvent) => {
-          if (pointer.current === 'touch') return;
-          const at = codeAt(mouseEvent.target);
-
-          setTip(
-            at
-              ? {
-                  code: at.code,
-                  x: mouseEvent.clientX,
-                  y: mouseEvent.clientY,
-                  bottom: mouseEvent.clientY,
-                  by: 'mouse',
-                }
-              : null
-          );
-        }}
-        onMouseLeave={() => pointer.current !== 'touch' && setTip(null)}
-        onClick={(clickEvent) => {
-          const at = codeAt(clickEvent.target);
-
-          if (!at) {
-            setTip(null);
-            // anywhere but a country opens the full screen map
-            if (
-              !full &&
-              (clickEvent.target as Element).closest('.rsm-svg') &&
-              !(clickEvent.target as Element).closest('[data-code]')
-            )
-              setFull(true);
-
-            return;
-          }
-
-          // on touch, a tap shows the country's card first; a second tap on the same country acts
-          if (pointer.current === 'touch' && tip?.code !== at.code)
-            return tipAt(at.code, at.el, 'touch');
-          setTip(null);
-          if (marks[at.code])
-            return navigate({
-              to: '/app/shelf',
-              search: { country: at.code },
-            });
-          // an unmarked country opens Log a book with it as a place
-          setFull(false);
-
-          navigate({
-            to: '.',
-            search: (prev) => ({ ...prev, log: true, country: at.code }),
-          });
-        }}
+        onPointerDown={handlePlatePointerDown}
+        onMouseMove={handlePlateMouseMove}
+        onMouseLeave={handlePlateMouseLeave}
+        onClick={handlePlateClick}
       >
         <button
           type="button"
@@ -538,10 +505,7 @@ const HomePage = () => {
             full ? m.home_full_close_label() : m.home_full_open_label()
           }
           title={full ? m.home_full_close() : m.home_full_open()}
-          onClick={(clickEvent) => {
-            clickEvent.stopPropagation();
-            setFull(!full);
-          }}
+          onClick={handleFullToggle}
         >
           {full ? (
             <ArrowsInIcon aria-hidden="true" />

@@ -28,6 +28,7 @@ import GoalShelf from './GoalShelf';
 import Postmark from './Postmark';
 import { GoalRoute } from './GoalsRoute';
 import * as styles from './GoalsPage.css';
+import { byName } from './goals';
 
 const PERCENT = 100;
 
@@ -43,12 +44,6 @@ type GoalRowProps = {
   /** just crossed its flag: plays the arrival once */
   arriving?: boolean;
 };
-
-const byName = (codes: string[], name: (code: string) => string) =>
-  codes
-    .map(name)
-    .sort((first, second) => first.localeCompare(second, getLocale()))
-    .join(', ');
 
 // One goal, as in the app mock: its plate (or shelf), name, kind, count, the road to the flag, and actions
 const GoalRow = ({

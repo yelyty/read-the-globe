@@ -10,8 +10,10 @@ import {
   MAP_HEIGHT as HEIGHT,
   MAP_WIDTH as WIDTH,
 } from '../../../../utils/flatMap';
+import { prefersReducedMotion } from '../../../../utils/motion';
 import { m } from '../../../../paraglide/messages.js';
 import { atlasAfter, BOOKS } from './miraAtlas';
+import AtlasCountry from './AtlasCountry';
 import * as styles from './LiveAtlas.css';
 
 // the window grows to full size over this share of the screen's height as it scrolls in
@@ -31,9 +33,6 @@ const projection = flatProjection();
 const path = geoPath(projection);
 const ANTARCTICA = '010';
 
-const reduced = () =>
-  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
 type Ping = { key: string; x: number; y: number };
 
 // Mira's 48 books pin themselves, oldest first, as the map rises through the screen; scrolling back unpins them.
@@ -44,7 +43,7 @@ const LiveAtlas = () => {
 
   // how many books are pinned, and whether the last scroll added one (only then do rings ping)
   const [{ shown, grew }, setPinned] = useState(() => ({
-    shown: reduced() ? BOOKS.length : 0,
+    shown: prefersReducedMotion() ? BOOKS.length : 0,
     grew: false,
   }));
 
@@ -71,7 +70,7 @@ const LiveAtlas = () => {
   useEffect(() => {
     const el = figure.current;
 
-    if (!el || reduced()) return;
+    if (!el || prefersReducedMotion()) return;
     let frame = 0;
 
     const update = () => {
@@ -151,9 +150,29 @@ const LiveAtlas = () => {
 
   const now = !latest
     ? m.landing_atlas_scroll()
-    : shown === BOOKS.length && reduced()
+    : shown === BOOKS.length && prefersReducedMotion()
       ? `${m.count_book({ count: BOOKS.length })}, ${m.count_country({ count: atlas.countries })}`
       : m.landing_atlas_latest({ title: latest[0], author: latest[1] });
+
+  const renderCountry = ({ code, d }: (typeof countries)[number]) => (
+    <AtlasCountry
+      key={code}
+      d={d}
+      set={atlas.set.has(code)}
+      author={atlas.author.has(code)}
+    />
+  );
+
+  // a ring where a book just pinned itself
+  const renderPing = (ping: Ping) => (
+    <circle
+      key={ping.key}
+      className={styles.ping}
+      cx={ping.x}
+      cy={ping.y}
+      r={14}
+    />
+  );
 
   return (
     <figure className={styles.frame} id="atlas" ref={figure}>
@@ -181,39 +200,8 @@ const LiveAtlas = () => {
               <rect x="3" width="3" height="6" className={styles.hatchAuthor} />
             </pattern>
           </defs>
-          <g>
-            {countries.map(({ code, d }) => {
-              const set = atlas.set.has(code);
-              const author = atlas.author.has(code);
-
-              return (
-                <path
-                  key={code}
-                  d={d}
-                  className={
-                    set && author
-                      ? styles.both
-                      : set
-                        ? styles.set
-                        : author
-                          ? styles.author
-                          : styles.land
-                  }
-                />
-              );
-            })}
-          </g>
-          <g>
-            {pings.map((ping) => (
-              <circle
-                key={ping.key}
-                className={styles.ping}
-                cx={ping.x}
-                cy={ping.y}
-                r={14}
-              />
-            ))}
-          </g>
+          <g>{countries.map(renderCountry)}</g>
+          <g>{pings.map(renderPing)}</g>
         </svg>
         <p className={srOnly} id="al-desc">
           {m.landing_atlas_desc()}

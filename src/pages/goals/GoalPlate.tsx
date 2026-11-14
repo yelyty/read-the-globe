@@ -7,6 +7,7 @@ import type { Continent } from '../../utils/continents';
 import { mainPiece } from '../../utils/worldShapes';
 import { HEIGHT, INSET, WIDTH } from './plate';
 import * as styles from './GoalsPage.css';
+import PlateCountry from './PlateCountry';
 
 // Europe on a plate is the mainland and the islands near it, not Russia to the Pacific
 const EUROPE_WEST = -25;
@@ -67,6 +68,15 @@ export const GoalPlate = ({
     )
   );
 
+  const renderCountry = ([code, shape]: (typeof features)[number]) => (
+    <PlateCountry
+      key={code}
+      d={path(shape) ?? ''}
+      mark={marks[code]}
+      hatch={hatch}
+    />
+  );
+
   return (
     <svg
       className={styles.plate}
@@ -86,27 +96,7 @@ export const GoalPlate = ({
           <rect width="2" height="4" className={styles.shapeAuthor} />
         </pattern>
       </defs>
-      {features.map(([code, shape]) => {
-        const mark = marks[code];
-        const both = mark && mark.set.length > 0 && mark.author.length > 0;
-
-        const cls = !mark
-          ? styles.shapeTodo
-          : both
-            ? styles.shapeMarked
-            : mark.set.length
-              ? styles.shapeSet
-              : styles.shapeAuthor;
-
-        return (
-          <path
-            key={code}
-            d={path(shape) ?? ''}
-            className={cls}
-            style={both ? { fill: `url(#${hatch})` } : undefined}
-          />
-        );
-      })}
+      {features.map(renderCountry)}
     </svg>
   );
 };

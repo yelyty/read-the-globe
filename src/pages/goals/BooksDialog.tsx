@@ -1,4 +1,4 @@
-import { useState, type SubmitEvent } from 'react';
+import { useState, type ChangeEvent, type SubmitEvent } from 'react';
 import { CheckIcon, MagnifyingGlassIcon } from '@phosphor-icons/react';
 
 import type { BookEntry, Goal } from '../../types';
@@ -10,6 +10,7 @@ import Dialog from '../../components/Dialog/Dialog';
 import DialogActions from '../../components/Dialog/DialogActions';
 import DialogText from '../../components/Dialog/DialogText';
 import { m } from '../../paraglide/messages.js';
+import { fold } from '../../utils/text';
 import * as styles from './GoalsPage.css';
 import { goalName, withBold } from './goals';
 
@@ -19,9 +20,6 @@ type BooksDialogProps = {
   onClose: () => void;
   onSaved: (count: number) => void;
 };
-
-const fold = (text: string) =>
-  text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
 // A theme goal's books: search, tick, Save. Ticks are held until Save, so Cancel leaves the goal as it was.
 const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
@@ -69,6 +67,25 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
     onSaved(picked.size);
   };
 
+  const handleQueryChange = (event: ChangeEvent<HTMLInputElement>) =>
+    setQuery(event.target.value);
+
+  const handleBookTick = (id: string) => () => toggle(id);
+
+  const renderBook = (book: BookEntry) => (
+    <li key={book.id}>
+      <label>
+        <input
+          type="checkbox"
+          checked={picked.has(book.id)}
+          onChange={handleBookTick(book.id)}
+        />
+        <span className={styles.pickTitle}>{book.title}</span>
+        <span className={styles.pickAuthor}>{book.author?.name}</span>
+      </label>
+    </li>
+  );
+
   return (
     <Dialog
       open
@@ -101,7 +118,7 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
                 placeholder={m.goals_books_placeholder()}
                 autoComplete="off"
                 value={query}
-                onChange={(changeEvent) => setQuery(changeEvent.target.value)}
+                onChange={handleQueryChange}
               />
             </div>
             {shown.length ? (
@@ -109,23 +126,7 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
                 <legend className={styles.srOnly}>
                   {m.goals_books_legend({ goal: title })}
                 </legend>
-                <ul>
-                  {shown.map((book) => (
-                    <li key={book.id}>
-                      <label>
-                        <input
-                          type="checkbox"
-                          checked={picked.has(book.id)}
-                          onChange={() => toggle(book.id)}
-                        />
-                        <span className={styles.pickTitle}>{book.title}</span>
-                        <span className={styles.pickAuthor}>
-                          {book.author?.name}
-                        </span>
-                      </label>
-                    </li>
-                  ))}
-                </ul>
+                <ul>{shown.map(renderBook)}</ul>
               </fieldset>
             ) : (
               <Hint role="status">

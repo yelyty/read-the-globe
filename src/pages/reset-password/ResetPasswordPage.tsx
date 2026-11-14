@@ -1,4 +1,4 @@
-import { useState, type SubmitEvent } from 'react';
+import { useState, type ChangeEvent, type SubmitEvent } from 'react';
 import { Link } from '@tanstack/react-router';
 import { PushPinIcon, WarningCircleIcon } from '@phosphor-icons/react';
 
@@ -44,6 +44,9 @@ const ResetPasswordPage = () => {
     setDone(!failed);
   };
 
+  const handlePasswordChange = (event: ChangeEvent<HTMLInputElement>) =>
+    setPassword(event.target.value);
+
   return (
     <CompanyPage
       title={m.reset_title()}
@@ -80,7 +83,7 @@ const ResetPasswordPage = () => {
             placeholder={m.auth_password_new_placeholder()}
             aria-describedby="rp-strength"
             value={password}
-            onChange={(event) => setPassword(event.target.value)}
+            onChange={handlePasswordChange}
             error={error}
           >
             <PasswordStrength id="rp-strength" password={password} />

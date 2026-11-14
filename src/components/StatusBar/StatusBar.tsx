@@ -37,6 +37,11 @@ const StatusBar = ({ children }: { children: ReactNode }) => {
   const show = useCallback((next: Status) => setStatus({ ...next }), []);
   const action = status?.action;
 
+  const handleAction = () => {
+    setStatus(null);
+    void action?.run();
+  };
+
   return (
     <StatusContext value={show}>
       {children}
@@ -56,10 +61,7 @@ const StatusBar = ({ children }: { children: ReactNode }) => {
               <button
                 type="button"
                 className={styles.action}
-                onClick={() => {
-                  setStatus(null);
-                  void action.run();
-                }}
+                onClick={handleAction}
               >
                 {action.icon}
                 {action.label}

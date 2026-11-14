@@ -1,29 +1,13 @@
 import { useEffect, useId, useState } from 'react';
-import { geoArea, geoEquirectangular, geoPath } from 'd3-geo';
-import type { Feature, Polygon } from 'geojson';
+import { geoEquirectangular, geoPath } from 'd3-geo';
+import type { Feature } from 'geojson';
 
 import type { Mark } from '../../utils/atlasMarks';
-import { worldShapes } from '../../utils/worldShapes';
+import { mainPiece, worldShapes } from '../../utils/worldShapes';
 import * as styles from './HomePage.css';
 
 // the space round a country's shape, as a share of its box's shorter side
 const PAD_SHARE = 0.06;
-
-const mainPiece = (feature: Feature): Feature => {
-  if (feature.geometry.type !== 'MultiPolygon') return feature;
-
-  const pieces = feature.geometry.coordinates.map(
-    (coordinates): Feature<Polygon> => ({
-      type: 'Feature',
-      properties: {},
-      geometry: { type: 'Polygon', coordinates },
-    })
-  );
-
-  return pieces.reduce((biggest, piece) =>
-    geoArea(piece) > geoArea(biggest) ? piece : biggest
-  );
-};
 
 type CountryShapeProps = {
   code: string;

@@ -1,29 +1,15 @@
-import { Link } from '@tanstack/react-router';
 import { MapTrifoldIcon } from '@phosphor-icons/react';
 
-import { counted, type Mark, type Marks } from '../../utils/atlasMarks';
+import { counted, type Marks } from '../../utils/atlasMarks';
 import {
   CONTINENT_NAMES,
   CONTINENT_OF,
-  continentName,
   type Continent,
 } from '../../utils/continents';
 import { m } from '../../paraglide/messages.js';
 import { getLocale } from '../../paraglide/runtime.js';
 import * as styles from './HomePage.css';
-import CountryShape from './CountryShape';
-
-const PEEK = 6;
-
-const describe = ({ set, author }: Mark) =>
-  [
-    set.length &&
-      m.home_n_set({ stories: m.count_story({ count: set.length }) }),
-    author.length &&
-      m.home_n_from({ authors: m.count_author({ count: author.length }) }),
-  ]
-    .filter(Boolean)
-    .join(', ');
+import ContinentRow from './ContinentRow';
 
 type AtlasCountriesProps = {
   marks: Marks;
@@ -56,6 +42,26 @@ const AtlasCountries = ({
     undefined
   );
 
+  // its countries in name order, under each continent that has any
+  const rows = continents.map((continent) => ({
+    continent,
+    codes: byContinent[continent]!.sort((first, second) =>
+      name(first).localeCompare(name(second), getLocale())
+    ),
+  }));
+
+  const renderRow = ({ continent, codes }: (typeof rows)[number]) => (
+    <ContinentRow
+      key={continent}
+      continent={continent}
+      codes={codes}
+      marks={marks}
+      name={name}
+      open={continent === biggest}
+      onFocusCountry={onFocusCountry}
+    />
+  );
+
   return (
     <section className={styles.section} aria-labelledby="countries-title">
       <div className={styles.subHead}>
@@ -66,76 +72,7 @@ const AtlasCountries = ({
         <p className={styles.subNote}>{m.home_countries_note()}</p>
       </div>
       <div className={styles.cc} data-tips>
-        {continents.map((continent) => {
-          const codes = byContinent[continent]!.sort((first, second) =>
-            name(first).localeCompare(name(second), getLocale())
-          );
-
-          return (
-            <details
-              key={continent}
-              className={styles.ccRow}
-              open={continent === biggest}
-            >
-              <summary className={styles.ccSummary}>
-                <h3 className={styles.ccTitle}>
-                  {continentName(continent)}{' '}
-                  <span className={styles.ccN} aria-hidden="true">
-                    {codes.length}
-                  </span>
-                  <span className={styles.srOnly}>
-                    , {m.count_country({ count: codes.length })}
-                  </span>
-                </h3>
-                <span className={styles.ccPeek} aria-hidden="true">
-                  {codes.slice(0, PEEK).map((code) => (
-                    <CountryShape
-                      key={code}
-                      code={code}
-                      mark={marks[code]}
-                      width={56}
-                      height={35}
-                    />
-                  ))}
-                  {codes.length > PEEK && (
-                    <span className={styles.ccMore}>
-                      +{codes.length - PEEK}
-                    </span>
-                  )}
-                </span>
-              </summary>
-              <ul className={styles.ccStamps}>
-                {codes.map((code) => (
-                  <li key={code}>
-                    <Link
-                      className={styles.ccStamp}
-                      to="/app/shelf"
-                      search={{ country: code }}
-                      onFocus={(focusEvent) =>
-                        focusEvent.currentTarget.matches(':focus-visible') &&
-                        onFocusCountry?.(code, focusEvent.currentTarget)
-                      }
-                      onBlur={() => onFocusCountry?.(code, null)}
-                    >
-                      <span className={styles.ccShape}>
-                        <CountryShape
-                          code={code}
-                          mark={marks[code]}
-                          width={128}
-                          height={80}
-                        />
-                      </span>
-                      <span className={styles.ccName}>{name(code)}</span>
-                      <span className={styles.ccWhat}>
-                        {describe(marks[code])}
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </details>
-          );
-        })}
+        {rows.map(renderRow)}
       </div>
     </section>
   );

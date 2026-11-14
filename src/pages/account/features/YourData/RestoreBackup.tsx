@@ -119,12 +119,14 @@ const RestoreBackup = ({
         })
       : m.account_earlier_date();
 
+  const handleChooseFile = () => file.current?.click();
+
   return (
     <>
       <button
         type="button"
         className={button({ variant: 'quiet' })}
-        onClick={() => file.current?.click()}
+        onClick={handleChooseFile}
       >
         <UploadSimpleIcon aria-hidden="true" />
         {m.account_restore_button()}

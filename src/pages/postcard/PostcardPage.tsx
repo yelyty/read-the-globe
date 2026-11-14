@@ -10,15 +10,14 @@ import { useAuth } from '../../auth/auth-context';
 import { useCountryNames } from '../../hooks/useCountryNames';
 import { atlasMarks } from '../../utils/atlasMarks';
 import { updateProfile } from '../../api/Profile/updateProfile';
-import type { SavedPostcard } from '../../api/Profile/getProfile';
 import type { Goal } from '../../types';
 import { m } from '../../paraglide/messages.js';
-import { getLocale } from '../../paraglide/runtime.js';
 import PageTitle from '../../components/PageTitle/PageTitle';
 import Logo from '../../components/Logo/Logo';
 import Hint from '../../components/Hint/Hint';
 import Select from '../../components/Select/Select';
 import { isoDay } from '../../utils/isoDate';
+import { lower } from '../../utils/text';
 import { goalName, goalProgress } from '../goals/goals';
 import {
   COLORS,
@@ -35,53 +34,18 @@ import {
 import { GOAL_H, GOAL_W, drawGoalCard, goalCardName } from './drawGoalCard';
 import { bookYears, yearSum } from './yearSum';
 import * as styles from './PostCardPage.css';
+import { logoImage } from './logoImage';
+import {
+  type CardOptions,
+  countLabel,
+  COUNTS,
+  readOptions,
+} from './cardOptions';
 
 const app = getRouteApi('/app');
 const route = getRouteApi('/app/postcard');
-
-// which card: the atlas's (both null), a year's, or a reached goal's
-type CardOptions = Options & { goal: number | null; year: string | null };
-
-const DEFAULTS: CardOptions = {
-  kind: 'authors',
-  count: 0,
-  frame: 'perforated',
-  color: null,
-  paper: 'paper',
-  goal: null,
-  year: null,
-};
-
-// how many countries a card lists: the top few, the top more, or all of them (0)
-const TOP_FEW = 3;
-const TOP_MORE = 6;
 // the set-up is saved once the reader stops changing it for this long
 const SAVE_DELAY_MS = 600;
-
-// the reader's saved set-up, field by field: an unknown or older value falls back to the default
-const oneOf = <T,>(values: readonly T[], value: unknown, fallback: T) =>
-  values.find((item) => item === value) ?? fallback;
-
-const keys = <T extends object>(obj: T) => Object.keys(obj) as (keyof T)[];
-
-const readOptions = (saved: SavedPostcard): CardOptions => ({
-  kind: oneOf(keys(KINDS), saved?.kind, DEFAULTS.kind),
-  count: oneOf(COUNTS, saved?.count, DEFAULTS.count),
-  frame: oneOf(
-    ['perforated', 'framed', 'plain'] as const,
-    saved?.frame,
-    DEFAULTS.frame
-  ),
-  color: oneOf(keys(COLORS), saved?.color, null),
-  paper: oneOf(keys(PAPERS), saved?.paper, DEFAULTS.paper),
-  goal: typeof saved?.goal === 'number' ? saved.goal : null,
-  year: typeof saved?.year === 'string' ? saved.year : null,
-});
-
-const countLabel = (count: number) =>
-  count ? m.postcard_top({ n: count }) : m.postcard_all();
-
-const COUNTS = [TOP_FEW, TOP_MORE, 0] as const;
 
 const FRAMES = {
   perforated: m.postcard_frame_perforated,
@@ -89,24 +53,11 @@ const FRAMES = {
   plain: m.postcard_frame_plain,
 } as const;
 
-const lower = (text: string) => text.toLocaleLowerCase(getLocale());
-
-// the logo as a picture the canvas can draw: the same SVG the header shows, given its own size
-const logoImage = (svg: SVGSVGElement) =>
-  new Promise<HTMLImageElement | null>((resolve) => {
-    const copy = svg.cloneNode(true) as SVGSVGElement;
-
-    copy.setAttribute('width', '604');
-    copy.setAttribute('height', '610');
-    const img = new Image();
-
-    img.onload = () => resolve(img);
-    img.onerror = () => resolve(null);
-
-    img.src =
-      'data:image/svg+xml;charset=utf-8,' +
-      encodeURIComponent(new XMLSerializer().serializeToString(copy));
-  });
+// the choices in the order they're offered
+const KIND_KEYS = Object.keys(KINDS) as Kind[];
+const PAPER_KEYS = Object.keys(PAPERS) as Options['paper'][];
+const FRAME_KEYS = Object.keys(FRAMES) as Options['frame'][];
+const COLOR_KEYS = Object.keys(COLORS) as (keyof typeof COLORS)[];
 
 const PostcardPage = () => {
   const { books, goals } = app.useLoaderData();
@@ -377,6 +328,102 @@ const PostcardPage = () => {
     });
   };
 
+  // the card picker's value is 'atlas', 'year:<year>' or 'goal:<id>'
+  const handleCardChange = (next: string) => {
+    const [card, value] = next.split(':');
+
+    set({
+      goal: card === 'goal' ? Number(value) : null,
+      year: card === 'year' ? value : null,
+    });
+  };
+
+  // one of the set-up's buttons: kind, paper, count, frame or colour
+  const handleSet = (change: Partial<CardOptions>) => () => set(change);
+
+  /* ---------- lists ---------- */
+  // the card picker: the reading atlas, then each year with books, then each goal reached
+  const cardChoices = [
+    { value: 'atlas', label: m.postcard_your_reading_atlas() },
+    ...years.map((yearOption) => ({
+      value: `year:${yearOption}`,
+      label: m.postcard_in_books({ year: yearOption }),
+    })),
+    ...reached.map((reachedGoal) => ({
+      value: `goal:${reachedGoal.id}`,
+      label: m.postcard_goal_option({ goal: goalName(reachedGoal.name) }),
+    })),
+  ];
+
+  const renderKind = (kind: Kind) => (
+    <button
+      key={kind}
+      type="button"
+      className={styles.kind}
+      data-kind={kind}
+      aria-pressed={options.kind === kind}
+      onClick={handleSet({ kind })}
+    >
+      <span className={styles.kindStamp} aria-hidden="true" />
+      <b className={styles.kindN}>{counts[kind]}</b>
+      <span className={styles.kindName}>{KINDS[kind].name()}</span>
+    </button>
+  );
+
+  const renderPaper = (paper: Options['paper']) => (
+    <button
+      key={paper}
+      type="button"
+      className={styles.paper}
+      aria-pressed={options.paper === paper}
+      onClick={handleSet({ paper })}
+    >
+      <span
+        className={styles.paperChip}
+        style={{ background: PAPERS[paper].fill }}
+        aria-hidden="true"
+      />
+      {PAPERS[paper].name()}
+    </button>
+  );
+
+  const renderCount = (count: Options['count']) => (
+    <button
+      key={count}
+      type="button"
+      className={styles.pill}
+      aria-pressed={options.count === count}
+      onClick={handleSet({ count })}
+    >
+      {countLabel(count)}
+    </button>
+  );
+
+  const renderFrame = (frame: Options['frame']) => (
+    <button
+      key={frame}
+      type="button"
+      className={styles.pill}
+      aria-pressed={options.frame === frame}
+      onClick={handleSet({ frame })}
+    >
+      {FRAMES[frame]()}
+    </button>
+  );
+
+  const renderColor = (key: keyof typeof COLORS) => (
+    <button
+      key={key}
+      type="button"
+      className={styles.swatch}
+      style={{ background: COLORS[key].fill }}
+      aria-pressed={color === key}
+      aria-label={COLORS[key].name()}
+      title={COLORS[key].name()}
+      onClick={handleSet({ color: key })}
+    />
+  );
+
   return (
     <>
       <PageTitle>{m.title_postcard()}</PageTitle>
@@ -421,27 +468,8 @@ const PostcardPage = () => {
                   labelId="pc-card-label"
                   className={styles.select}
                   value={which}
-                  onChange={(next) => {
-                    const [card, value] = next.split(':');
-
-                    set({
-                      goal: card === 'goal' ? Number(value) : null,
-                      year: card === 'year' ? value : null,
-                    });
-                  }}
-                  options={[
-                    { value: 'atlas', label: m.postcard_your_reading_atlas() },
-                    ...years.map((yearOption) => ({
-                      value: `year:${yearOption}`,
-                      label: m.postcard_in_books({ year: yearOption }),
-                    })),
-                    ...reached.map((reachedGoal) => ({
-                      value: `goal:${reachedGoal.id}`,
-                      label: m.postcard_goal_option({
-                        goal: goalName(reachedGoal.name),
-                      }),
-                    })),
-                  ]}
+                  onChange={handleCardChange}
+                  options={cardChoices}
                 />
                 {!reached.length && <Hint>{m.postcard_reach_hint()}</Hint>}
               </div>
@@ -456,22 +484,7 @@ const PostcardPage = () => {
                     role="group"
                     aria-labelledby="pc-kind-label"
                   >
-                    {(Object.keys(KINDS) as Kind[]).map((kind) => (
-                      <button
-                        key={kind}
-                        type="button"
-                        className={styles.kind}
-                        data-kind={kind}
-                        aria-pressed={options.kind === kind}
-                        onClick={() => set({ kind })}
-                      >
-                        <span className={styles.kindStamp} aria-hidden="true" />
-                        <b className={styles.kindN}>{counts[kind]}</b>
-                        <span className={styles.kindName}>
-                          {KINDS[kind].name()}
-                        </span>
-                      </button>
-                    ))}
+                    {KIND_KEYS.map(renderKind)}
                   </div>
                 </div>
               )}
@@ -485,22 +498,7 @@ const PostcardPage = () => {
                   role="group"
                   aria-labelledby="pc-paper-label"
                 >
-                  {(Object.keys(PAPERS) as Options['paper'][]).map((paper) => (
-                    <button
-                      key={paper}
-                      type="button"
-                      className={styles.paper}
-                      aria-pressed={options.paper === paper}
-                      onClick={() => set({ paper })}
-                    >
-                      <span
-                        className={styles.paperChip}
-                        style={{ background: PAPERS[paper].fill }}
-                        aria-hidden="true"
-                      />
-                      {PAPERS[paper].name()}
-                    </button>
-                  ))}
+                  {PAPER_KEYS.map(renderPaper)}
                 </div>
               </div>
             </div>
@@ -525,19 +523,7 @@ const PostcardPage = () => {
                   <span className={styles.rowLabel} id="pc-count-label">
                     {m.postcard_stamps()}
                   </span>
-                  <div className={styles.pills}>
-                    {COUNTS.map((count) => (
-                      <button
-                        key={count}
-                        type="button"
-                        className={styles.pill}
-                        aria-pressed={options.count === count}
-                        onClick={() => set({ count: count })}
-                      >
-                        {countLabel(count)}
-                      </button>
-                    ))}
-                  </div>
+                  <div className={styles.pills}>{COUNTS.map(renderCount)}</div>
                 </div>
                 <div
                   className={styles.row}
@@ -548,19 +534,7 @@ const PostcardPage = () => {
                     {m.postcard_frame()}
                   </span>
                   <div className={styles.pills}>
-                    {(Object.keys(FRAMES) as Options['frame'][]).map(
-                      (frame) => (
-                        <button
-                          key={frame}
-                          type="button"
-                          className={styles.pill}
-                          aria-pressed={options.frame === frame}
-                          onClick={() => set({ frame: frame })}
-                        >
-                          {FRAMES[frame]()}
-                        </button>
-                      )
-                    )}
+                    {FRAME_KEYS.map(renderFrame)}
                   </div>
                 </div>
                 <div
@@ -572,20 +546,7 @@ const PostcardPage = () => {
                     {m.postcard_colour()}
                   </span>
                   <div className={styles.swatches}>
-                    {(Object.keys(COLORS) as (keyof typeof COLORS)[]).map(
-                      (key) => (
-                        <button
-                          key={key}
-                          type="button"
-                          className={styles.swatch}
-                          style={{ background: COLORS[key].fill }}
-                          aria-pressed={color === key}
-                          aria-label={COLORS[key].name()}
-                          title={COLORS[key].name()}
-                          onClick={() => set({ color: key })}
-                        />
-                      )
-                    )}
+                    {COLOR_KEYS.map(renderColor)}
                   </div>
                   <span className={styles.colorName} aria-hidden="true">
                     {COLORS[color].name()}

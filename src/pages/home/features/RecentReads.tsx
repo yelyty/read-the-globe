@@ -9,23 +9,25 @@ import * as styles from '../HomePage.css';
 
 type RecentReadsProps = { books: BookEntry[]; names: Record<string, string> };
 
-const RecentReads = ({ books, names }: RecentReadsProps) => (
-  <section className={styles.section} aria-labelledby="recent-title">
-    <div className={styles.subHead}>
-      <h2 id="recent-title" className={styles.h2}>
-        <MapPinIcon className={styles.h2Icon} aria-hidden="true" />
-        {m.home_recent()}
-      </h2>
-      <Link className={styles.more} to="/app/shelf">
-        {m.nav_shelf()} <ArrowRightIcon aria-hidden="true" />
-      </Link>
-    </div>
-    <ul className={list}>
-      {books.map((book) => (
-        <BookRow key={book.id} book={book} names={names} />
-      ))}
-    </ul>
-  </section>
-);
+const RecentReads = ({ books, names }: RecentReadsProps) => {
+  const renderBook = (book: BookEntry) => (
+    <BookRow key={book.id} book={book} names={names} />
+  );
+
+  return (
+    <section className={styles.section} aria-labelledby="recent-title">
+      <div className={styles.subHead}>
+        <h2 id="recent-title" className={styles.h2}>
+          <MapPinIcon className={styles.h2Icon} aria-hidden="true" />
+          {m.home_recent()}
+        </h2>
+        <Link className={styles.more} to="/app/shelf">
+          {m.nav_shelf()} <ArrowRightIcon aria-hidden="true" />
+        </Link>
+      </div>
+      <ul className={list}>{books.map(renderBook)}</ul>
+    </section>
+  );
+};
 
 export default RecentReads;

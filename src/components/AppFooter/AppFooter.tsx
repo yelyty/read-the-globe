@@ -12,16 +12,18 @@ const LINKS = [
 ] as const;
 
 const AppFooter = () => {
+  const renderLink = (link: (typeof LINKS)[number]) => (
+    <Link key={link.to} className={styles.link} to={link.to}>
+      {link.label()}
+    </Link>
+  );
+
   return (
     <footer className={styles.footer}>
       <div className={styles.row}>
         <p>{m.footer_copyright({ year: 2026 })}</p>
         <nav className={styles.links} aria-label={m.footer_nav()}>
-          {LINKS.map((link) => (
-            <Link key={link.to} className={styles.link} to={link.to}>
-              {link.label()}
-            </Link>
-          ))}
+          {LINKS.map(renderLink)}
         </nav>
         <p className={styles.credit}>
           {m.footer_map_before()}{' '}

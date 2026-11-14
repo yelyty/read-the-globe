@@ -13,7 +13,7 @@ import {
   restoreGoal,
 } from '../../api/goals/goals';
 import { useStatus } from '../../hooks/useStatus';
-import { reducedMotion } from '../../styles/global.css';
+import { prefersReducedMotion } from '../../utils/motion';
 import { useCountryNames } from '../../hooks/useCountryNames';
 import { m } from '../../paraglide/messages.js';
 import PageTitle from '../../components/PageTitle/PageTitle';
@@ -27,9 +27,10 @@ import {
   today,
   withBold,
   type GoalDraft,
+  type Suggestion,
 } from './goals';
-import { GoalPlate } from './GoalPlate';
-import GoalShelf from './GoalShelf';
+import GoalDestination from './GoalDestination';
+import SuggestionGroup from './SuggestionGroup';
 import GoalRow from './GoalRow';
 import GoalDialog from './GoalsDialog';
 import BooksDialog from './BooksDialog';
@@ -89,7 +90,7 @@ const GoalsPage = () => {
       changes.map(({ g, done }) => markReached(g.id, done ? today() : null))
     ).then((problems) => {
       if (!problems.every((problem) => !problem)) return;
-      if (!matchMedia(reducedMotion).matches)
+      if (!prefersReducedMotion())
         setArriving((prev) => [
           ...prev,
           ...changes
@@ -114,7 +115,7 @@ const GoalsPage = () => {
 
     heading.scrollIntoView({
       block: 'center',
-      behavior: matchMedia(reducedMotion).matches ? 'auto' : 'smooth',
+      behavior: prefersReducedMotion() ? 'auto' : 'smooth',
     });
 
     heading.focus({ preventScroll: true });
@@ -262,6 +263,74 @@ const GoalsPage = () => {
 
   const rest = offered.filter((option) => !top.includes(option));
 
+  // More goals, by kind; a kind with nothing left to offer isn't shown
+  const groups = (Object.keys(KIND_GROUP) as GoalKind[])
+    .map((kind) => ({
+      kind,
+      items: rest.filter((option) => option.c.kind === kind),
+    }))
+    .filter((group) => group.items.length);
+
+  /* ---------- lists ---------- */
+  const renderDestination = ({ c, p }: Suggestion) => (
+    <GoalDestination
+      key={c.name}
+      goal={c}
+      progress={p}
+      marks={marks}
+      shapes={shapes}
+      disabled={full}
+      onAdd={add}
+    />
+  );
+
+  const renderGroup = ({ kind, items }: (typeof groups)[number]) => (
+    <SuggestionGroup
+      key={kind}
+      kind={kind}
+      items={items}
+      disabled={full}
+      onAdd={add}
+    />
+  );
+
+  const renderGoal = (goal: Goal) => (
+    <GoalRow
+      key={goal.id}
+      goal={goal}
+      progress={progress(goal)}
+      marks={marks}
+      shapes={shapes}
+      name={name}
+      onEdit={handleEdit(goal)}
+      onRemove={handleRemove(goal)}
+      onChooseBooks={handleChooseBooks(goal)}
+      arriving={arriving.includes(goal.id)}
+    />
+  );
+
+  /* ---------- handlers ---------- */
+  const handleAdd = (draft: GoalDraft) => () => add(draft);
+  const handleNewGoal = () => setEditing('new');
+  const handleEdit = (goal: Goal) => () => setEditing(goal);
+  const handleRemove = (goal: Goal) => () => remove(goal);
+  const handleChooseBooks = (goal: Goal) => () => setChoosing(goal);
+  const handleEditClose = () => setEditing(null);
+  const handleChooseClose = () => setChoosing(null);
+
+  // the line said after a save names the goal; a new one is also scrolled to
+  const handleGoalSaved = (savedName: string) =>
+    saved(
+      (editing === 'new' ? m.goals_added : m.goals_saved)({
+        goal: goalName(savedName),
+      }),
+      savedName
+    );
+
+  const handleBooksSaved = (count: number) =>
+    choosing &&
+    saved(m.goals_books_counted({ count, goal: goalName(choosing.name) }));
+
   const suggestions = (
     <section className={styles.addGoal} aria-labelledby="add-goal-title">
       <details className={styles.sugg} open={!goals.length || undefined}>
@@ -284,7 +353,7 @@ const GoalsPage = () => {
             <button
               type="button"
               className={styles.primary}
-              onClick={() => add(pick.c)}
+              onClick={handleAdd(pick.c)}
             >
               <PlusIcon aria-hidden="true" />
               {m.goals_add_named({ goal: goalName(pick.c.name) })}
@@ -293,43 +362,7 @@ const GoalsPage = () => {
         )}
         {full && <p className={styles.full}>{m.goals_full()}</p>}
         {top.length > 0 && (
-          <ul className={styles.dests}>
-            {top.map(({ c, p }) => (
-              <li key={c.name}>
-                <button
-                  type="button"
-                  className={styles.dest}
-                  disabled={full}
-                  onClick={() => add(c)}
-                >
-                  <span className={styles.destMap}>
-                    {c.kind === 'theme' ? (
-                      <GoalShelf done={0} total={c.target!} />
-                    ) : (
-                      <GoalPlate
-                        codes={p.all}
-                        marks={marks}
-                        shapes={shapes}
-                        continent={c.continent}
-                      />
-                    )}
-                  </span>
-                  <span className={styles.destName}>{goalName(c.name)}</span>
-                  <span className={styles.destNote}>
-                    {p.done
-                      ? m.goals_already({ done: p.done, total: p.total })
-                      : c.kind === 'theme'
-                        ? m.count_book({ count: p.total })
-                        : m.count_country({ count: p.total })}
-                  </span>
-                  <span className={styles.destAdd}>
-                    <PlusIcon aria-hidden="true" />
-                    {m.goals_add_goal()}
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
+          <ul className={styles.dests}>{top.map(renderDestination)}</ul>
         )}
         {rest.length > 0 && (
           <details className={styles.more}>
@@ -337,38 +370,7 @@ const GoalsPage = () => {
               {m.goals_more()}{' '}
               <span className={styles.moreN}>· {rest.length}</span>
             </summary>
-            {(Object.keys(KIND_GROUP) as GoalKind[]).map((kind) => {
-              const items = rest.filter((option) => option.c.kind === kind);
-
-              return items.length ? (
-                <div key={kind} className={styles.group}>
-                  <h3>{KIND_GROUP[kind]()}</h3>
-                  <ul className={styles.chips}>
-                    {items.map(({ c, p }) => (
-                      <li key={c.name}>
-                        <button
-                          type="button"
-                          className={styles.chip}
-                          disabled={full}
-                          onClick={() => add(c)}
-                        >
-                          <PlusIcon aria-hidden="true" />
-                          {goalName(c.name)}
-                          {p.done > 0 && c.kind !== 'theme' && (
-                            <span className={styles.chipNote}>
-                              {m.goals_already({
-                                done: p.done,
-                                total: p.total,
-                              })}
-                            </span>
-                          )}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null;
-            })}
+            {groups.map(renderGroup)}
           </details>
         )}
       </details>
@@ -377,7 +379,7 @@ const GoalsPage = () => {
         className={styles.outline}
         aria-haspopup="dialog"
         disabled={full}
-        onClick={() => setEditing('new')}
+        onClick={handleNewGoal}
       >
         <PlusIcon aria-hidden="true" />
         {m.goals_make_own()}
@@ -402,22 +404,7 @@ const GoalsPage = () => {
                 {full && ` · ${m.goals_sum_full()}`}
               </span>
             </summary>
-            <ul className={styles.goalList}>
-              {sorted.map((goal) => (
-                <GoalRow
-                  key={goal.id}
-                  goal={goal}
-                  progress={progress(goal)}
-                  marks={marks}
-                  shapes={shapes}
-                  name={name}
-                  onEdit={() => setEditing(goal)}
-                  onRemove={() => remove(goal)}
-                  onChooseBooks={() => setChoosing(goal)}
-                  arriving={arriving.includes(goal.id)}
-                />
-              ))}
-            </ul>
+            <ul className={styles.goalList}>{sorted.map(renderGoal)}</ul>
           </details>
         </>
       ) : (
@@ -464,30 +451,16 @@ const GoalsPage = () => {
           goal={editing === 'new' ? null : editing}
           goals={goals}
           names={names}
-          onClose={() => setEditing(null)}
-          onSaved={(savedName) =>
-            saved(
-              (editing === 'new' ? m.goals_added : m.goals_saved)({
-                goal: goalName(savedName),
-              }),
-              savedName
-            )
-          }
+          onClose={handleEditClose}
+          onSaved={handleGoalSaved}
         />
       )}
       {choosing && (
         <BooksDialog
           goal={choosing}
           books={books}
-          onClose={() => setChoosing(null)}
-          onSaved={(count) =>
-            saved(
-              m.goals_books_counted({
-                count: count,
-                goal: goalName(choosing.name),
-              })
-            )
-          }
+          onClose={handleChooseClose}
+          onSaved={handleBooksSaved}
         />
       )}
     </>

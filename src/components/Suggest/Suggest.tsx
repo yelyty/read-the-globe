@@ -5,10 +5,14 @@ import {
   useMemo,
   useRef,
   useState,
+  type ChangeEvent,
   type ComponentPropsWithoutRef,
+  type FocusEvent,
   type KeyboardEvent,
+  type MouseEvent,
 } from 'react';
 
+import { fold } from '../../utils/text';
 import * as styles from './Suggest.css';
 
 // space kept between the list and the screen's edge, and between the list and its field
@@ -17,10 +21,6 @@ const FIELD_GAP = 8;
 // below this much room under the field, the list opens upwards if there's more room above
 const MIN_ROOM_BELOW = 200;
 const MAX_LIST_HEIGHT = 280;
-
-// "hoeg" finds Høeg: accents don't block a match
-const fold = (text: string) =>
-  text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
 const MAX = 60;
 
@@ -156,13 +156,53 @@ const Suggest = ({
     }
   };
 
+  const handlePlainChange = (event: ChangeEvent<HTMLInputElement>) =>
+    onValue(event.target.value);
+
+  // typing opens the list again, with nothing highlighted
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    onValue(event.target.value);
+    setOpen(true);
+    setAt(-1);
+  };
+
+  const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
+    setOpen(false);
+    input.onBlur?.(event);
+  };
+
+  // keep focus in the field
+  const handleMenuMouseDown = (event: MouseEvent<HTMLUListElement>) =>
+    event.preventDefault();
+
+  const handleMenuClick = (event: MouseEvent<HTMLUListElement>) => {
+    const li = (event.target as Element).closest<HTMLElement>(
+      '[role="option"]'
+    );
+
+    if (li) pick(hits[Number(li.dataset.i)]);
+  };
+
+  const renderHit = (option: string, i: number) => (
+    <li
+      key={option}
+      id={`${id}-${i}`}
+      data-i={i}
+      className={styles.option}
+      role="option"
+      aria-selected={i === at}
+    >
+      {option}
+    </li>
+  );
+
   // nothing to suggest (a real place's name): a plain field
   if (!options.length)
     return (
       <input
         {...input}
         value={value}
-        onChange={(changeEvent) => onValue(changeEvent.target.value)}
+        onChange={handlePlainChange}
         onKeyDown={onKeyDown}
       />
     );
@@ -178,16 +218,9 @@ const Suggest = ({
         aria-controls={id}
         aria-expanded={shown}
         aria-activedescendant={shown && at > -1 ? `${id}-${at}` : undefined}
-        onChange={(changeEvent) => {
-          onValue(changeEvent.target.value);
-          setOpen(true);
-          setAt(-1);
-        }}
+        onChange={handleChange}
         onKeyDown={keys}
-        onBlur={(blurEvent) => {
-          setOpen(false);
-          input.onBlur?.(blurEvent);
-        }}
+        onBlur={handleBlur}
       />
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events -- the field's arrow keys and Enter pick from the keyboard */}
       <ul
@@ -196,28 +229,10 @@ const Suggest = ({
         className={styles.menu}
         role="listbox"
         popover="manual"
-        onMouseDown={(mouseEvent) => mouseEvent.preventDefault()} // keep focus in the field
-        onClick={(clickEvent) => {
-          const li = (clickEvent.target as Element).closest<HTMLElement>(
-            '[role="option"]'
-          );
-
-          if (li) pick(hits[Number(li.dataset.i)]);
-        }}
+        onMouseDown={handleMenuMouseDown}
+        onClick={handleMenuClick}
       >
-        {shown &&
-          hits.map((option, i) => (
-            <li
-              key={option}
-              id={`${id}-${i}`}
-              data-i={i}
-              className={styles.option}
-              role="option"
-              aria-selected={i === at}
-            >
-              {option}
-            </li>
-          ))}
+        {shown && hits.map(renderHit)}
       </ul>
     </>
   );

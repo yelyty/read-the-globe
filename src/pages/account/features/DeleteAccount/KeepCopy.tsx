@@ -18,22 +18,20 @@ const KeepCopy = ({ books, names }: KeepCopyProps) => {
 
   if (!books.length) return null;
 
+  const handleDownload = () => {
+    exportReadingList(books, names);
+
+    setKept(
+      m.account_keep_saved({
+        books: m.count_book({ count: books.length }),
+      })
+    );
+  };
+
   return (
     <div className={styles.keepCopy}>
       <p>{m.account_keep_copy()}</p>
-      <Button
-        type="button"
-        variant="text"
-        onClick={() => {
-          exportReadingList(books, names);
-
-          setKept(
-            m.account_keep_saved({
-              books: m.count_book({ count: books.length }),
-            })
-          );
-        }}
-      >
+      <Button type="button" variant="text" onClick={handleDownload}>
         <DownloadSimpleIcon aria-hidden="true" />
         {m.account_download_list()}
       </Button>

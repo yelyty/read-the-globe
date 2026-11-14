@@ -1,9 +1,10 @@
 import { useLayoutEffect, useRef } from 'react';
 
 import type { Marks } from '../../utils/atlasMarks';
-import { coverColor } from '../../utils/coverColors';
+import type { BookEntry } from '../../types';
 import { m } from '../../paraglide/messages.js';
 import * as styles from './HomePage.css';
+import TipBook from './TipBook';
 
 // space kept between the tip and the screen's edges or the header
 const EDGE_GAP = 8;
@@ -68,6 +69,15 @@ const MapTip = ({ tip, marks, names }: MapTipProps) => {
     key: one ? m.tip_key_one : m.tip_key_many,
   }[tip.by]();
 
+  const renderBook = (book: BookEntry) => (
+    <TipBook
+      key={book.id}
+      book={book}
+      set={mark.set.includes(book)}
+      author={mark.author.includes(book)}
+    />
+  );
+
   return (
     <div ref={ref} className={styles.tip} role="tooltip">
       <p className={`${styles.tipHead} ${styles.tipHeadBooks}`}>
@@ -75,45 +85,7 @@ const MapTip = ({ tip, marks, names }: MapTipProps) => {
         <span>{m.count_book({ count: books.length })}</span>
       </p>
       <ul className={styles.tipList}>
-        {books.slice(0, SHOWN).map((book) => {
-          const set = mark.set.includes(book);
-          const author = mark.author.includes(book);
-
-          return (
-            <li key={book.id}>
-              <i
-                className={styles.tipCover}
-                style={{
-                  background: coverColor(
-                    book.title + (book.author?.name ?? '')
-                  ),
-                }}
-                aria-hidden="true"
-              />
-              <span className={styles.tipBook}>
-                <span className={styles.tipTitle}>{book.title}</span>
-                <span>{book.author?.name}</span>
-                <span className={styles.tipWhy}>
-                  <i
-                    className={
-                      set && author
-                        ? styles.swatchBoth
-                        : set
-                          ? styles.swatchSet
-                          : styles.swatchAuthor
-                    }
-                    aria-hidden="true"
-                  />
-                  {set && author
-                    ? m.tip_both()
-                    : set
-                      ? m.tip_set()
-                      : m.tip_author()}
-                </span>
-              </span>
-            </li>
-          );
-        })}
+        {books.slice(0, SHOWN).map(renderBook)}
       </ul>
       <p className={`${styles.tipFoot} ${styles.tipFootRule}`}>
         {books.length > SHOWN &&

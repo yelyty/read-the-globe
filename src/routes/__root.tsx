@@ -6,34 +6,18 @@ import {
 
 import {
   baseLocale,
-  extractLocaleFromNavigator,
   getLocale,
   localizeUrl,
-  localStorageKey,
   locales,
-  toLocale,
 } from '../paraglide/runtime.js';
 import { m } from '../paraglide/messages.js';
 import type { AuthContextValue } from '../auth/auth-context';
 import CompanyPage from '../pages/company/CompanyPage';
+import { wantedLocale } from '../utils/lang';
 
 export interface RouterContext {
   auth: AuthContextValue;
 }
-
-// A URL without /cs or /uk reads as English, so Paraglide never looks further. Send a reader who
-// picked another language, or whose browser prefers one, to its prefix. A prefix in a link always wins.
-const wantedLocale = () => {
-  try {
-    const saved = toLocale(localStorage.getItem(localStorageKey));
-
-    if (saved) return saved;
-  } catch {
-    // storage blocked: fall back to the browser
-  }
-
-  return extractLocaleFromNavigator();
-};
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   beforeLoad: () => {

@@ -46,6 +46,8 @@ const ImportCsv = ({ className, children, onDone }: ImportCsvProps) => {
     onDone(importReport(result.added, result.duplicates, problems));
   };
 
+  const handleChooseFile = () => file.current?.click();
+
   return (
     <>
       <button
@@ -53,7 +55,7 @@ const ImportCsv = ({ className, children, onDone }: ImportCsvProps) => {
         className={className}
         disabled={busy}
         aria-busy={busy || undefined}
-        onClick={() => file.current?.click()}
+        onClick={handleChooseFile}
       >
         {busy ? m.account_importing() : children}
       </button>

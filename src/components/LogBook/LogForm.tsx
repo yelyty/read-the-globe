@@ -1,5 +1,5 @@
-import { useMemo, useState, type SubmitEvent } from 'react';
-import { PlusIcon, PushPinIcon, TrashIcon, XIcon } from '@phosphor-icons/react';
+import { useMemo, useState, type ChangeEvent, type SubmitEvent } from 'react';
+import { PlusIcon, PushPinIcon, TrashIcon } from '@phosphor-icons/react';
 import type { Feature } from 'geojson';
 
 import { type Landing } from '../../hooks/useLanding';
@@ -20,13 +20,17 @@ import { m } from '../../paraglide/messages.js';
 import { getLocale } from '../../paraglide/runtime.js';
 import { useDirty } from '../../hooks/useUnsaved';
 import { isoMonth, isoYear, isoYearMonth } from '../../utils/isoDate';
+import { formatMonth } from '../../utils/formatDate';
 import * as fieldStyles from '../Field/Field.css';
 import Hint from '../Hint/Hint';
 import Suggest from '../Suggest/Suggest';
 import Select from '../Select/Select';
 import Dialog from '../Dialog/Dialog';
 import * as styles from './LogBook.css';
+import MarkPreview from './MarkPreview';
+import PlaceItem from './PlaceItem';
 import ThenNote from './ThenNote';
+import { type Row, row } from './placeRow';
 
 const MONTHS_IN_YEAR = 12;
 // any year serves: only its month names are read
@@ -47,36 +51,6 @@ const MONTHS = Array.from({ length: MONTHS_IN_YEAR }, (_unused, i) =>
 const YEARS = Array.from({ length: YEARS_BACK }, (_unused, i) =>
   String(new Date().getFullYear() - i)
 );
-
-/* a place: a name and its country, or (imagined) a world's name and no country.
-   pick: the country chosen for a state that split; open: its choice unfolded again by Change */
-type Row = {
-  key: number;
-  name: string;
-  country: string;
-  imagined: boolean;
-  pick: string;
-  open: boolean;
-};
-
-let rowKey = 0;
-
-const row = (name = '', country = '', imagined = false): Row => ({
-  key: ++rowKey,
-  name,
-  country,
-  imagined,
-  pick: '',
-  open: false,
-});
-
-const formatMonth = (day: string) =>
-  day
-    ? new Date(`${day}T12:00:00`).toLocaleDateString(getLocale(), {
-        month: 'short',
-        year: 'numeric',
-      })
-    : '';
 
 type LogFormProps = {
   book?: BookEntry;
@@ -452,6 +426,162 @@ const LogForm = ({
         ? m.log_pin_again()
         : m.log_pin_it();
 
+  /* ---------- handlers ---------- */
+  const handleTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setTitle(event.target.value);
+    fix('title');
+    forgetDup();
+  };
+
+  const handleAuthorChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setAuthor(event.target.value);
+    fix('author');
+    forgetDup();
+  };
+
+  const handleCountryValue = (value: string) => {
+    setCountry(value);
+    if (!splitStates(value)) setAuthorPick('');
+    setAuthorOpen(false);
+    fix('country');
+  };
+
+  const handleAuthorPick = (code: string) => {
+    setAuthorPick(code);
+    setAuthorOpen(false);
+    fix('country');
+  };
+
+  const handleAuthorChoiceReopen = () => setAuthorOpen(true);
+
+  // a place's name: a real place named after its country fills the country in, if it's still empty
+  const handlePlaceNameValue = (placeRow: Row) => (value: string) => {
+    const sp = !placeRow.imagined && split(value);
+
+    setRow(placeRow.key, {
+      name: value,
+      ...(sp && !placeRow.country && { country: name(sp.code) }),
+    });
+  };
+
+  const handlePlaceCountryValue = (placeRow: Row) => (value: string) => {
+    setRow(placeRow.key, {
+      country: value,
+      open: false,
+      ...(!splitStates(value) && { pick: '' }),
+    });
+
+    fix(`${PLACE_KEY}${placeRow.key}`);
+  };
+
+  // the last place is emptied rather than removed, so there's always a row to type in
+  const handlePlaceRemove = (placeRow: Row) => () => {
+    fix(`${PLACE_KEY}${placeRow.key}`);
+
+    setRows((rs) =>
+      rs.length === 1
+        ? [row()]
+        : rs.filter((other) => other.key !== placeRow.key)
+    );
+
+    document.querySelector<HTMLInputElement>(`.${styles.place} input`)?.focus();
+  };
+
+  const handlePlacePick = (placeRow: Row) => (code: string) => {
+    setRow(placeRow.key, { pick: code, open: false });
+    fix(`${PLACE_KEY}${placeRow.key}`);
+  };
+
+  const handlePlaceChoiceReopen = (placeRow: Row) => () =>
+    setRow(placeRow.key, { open: true });
+
+  const handleImaginedChange =
+    (placeRow: Row) => (event: ChangeEvent<HTMLInputElement>) => {
+      setRow(placeRow.key, { imagined: event.target.checked });
+      fix(`${PLACE_KEY}${placeRow.key}`);
+    };
+
+  const handlePlaceAdd = () => {
+    const newRow = row();
+
+    setRows((rs) => [...rs, newRow]);
+
+    requestAnimationFrame(() =>
+      document.getElementById(`pr-name-${newRow.key}`)?.focus()
+    );
+  };
+
+  const handleThemeTick =
+    (themeId: number) => (event: ChangeEvent<HTMLInputElement>) =>
+      setTicks((ticked) =>
+        event.target.checked
+          ? [...ticked, themeId]
+          : ticked.filter((id) => id !== themeId)
+      );
+
+  /* ---------- lists ---------- */
+  const renderMark = ([code, mark]: (typeof preview)[number]) => (
+    <MarkPreview
+      key={code}
+      name={name(code)}
+      set={mark.set}
+      author={mark.author}
+    />
+  );
+
+  const renderImagined = (place: (typeof imagined)[number]) => (
+    <span key={place.key} className={styles.mark}>
+      <i className={styles.dotImagined} aria-hidden="true" />
+      {place.name}
+      <span className={styles.markNote}> · {m.log_imagined_note()}</span>
+    </span>
+  );
+
+  const renderPlace = (placeRow: Row) => (
+    <PlaceItem
+      key={placeRow.key}
+      placeRow={placeRow}
+      error={errors[`${PLACE_KEY}${placeRow.key}`]}
+      empty={rows.length === 1 && !placeRow.name && !placeRow.country}
+      worlds={worlds}
+      countries={countries}
+      names={names}
+      onNameValue={handlePlaceNameValue(placeRow)}
+      onCountryValue={handlePlaceCountryValue(placeRow)}
+      onRemove={handlePlaceRemove(placeRow)}
+      onPick={handlePlacePick(placeRow)}
+      onChoiceReopen={handlePlaceChoiceReopen(placeRow)}
+      onImaginedChange={handleImaginedChange(placeRow)}
+    />
+  );
+
+  const renderTheme = (theme: Goal) => (
+    <li key={theme.id}>
+      <label>
+        <input
+          type="checkbox"
+          checked={ticks.includes(theme.id)}
+          onChange={handleThemeTick(theme.id)}
+        />
+        {theme.name}
+      </label>
+    </li>
+  );
+
+  // the month and year menus: "Month" / "Year" first, for a book read some time
+  const monthOptions = [
+    { value: '', label: m.log_month() },
+    ...MONTHS.map((monthName, i) => ({
+      value: String(i + 1).padStart(2, '0'),
+      label: monthName,
+    })),
+  ];
+
+  const yearOptions = [
+    { value: '', label: m.log_year() },
+    ...YEARS.map((yearOption) => ({ value: yearOption, label: yearOption })),
+  ];
+
   return (
     <Dialog
       open
@@ -473,39 +603,8 @@ const LogForm = ({
       {(preview.length > 0 || imagined.length > 0) && (
         <p className={styles.preview}>
           <span className={styles.label}>{m.log_will_mark()}</span>
-          {preview.map(([code, mk]) => (
-            <span key={code} className={styles.mark}>
-              <i
-                className={
-                  mk.set && mk.author
-                    ? styles.swatch
-                    : mk.set
-                      ? styles.dotSet
-                      : styles.dotAuthor
-                }
-                aria-hidden="true"
-              />
-              {name(code)}
-              <span className={styles.srOnly}>
-                ,{' '}
-                {mk.set && mk.author
-                  ? m.log_mark_both()
-                  : mk.set
-                    ? m.log_mark_set()
-                    : m.log_mark_author()}
-              </span>
-            </span>
-          ))}
-          {imagined.map((place) => (
-            <span key={place.key} className={styles.mark}>
-              <i className={styles.dotImagined} aria-hidden="true" />
-              {place.name}
-              <span className={styles.markNote}>
-                {' '}
-                · {m.log_imagined_note()}
-              </span>
-            </span>
-          ))}
+          {preview.map(renderMark)}
+          {imagined.map(renderImagined)}
         </p>
       )}
 
@@ -523,11 +622,7 @@ const LogForm = ({
             value={title}
             aria-invalid={errors.title ? true : undefined}
             aria-describedby={errors.title ? 'f-title-err' : undefined}
-            onChange={(changeEvent) => {
-              setTitle(changeEvent.target.value);
-              fix('title');
-              forgetDup();
-            }}
+            onChange={handleTitleChange}
           />
           {errors.title && (
             <div id="f-title-err" className={fieldStyles.fieldError}>
@@ -552,11 +647,7 @@ const LogForm = ({
             value={author}
             aria-invalid={errors.author ? true : undefined}
             aria-describedby={errors.author ? 'f-author-err' : undefined}
-            onChange={(changeEvent) => {
-              setAuthor(changeEvent.target.value);
-              fix('author');
-              forgetDup();
-            }}
+            onChange={handleAuthorChange}
           />
           {errors.author && (
             <div id="f-author-err" className={fieldStyles.fieldError}>
@@ -583,12 +674,7 @@ const LogForm = ({
             value={country}
             aria-invalid={errors.country ? true : undefined}
             aria-describedby={`${errors.country ? 'f-country-err ' : ''}f-country-note`}
-            onValue={(value) => {
-              setCountry(value);
-              if (!splitStates(value)) setAuthorPick('');
-              setAuthorOpen(false);
-              fix('country');
-            }}
+            onValue={handleCountryValue}
           />
           <ThenNote
             typed={country}
@@ -596,12 +682,8 @@ const LogForm = ({
             open={authorOpen}
             author
             names={names}
-            onPick={(code) => {
-              setAuthorPick(code);
-              setAuthorOpen(false);
-              fix('country');
-            }}
-            onChange={() => setAuthorOpen(true)}
+            onPick={handleAuthorPick}
+            onChange={handleAuthorChoiceReopen}
           />
           {errors.country && (
             <div id="f-country-err" className={fieldStyles.fieldError}>
@@ -621,154 +703,12 @@ const LogForm = ({
             <span>{m.log_city()}</span>
             <span>{m.log_country_col()}</span>
           </div>
-          <ul className={styles.places}>
-            {rows.map((placeRow) => {
-              const err = errors[`${PLACE_KEY}${placeRow.key}`];
-
-              const empty =
-                rows.length === 1 && !placeRow.name && !placeRow.country;
-
-              return (
-                <li
-                  key={placeRow.key}
-                  className={styles.place}
-                  data-imagined={placeRow.imagined || undefined}
-                >
-                  <label
-                    className={styles.srOnly}
-                    htmlFor={`pr-name-${placeRow.key}`}
-                  >
-                    {m.log_place()}
-                  </label>
-                  <Suggest
-                    id={`pr-name-${placeRow.key}`}
-                    className={fieldStyles.input}
-                    autoComplete="off"
-                    maxLength={80}
-                    placeholder={
-                      placeRow.imagined ? m.log_world_ph() : m.log_city()
-                    }
-                    // an imagined place offers the reader's worlds; ponytail: no gazetteer of real places yet
-                    options={placeRow.imagined ? worlds : []}
-                    value={placeRow.name}
-                    onValue={(value) => {
-                      const sp = !placeRow.imagined && split(value);
-
-                      setRow(placeRow.key, {
-                        name: value,
-                        ...(sp &&
-                          !placeRow.country && { country: name(sp.code) }),
-                      });
-                    }}
-                  />
-                  {!placeRow.imagined && (
-                    <div data-invalid={Boolean(err)}>
-                      <label
-                        className={styles.srOnly}
-                        htmlFor={`pr-country-${placeRow.key}`}
-                      >
-                        {m.log_place_country()}
-                      </label>
-                      <Suggest
-                        id={`pr-country-${placeRow.key}`}
-                        className={fieldStyles.input}
-                        autoComplete="off"
-                        options={countries}
-                        maxLength={60}
-                        placeholder={m.log_country_col()}
-                        value={placeRow.country}
-                        aria-invalid={err ? true : undefined}
-                        aria-describedby={
-                          err ? `pr-country-${placeRow.key}-err` : undefined
-                        }
-                        onValue={(value) => {
-                          setRow(placeRow.key, {
-                            country: value,
-                            open: false,
-                            ...(!splitStates(value) && { pick: '' }),
-                          });
-
-                          fix(`${PLACE_KEY}${placeRow.key}`);
-                        }}
-                      />
-                      {err && (
-                        <div
-                          id={`pr-country-${placeRow.key}-err`}
-                          className={fieldStyles.fieldError}
-                        >
-                          {err}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  <button
-                    type="button"
-                    className={styles.close}
-                    aria-label={m.log_remove_place()}
-                    hidden={empty}
-                    onClick={() => {
-                      fix(`${PLACE_KEY}${placeRow.key}`);
-
-                      setRows((rs) =>
-                        rs.length === 1
-                          ? [row()]
-                          : rs.filter((other) => other.key !== placeRow.key)
-                      );
-
-                      document
-                        .querySelector<HTMLInputElement>(
-                          `.${styles.place} input`
-                        )
-                        ?.focus();
-                    }}
-                  >
-                    <XIcon aria-hidden="true" />
-                  </button>
-                  {!placeRow.imagined && (
-                    <ThenNote
-                      typed={placeRow.country}
-                      pick={placeRow.pick}
-                      open={placeRow.open}
-                      names={names}
-                      onPick={(code) => {
-                        setRow(placeRow.key, { pick: code, open: false });
-                        fix(`${PLACE_KEY}${placeRow.key}`);
-                      }}
-                      onChange={() => setRow(placeRow.key, { open: true })}
-                    />
-                  )}
-                  {/* an imagined world has no country: ticking it sets the country aside (kept, in case it's unticked) */}
-                  <label className={styles.imagined}>
-                    <input
-                      type="checkbox"
-                      checked={placeRow.imagined}
-                      onChange={(changeEvent) => {
-                        setRow(placeRow.key, {
-                          imagined: changeEvent.target.checked,
-                        });
-
-                        fix(`${PLACE_KEY}${placeRow.key}`);
-                      }}
-                    />
-                    {m.log_imagined()}
-                  </label>
-                </li>
-              );
-            })}
-          </ul>
+          <ul className={styles.places}>{rows.map(renderPlace)}</ul>
           {rows.length < MAX_PLACES && (
             <button
               type="button"
               className={styles.linkBtn}
-              onClick={() => {
-                const newRow = row();
-
-                setRows((rs) => [...rs, newRow]);
-
-                requestAnimationFrame(() =>
-                  document.getElementById(`pr-name-${newRow.key}`)?.focus()
-                );
-              }}
+              onClick={handlePlaceAdd}
             >
               <PlusIcon aria-hidden="true" />
               {m.log_add_place()}
@@ -785,13 +725,7 @@ const LogForm = ({
               className={styles.monthPick}
               value={mon}
               onChange={setMon}
-              options={[
-                { value: '', label: m.log_month() },
-                ...MONTHS.map((mo, i) => ({
-                  value: String(i + 1).padStart(2, '0'),
-                  label: mo,
-                })),
-              ]}
+              options={monthOptions}
             />
             <Select
               id="f-year"
@@ -799,13 +733,7 @@ const LogForm = ({
               className={styles.yearPick}
               value={year}
               onChange={setYear}
-              options={[
-                { value: '', label: m.log_year() },
-                ...YEARS.map((yearOption) => ({
-                  value: yearOption,
-                  label: yearOption,
-                })),
-              ]}
+              options={yearOptions}
             />
           </div>
           <Hint id="f-month-hint">{m.log_month_hint()}</Hint>
@@ -822,26 +750,7 @@ const LogForm = ({
                     })
                   : m.log_counts_q()}
               </summary>
-              <ul>
-                {themes.map((theme) => (
-                  <li key={theme.id}>
-                    <label>
-                      <input
-                        type="checkbox"
-                        checked={ticks.includes(theme.id)}
-                        onChange={(changeEvent) =>
-                          setTicks((ticked) =>
-                            changeEvent.target.checked
-                              ? [...ticked, theme.id]
-                              : ticked.filter((id) => id !== theme.id)
-                          )
-                        }
-                      />
-                      {theme.name}
-                    </label>
-                  </li>
-                ))}
-              </ul>
+              <ul>{themes.map(renderTheme)}</ul>
             </details>
           </fieldset>
         )}

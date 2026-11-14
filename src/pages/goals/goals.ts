@@ -10,6 +10,7 @@ import {
 } from '../../utils/continents';
 import { toNumeric } from '../../utils/toIsoNumeric';
 import { m } from '../../paraglide/messages.js';
+import { getLocale } from '../../paraglide/runtime.js';
 
 export const MAX_GOALS = 10;
 
@@ -172,3 +173,12 @@ export const romanDate = (iso: string) => {
 
   return `${date.getDate()} ${months[date.getMonth()]} ${String(date.getFullYear()).slice(-SHORT_YEAR_DIGITS)}`;
 };
+
+export const byName = (codes: string[], name: (code: string) => string) =>
+  codes
+    .map(name)
+    .sort((first, second) => first.localeCompare(second, getLocale()))
+    .join(', ');
+
+/** a catalogue goal offered to the reader, with how far their books already go into it */
+export type Suggestion = { c: CatalogueGoal; p: Progress };

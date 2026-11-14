@@ -15,6 +15,9 @@ type DeleteAccountProps = {
 const DeleteAccount = ({ books, names }: DeleteAccountProps) => {
   const [open, setOpen] = useState(false);
 
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
   return (
     <div className={styles.dangerItem}>
       <h3 className={styles.itemTitle}>{m.account_delete()}</h3>
@@ -23,14 +26,14 @@ const DeleteAccount = ({ books, names }: DeleteAccountProps) => {
         type="button"
         variant="dangerOutline"
         aria-haspopup="dialog"
-        onClick={() => setOpen(true)}
+        onClick={handleOpen}
       >
         <TrashIcon aria-hidden="true" />
         {m.account_delete()}
       </Button>
       <ConfirmationDialog
         open={open}
-        onClose={() => setOpen(false)}
+        onClose={handleClose}
         books={books}
         names={names}
       />

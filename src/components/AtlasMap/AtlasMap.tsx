@@ -10,7 +10,6 @@ import { ArrowLeftIcon, ArrowRightIcon } from '@phosphor-icons/react';
 import {
   ComposableMap,
   Geographies,
-  Geography,
   Marker,
   type ProjectionFunction,
 } from 'react-simple-maps';
@@ -24,6 +23,8 @@ import {
 } from '../../utils/flatMap';
 import { m } from '../../paraglide/messages.js';
 import * as styles from './AtlasMap.css';
+import { Drawn } from './Drawn';
+import MapCountry from './MapCountry';
 
 // 50m, not 110m: the low-detail map leaves out small countries, which then could never be marked.
 // A local copy of world-atlas@2.0.2 countries-50m with Crimea moved from Russia back into Ukraine.
@@ -44,9 +45,12 @@ const projectionProp = projection as unknown as ProjectionFunction;
 export type Show = 'all' | 'set' | 'author';
 export const ANTARCTICA = '010'; // no country, never counted, never offered
 
+/** a pin of its own, off any country (an imagined world's place) */
+type Dot = { id: string; lon: number; lat: number };
+
 type AtlasMapProps = {
   marks: Marks;
-  dots: { id: string; lon: number; lat: number }[];
+  dots: Dot[];
   show?: Show;
   /** unmarked countries invite a book set there (Home): they lift under the pointer */
   open?: boolean;
@@ -73,13 +77,6 @@ const store = {
       /* private mode: the hint just shows again */
     }
   },
-};
-
-// mounted inside the map once its countries are drawn, so the phone frame can measure them
-const Drawn = ({ onDrawn }: { onDrawn: () => void }) => {
-  useEffect(onDrawn, [onDrawn]);
-
-  return null;
 };
 
 const AtlasMap = memo(
@@ -161,6 +158,22 @@ const AtlasMap = memo(
       }
     };
 
+    const renderCountry = (geo: Geo) => (
+      <MapCountry
+        key={geo.rsmKey}
+        geo={geo}
+        mark={marks[geo.id]}
+        open={open && geo.id !== ANTARCTICA}
+        landed={Boolean(landed?.has(geo.id))}
+      />
+    );
+
+    const renderDot = (dot: Dot) => (
+      <Marker key={dot.id} coordinates={[dot.lon, dot.lat]}>
+        <circle r={2.6} className={styles.dot} />
+      </Marker>
+    );
+
     return (
       <figure className={styles.plate} data-show={show}>
         <div
@@ -192,39 +205,12 @@ const AtlasMap = memo(
             <Geographies geography={GEO_URL}>
               {({ geographies }) => (
                 <>
-                  {geographies.map((geo: Geo) => {
-                    const mark = marks[geo.id];
-
-                    const classes = [
-                      styles.land,
-                      mark?.set.length && styles.set,
-                      mark?.author.length && styles.author,
-                      mark && styles.marked,
-                      !mark && open && geo.id !== ANTARCTICA && styles.open,
-                      landed?.has(geo.id) && styles.landed,
-                    ];
-
-                    return (
-                      <Geography
-                        key={geo.rsmKey}
-                        geography={geo}
-                        data-code={geo.id} // Home reads it for the tooltip, a click and the pin's flight
-                        tabIndex={-1} // the country list under the map is the keyboard way in
-                        className={classes.filter(Boolean).join(' ')}
-                      />
-                    );
-                  })}
+                  {geographies.map(renderCountry)}
                   {geographies.length > 0 && <Drawn onDrawn={frame} />}
                 </>
               )}
             </Geographies>
-            <g className={styles.dots}>
-              {dots.map((dot) => (
-                <Marker key={dot.id} coordinates={[dot.lon, dot.lat]}>
-                  <circle r={2.6} className={styles.dot} />
-                </Marker>
-              ))}
-            </g>
+            <g className={styles.dots}>{dots.map(renderDot)}</g>
           </ComposableMap>
         </div>
         {hint && (

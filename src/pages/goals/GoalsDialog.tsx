@@ -1,4 +1,9 @@
-import { useState, type SubmitEvent } from 'react';
+import {
+  useState,
+  type ChangeEvent,
+  type KeyboardEvent,
+  type SubmitEvent,
+} from 'react';
 import { CheckIcon, PlusIcon, XIcon } from '@phosphor-icons/react';
 
 import Field from '../../components/Field/Field';
@@ -139,6 +144,51 @@ const GoalDialog = ({
     onSaved(draft.name);
   };
 
+  /* ---------- handlers: any change clears the error shown ---------- */
+  const handleKindChange = (next: GoalKind) => {
+    setKind(next);
+    setError(undefined);
+  };
+
+  const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+    setError(undefined);
+  };
+
+  // Enter in the country field adds what's typed rather than submitting the form
+  const handleCountryKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== 'Enter') return;
+    event.preventDefault();
+    addCountry(country);
+  };
+
+  const handleCountryRemove = (code: string) => () =>
+    setCodes(codes.filter((other) => other !== code));
+
+  const handleTargetChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setTarget(event.target.value);
+    setError(undefined);
+  };
+
+  const regionOptions = REGIONS.map((region) => ({
+    value: region,
+    label: continentName(region),
+  }));
+
+  // a country chosen for the goal, with the way to take it off again
+  const renderPicked = (code: string) => (
+    <li key={code}>
+      {names[code] ?? code}
+      <button
+        type="button"
+        aria-label={m.goals_remove_country({ country: names[code] ?? code })}
+        onClick={handleCountryRemove(code)}
+      >
+        <XIcon aria-hidden="true" />
+      </button>
+    </li>
+  );
+
   return (
     <Dialog
       open
@@ -157,10 +207,7 @@ const GoalDialog = ({
             labelId="g-kind-label"
             value={kind}
             disabled={!!goal}
-            onChange={(next) => {
-              setKind(next);
-              setError(undefined);
-            }}
+            onChange={handleKindChange}
             options={[
               { value: 'region', label: m.goals_kind_region() },
               { value: 'countries', label: m.goals_kind_countries() },
@@ -177,10 +224,7 @@ const GoalDialog = ({
           autoComplete="off"
           value={name}
           error={errorAt('g-name')}
-          onChange={(changeEvent) => {
-            setName(changeEvent.target.value);
-            setError(undefined);
-          }}
+          onChange={handleNameChange}
         />
 
         {kind === 'region' && (
@@ -197,10 +241,7 @@ const GoalDialog = ({
               labelId="g-region-label"
               value={continent}
               onChange={setContinent}
-              options={REGIONS.map((region) => ({
-                value: region,
-                label: continentName(region),
-              }))}
+              options={regionOptions}
             />
           </div>
         )}
@@ -226,12 +267,7 @@ const GoalDialog = ({
               onValue={setCountry}
               // a name picked from the list goes straight onto the goal
               onPick={addCountry}
-              onKeyDown={(keyEvent) => {
-                if (keyEvent.key === 'Enter') {
-                  keyEvent.preventDefault();
-                  addCountry(country);
-                }
-              }}
+              onKeyDown={handleCountryKeyDown}
             />
             <Hint id="g-country-hint">{m.goals_country_hint()}</Hint>
             {errorAt('g-country') && (
@@ -240,24 +276,7 @@ const GoalDialog = ({
               </p>
             )}
             {codes.length > 0 && (
-              <ul className={styles.picked}>
-                {codes.map((code) => (
-                  <li key={code}>
-                    {names[code] ?? code}
-                    <button
-                      type="button"
-                      aria-label={m.goals_remove_country({
-                        country: names[code] ?? code,
-                      })}
-                      onClick={() =>
-                        setCodes(codes.filter((other) => other !== code))
-                      }
-                    >
-                      <XIcon aria-hidden="true" />
-                    </button>
-                  </li>
-                ))}
-              </ul>
+              <ul className={styles.picked}>{codes.map(renderPicked)}</ul>
             )}
           </div>
         )}
@@ -268,14 +287,11 @@ const GoalDialog = ({
             label={m.goals_target()}
             type="number"
             min={1}
-            max={200}
+            max={MAX_THEME_TARGET}
             inputMode="numeric"
             value={target}
             error={errorAt('g-target')}
-            onChange={(changeEvent) => {
-              setTarget(changeEvent.target.value);
-              setError(undefined);
-            }}
+            onChange={handleTargetChange}
           />
         )}
 

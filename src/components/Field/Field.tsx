@@ -46,6 +46,8 @@ const Field = ({
     />
   );
 
+  const handleToggleVisible = () => setVisible((shown) => !shown);
+
   return (
     <div className={styles.field} data-invalid={Boolean(error)}>
       <label htmlFor={id} className={styles.fieldLabel}>
@@ -58,7 +60,7 @@ const Field = ({
             type="button"
             className={styles.pwToggle}
             aria-controls={id}
-            onClick={() => setVisible((shown) => !shown)}
+            onClick={handleToggleVisible}
           >
             {visible ? m.field_hide() : m.field_show()}
           </button>

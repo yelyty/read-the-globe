@@ -1,10 +1,12 @@
-import { useRef, useState, type SubmitEvent } from 'react';
-import { useRouter } from '@tanstack/react-router';
 import {
-  ArrowCounterClockwiseIcon,
-  PlusIcon,
-  XIcon,
-} from '@phosphor-icons/react';
+  useRef,
+  useState,
+  type ChangeEvent,
+  type SubmitEvent,
+  type SyntheticEvent,
+} from 'react';
+import { useRouter } from '@tanstack/react-router';
+import { ArrowCounterClockwiseIcon, PlusIcon } from '@phosphor-icons/react';
 
 import type { World } from '../../types';
 import { addWorld, removeWorld } from '../../api/worlds/worlds';
@@ -12,6 +14,7 @@ import { useStatus } from '../../hooks/useStatus';
 import { sameWorld, type WorldRow } from '../../utils/worlds';
 import { m } from '../../paraglide/messages.js';
 import * as styles from './HomePage.css';
+import WorldItem from './WorldItem';
 import WorldDialog from './WorldDialog';
 
 const OPEN = 'rtg-beyond';
@@ -79,23 +82,36 @@ const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
     });
   };
 
+  // the list remembers being open or closed on this device
+  const handleToggle = (event: SyntheticEvent<HTMLDetailsElement>) => {
+    const now = event.currentTarget.open;
+
+    setOpen(now);
+
+    try {
+      localStorage.setItem(OPEN, now ? 'open' : 'closed');
+    } catch {
+      /* private mode: it opens again next time */
+    }
+  };
+
+  const renderWorld = (world: WorldRow) => (
+    <WorldItem
+      key={world.name}
+      world={world}
+      onOpen={setShown}
+      onRemove={remove}
+    />
+  );
+
+  const handleNameChange = (event: ChangeEvent<HTMLInputElement>) =>
+    setName(event.target.value);
+
+  const handleDialogClose = () => setShown(null);
+
   return (
     <>
-      <details
-        className={styles.beyond}
-        open={open}
-        onToggle={(toggleEvent) => {
-          const now = toggleEvent.currentTarget.open;
-
-          setOpen(now);
-
-          try {
-            localStorage.setItem(OPEN, now ? 'open' : 'closed');
-          } catch {
-            /* private mode: it opens again next time */
-          }
-        }}
-      >
+      <details className={styles.beyond} open={open} onToggle={handleToggle}>
         <summary className={styles.beyondLabel}>
           {m.world_beyond()}{' '}
           {worlds.length > 0 && (
@@ -107,41 +123,7 @@ const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
         </summary>
         <div className={styles.beyondBody}>
           {worlds.length > 0 && (
-            <ul className={styles.beyondList}>
-              {worlds.map((world) => (
-                <li key={world.name} className={styles.worldRow}>
-                  <button
-                    type="button"
-                    className={styles.worldOpen}
-                    aria-haspopup="dialog"
-                    onClick={() => setShown(world)}
-                  >
-                    <i className={styles.dotImagined} aria-hidden="true" />
-                    <span
-                      className={styles.worldName}
-                      data-saved={!world.books.length || undefined}
-                    >
-                      {world.name}
-                    </span>
-                    <span className={styles.beyondN}>
-                      {world.books.length
-                        ? m.count_book({ count: world.books.length })
-                        : m.world_no_books_short()}
-                    </span>
-                  </button>
-                  {!world.books.length && world.saved && (
-                    <button
-                      type="button"
-                      className={styles.beyondRm}
-                      aria-label={m.world_remove({ name: world.name })}
-                      onClick={() => remove(world.saved!)}
-                    >
-                      <XIcon aria-hidden="true" />
-                    </button>
-                  )}
-                </li>
-              ))}
-            </ul>
+            <ul className={styles.beyondList}>{worlds.map(renderWorld)}</ul>
           )}
           <form className={styles.beyondAdd} onSubmit={add} noValidate>
             <label className={styles.srOnly} htmlFor="w-name">
@@ -154,7 +136,7 @@ const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
               placeholder={m.world_placeholder()}
               autoComplete="off"
               value={name}
-              onChange={(changeEvent) => setName(changeEvent.target.value)}
+              onChange={handleNameChange}
             />
             <button type="submit" className={styles.beyondBtn}>
               <PlusIcon aria-hidden="true" />
@@ -163,7 +145,7 @@ const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
           </form>
         </div>
       </details>
-      {shown && <WorldDialog world={shown} onClose={() => setShown(null)} />}
+      {shown && <WorldDialog world={shown} onClose={handleDialogClose} />}
     </>
   );
 };

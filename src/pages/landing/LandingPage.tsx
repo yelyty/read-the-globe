@@ -5,9 +5,8 @@ import { useAuth } from '../../auth/auth-context';
 import * as styles from './LandingPage.css';
 import Hero from './components/Hero/Hero';
 import Header from './components/Header/Header';
-import LoginDialog, {
-  type AuthMode,
-} from './components/LoginDialog/LoginDialog';
+import LoginDialog from './components/LoginDialog/LoginDialog';
+import type { AuthMode } from './components/LoginDialog/validate';
 import Footer from './components/Footer/Footer';
 import LiveAtlas from './components/LiveAtlas/LiveAtlas';
 import Features from './components/Features/Features';

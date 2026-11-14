@@ -1,5 +1,7 @@
 import {
+  extractLocaleFromNavigator,
   getLocale,
+  localStorageKey,
   setLocale,
   toLocale,
   type Locale,
@@ -48,3 +50,17 @@ export async function adoptAccountLang(userId: string): Promise<boolean> {
 
   return true;
 }
+
+// A URL without /cs or /uk reads as English, so Paraglide never looks further. Send a reader who
+// picked another language, or whose browser prefers one, to its prefix. A prefix in a link always wins.
+export const wantedLocale = () => {
+  try {
+    const saved = toLocale(localStorage.getItem(localStorageKey));
+
+    if (saved) return saved;
+  } catch {
+    // storage blocked: fall back to the browser
+  }
+
+  return extractLocaleFromNavigator();
+};

@@ -3,7 +3,9 @@ import {
   useId,
   useRef,
   type ComponentProps,
+  type MouseEvent,
   type ReactNode,
+  type SyntheticEvent,
 } from 'react';
 import { XIcon } from '@phosphor-icons/react';
 
@@ -68,6 +70,26 @@ const Dialog = ({
     if (canDiscard(dirty)) onClose();
   };
 
+  // Esc: the browser would close it behind our back, so the parent decides instead
+  const handleCancel = (event: SyntheticEvent<HTMLDialogElement>) => {
+    event.preventDefault();
+    dismiss();
+  };
+
+  const handleClick = (event: MouseEvent<HTMLDialogElement>) => {
+    if (!backdropClose || event.target !== event.currentTarget) return;
+    // the dialog's own padding is the dialog too: only a click outside its box is the backdrop
+    const box = event.currentTarget.getBoundingClientRect();
+
+    const inside =
+      event.clientX >= box.left &&
+      event.clientX <= box.right &&
+      event.clientY >= box.top &&
+      event.clientY <= box.bottom;
+
+    if (!inside) dismiss();
+  };
+
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- backdrop click; Esc closes it from the keyboard
     <dialog
@@ -75,24 +97,8 @@ const Dialog = ({
       className={[styles.dialog[variant], className].filter(Boolean).join(' ')}
       aria-labelledby={titleId}
       {...rest}
-      // Esc: the browser would close it behind our back, so the parent decides instead
-      onCancel={(event) => {
-        event.preventDefault();
-        dismiss();
-      }}
-      onClick={(event) => {
-        if (!backdropClose || event.target !== event.currentTarget) return;
-        // the dialog's own padding is the dialog too: only a click outside its box is the backdrop
-        const box = event.currentTarget.getBoundingClientRect();
-
-        const inside =
-          event.clientX >= box.left &&
-          event.clientX <= box.right &&
-          event.clientY >= box.top &&
-          event.clientY <= box.bottom;
-
-        if (!inside) dismiss();
-      }}
+      onCancel={handleCancel}
+      onClick={handleClick}
     >
       <div className={styles.head[variant]}>
         <div>

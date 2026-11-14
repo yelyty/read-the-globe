@@ -1,10 +1,9 @@
-import { Link } from '@tanstack/react-router';
-
 import Logo from '../../../../components/Logo/Logo';
 import LanguagePicker from '../../../../components/LanguagePicker/LanguagePicker';
 import { m } from '../../../../paraglide/messages.js';
 import { SECTIONS } from '../../sections';
 import * as styles from './Footer.css';
+import FooterColumn, { type Column } from './FooterColumn';
 
 const COLUMNS = [
   {
@@ -27,6 +26,19 @@ const COLUMNS = [
 ] as const;
 
 const Footer = () => {
+  // the landing's own sections, as links back to them
+  const renderSection = (section: (typeof SECTIONS)[number]) => (
+    <li key={section.hash}>
+      <a className={styles.footerLink} href={`/#${section.hash}`}>
+        {section.label()}
+      </a>
+    </li>
+  );
+
+  const renderColumn = (column: Column) => (
+    <FooterColumn key={column.id} column={column} />
+  );
+
   return (
     <footer className={styles.footer}>
       <div className={styles.wrap}>
@@ -46,32 +58,9 @@ const Footer = () => {
             <h2 className={styles.footerHead} id="footer-product">
               {m.footer_product()}
             </h2>
-            <ul className={styles.footerList}>
-              {SECTIONS.map((section) => (
-                <li key={section.hash}>
-                  <a className={styles.footerLink} href={`/#${section.hash}`}>
-                    {section.label()}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <ul className={styles.footerList}>{SECTIONS.map(renderSection)}</ul>
           </nav>
-          {COLUMNS.map((column) => (
-            <nav key={column.id} aria-labelledby={column.id}>
-              <h2 className={styles.footerHead} id={column.id}>
-                {column.title()}
-              </h2>
-              <ul className={styles.footerList}>
-                {column.links.map((link) => (
-                  <li key={link.to}>
-                    <Link className={styles.footerLink} to={link.to}>
-                      {link.label()}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          ))}
+          {COLUMNS.map(renderColumn)}
         </div>
         <div className={styles.footerTail}>
           <span>{m.footer_copyright({ year: 2026 })}</span>
