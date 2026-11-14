@@ -28,11 +28,15 @@ import {
   withBold,
   type GoalDraft,
 } from './goals';
-import { GoalPlate, GoalShelf } from './GoalPlate';
+import { GoalPlate } from './GoalPlate';
+import GoalShelf from './GoalShelf';
 import GoalRow from './GoalRow';
 import GoalDialog from './GoalsDialog';
 import BooksDialog from './BooksDialog';
 import * as styles from './GoalsPage.css';
+
+// the suggestions offered: the best few, then one of each kind of goal if it isn't there yet
+const TOP_SUGGESTIONS = 4;
 
 const app = getRouteApi('/app');
 const route = getRouteApi('/app/goals');
@@ -241,7 +245,7 @@ const GoalsPage = () => {
   const top = offered
     .filter((option) => option.score > 0 && option.score < 1)
     .sort((first, second) => second.score - first.score || first.i - second.i)
-    .slice(0, 4);
+    .slice(0, TOP_SUGGESTIONS);
 
   for (const kind of Object.keys(KIND_GROUP) as GoalKind[]) {
     const extra = offered.find(
@@ -250,7 +254,7 @@ const GoalsPage = () => {
 
     if (
       extra &&
-      top.length < 4 &&
+      top.length < TOP_SUGGESTIONS &&
       !top.some((option) => option.c.kind === kind)
     )
       top.push(extra);

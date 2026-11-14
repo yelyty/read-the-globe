@@ -6,10 +6,9 @@ import { getLocale } from '../../../../paraglide/runtime.js';
 import { deleteAccount } from '../../../../api/Profile/deleteAccount';
 import type { BookEntry } from '../../../../types';
 import { Button } from '../../../../components/Button/Button';
-import Dialog, {
-  DialogActions,
-  DialogText,
-} from '../../../../components/Dialog/Dialog';
+import Dialog from '../../../../components/Dialog/Dialog';
+import DialogActions from '../../../../components/Dialog/DialogActions';
+import DialogText from '../../../../components/Dialog/DialogText';
 import { m } from '../../../../paraglide/messages.js';
 import KeepCopy from './KeepCopy';
 

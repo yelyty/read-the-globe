@@ -12,12 +12,129 @@ export const SIZE = 1080;
 
 export type Country = { shape: Feature<Polygon | MultiPolygon>; main: Box };
 
+// the flat world the stamps are cut from: 360° across 1000 units, 180° down 500, centred on the middle
+const WORLD_WIDTH = 1000;
+const WORLD_HEIGHT = WORLD_WIDTH / 2;
+const DEGREES_ACROSS = 360;
+const UNITS_PER_DEGREE = WORLD_WIDTH / DEGREES_ACROSS;
+// a ring spanning more than half the world wraps the date line
+const HALF_WORLD_DEG = DEGREES_ACROSS / 2;
+
 // the map's own world shapes (Crimea in Ukraine), see AtlasMap
 const GEO_URL = '/countries-50m.json';
 
 export const projection = geoEquirectangular()
-  .scale(1000 / (2 * Math.PI))
-  .translate([500, 250]);
+  .scale(WORLD_WIDTH / (2 * Math.PI))
+  .translate([WORLD_WIDTH / 2, WORLD_HEIGHT / 2]);
+
+// a stamp's outline keeps this share of its longer side clear round the country
+const OUTLINE_PAD = 0.06;
+// "N / 195": the countries in the world
+const COUNTRIES_IN_WORLD = 195;
+
+/* the card's layout on its SIZE × SIZE canvas. Plain numbers are pixels; shares are of a stamp's width */
+const STAMP = {
+  /** height for a width */
+  aspect: 1.12,
+  /** the framed style's band */
+  band: 0.045,
+  /** the perforated style's holes and their spacing */
+  holeRadius: 0.032,
+  holeStep: 0.1,
+  /** the picture's inset, the room under it for the name, and the country's margin inside it */
+  inset: 0.075,
+  captionRoom: 0.3,
+  shapeMargin: 0.1,
+  pictureLine: 1.5,
+  /** the name, and the books line under it on a top-N card */
+  nameRise: 0.1,
+  nameRiseOverSub: 0.15,
+  nameSize: 0.13,
+  nameMaxPx: 40,
+  nameMinPx: 12,
+  subRise: 0.05,
+  subSize: 0.1,
+  subMaxPx: 32,
+} as const;
+
+const PAGE = {
+  margin: 52,
+  headHeight: 156,
+  logoTop: 46,
+  logoWidth: 62,
+  /** the logo file's own size, for its proportions */
+  logoArt: { width: 604, height: 610 },
+  logoGap: 18,
+  titleBaseline: 100,
+  titleMaxPx: 62,
+  titleMinPx: 36,
+  /** under the header: a year card's sentence, or the kind's caption */
+  lineDrop: 56,
+  lineMaxPx: 40,
+  lineMinPx: 26,
+  captionDrop: 52,
+  captionPx: 28,
+} as const;
+
+const SHEET = {
+  /** below the header's rule */
+  top: 82,
+  bottom: 752,
+  /** the rule under the sheet */
+  ruleGap: 20,
+  /** a top-N card always shows three across */
+  topColumns: 3,
+  maxColumns: 6,
+  maxRows: 3,
+  gap: 22,
+  tightGap: 14,
+  /** the "and N more" line under a full sheet */
+  moreLine: 34,
+  morePx: 28,
+} as const;
+
+// all stamps: up to this many in a row, so few stamps are drawn bigger
+const COLUMNS = [
+  { upTo: 2, columns: 2 },
+  { upTo: 6, columns: 3 },
+  { upTo: 12, columns: 4 },
+] as const;
+
+// an empty sheet: one dashed space waiting for the first stamp
+const EMPTY = {
+  width: 460,
+  height: 360,
+  dash: 10,
+  dashGap: 8,
+  line: 2.5,
+  titleRise: 6,
+  titlePx: 38,
+  subDrop: 40,
+  subPx: 26,
+} as const;
+
+// the numbers at the foot: countries big on the left, continents and books on the right
+const STATS = {
+  /** the baseline sits this share of the way down the space between the sheet's rule and the footer */
+  baselineShare: 0.62,
+  footerRoom: 28,
+  footBottom: 44,
+  footPx: 34,
+  nudge: 6,
+  bigPx: 230,
+  bigLabelPx: 32,
+  smallPx: 132,
+  smallLabelPx: 28,
+  minContinentsWidth: 220,
+  between: 44,
+  /** "/ 195" beside the big number, as shares of its size */
+  ofGap: 0.1,
+  ofSize: 0.3,
+  /** the label under a number: a line below it, at least this share of the number's size */
+  labelLead: 1.5,
+  labelDrop: 0.33,
+  labelNudge: 3,
+} as const;
 
 export const PALETTE = light.color;
 export const SERIF = light.font.display;
@@ -80,9 +197,12 @@ type Spec = {
 };
 
 export type Kind = keyof typeof KINDS;
+/** how many stamps a card shows: the top 3 or 6, or 0 for every one */
+export type StampCount = 0 | 3 | 6;
+
 export type Options = {
   kind: Kind;
-  count: 0 | 3 | 6; // 0: every stamp
+  count: StampCount;
   frame: 'perforated' | 'framed' | 'plain';
   color: keyof typeof COLORS | null; // null: the kind's own mark, rust for authors, olive for settings
   paper: keyof typeof PAPERS;
@@ -196,12 +316,13 @@ export function loadCountries() {
 // (into Chukotka) is unwrapped first, so its frame sits on the mainland and the far end is clipped by the stamp.
 function flatBox([outer]: Position[][]) {
   const lons = outer.map((point) => point[0]);
-  const wraps = Math.max(...lons) - Math.min(...lons) > 180;
+  const wraps = Math.max(...lons) - Math.min(...lons) > HALF_WORLD_DEG;
 
-  // the projection's own arithmetic: 1000 / 360 units a degree, centred on [500, 250]
+  // the projection's own arithmetic: UNITS_PER_DEGREE a degree, centred on the middle of the world
   const pts = outer.map(([lon, lat]) => [
-    500 + ((wraps && lon < 0 ? lon + 360 : lon) * 1000) / 360,
-    250 - (lat * 1000) / 360,
+    WORLD_WIDTH / 2 +
+      (wraps && lon < 0 ? lon + DEGREES_ACROSS : lon) * UNITS_PER_DEGREE,
+    WORLD_HEIGHT / 2 - lat * UNITS_PER_DEGREE,
   ]);
 
   let area = 0;
@@ -225,7 +346,7 @@ function flatBox([outer]: Position[][]) {
 
 // a country's outline as SVG, framed on its main landmass like a stamp (the Shelf's country header)
 export function countryStamp({ shape, main: [[x0, y0], [x1, y1]] }: Country) {
-  const pad = Math.max(x1 - x0, y1 - y0) * 0.06;
+  const pad = Math.max(x1 - x0, y1 - y0) * OUTLINE_PAD;
 
   const viewBox = [x0 - pad, y0 - pad, x1 - x0 + pad * 2, y1 - y0 + pad * 2]
     .map((value) => value.toFixed(1))
@@ -341,7 +462,7 @@ export async function drawPostcard({
 
     if (opt.frame === 'framed') {
       // a picture frame: a Line band between two Mark rules
-      const bw = sw * 0.045;
+      const bw = sw * STAMP.band;
 
       ctx.strokeStyle = PALETTE.border;
       ctx.lineWidth = bw;
@@ -357,8 +478,8 @@ export async function drawPostcard({
     } else {
       // perforated: the card's colour punched round the edge
       ctx.fillStyle = paper;
-      const radius = sw * 0.032;
-      const step = sw * 0.1;
+      const radius = sw * STAMP.holeRadius;
+      const step = sw * STAMP.holeStep;
 
       for (let pos = step / 2; pos < sw; pos += step) {
         ctx.beginPath();
@@ -375,14 +496,14 @@ export async function drawPostcard({
       }
     }
 
-    const ip = sw * 0.075;
+    const ip = sw * STAMP.inset;
     const iw = sw - ip * 2;
-    const ih = sh - ip - sw * 0.3;
+    const ih = sh - ip - sw * STAMP.captionRoom;
 
     ctx.fillStyle = PALETTE.background;
     ctx.fillRect(ip, ip, iw, ih);
     ctx.strokeStyle = PALETTE.border;
-    ctx.lineWidth = 1.5;
+    ctx.lineWidth = STAMP.pictureLine;
     ctx.strokeRect(ip, ip, iw, ih);
 
     const country = countries.get(code);
@@ -391,8 +512,8 @@ export async function drawPostcard({
       const [[x0, y0], [x1, y1]] = country.main;
 
       const scale = Math.min(
-        (iw - sw * 0.1) / (x1 - x0 || 1),
-        (ih - sw * 0.1) / (y1 - y0 || 1)
+        (iw - sw * STAMP.shapeMargin) / (x1 - x0 || 1),
+        (ih - sw * STAMP.shapeMargin) / (y1 - y0 || 1)
       );
 
       ctx.save();
@@ -416,14 +537,14 @@ export async function drawPostcard({
       ctx.restore();
     }
 
-    const fb = opt.frame === 'framed' ? sw * 0.045 : 0; // names sit above the frame's band
+    const fb = opt.frame === 'framed' ? sw * STAMP.band : 0; // names sit above the frame's band
 
     if (sub)
       text(
         sub,
         sw / 2,
-        sh - fb - sw * 0.05,
-        `500 ${Math.min(32, Math.round(sw * 0.1))}px ${SANS}`,
+        sh - fb - sw * STAMP.subRise,
+        `500 ${Math.min(STAMP.subMaxPx, Math.round(sw * STAMP.subSize))}px ${SANS}`,
         PALETTE.text,
         { align: 'center' }
       );
@@ -432,13 +553,13 @@ export async function drawPostcard({
     text(
       name,
       sw / 2,
-      sh - fb - (sub ? sw * 0.15 : sw * 0.1),
+      sh - fb - sw * (sub ? STAMP.nameRiseOverSub : STAMP.nameRise),
       fit(
         name,
         `500 {s}px ${SANS}`,
         sw - ip * 2,
-        Math.min(40, Math.round(sw * 0.13)),
-        12
+        Math.min(STAMP.nameMaxPx, Math.round(sw * STAMP.nameSize)),
+        STAMP.nameMinPx
       ),
       PALETTE.text,
       { align: 'center' }
@@ -468,17 +589,17 @@ export async function drawPostcard({
 
     if (opts.of)
       text(
-        '/ 195',
-        posX + nw + px * 0.1,
+        `/ ${COUNTRIES_IN_WORLD}`,
+        posX + nw + px * STATS.ofGap,
         posY,
-        `400 ${Math.round(px * 0.3)}px ${SANS}`,
+        `400 ${Math.round(px * STATS.ofSize)}px ${SANS}`,
         PALETTE.textSecondary
       );
 
     text(
       label,
-      posX + (opts.align === 'right' ? 0 : 3),
-      posY + Math.round(Math.max(lab * 1.5, px * 0.33)),
+      posX + (opts.align === 'right' ? 0 : STATS.labelNudge),
+      posY + Math.round(Math.max(lab * STATS.labelLead, px * STATS.labelDrop)),
       `500 ${lab}px ${SANS}`,
       PALETTE.textSecondary,
       { ls: '3px', align: opts.align }
@@ -488,18 +609,32 @@ export async function drawPostcard({
   // the page: the header band, the stamp sheet, the numbers
   ctx.fillStyle = paper;
   ctx.fillRect(0, 0, SIZE, SIZE);
-  const mg = 52;
-  const headH = 156;
-  const markW = logo ? 62 : 0;
+  const mg = PAGE.margin;
+  const headH = PAGE.headHeight;
+  const markW = logo ? PAGE.logoWidth : 0;
+  const { logoArt } = PAGE;
 
-  if (logo) ctx.drawImage(logo, mg, 46, markW, Math.round((markW * 610) / 604)); // the logo's own proportions
-  const tx = mg + (logo ? markW + 18 : 0);
+  if (logo)
+    ctx.drawImage(
+      logo,
+      mg,
+      PAGE.logoTop,
+      markW,
+      Math.round((markW * logoArt.height) / logoArt.width)
+    );
+  const tx = mg + (logo ? markW + PAGE.logoGap : 0);
 
   text(
     title,
     tx,
-    100,
-    fit(title, `italic 400 {s}px ${SERIF}`, SIZE - tx - mg, 62, 36),
+    PAGE.titleBaseline,
+    fit(
+      title,
+      `italic 400 {s}px ${SERIF}`,
+      SIZE - tx - mg,
+      PAGE.titleMaxPx,
+      PAGE.titleMinPx
+    ),
     PALETTE.text
   );
 
@@ -508,8 +643,14 @@ export async function drawPostcard({
     text(
       year.line,
       SIZE / 2,
-      headH + 56,
-      fit(year.line, `italic 400 {s}px ${SERIF}`, SIZE - mg * 2, 40, 26),
+      headH + PAGE.lineDrop,
+      fit(
+        year.line,
+        `italic 400 {s}px ${SERIF}`,
+        SIZE - mg * 2,
+        PAGE.lineMaxPx,
+        PAGE.lineMinPx
+      ),
       PALETTE.text,
       { align: 'center' }
     ); // the year in one sentence
@@ -517,15 +658,15 @@ export async function drawPostcard({
     text(
       spec.caption?.() ?? '',
       SIZE / 2,
-      headH + 52,
-      `500 28px ${SANS}`,
+      headH + PAGE.captionDrop,
+      `500 ${PAGE.captionPx}px ${SANS}`,
       PALETTE.textSecondary,
       { align: 'center', ls: '5px' }
     );
 
   // all: up to 18 stamps in rows of six, bigger when there are few; top 3 or 6: the most-read countries
-  const top = headH + 82;
-  const sheetB = 752;
+  const top = headH + SHEET.top;
+  const sheetB = SHEET.bottom;
   const booksIn = (code: string) => spec.count(marks[code]);
 
   const list = opt.count
@@ -540,25 +681,19 @@ export async function drawPostcard({
 
   const count = list.length;
 
-  const cols = opt.count
-    ? 3
-    : count <= 2
-      ? 2
-      : count <= 6
-        ? 3
-        : count <= 12
-          ? 4
-          : 6;
+  const cols: number = opt.count
+    ? SHEET.topColumns
+    : (COLUMNS.find((step) => count <= step.upTo)?.columns ?? SHEET.maxColumns);
 
-  const rows = Math.min(3, Math.max(1, Math.ceil(count / cols)));
-  const gap = cols === 6 ? 14 : 22;
+  const rows = Math.min(SHEET.maxRows, Math.max(1, Math.ceil(count / cols)));
+  const gap = cols === SHEET.maxColumns ? SHEET.tightGap : SHEET.gap;
   let sw = (SIZE - mg * 2 - gap * (cols - 1)) / cols;
-  let sh = sw * 1.12;
-  const room = sheetB - top - (count > cols * rows ? 34 : 0);
+  let sh = sw * STAMP.aspect;
+  const room = sheetB - top - (count > cols * rows ? SHEET.moreLine : 0);
 
   if (rows * sh + (rows - 1) * gap > room) {
     sh = (room - (rows - 1) * gap) / rows;
-    sw = sh / 1.12;
+    sw = sh / STAMP.aspect;
   }
 
   const shown = list.slice(0, cols * rows);
@@ -567,23 +702,22 @@ export async function drawPostcard({
   const gy = top + (room - (rows * sh + (rows - 1) * gap)) / 2;
 
   if (!count) {
-    // an empty sheet: one dashed space waiting for the first stamp
-    const ew = 460;
-    const eh = 360;
+    const ew = EMPTY.width;
+    const eh = EMPTY.height;
     const ex = (SIZE - ew) / 2;
     const ey = top + (sheetB - top - eh) / 2;
 
-    ctx.setLineDash([10, 8]);
+    ctx.setLineDash([EMPTY.dash, EMPTY.dashGap]);
     ctx.strokeStyle = PALETTE.textMuted;
-    ctx.lineWidth = 2.5;
+    ctx.lineWidth = EMPTY.line;
     ctx.strokeRect(ex, ey, ew, eh);
     ctx.setLineDash([]);
 
     text(
       m.postcard_first_stamp(),
       SIZE / 2,
-      ey + eh / 2 - 6,
-      `italic 400 38px ${SERIF}`,
+      ey + eh / 2 - EMPTY.titleRise,
+      `italic 400 ${EMPTY.titlePx}px ${SERIF}`,
       PALETTE.textSecondary,
       { align: 'center' }
     );
@@ -591,8 +725,8 @@ export async function drawPostcard({
     text(
       m.postcard_first_stamp_sub(),
       SIZE / 2,
-      ey + eh / 2 + 40,
-      `500 26px ${SANS}`,
+      ey + eh / 2 + EMPTY.subDrop,
+      `500 ${EMPTY.subPx}px ${SANS}`,
       PALETTE.textMuted,
       { align: 'center' }
     );
@@ -621,52 +755,68 @@ export async function drawPostcard({
     text(
       m.postcard_more({ n: count - shown.length }),
       gx + gridW,
-      gy + rows * sh + (rows - 1) * gap + 34,
-      `italic 400 28px ${SERIF}`,
+      gy + rows * sh + (rows - 1) * gap + SHEET.moreLine,
+      `italic 400 ${SHEET.morePx}px ${SERIF}`,
       PALETTE.textSecondary,
       { align: 'right' }
     );
-  rule(sheetB + 20);
+  const sheetRule = sheetB + SHEET.ruleGap;
 
-  const footY = SIZE - 44;
-  const base = Math.round(sheetB + 20 + (footY - 28 - sheetB - 20) * 0.62);
+  rule(sheetRule);
+
+  const footY = SIZE - STATS.footBottom;
+
+  const base = Math.round(
+    sheetRule + (footY - STATS.footerRoom - sheetRule) * STATS.baselineShare
+  );
 
   stat(
     stats.countries,
     spec.stat({ count: stats.countries }),
-    mg - 6,
+    mg - STATS.nudge,
     base,
-    230,
-    32,
+    STATS.bigPx,
+    STATS.bigLabelPx,
     {
       of: true,
     }
   );
 
-  ctx.font = `400 132px ${SERIF}`;
-  const cw = Math.max(ctx.measureText(String(stats.continents)).width, 220);
+  ctx.font = `400 ${STATS.smallPx}px ${SERIF}`;
+
+  const cw = Math.max(
+    ctx.measureText(String(stats.continents)).width,
+    STATS.minContinentsWidth
+  );
 
   stat(
     stats.continents,
     m.label_continent({ count: stats.continents }),
     SIZE - mg,
     base,
-    132,
-    28,
+    STATS.smallPx,
+    STATS.smallLabelPx,
     { align: 'right' }
   );
 
   stat(
     stats.books,
     m.label_book({ count: stats.books }),
-    SIZE - mg - cw - 44,
+    SIZE - mg - cw - STATS.between,
     base,
-    132,
-    28,
+    STATS.smallPx,
+    STATS.smallLabelPx,
     { align: 'right' }
   );
 
-  text('readtheglobe.app', SIZE - mg, footY, `500 34px ${SANS}`, PALETTE.text, {
-    align: 'right',
-  }); // full Ink: it has to survive the card being shrunk in a feed
+  text(
+    'readtheglobe.app',
+    SIZE - mg,
+    footY,
+    `500 ${STATS.footPx}px ${SANS}`,
+    PALETTE.text,
+    {
+      align: 'right',
+    }
+  ); // full Ink: it has to survive the card being shrunk in a feed
 }

@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 
+import { MAX_ROUTE_STOPS } from './goals';
 import * as styles from './GoalsPage.css';
 
 type GoalRouteProps = { done: number; total: number; theme?: boolean };
@@ -15,7 +16,7 @@ export const GoalRoute = ({ done, total, theme }: GoalRouteProps) => {
     >
       <div className={styles.routeTrack} />
       <div className={styles.routeFill} />
-      {total <= 30 && (
+      {total <= MAX_ROUTE_STOPS && (
         <div className={styles.routeStops}>
           {Array.from({ length: total - 1 }, (_unused, i) => (
             <i

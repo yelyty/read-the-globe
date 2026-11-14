@@ -14,11 +14,14 @@ const COVER_COLORS = [
   '#5A4A2E',
 ];
 
+// the string hash Java uses: hash * 31 + char, written as a shift
+const HASH_SHIFT = 5;
+
 export function coverColor(seed: string): string {
   let hash = 0;
 
   for (let i = 0; i < seed.length; i++) {
-    hash = (hash << 5) - hash + seed.charCodeAt(i);
+    hash = (hash << HASH_SHIFT) - hash + seed.charCodeAt(i);
     hash |= 0;
   }
 

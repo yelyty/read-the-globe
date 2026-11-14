@@ -115,18 +115,4 @@ const Dialog = ({
   );
 };
 
-type DialogTextProps = ComponentProps<'p'>;
-
-/** the explaining paragraph under the header */
-export const DialogText = ({ className, ...rest }: DialogTextProps) => (
-  <p className={[styles.text, className].filter(Boolean).join(' ')} {...rest} />
-);
-
-type DialogActionsProps = { children: ReactNode };
-
-/** the buttons row at the foot: the safe choice first, the action last */
-export const DialogActions = ({ children }: DialogActionsProps) => (
-  <div className={styles.actions}>{children}</div>
-);
-
 export default Dialog;

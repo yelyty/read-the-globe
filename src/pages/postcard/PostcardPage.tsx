@@ -18,6 +18,7 @@ import PageTitle from '../../components/PageTitle/PageTitle';
 import Logo from '../../components/Logo/Logo';
 import Hint from '../../components/Hint/Hint';
 import Select from '../../components/Select/Select';
+import { isoDay } from '../../utils/isoDate';
 import { goalName, goalProgress } from '../goals/goals';
 import {
   COLORS,
@@ -51,6 +52,12 @@ const DEFAULTS: CardOptions = {
   year: null,
 };
 
+// how many countries a card lists: the top few, the top more, or all of them (0)
+const TOP_FEW = 3;
+const TOP_MORE = 6;
+// the set-up is saved once the reader stops changing it for this long
+const SAVE_DELAY_MS = 600;
+
 // the reader's saved set-up, field by field: an unknown or older value falls back to the default
 const oneOf = <T,>(values: readonly T[], value: unknown, fallback: T) =>
   values.find((item) => item === value) ?? fallback;
@@ -59,7 +66,7 @@ const keys = <T extends object>(obj: T) => Object.keys(obj) as (keyof T)[];
 
 const readOptions = (saved: SavedPostcard): CardOptions => ({
   kind: oneOf(keys(KINDS), saved?.kind, DEFAULTS.kind),
-  count: oneOf([0, 3, 6] as const, saved?.count, DEFAULTS.count),
+  count: oneOf(COUNTS, saved?.count, DEFAULTS.count),
   frame: oneOf(
     ['perforated', 'framed', 'plain'] as const,
     saved?.frame,
@@ -74,7 +81,7 @@ const readOptions = (saved: SavedPostcard): CardOptions => ({
 const countLabel = (count: number) =>
   count ? m.postcard_top({ n: count }) : m.postcard_all();
 
-const COUNTS = [3, 6, 0] as const;
+const COUNTS = [TOP_FEW, TOP_MORE, 0] as const;
 
 const FRAMES = {
   perforated: m.postcard_frame_perforated,
@@ -199,7 +206,7 @@ const PostcardPage = () => {
       updateProfile(user.id, { postcard: options }).then(
         (problem) => problem && console.error(problem)
       );
-    }, 600);
+    }, SAVE_DELAY_MS);
 
     return () => clearTimeout(timer);
   }, [options, user]);
@@ -268,7 +275,7 @@ const PostcardPage = () => {
       ? goalCardName(goal)
       : year
         ? `read-the-globe-${year}-postcard.png`
-        : `read-the-globe-postcard-${new Date().toISOString().slice(0, 10)}.png`;
+        : `read-the-globe-postcard-${isoDay(new Date().toISOString())}.png`;
 
   const save = (blob: Blob) => {
     const link = document.createElement('a');

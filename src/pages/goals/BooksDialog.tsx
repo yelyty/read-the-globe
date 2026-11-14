@@ -6,10 +6,9 @@ import { setGoalBooks } from '../../api/goals/goals';
 import Hint from '../../components/Hint/Hint';
 import { Button } from '../../components/Button/Button';
 import { useDirty } from '../../hooks/useUnsaved';
-import Dialog, {
-  DialogActions,
-  DialogText,
-} from '../../components/Dialog/Dialog';
+import Dialog from '../../components/Dialog/Dialog';
+import DialogActions from '../../components/Dialog/DialogActions';
+import DialogText from '../../components/Dialog/DialogText';
 import { m } from '../../paraglide/messages.js';
 import * as styles from './GoalsPage.css';
 import { goalName, withBold } from './goals';

@@ -6,6 +6,9 @@ import type { Mark } from '../../utils/atlasMarks';
 import { worldShapes } from '../../utils/worldShapes';
 import * as styles from './HomePage.css';
 
+// the space round a country's shape, as a share of its box's shorter side
+const PAD_SHARE = 0.06;
+
 const mainPiece = (feature: Feature): Feature => {
   if (feature.geometry.type !== 'MultiPolygon') return feature;
 
@@ -41,7 +44,7 @@ const CountryShape = ({ code, mark, width, height }: CountryShapeProps) => {
 
   if (!shape) return <svg width={width} height={height} aria-hidden="true" />;
 
-  const pad = Math.min(width, height) * 0.06;
+  const pad = Math.min(width, height) * PAD_SHARE;
 
   const projection = geoEquirectangular().fitExtent(
     [

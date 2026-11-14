@@ -35,6 +35,34 @@ const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 const PIN =
   '<svg viewBox="0 0 24 24"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"/><circle cx="12" cy="9" r="2.8"/></svg>';
 
+// the gold ring round a country too small to see fill
+const RING_MS = 750;
+// the plate counts as in view with its top this share down the screen at most (and the header's height,
+// give or take a few pixels, at least); a scroll to it leaves a gap under the header
+const VIEW_TOP_SHARE = 0.35;
+const HEADER_SLACK = 4;
+const SCROLL_GAP = 24;
+// a smooth scroll that never says it ended is taken as done after this long
+const SCROLL_SETTLE_MS = 650;
+// frames to wait for the map's shapes: about two seconds
+const MAX_DRAW_FRAMES = 120;
+// the line said when the pins land
+const SAID_MS = 6000;
+// a goal reached is announced after the pins settle
+const GOAL_SAY_MS = 900;
+// a flying pin arcs up by a share of its sideways distance, within these bounds
+const MIN_LIFT = 60;
+const MAX_LIFT = 160;
+const LIFT_SHARE = 0.25;
+// pins leave one after another and fly for this long
+const FLIGHT_MS = 820;
+const FIRST_PIN_DELAY_MS = 120;
+const PIN_STAGGER_MS = 110;
+// a country smaller than this, both ways, gets the ring
+const TINY_COUNTRY = 24;
+// a beat after the last pin lands before what comes next
+const LAND_PAUSE_MS = 260;
+
 // a country too small to see fill gets a gold ring where the pin landed
 const ringAt = (rect: DOMRect) => {
   const ring = document.createElement('div');
@@ -50,7 +78,7 @@ const ringAt = (rect: DOMRect) => {
       { transform: 'translate(-50%, -50%) scale(.4)', opacity: 1 },
       { transform: 'translate(-50%, -50%) scale(1.7)', opacity: 0 },
     ],
-    { duration: 750, easing: 'cubic-bezier(.2,.8,.25,1)' }
+    { duration: RING_MS, easing: 'cubic-bezier(.2,.8,.25,1)' }
   ).onfinish = () => ring.remove();
 };
 
@@ -60,9 +88,9 @@ const plateInView = (plate: Element) =>
     const top = plate.getBoundingClientRect().top;
     const head = document.querySelector('header')?.offsetHeight ?? 0;
 
-    if (top >= head - 4 && top < innerHeight * 0.35)
+    if (top >= head - HEADER_SLACK && top < innerHeight * VIEW_TOP_SHARE)
       return requestAnimationFrame(() => done());
-    const to = Math.max(0, top + scrollY - head - 24);
+    const to = Math.max(0, top + scrollY - head - SCROLL_GAP);
 
     if (reduced()) {
       scrollTo({ top: to, behavior: 'instant' });
@@ -71,7 +99,7 @@ const plateInView = (plate: Element) =>
     }
 
     addEventListener('scrollend', () => done(), { once: true });
-    setTimeout(done, 650);
+    setTimeout(done, SCROLL_SETTLE_MS);
     scrollTo({ top: to, behavior: 'smooth' });
   });
 
@@ -81,7 +109,7 @@ const drawn = (plate: Element) =>
     let tries = 0;
 
     const look = () =>
-      plate.querySelector('[data-code]') || ++tries > 120
+      plate.querySelector('[data-code]') || ++tries > MAX_DRAW_FRAMES
         ? done()
         : requestAnimationFrame(look);
 
@@ -142,7 +170,7 @@ const HomePage = () => {
   // the line said when the pins land stays a few seconds
   useEffect(() => {
     if (!said) return;
-    const timer = setTimeout(() => setSaid(''), 6000);
+    const timer = setTimeout(() => setSaid(''), SAID_MS);
 
     return () => clearTimeout(timer);
   }, [said]);
@@ -227,7 +255,7 @@ const HomePage = () => {
                 run: () => navigate({ to: '/app/goals' }),
               },
             }),
-          reduced() ? 0 : 900
+          reduced() ? 0 : GOAL_SAY_MS
         );
     };
 
@@ -282,7 +310,7 @@ const HomePage = () => {
         const rect = path.getBoundingClientRect();
         const dx = rect.left + rect.width / 2 - x0;
         const dy = rect.top + rect.height / 2 - y0;
-        const lift = Math.min(160, Math.abs(dx) * 0.25 + 60);
+        const lift = Math.min(MAX_LIFT, Math.abs(dx) * LIFT_SHARE + MIN_LIFT);
         const pin = document.createElement('div');
 
         pin.className = styles.flyPin;
@@ -316,8 +344,8 @@ const HomePage = () => {
             },
           ],
           {
-            duration: 820,
-            delay: 120 + index * 110,
+            duration: FLIGHT_MS,
+            delay: FIRST_PIN_DELAY_MS + index * PIN_STAGGER_MS,
             easing: 'cubic-bezier(.45,.05,.3,1)',
             fill: 'forwards',
           }
@@ -327,8 +355,9 @@ const HomePage = () => {
           const code = path.dataset.code!;
 
           setLanded((prev) => new Set(prev).add(code));
-          if (rect.width < 24 && rect.height < 24) ringAt(rect);
-          if (++count === paths.length) setTimeout(land, 260);
+          if (rect.width < TINY_COUNTRY && rect.height < TINY_COUNTRY)
+            ringAt(rect);
+          if (++count === paths.length) setTimeout(land, LAND_PAUSE_MS);
         };
       });
     })();

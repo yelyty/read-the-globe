@@ -91,13 +91,23 @@ const FILL: Record<Mark, string> = {
   both: 'url(#close-hatch)',
 };
 
+// a stamp is drawn on a 100×100 grid; its country sits inside this margin
+const STAMP_SIZE = 100;
+const OUTLINE_MARGIN = 12;
+// stamp positions are percentages of the section: above the middle the name shows below the stamp,
+// and this close to a side it lines up with that side
+const MIDDLE = 50;
+const EDGE = 15;
+// on a phone, every other stamp hides and the rest alternate low and high
+const PHONE_PATTERN = 4;
+
 // a country on its disc, fitted into the middle of a 100×100 stamp
 const outline = (shape: Feature) =>
   geoPath(
     geoEquirectangular().fitExtent(
       [
-        [12, 12],
-        [88, 88],
+        [OUTLINE_MARGIN, OUTLINE_MARGIN],
+        [STAMP_SIZE - OUTLINE_MARGIN, STAMP_SIZE - OUTLINE_MARGIN],
       ],
       mainPiece(shape)
     )
@@ -140,20 +150,21 @@ const Closing = ({ onSignUp }: { onSignUp: () => void }) => {
         const shape = shapes?.[stamp.code];
 
         // the ones high up show their name below them, the rest above, so it stays inside the section
-        const tipSide = parseFloat(stamp.place.top) < 50 ? 'below' : 'above';
+        const tipSide =
+          parseFloat(stamp.place.top) < MIDDLE ? 'below' : 'above';
 
         // …and the ones by an edge line it up with that edge, so it isn't cut off
         const tipAlign =
-          parseFloat(stamp.place.left) < 15
+          parseFloat(stamp.place.left) < EDGE
             ? 'start'
-            : parseFloat(stamp.place.right) < 15
+            : parseFloat(stamp.place.right) < EDGE
               ? 'end'
               : 'center';
 
         return (
           <div
             key={stamp.code}
-            className={`${styles.stamp} ${styles.onPhone[i % 2 ? 'hide' : i % 4 ? 'low' : 'high']}`}
+            className={`${styles.stamp} ${styles.onPhone[i % 2 ? 'hide' : i % PHONE_PATTERN ? 'low' : 'high']}`}
             style={{ ...stamp.place, '--n': String(stamp.n) } as CSSProperties}
           >
             <svg viewBox="0 0 100 100" role="img" aria-label={label}>

@@ -13,8 +13,15 @@ import { fieldError } from '../../components/Field/Field.css';
 import Hint from '../../components/Hint/Hint';
 import { Button } from '../../components/Button/Button';
 import { useDirty } from '../../hooks/useUnsaved';
-import Dialog, { DialogActions } from '../../components/Dialog/Dialog';
-import { MAX_GOALS, REGIONS, goalName } from './goals';
+import Dialog from '../../components/Dialog/Dialog';
+import DialogActions from '../../components/Dialog/DialogActions';
+import {
+  DEFAULT_THEME_TARGET,
+  MAX_GOALS,
+  MAX_THEME_TARGET,
+  REGIONS,
+  goalName,
+} from './goals';
 import * as styles from './GoalsPage.css';
 
 const NAME_HINT: Record<GoalKind, () => string> = {
@@ -49,7 +56,11 @@ const GoalDialog = ({
 
   const [codes, setCodes] = useState<string[]>(goal?.countryCodes ?? []);
   const [country, setCountry] = useState('');
-  const [target, setTarget] = useState(String(goal?.target ?? 5));
+
+  const [target, setTarget] = useState(
+    String(goal?.target ?? DEFAULT_THEME_TARGET)
+  );
+
   // `at` names the field the error is about; without it the error is about the whole form
   const [error, setError] = useState<{ text: string; at?: string }>();
   const [saving, setSaving] = useState(false);
@@ -111,7 +122,9 @@ const GoalDialog = ({
       continent: kind === 'region' ? continent : null,
       countryCodes: kind === 'countries' ? codes : null,
       target:
-        kind === 'theme' ? Math.min(200, Math.round(Number(target))) : null,
+        kind === 'theme'
+          ? Math.min(MAX_THEME_TARGET, Math.round(Number(target)))
+          : null,
     };
 
     setSaving(true);

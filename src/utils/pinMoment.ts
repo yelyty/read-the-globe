@@ -20,9 +20,22 @@ const ORD = [
   'tenth',
 ];
 
-const ord = (num: number) =>
-  ORD[num] ??
-  `${num}${num % 100 > 10 && num % 100 < 14 ? 'th' : (['th', 'st', 'nd', 'rd'][num % 10] ?? 'th')}`;
+// past tenth: 21st, 22nd, 23rd, but 11th, 12th, 13th
+const ORD_SUFFIX = ['th', 'st', 'nd', 'rd'];
+const TEENS = { from: 11, to: 13 };
+const HUNDRED = 100;
+const TEN = 10;
+
+const ord = (num: number) => {
+  if (ORD[num]) return ORD[num];
+  const lastTwo = num % HUNDRED;
+  const teen = lastTwo >= TEENS.from && lastTwo <= TEENS.to;
+
+  return `${num}${teen ? 'th' : (ORD_SUFFIX[num % TEN] ?? 'th')}`;
+};
+
+// the most countries a pin flies to at once
+const MAX_TARGETS = 5;
 
 const list = (items: string[]) =>
   new Intl.ListFormat(getLocale(), { type: 'conjunction' }).format(items);
@@ -124,7 +137,7 @@ export function pinMoment(
     targets: (moved.length
       ? [...new Set(moved)]
       : [back ?? authorCode].filter((code): code is string => !!code)
-    ).slice(0, 5),
+    ).slice(0, MAX_TARGETS),
     line: first
       ? m.pin_begun({ where })
       : m.pin_pinned({ title: book.title, stop, where }),

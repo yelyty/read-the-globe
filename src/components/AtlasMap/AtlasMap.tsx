@@ -7,7 +7,6 @@ import {
   type ReactNode,
 } from 'react';
 import { ArrowLeftIcon, ArrowRightIcon } from '@phosphor-icons/react';
-import { geoEquirectangular } from 'd3-geo';
 import {
   ComposableMap,
   Geographies,
@@ -18,6 +17,11 @@ import {
 
 import type { Geo } from '../../types';
 import type { Marks } from '../../utils/atlasMarks';
+import {
+  flatProjection,
+  MAP_HEIGHT as HEIGHT,
+  MAP_WIDTH as WIDTH,
+} from '../../utils/flatMap';
 import { m } from '../../paraglide/messages.js';
 import * as styles from './AtlasMap.css';
 
@@ -25,14 +29,14 @@ import * as styles from './AtlasMap.css';
 // A local copy of world-atlas@2.0.2 countries-50m with Crimea moved from Russia back into Ukraine.
 export const GEO_URL = '/countries-50m.json';
 
-// A flat latitude/longitude grid, as in the mock: 360° across, 83°N to 57°S down (no Antarctica).
-const WIDTH = 1000;
-const HEIGHT = Math.round((WIDTH * (83 + 57)) / 360);
+const projection = flatProjection();
 
-const projection = geoEquirectangular()
-  .scale(WIDTH / (2 * Math.PI))
-  .center([0, (83 - 57) / 2])
-  .translate([WIDTH / 2, HEIGHT / 2]);
+// the map scrolls sideways on a phone: an edge this close to the end counts as reached
+const EDGE_SLACK = 2;
+// the widest run of marks it centres on, as a share of the visible width
+const FRAME_SHARE = 0.8;
+// scrolls this soon after framing are the map's own, not the reader's
+const AUTO_SCROLL_MS = 400;
 
 // react-simple-maps 1.0.0 uses a projection passed as a function as-is; its @types describe a factory instead
 const projectionProp = projection as unknown as ProjectionFunction;
@@ -104,8 +108,8 @@ const AtlasMap = memo(
       const max = el.scrollWidth - el.clientWidth;
 
       setEdges({
-        left: max > 1 && el.scrollLeft > 2,
-        right: max > 1 && el.scrollLeft < max - 2,
+        left: max > 1 && el.scrollLeft > EDGE_SLACK,
+        right: max > 1 && el.scrollLeft < max - EDGE_SLACK,
       });
     }, []);
 
@@ -130,7 +134,7 @@ const AtlasMap = memo(
         xs.forEach((start, i) => {
           const group = xs
             .slice(i)
-            .filter((other) => other - start <= box.width * 0.8);
+            .filter((other) => other - start <= box.width * FRAME_SHARE);
 
           if (group.length > best.length) best = group;
         });
@@ -151,7 +155,7 @@ const AtlasMap = memo(
     const onScroll = () => {
       measure();
 
-      if (hint && Date.now() - auto.current > 400) {
+      if (hint && Date.now() - auto.current > AUTO_SCROLL_MS) {
         setHint(false);
         store.set(SLID, '1');
       }

@@ -2,11 +2,12 @@ import type { BookEntry, Goal } from '../../types';
 import { CONTINENT_OF } from '../../utils/continents';
 import { m } from '../../paraglide/messages.js';
 import { getLocale } from '../../paraglide/runtime.js';
+import { isoDay, isoYear } from '../../utils/isoDate';
 import { goalName } from '../goals/goals';
 
 // when a book was read; rows saved before read_on fall back to the day they were logged
 export const readDate = (book: BookEntry) =>
-  book.readOn ?? book.createdAt?.slice(0, 10) ?? '';
+  book.readOn ?? isoDay(book.createdAt ?? '');
 
 // a book's countries, both marks: its author's, then its story's
 export const bookCodes = (book: BookEntry) =>
@@ -20,7 +21,7 @@ export const bookYears = (books: BookEntry[]) =>
   [
     ...new Set(
       books
-        .map((book) => readDate(book).slice(0, 4))
+        .map((book) => isoYear(readDate(book)))
         .filter((year) => /^\d{4}$/.test(year))
     ),
   ]

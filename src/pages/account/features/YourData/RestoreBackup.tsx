@@ -14,10 +14,9 @@ import {
 import { useStatus } from '../../../../hooks/useStatus';
 import { Button } from '../../../../components/Button/Button';
 import { button } from '../../../../components/Button/Button.css';
-import Dialog, {
-  DialogActions,
-  DialogText,
-} from '../../../../components/Dialog/Dialog';
+import Dialog from '../../../../components/Dialog/Dialog';
+import DialogActions from '../../../../components/Dialog/DialogActions';
+import DialogText from '../../../../components/Dialog/DialogText';
 import { m } from '../../../../paraglide/messages.js';
 import { getLocale } from '../../../../paraglide/runtime.js';
 import { atlasWords, bookCount, goalCount } from './readingList';

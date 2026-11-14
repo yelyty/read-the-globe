@@ -11,6 +11,13 @@ import {
 
 import * as styles from './Suggest.css';
 
+// space kept between the list and the screen's edge, and between the list and its field
+const SCREEN_MARGIN = 16;
+const FIELD_GAP = 8;
+// below this much room under the field, the list opens upwards if there's more room above
+const MIN_ROOM_BELOW = 200;
+const MAX_LIST_HEIGHT = 280;
+
 // "hoeg" finds Høeg: accents don't block a match
 const fold = (text: string) =>
   text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
@@ -71,14 +78,14 @@ const Suggest = ({
     const rect = field.current?.getBoundingClientRect();
 
     if (!list || !rect) return;
-    const below = innerHeight - rect.bottom - 16;
-    const up = below < 200 && rect.top > below;
+    const below = innerHeight - rect.bottom - SCREEN_MARGIN;
+    const up = below < MIN_ROOM_BELOW && rect.top > below;
 
     list.style.left = `${rect.left}px`;
     list.style.width = `${rect.width}px`;
-    list.style.maxHeight = `${Math.min(280, (up ? rect.top : below) - 16)}px`;
-    list.style.top = up ? '' : `${rect.bottom + 8}px`;
-    list.style.bottom = up ? `${innerHeight - rect.top + 8}px` : '';
+    list.style.maxHeight = `${Math.min(MAX_LIST_HEIGHT, (up ? rect.top : below) - SCREEN_MARGIN)}px`;
+    list.style.top = up ? '' : `${rect.bottom + FIELD_GAP}px`;
+    list.style.bottom = up ? `${innerHeight - rect.top + FIELD_GAP}px` : '';
   };
 
   useLayoutEffect(() => {

@@ -13,6 +13,12 @@ import { m } from '../../paraglide/messages.js';
 
 export const MAX_GOALS = 10;
 
+/** a goal's route draws one stop per book up to this many; a longer one shows a percentage instead */
+export const MAX_ROUTE_STOPS = 30;
+/** a new theme goal starts at this many books, and can count up to the most */
+export const DEFAULT_THEME_TARGET = 5;
+export const MAX_THEME_TARGET = 200;
+
 export const REGIONS = (Object.keys(CONTINENT_NAMES) as Continent[]).filter(
   (continent) => continent !== 'AN'
 );
@@ -143,6 +149,9 @@ export const goalHas = (goal: Goal, code: string) =>
     : goal.kind === 'countries' && !!goal.countryCodes?.includes(code);
 
 // the postmark's date, for a reached goal's stamp: "4 X 26"
+// '26 for 2026
+const SHORT_YEAR_DIGITS = 2;
+
 export const romanDate = (iso: string) => {
   const date = new Date(`${iso}T12:00:00`);
 
@@ -161,5 +170,5 @@ export const romanDate = (iso: string) => {
     'XII',
   ];
 
-  return `${date.getDate()} ${months[date.getMonth()]} ${String(date.getFullYear()).slice(2)}`;
+  return `${date.getDate()} ${months[date.getMonth()]} ${String(date.getFullYear()).slice(-SHORT_YEAR_DIGITS)}`;
 };

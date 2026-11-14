@@ -1,8 +1,9 @@
 import type { BookEntry } from '../types';
+import { isoDay, isoYear, isoYearMonth } from './isoDate';
 
 // when a book was read (read_on); a book without one falls back to the day it was logged
 export const readDate = (book: BookEntry) =>
-  book.readOn ?? (book.createdAt ?? '').slice(0, 10);
+  book.readOn ?? isoDay(book.createdAt ?? '');
 
 // newest read first; ties keep the order they came in
 export const byReadDate = (left: BookEntry, right: BookEntry) =>
@@ -21,11 +22,11 @@ export function readOnFor(
   today: string
 ): string | null {
   if (!mon && !year) return null;
-  const ym = `${year || today.slice(0, 4)}-${mon || '01'}`;
+  const ym = `${year || isoYear(today)}-${mon || '01'}`;
 
   if (ym === startYm) return null;
 
-  return ym === today.slice(0, 7) ? today : `${ym}-01`;
+  return ym === isoYearMonth(today) ? today : `${ym}-01`;
 }
 
 // the reader's own today, YYYY-MM-DD

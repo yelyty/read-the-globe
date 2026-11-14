@@ -5,10 +5,14 @@ import type { Feature, FeatureCollection } from 'geojson';
 import type { Marks } from '../../utils/atlasMarks';
 import type { Continent } from '../../utils/continents';
 import { mainPiece } from '../../utils/worldShapes';
+import { HEIGHT, INSET, WIDTH } from './plate';
 import * as styles from './GoalsPage.css';
 
-const WIDTH = 176;
-const HEIGHT = 110;
+// Europe on a plate is the mainland and the islands near it, not Russia to the Pacific
+const EUROPE_WEST = -25;
+const EUROPE_NORTH = 72;
+const EUROPE_EAST = 60;
+const EUROPE_SOUTH = 34;
 
 const CROP: Partial<Record<Continent, Feature>> = {
   EU: {
@@ -17,8 +21,8 @@ const CROP: Partial<Record<Continent, Feature>> = {
     geometry: {
       type: 'MultiPoint',
       coordinates: [
-        [-25, 72],
-        [60, 34],
+        [EUROPE_WEST, EUROPE_NORTH],
+        [EUROPE_EAST, EUROPE_SOUTH],
       ],
     },
   },
@@ -56,8 +60,8 @@ export const GoalPlate = ({
   const path = geoPath(
     geoEquirectangular().fitExtent(
       [
-        [8, 8],
-        [WIDTH - 8, HEIGHT - 8],
+        [INSET, INSET],
+        [WIDTH - INSET, HEIGHT - INSET],
       ],
       frame
     )
@@ -106,62 +110,3 @@ export const GoalPlate = ({
     </svg>
   );
 };
-
-export const GoalShelf = ({ done, total }: { done: number; total: number }) => {
-  const count = Math.min(total, 20);
-
-  const filled =
-    total <= 20
-      ? Math.min(done, count)
-      : Math.round(Math.min(1, done / total) * count);
-
-  const gap = 3;
-  const sw = Math.min(14, (WIDTH - 24 - gap * (count - 1)) / count);
-  const x0 = (WIDTH - (sw * count + gap * (count - 1))) / 2;
-  const base = HEIGHT - 22;
-
-  return (
-    <svg
-      className={styles.plate}
-      viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-      aria-hidden="true"
-      focusable="false"
-    >
-      {Array.from({ length: count }, (_unused, i) => {
-        const height = 44 + ((i * 37) % 23);
-
-        return (
-          <rect
-            key={i}
-            className={i < filled ? styles.spineIn : styles.spine}
-            x={x0 + i * (sw + gap)}
-            y={base - height}
-            width={sw}
-            height={height}
-            rx="1.5"
-          />
-        );
-      })}
-      <line
-        className={styles.plank}
-        x1="10"
-        x2={WIDTH - 10}
-        y1={base + 1}
-        y2={base + 1}
-      />
-    </svg>
-  );
-};
-
-export const Compass = () => (
-  <svg
-    className={styles.compass}
-    viewBox="-12 -12 24 24"
-    aria-hidden="true"
-    focusable="false"
-  >
-    <circle r="8.5" />
-    <path className={styles.compassNorth} d="M0-11 2.2-1.6 0 0-2.2-1.6Z" />
-    <path d="M0 11 2.2 1.6 0 0-2.2 1.6ZM11 0 1.6 2.2 0 0 1.6-2.2ZM-11 0-1.6 2.2 0 0-1.6-2.2Z" />
-  </svg>
-);

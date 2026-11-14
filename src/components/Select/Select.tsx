@@ -11,6 +11,11 @@ import { CaretDownIcon, CheckIcon } from '@phosphor-icons/react';
 import { srOnly } from '../../styles/global.css';
 import * as styles from './Select.css';
 
+// keys typed within this long of each other spell one word (type-ahead)
+const TYPE_AHEAD_MS = 600;
+// options Page Up / Page Down move by
+const PAGE_STEP = 8;
+
 export type SelectOption<T extends string> = {
   value: T;
   label: string;
@@ -146,7 +151,8 @@ const Select = <T extends string>({
 
   // typing a few letters jumps to the option they start, as a native select does
   const typeahead = (key: string, now: number) => {
-    const text = (now - typed.current.at < 600 ? typed.current.text : '') + key;
+    const text =
+      (now - typed.current.at < TYPE_AHEAD_MS ? typed.current.text : '') + key;
 
     typed.current = { text, at: now };
     const from = text.length === 1 ? active + 1 : active;
@@ -176,8 +182,8 @@ const Select = <T extends string>({
       ArrowUp: () => setActive(Math.max(0, active - 1)),
       Home: () => setActive(0),
       End: () => setActive(last),
-      PageDown: () => setActive(Math.min(last, active + 8)),
-      PageUp: () => setActive(Math.max(0, active - 8)),
+      PageDown: () => setActive(Math.min(last, active + PAGE_STEP)),
+      PageUp: () => setActive(Math.max(0, active - PAGE_STEP)),
       Enter: () => choose(active),
       ' ': () => choose(active),
       Escape: close,

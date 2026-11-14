@@ -7,6 +7,7 @@ import { coverColor } from '../../utils/coverColors';
 import { readDate } from '../../utils/readDate';
 import { m } from '../../paraglide/messages.js';
 import { getLocale } from '../../paraglide/runtime.js';
+import { isoYearMonth } from '../../utils/isoDate';
 import * as styles from './BookRow.css';
 
 const formatMonth = (day: string) =>
@@ -40,7 +41,7 @@ const BookRow = ({ book, names }: BookRowProps) => {
         <span className={styles.rowAuthor}>
           {book.author?.name}
           {readDate(book) && (
-            <time dateTime={readDate(book).slice(0, 7)}>
+            <time dateTime={isoYearMonth(readDate(book))}>
               {formatMonth(readDate(book))}
             </time>
           )}

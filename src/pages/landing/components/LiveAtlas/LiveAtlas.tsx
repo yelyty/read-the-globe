@@ -1,22 +1,32 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Feature } from 'geojson';
-import { geoEquirectangular, geoPath } from 'd3-geo';
+import { geoPath } from 'd3-geo';
 
 import { mainPiece, worldShapes } from '../../../../utils/worldShapes';
 import { toNumeric } from '../../../../utils/toIsoNumeric';
 import { srOnly } from '../../../../styles/global.css';
+import {
+  flatProjection,
+  MAP_HEIGHT as HEIGHT,
+  MAP_WIDTH as WIDTH,
+} from '../../../../utils/flatMap';
 import { m } from '../../../../paraglide/messages.js';
 import { atlasAfter, BOOKS } from './miraAtlas';
 import * as styles from './LiveAtlas.css';
 
-// the app's own flat map (AtlasMap): 360° across, 83°N to 57°S down, no Antarctica
-const WIDTH = 1000;
-const HEIGHT = Math.round((WIDTH * (83 + 57)) / 360);
+// the window grows to full size over this share of the screen's height as it scrolls in
+const GROW_SPAN = 0.85;
+// it starts at 80% of its size and tilted back 18°
+const START_ZOOM = 0.8;
+const START_TILT_DEG = 18;
+// all the books are pinned once the window's top is this share of the screen from the top
+const PINNED_AT = 0.12;
+// digits the CSS variables are written with
+const ZOOM_DIGITS = 4;
+const TILT_DIGITS = 2;
 
-const projection = geoEquirectangular()
-  .scale(WIDTH / (2 * Math.PI))
-  .center([0, (83 - 57) / 2])
-  .translate([WIDTH / 2, HEIGHT / 2]);
+// the app's own flat map (AtlasMap)
+const projection = flatProjection();
 
 const path = geoPath(projection);
 const ANTARCTICA = '010';
@@ -71,13 +81,21 @@ const LiveAtlas = () => {
       // the window: 80% and tilted back as it enters, full size and flat once its top nears the top of the screen
       const progress = Math.min(
         1,
-        Math.max(0, (innerHeight - top) / (innerHeight * 0.85))
+        Math.max(0, (innerHeight - top) / (innerHeight * GROW_SPAN))
       );
 
-      el.style.setProperty('--z', (0.8 + 0.2 * progress).toFixed(4));
-      el.style.setProperty('--tilt', `${(18 * (1 - progress)).toFixed(2)}deg`);
+      el.style.setProperty(
+        '--z',
+        (START_ZOOM + (1 - START_ZOOM) * progress).toFixed(ZOOM_DIGITS)
+      );
+
+      el.style.setProperty(
+        '--tilt',
+        `${(START_TILT_DEG * (1 - progress)).toFixed(TILT_DIGITS)}deg`
+      );
+
       // the books: none at the top of the page, all of them once the window's top is near the top of the screen
-      const end = Math.max(1, top + scrollY - innerHeight * 0.12);
+      const end = Math.max(1, top + scrollY - innerHeight * PINNED_AT);
 
       const next = Math.round(
         Math.min(1, Math.max(0, scrollY / end)) * BOOKS.length

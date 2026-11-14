@@ -37,12 +37,20 @@ import BookRow from '../../components/BookRow/BookRow';
 import { useStatus } from '../../hooks/useStatus';
 import PageTitle from '../../components/PageTitle/PageTitle';
 import Select from '../../components/Select/Select';
+import { isoYear } from '../../utils/isoDate';
 import { countryStamp, loadCountries } from '../postcard/drawPostcard';
 import { goalHas, goalName } from '../goals/goals';
 import ImportCsv from '../account/features/YourData/ImportCsv';
 import { exportExample } from '../account/features/YourData/readingList';
 import * as styles from './ShelfPage.css';
 import NextToRead from './features/NextToRead';
+
+// a stamp's hatch is drawn for a 128px stamp: two 3px stripes, olive and rust, repeating every 6px
+const STAMP_PX = 128;
+const HATCH_PERIOD = 6;
+
+const hatchSize = (stampWidth: number) =>
+  (stampWidth / STAMP_PX) * HATCH_PERIOD;
 
 const app = getRouteApi('/app');
 const shelfRoute = getRouteApi('/app/shelf');
@@ -57,7 +65,7 @@ const CONTINENTS = (Object.keys(CONTINENT_NAMES) as Continent[]).filter(
 const PAGE = 100;
 
 const authorCode = (book: BookEntry) => book.author?.country?.code;
-const yearOf = (book: BookEntry) => readDate(book).slice(0, 4);
+const yearOf = (book: BookEntry) => isoYear(readDate(book));
 
 const placeCodes = (book: BookEntry) =>
   (book.places ?? [])
@@ -534,19 +542,19 @@ const ShelfPage = () => {
                           <pattern
                             id="shelf-hatch"
                             patternUnits="userSpaceOnUse"
-                            width={(stamp.width / 128) * 6}
-                            height={(stamp.width / 128) * 6}
+                            width={hatchSize(stamp.width)}
+                            height={hatchSize(stamp.width)}
                             patternTransform="rotate(45)"
                           >
                             <rect
                               className={styles.hatchSet}
-                              width={(stamp.width / 128) * 6}
-                              height={(stamp.width / 128) * 6}
+                              width={hatchSize(stamp.width)}
+                              height={hatchSize(stamp.width)}
                             />
                             <rect
                               className={styles.hatchAuthor}
-                              width={(stamp.width / 128) * 3}
-                              height={(stamp.width / 128) * 6}
+                              width={hatchSize(stamp.width) / 2}
+                              height={hatchSize(stamp.width)}
                             />
                           </pattern>
                         </defs>

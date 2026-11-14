@@ -5,6 +5,11 @@ import { coverColor } from '../../utils/coverColors';
 import { m } from '../../paraglide/messages.js';
 import * as styles from './HomePage.css';
 
+// space kept between the tip and the screen's edges or the header
+const EDGE_GAP = 8;
+// space between the tip and the point it's about
+const POINT_GAP = 16;
+
 export type Tip = {
   code: string;
   /** where it points: the pointer, or the country (or chip) it's about */
@@ -33,10 +38,12 @@ const MapTip = ({ tip, marks, names }: MapTipProps) => {
     if (!el) return;
     const tw = el.offsetWidth;
     const th = el.offsetHeight;
-    const floor = (document.querySelector('header')?.offsetHeight ?? 0) + 8;
 
-    el.style.left = `${Math.max(8, Math.min(innerWidth - tw - 8, tip.x - tw / 2))}px`;
-    el.style.top = `${tip.y - th - 16 < floor ? Math.min(innerHeight - th - 8, tip.bottom + 16) : tip.y - th - 16}px`;
+    const floor =
+      (document.querySelector('header')?.offsetHeight ?? 0) + EDGE_GAP;
+
+    el.style.left = `${Math.max(EDGE_GAP, Math.min(innerWidth - tw - EDGE_GAP, tip.x - tw / 2))}px`;
+    el.style.top = `${tip.y - th - POINT_GAP < floor ? Math.min(innerHeight - th - EDGE_GAP, tip.bottom + POINT_GAP) : tip.y - th - POINT_GAP}px`;
   });
 
   if (!mark)

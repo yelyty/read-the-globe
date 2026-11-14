@@ -53,6 +53,26 @@ export default defineConfig([
     },
   },
   {
+    // components and functions name their numbers; styles and tests may write them as they are
+    files: ['**/*.{ts,tsx}'],
+    ignores: ['**/*.css.ts', '**/*.test.ts', '**/*.test.tsx'],
+    rules: {
+      '@typescript-eslint/no-magic-numbers': [
+        'error',
+        {
+          // 2 halves and centres (width / 2)
+          ignore: [0, 1, -1, 2],
+          ignoreArrayIndexes: true,
+          ignoreDefaultValues: true,
+          ignoreEnums: true,
+          ignoreNumericLiteralTypes: true,
+          ignoreReadonlyClassProperties: true,
+          ignoreTypeIndexes: true,
+        },
+      ],
+    },
+  },
+  {
     plugins: { '@stylistic': stylistic },
     rules: {
       // same blank-line rule as lexum-orchestrator
