@@ -64,6 +64,8 @@ export async function signUp(details: {
       email: details.email,
       password: details.password,
       options: {
+        // without it the confirmation link goes to the project's Site URL, not to where the reader signed up
+        emailRedirectTo: window.location.origin,
         data: {
           display_name: details.name,
           ...(details.example && { [SEED_FLAG]: true }),
