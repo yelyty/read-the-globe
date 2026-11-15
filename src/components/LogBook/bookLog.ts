@@ -1,7 +1,7 @@
 import type { BookDraft } from '../../api/books/books';
 import type { Landing } from '../../hooks/useLanding';
 import type { BookEntry, Goal } from '../../types';
-import { goalProgress, isDone } from '../../pages/goals/goalProgress';
+import { goalProgress, isDone } from '../../pages/goals/utils/goalProgress';
 import { atlasMarks } from '../../utils/atlasMarks';
 import { authorCountry } from '../../utils/book';
 import {

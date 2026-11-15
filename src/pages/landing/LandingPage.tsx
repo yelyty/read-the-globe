@@ -3,16 +3,16 @@ import { useNavigate } from '@tanstack/react-router';
 
 import { useAuth } from '../../auth/auth-context';
 import * as styles from './LandingPage.css';
-import Hero from './components/Hero/Hero';
-import Header from './components/Header/Header';
-import LoginDialog from './components/LoginDialog/LoginDialog';
-import type { AuthMode } from './components/LoginDialog/validate';
-import Footer from './components/Footer/Footer';
-import LiveAtlas from './components/LiveAtlas/LiveAtlas';
-import Features from './components/Features/Features';
-import Share from './components/Share/Share';
-import Faq from './components/Faq/Faq';
-import Closing from './components/Closing/Closing';
+import Hero from './features/Hero/Hero';
+import Header from './features/Header/Header';
+import LoginDialog from './features/LoginDialog/LoginDialog';
+import type { AuthMode } from './features/LoginDialog/validate';
+import Footer from './features/Footer/Footer';
+import LiveAtlas from './features/LiveAtlas/LiveAtlas';
+import Features from './features/Features/Features';
+import Share from './features/Share/Share';
+import Faq from './features/Faq/Faq';
+import Closing from './features/Closing/Closing';
 
 const LandingPage = () => {
   const [auth, setAuth] = useState<AuthMode | null>(null);

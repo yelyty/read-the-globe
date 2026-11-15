@@ -1,6 +1,6 @@
 import * as styles from '../CompanyPage.css';
 import CompanyPage from '../CompanyPage';
-import JournalPost, { type Post } from './JournalPost';
+import JournalPost, { type Post } from '../components/JournalPost';
 
 const POSTS: Post[] = [
   {

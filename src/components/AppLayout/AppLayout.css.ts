@@ -7,7 +7,7 @@ import {
   phone,
   reducedMotion,
 } from '../../styles/global.css';
-import { start } from '../../pages/landing/components/Header/Header.css';
+import { start } from '../../pages/landing/features/Header/Header.css';
 
 export const shell = style({
   display: 'flex',

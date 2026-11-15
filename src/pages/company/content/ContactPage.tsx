@@ -11,10 +11,10 @@ import {
 import { m } from '../../../paraglide/messages.js';
 import { getLocale } from '../../../paraglide/runtime.js';
 import { useDirty, useLeaveGuard } from '../../../hooks/useUnsaved';
-import { btnPrimary } from '../../landing/components/LoginDialog/LoginDialog.css';
+import { btnPrimary } from '../../landing/features/LoginDialog/LoginDialog.css';
 import CompanyPage from '../CompanyPage';
 import * as styles from '../CompanyPage.css';
-import { validate } from './validateContact';
+import { validate } from '../utils/validateContact';
 
 const FIELD_ORDER: (keyof ContactMessage)[] = ['name', 'email', 'message'];
 

@@ -9,8 +9,8 @@ import { changePassword } from '../../auth/session';
 import { newPasswordProblem } from '../../auth/forms';
 import { m } from '../../paraglide/messages.js';
 import CompanyPage from '../company/CompanyPage';
-import PasswordStrength from '../landing/components/LoginDialog/PasswordStrength';
-import { btnPrimary } from '../landing/components/LoginDialog/LoginDialog.css';
+import PasswordStrength from '../landing/features/LoginDialog/PasswordStrength';
+import { btnPrimary } from '../landing/features/LoginDialog/LoginDialog.css';
 import * as styles from '../company/CompanyPage.css';
 
 // Where the "Forgot your password?" email lands: Supabase signs the reader in from the link, then they pick a new one.

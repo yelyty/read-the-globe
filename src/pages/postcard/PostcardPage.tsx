@@ -10,17 +10,22 @@ import PageTitle from '../../components/PageTitle/PageTitle';
 import Logo from '../../components/Logo/Logo';
 import ButtonLink from '../../components/Button/ButtonLink';
 import EmptyState from '../../components/EmptyState/EmptyState';
-import { goalProgress } from '../goals/goalProgress';
+import { goalProgress } from '../goals/utils/goalProgress';
 import * as styles from './PostCardPage.css';
-import { readOptions, type CardOptions } from './cardOptions';
-import { cardFileName, cardLabel, cardShare, cardTitle } from './cardText';
-import { GOAL_H, GOAL_W } from './drawGoalCard';
-import { KINDS, SIZE, postcardStats } from './drawPostcard';
-import { useCardDrawing } from './useCardDrawing';
-import { useSavedSetup } from './useSavedSetup';
-import { bookYears, yearSum } from './yearSum';
+import { readOptions, type CardOptions } from './utils/cardOptions';
+import {
+  cardFileName,
+  cardLabel,
+  cardShare,
+  cardTitle,
+} from './utils/cardText';
+import { GOAL_H, GOAL_W } from './utils/drawGoalCard';
+import { KINDS, SIZE, postcardStats } from './utils/drawPostcard';
+import { useCardDrawing } from './hooks/useCardDrawing';
+import { useSavedSetup } from './hooks/useSavedSetup';
+import { bookYears, yearSum } from './utils/yearSum';
 import CardSend from './features/CardSend';
-import CardSetup from './features/CardSetup';
+import CardSetup from './features/CardSetup/CardSetup';
 
 const app = getRouteApi('/app');
 const route = getRouteApi('/app/postcard');

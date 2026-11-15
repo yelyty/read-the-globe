@@ -5,8 +5,8 @@ import { useCountryNames } from '../../hooks/useCountryNames';
 import { atlasMarks } from '../../utils/atlasMarks';
 import { m } from '../../paraglide/messages.js';
 import PageTitle from '../../components/PageTitle/PageTitle';
-import NextToRead from './features/NextToRead';
-import ShelfRead from './features/ShelfRead';
+import NextToRead from './features/NextToRead/NextToRead';
+import ShelfRead from './features/ShelfRead/ShelfRead';
 import ShelfTabs from './features/ShelfTabs';
 
 const app = getRouteApi('/app');
