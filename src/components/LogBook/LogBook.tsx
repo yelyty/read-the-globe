@@ -5,16 +5,15 @@ import {
   useRouter,
   useRouterState,
 } from '@tanstack/react-router';
-import { ArrowCounterClockwiseIcon } from '@phosphor-icons/react';
 
-import { useStatus } from '../../hooks/useStatus';
+import { useUndo } from '../../hooks/useUndo';
 import { useLanding, type Landing } from '../../hooks/useLanding';
 import type { BookEntry, NextRead } from '../../types';
 import { saveBook } from '../../api/books/books';
 import { worldsOf } from '../../utils/worlds';
-import { readDate } from '../../utils/readDate';
 import { getCountryNames } from '../../utils/countryNames';
 import { m } from '../../paraglide/messages.js';
+import { draftOf } from './bookLog';
 import * as styles from './LogBook.css';
 import LogForm from './LogForm';
 
@@ -22,7 +21,7 @@ const app = getRouteApi('/app');
 
 // ?country=<code> or ?world=<name> starts it with a place there (a click on the map, a world's Log a book set here).
 const LogBook = () => {
-  const status = useStatus();
+  const offerUndo = useUndo();
   const { log, edit, next, country, world } = app.useSearch();
   const { books, goals, worlds } = app.useLoaderData();
   const navigate = useNavigate();
@@ -84,30 +83,10 @@ const LogBook = () => {
     await close();
     await router.invalidate();
 
-    status.show({
-      text: m.log_removed({ title: gone.title }),
-      action: {
-        label: m.common_undo(),
-        icon: <ArrowCounterClockwiseIcon aria-hidden="true" />,
-        run: async () => {
-          const { error } = await saveBook({
-            title: gone.title,
-            author: gone.author?.name ?? '',
-            authorCountry: gone.author?.country?.code ?? '',
-            readOn: readDate(gone),
-            places: gone.places.map((place) => ({
-              name: place.name,
-              country: place.imagined ? null : (place.countryCode ?? ''),
-              imagined: place.imagined,
-            })),
-            goalIds: gone.goals.map((goal) => goal.goalId),
-          });
-
-          if (error) return status.show({ text: error });
-          await router.invalidate();
-          status.show({ text: m.log_back({ title: gone.title }) });
-        },
-      },
+    offerUndo({
+      said: m.log_removed({ title: gone.title }),
+      undo: async () => (await saveBook(draftOf(gone))).problem,
+      undone: m.log_back({ title: gone.title }),
     });
   };
 

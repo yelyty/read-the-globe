@@ -18,16 +18,16 @@ import Hint from '../../components/Hint/Hint';
 import Select from '../../components/Select/Select';
 import { isoDay } from '../../utils/isoDate';
 import { lower } from '../../utils/text';
-import { goalName, goalProgress } from '../goals/goals';
+import { loadCountries, type Country } from '../../utils/countryStamps';
+import { goalName } from '../goals/catalogue';
+import { goalProgress } from '../goals/goalProgress';
 import {
   COLORS,
   KINDS,
   PAPERS,
   SIZE,
   drawPostcard,
-  loadCountries,
   postcardStats,
-  type Country,
   type Kind,
   type Options,
 } from './drawPostcard';

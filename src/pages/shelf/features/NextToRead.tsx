@@ -5,10 +5,7 @@ import {
   type ChangeEvent,
   type SubmitEvent,
 } from 'react';
-import {
-  ArrowCounterClockwiseIcon,
-  BookmarkSimpleIcon,
-} from '@phosphor-icons/react';
+import { BookmarkSimpleIcon } from '@phosphor-icons/react';
 
 import type { Goal, NextRead } from '../../../types';
 import type { Marks } from '../../../utils/atlasMarks';
@@ -16,6 +13,7 @@ import { addNextRead, removeNextRead } from '../../../api/nextReads/nextReads';
 import { getLocale } from '../../../paraglide/runtime.js';
 import { m } from '../../../paraglide/messages.js';
 import { useStatus } from '../../../hooks/useStatus';
+import { useUndo } from '../../../hooks/useUndo';
 import { useDirty, useLeaveGuard } from '../../../hooks/useUnsaved';
 import Select from '../../../components/Select/Select';
 import Suggest from '../../../components/Suggest/Suggest';
@@ -24,8 +22,8 @@ import {
   countryStamp,
   loadCountries,
   type Country,
-} from '../../postcard/drawPostcard';
-import { goalHas } from '../../goals/goals';
+} from '../../../utils/countryStamps';
+import { goalHas } from '../../goals/goalProgress';
 import * as styles from '../ShelfPage.css';
 import NextItem from './NextItem';
 
@@ -54,6 +52,7 @@ const NextToRead = ({
   const [error, setError] = useState<{ text: string; at?: string }>();
   const [said, setSaid] = useState('');
   const status = useStatus();
+  const offerUndo = useUndo();
   const [saving, setSaving] = useState(false);
   const [countries, setCountries] = useState<Map<string, Country>>();
   const titleRef = useRef<HTMLInputElement>(null);
@@ -134,25 +133,27 @@ const NextToRead = ({
 
     setSaving(false);
 
-    if (!saved) {
-      setError({ text: m.next_save_failed() });
+    if (saved.problem !== null) {
+      setError({ text: saved.problem });
 
       return;
     }
 
-    setItems((list) => [saved, ...list]);
+    setItems((list) => [saved.data, ...list]);
     setTitle('');
     setAuthor('');
     setCountry('');
     setMark('author');
     setError(undefined);
-    setSaid(m.next_saved({ title: saved.title }));
+    setSaid(m.next_saved({ title: saved.data.title }));
     titleRef.current?.focus();
   };
 
   const remove = async (item: NextRead) => {
-    if (!(await removeNextRead(item.id))) {
-      status.show({ text: m.next_remove_failed({ title: item.title }) });
+    const problem = await removeNextRead(item);
+
+    if (problem) {
+      status.show({ text: problem });
 
       return;
     }
@@ -161,23 +162,23 @@ const NextToRead = ({
 
     setItems((list) => list.filter((it) => it.id !== item.id));
 
-    status.show({
-      text: m.next_removed({ title: item.title }),
-      action: {
-        label: m.common_undo(),
-        icon: <ArrowCounterClockwiseIcon aria-hidden="true" />,
-        run: async () => {
-          const back = await addNextRead(item);
+    // the list is this card's own: Undo puts the item back where it was, without reloading the Shelf
+    offerUndo({
+      said: m.next_removed({ title: item.title }),
+      undo: async () => {
+        const back = await addNextRead(item);
 
-          if (!back) {
-            status.show({ text: m.next_save_failed() });
+        if (back.problem !== null) return back.problem;
 
-            return;
-          }
+        setItems((list) => [
+          ...list.slice(0, at),
+          back.data,
+          ...list.slice(at),
+        ]);
 
-          setItems((list) => [...list.slice(0, at), back, ...list.slice(at)]);
-        },
+        return null;
       },
+      refresh: false,
     });
 
     titleRef.current?.focus();

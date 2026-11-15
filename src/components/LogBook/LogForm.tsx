@@ -1,20 +1,12 @@
 import { useMemo, useState, type ChangeEvent, type SubmitEvent } from 'react';
 import { PlusIcon, PushPinIcon, TrashIcon } from '@phosphor-icons/react';
 
-import { type Landing } from '../../hooks/useLanding';
 import type { BookEntry, Goal, NextRead } from '../../types';
-import { deleteBook, saveBook, type BookDraft } from '../../api/books/books';
+import { deleteBook, saveBook } from '../../api/books/books';
 import { removeNextRead } from '../../api/nextReads/nextReads';
-import { atlasMarks } from '../../utils/atlasMarks';
-import { pinMoment } from '../../utils/pinMoment';
-import {
-  countryFrom,
-  splitStates,
-  tidy,
-  type CountryMatch,
-} from '../../utils/countryFrom';
-import { goalProgress, isDone } from '../../pages/goals/goals';
-import { localToday, readDate, readOnFor } from '../../utils/readDate';
+import { type Landing } from '../../hooks/useLanding';
+import { splitStates } from '../../utils/countryFrom';
+import { readDate } from '../../utils/readDate';
 import { m } from '../../paraglide/messages.js';
 import { getLocale } from '../../paraglide/runtime.js';
 import { useDirty } from '../../hooks/useUnsaved';
@@ -30,14 +22,19 @@ import MarkPreview from './MarkPreview';
 import PlaceItem from './PlaceItem';
 import ThenNote from './ThenNote';
 import { type Row, row } from './placeRow';
+import {
+  duplicateOf,
+  landingFor,
+  PLACE_KEY,
+  readLog,
+  splitPlace,
+} from './bookLog';
 
 const MONTHS_IN_YEAR = 12;
 // any year serves: only its month names are read
 const SAMPLE_YEAR = 2000;
 // the year menu reaches this many years back
 const YEARS_BACK = 80;
-// a place's error is filed under its row: 'place-<key>'
-const PLACE_KEY = 'place-';
 
 const MAX_PLACES = 20;
 
@@ -90,14 +87,6 @@ const LogForm = ({
       ),
     [names]
   );
-
-  // "City, Country" in one go
-  const split = (raw: string) => {
-    const hit = raw.match(/^(.*),\s*([^,]+)$/);
-    const match = hit && countryFrom(hit[2], names);
-
-    return hit && match ? { name: hit[1].trim(), code: match.code } : null;
-  };
 
   const startYm = book ? isoYearMonth(readDate(book)) : '';
   const themes = goals.filter((goal) => goal.kind === 'theme');
@@ -162,45 +151,23 @@ const LogForm = ({
   const [saving, setSaving] = useState(false);
   const dirty = useDirty([title, author, country, rows, mon, year, ticks]);
 
-  const places = rows
-    .filter(
-      (placeRow) =>
-        placeRow.name.trim() || (!placeRow.imagined && placeRow.country.trim())
-    )
-    .map((placeRow) => {
-      if (placeRow.imagined)
-        return {
-          key: placeRow.key,
-          name: tidy(placeRow.name),
-          imagined: true,
-          typed: '',
-        };
-      const sp = split(placeRow.name);
+  // what's typed, read into countries: the preview below, and on Pin it the errors or the book to save
+  const log = readLog(
+    {
+      title,
+      author,
+      country,
+      authorPick,
+      rows,
+      month: mon,
+      year,
+      startMonth: startYm,
+      goalIds: ticks,
+    },
+    names
+  );
 
-      const match: CountryMatch | null =
-        countryFrom(placeRow.country, names, placeRow.pick) ??
-        (sp ? { code: sp.code } : null);
-
-      return {
-        key: placeRow.key,
-        name: sp ? sp.name : placeRow.name.trim(),
-        imagined: false,
-        match: match,
-        code: match?.code,
-        typed: placeRow.country.trim(),
-      };
-    });
-
-  const authorMatch = countryFrom(country, names, authorPick);
-  const authorCode = authorMatch?.code;
-
-  // what Pin it will mark, in words
-  const marks: Record<string, { set?: boolean; author?: boolean }> = {};
-
-  if (authorCode) marks[authorCode] = { author: true };
-  for (const place of places)
-    if (place.code) marks[place.code] = { ...marks[place.code], set: true };
-  const imagined = places.filter((place) => place.imagined);
+  const imagined = log.places.filter((place) => place.imagined);
 
   // an error goes as soon as its field is touched
   const fix = (key: string) => {
@@ -225,15 +192,6 @@ const LogForm = ({
       )
     );
 
-  const countryError = (typed: string, place: boolean) =>
-    splitStates(typed)
-      ? m.log_choose_today({ name: tidy(typed) })
-      : typed
-        ? m.log_no_country({ typed })
-        : place
-          ? m.log_add_place_country()
-          : m.log_add_author_country();
-
   const FIELD: Record<string, [id: string, label: string]> = {
     title: ['f-title', m.log_f_title()],
     author: ['f-author', m.log_f_author()],
@@ -249,18 +207,12 @@ const LogForm = ({
   const submit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (saving) return;
-    const errs: Record<string, string> = {};
+    const errs = log.errors;
 
-    if (!title.trim()) errs.title = m.log_need_title();
-    if (!author.trim()) errs.author = m.log_need_author();
-    if (!authorCode) errs.country = countryError(country.trim(), false);
-    for (const place of places)
-      if (!place.code && !place.imagined)
-        errs[`${PLACE_KEY}${place.key}`] = countryError(place.typed, true);
     setErrors(errs);
     const bad = Object.keys(errs);
 
-    if (bad.length) {
+    if (bad.length || !log.draft) {
       setFormError(
         bad.length === 1
           ? errs[bad[0]]
@@ -277,122 +229,38 @@ const LogForm = ({
       return;
     }
 
+    const draft = log.draft;
     // the same book twice is usually a slip: say so once, then let a second Pin it through
-    const key = `${title.trim()}|${author.trim()}`.toLowerCase();
+    const dup = !book && duplicateOf(draft, books);
 
-    const dup =
-      !book &&
-      books.find(
-        (entry) =>
-          `${entry.title}|${entry.author?.name ?? ''}`.toLowerCase() === key
-      );
-
-    if (dup && dupOk !== key) {
-      setDupOk(key);
+    if (dup && dupOk !== dup.id) {
+      setDupOk(dup.id);
       setFormError(m.log_dup({ month: formatMonth(readDate(dup)) }));
 
       return;
     }
 
-    // the read month goes to read_on; created_at stays the day it was logged (Home's Recent reads)
-    const readOn = readOnFor(mon, year, startYm, localToday());
-
-    // ponytail: an old name or a territory isn't kept beside the country; it only names an unnamed place
-    const draft: BookDraft = {
-      title: title.trim(),
-      author: author.trim(),
-      authorCountry: authorCode!,
-      readOn,
-      places: places.map((place) =>
-        place.imagined
-          ? { name: place.name, country: null, imagined: true }
-          : {
-              name:
-                place.name ||
-                place.match?.as ||
-                place.match?.then ||
-                name(place.code),
-              country: place.code!,
-            }
-      ),
-      goalIds: ticks,
-    };
-
     setSaving(true);
-    const { id, error } = await saveBook(draft, book?.id);
+    const saved = await saveBook(draft, book?.id);
 
-    if (error || !id) {
+    if (saved.problem !== null) {
       setSaving(false);
-      setFormError(error ?? '');
+      setFormError(saved.problem);
 
       return;
     }
 
-    if (!book && nextItem) await removeNextRead(nextItem.id);
+    const id = saved.data;
+
+    // logged from Next to read: it leaves that list (quietly: the book itself is saved)
+    if (!book && nextItem) await removeNextRead(nextItem);
 
     onDone(
       book
         ? m.log_saved({ title: title.trim() })
         : m.log_pinned({ title: title.trim() }),
-      book ? undefined : landing(id, draft)
+      book ? undefined : landingFor(id, draft, { books, goals, names })
     );
-  };
-
-  // where the new book lands on Home, and whether it carried a goal over its flag
-  const landing = (id: string, draft: BookDraft): Landing => {
-    const added: BookEntry = {
-      id,
-      title: draft.title,
-      author: {
-        name: draft.author,
-        country: { code: draft.authorCountry, name: name(draft.authorCountry) },
-      },
-      places: draft.places.map((place, i) => ({
-        id: String(i),
-        name: place.name,
-        lon: 0,
-        lat: 0,
-        countryCode: place.country,
-        bookId: id,
-        imagined: place.imagined,
-      })),
-      goals: draft.goalIds.map((goalId) => ({ goalId })),
-    };
-
-    const all = [...books, added];
-    const before = atlasMarks(books);
-    const after = atlasMarks(all);
-
-    // the Goals page stamps them when the reader goes to look
-    const reached = goals.filter(
-      (goal) =>
-        !goal.reachedOn &&
-        !isDone(goalProgress(goal, before, books)) &&
-        isDone(goalProgress(goal, after, all))
-    );
-
-    const firstGoal = reached[0];
-
-    const total = firstGoal && goalProgress(firstGoal, after, all).total;
-
-    return {
-      ...pinMoment(added, before, after, names),
-      bookId: id,
-      reached: firstGoal
-        ? [
-            m.log_goal_reached({
-              name: firstGoal.name,
-              total:
-                firstGoal.kind === 'theme'
-                  ? m.count_book({ count: total })
-                  : m.log_all({ countries: m.count_country({ count: total }) }),
-            }),
-            reached.length > 1 && m.log_and_more({ count: reached.length - 1 }),
-          ]
-            .filter(Boolean)
-            .join(' ')
-        : null,
-    };
   };
 
   const remove = async () => {
@@ -410,7 +278,7 @@ const LogForm = ({
     onRemoved(book);
   };
 
-  const preview = Object.entries(marks);
+  const preview = Object.entries(log.marks);
 
   const label = saving
     ? book
@@ -452,7 +320,7 @@ const LogForm = ({
 
   // a place's name: a real place named after its country fills the country in, if it's still empty
   const handlePlaceNameValue = (placeRow: Row) => (value: string) => {
-    const sp = !placeRow.imagined && split(value);
+    const sp = !placeRow.imagined && splitPlace(value, names);
 
     setRow(placeRow.key, {
       name: value,

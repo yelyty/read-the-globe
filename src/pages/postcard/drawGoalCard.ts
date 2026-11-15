@@ -7,16 +7,12 @@ import { bookCountries } from '../../utils/book';
 import { readDate } from '../../utils/readDate';
 import { m } from '../../paraglide/messages.js';
 import { getLocale } from '../../paraglide/runtime.js';
-import { goalName, romanDate, today, type Progress } from '../goals/goals';
-import {
-  PALETTE,
-  PAPERS,
-  SANS,
-  SERIF,
-  pen,
-  projection,
-  type Country,
-} from './drawPostcard';
+import { romanDate } from '../../utils/formatDate';
+import { localToday } from '../../utils/readDate';
+import { projection, type Country } from '../../utils/countryStamps';
+import { goalName } from '../goals/catalogue';
+import { type Progress } from '../goals/goalProgress';
+import { PALETTE, PAPERS, SANS, SERIF, pen } from './drawPostcard';
 
 export const GOAL_W = 1500;
 export const GOAL_H = 1000;
@@ -233,7 +229,7 @@ export async function drawGoalCard({
       ? bookCountries(last).find((code) => progress.reached.includes(code))
       : undefined;
 
-  const date = goal.reachedOn ?? today();
+  const date = goal.reachedOn ?? localToday();
 
   const draw = (country: Country, scale: number) => {
     ctx.beginPath();

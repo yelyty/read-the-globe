@@ -1,9 +1,6 @@
 import { useRef, useState, type ChangeEvent } from 'react';
 import { useRouter } from '@tanstack/react-router';
-import {
-  ArrowCounterClockwiseIcon,
-  UploadSimpleIcon,
-} from '@phosphor-icons/react';
+import { UploadSimpleIcon } from '@phosphor-icons/react';
 
 import type { BookEntry, Goal } from '../../../../types';
 import {
@@ -12,6 +9,7 @@ import {
   type Backup,
 } from '../../../../api/data/data';
 import { useStatus } from '../../../../hooks/useStatus';
+import { useUndo } from '../../../../hooks/useUndo';
 import { Button } from '../../../../components/Button/Button';
 import { button } from '../../../../components/Button/Button.css';
 import Dialog from '../../../../components/Dialog/Dialog';
@@ -38,6 +36,7 @@ const RestoreBackup = ({
 }: RestoreBackupProps) => {
   const router = useRouter();
   const status = useStatus();
+  const offerUndo = useUndo();
   const file = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState<Backup | null>(null);
@@ -89,22 +88,13 @@ const RestoreBackup = ({
 
     await router.invalidate();
 
-    status.show({
-      text: m.account_restored({
+    offerUndo({
+      said: m.account_restored({
         books: bookCount(pending.books.length),
         goals: goalCount(pending.goals.length),
       }),
-      action: {
-        label: m.common_undo(),
-        icon: <ArrowCounterClockwiseIcon aria-hidden="true" />,
-        run: async () => {
-          const undone = await restoreBackup(was);
-
-          if (undone) return status.show({ text: undone });
-          await router.invalidate();
-          status.show({ text: m.account_as_it_was() });
-        },
-      },
+      undo: () => restoreBackup(was),
+      undone: m.account_as_it_was(),
     });
   };
 

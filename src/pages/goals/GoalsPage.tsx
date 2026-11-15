@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { getRouteApi, useNavigate, useRouter } from '@tanstack/react-router';
 import type { Feature } from 'geojson';
-import { ArrowCounterClockwiseIcon, PlusIcon } from '@phosphor-icons/react';
+import { PlusIcon } from '@phosphor-icons/react';
 
 import type { Goal, GoalKind } from '../../types';
 import { atlasMarks } from '../../utils/atlasMarks';
@@ -13,22 +13,21 @@ import {
   restoreGoal,
 } from '../../api/goals/goals';
 import { useStatus } from '../../hooks/useStatus';
+import { useUndo } from '../../hooks/useUndo';
 import { prefersReducedMotion } from '../../utils/motion';
 import { useCountryNames } from '../../hooks/useCountryNames';
 import { m } from '../../paraglide/messages.js';
 import PageTitle from '../../components/PageTitle/PageTitle';
+import { localToday } from '../../utils/readDate';
+import { withBold } from '../../utils/text';
 import {
   CATALOGUE,
   KIND_GROUP,
   MAX_GOALS,
   goalName,
-  goalProgress,
-  isDone,
-  today,
-  withBold,
-  type GoalDraft,
   type Suggestion,
-} from './goals';
+} from './catalogue';
+import { goalProgress, isDone, type GoalDraft } from './goalProgress';
 import GoalDestination from './GoalDestination';
 import SuggestionGroup from './SuggestionGroup';
 import GoalRow from './GoalRow';
@@ -49,6 +48,7 @@ const GoalsPage = () => {
   const [editing, setEditing] = useState<Goal | 'new' | null>(null);
   const [choosing, setChoosing] = useState<Goal | null>(null);
   const status = useStatus();
+  const offerUndo = useUndo();
   const names = useCountryNames();
   const say = (text: string) => status.show({ text });
   const { add: addSlug } = route.useSearch();
@@ -85,7 +85,9 @@ const GoalsPage = () => {
     if (!changes.length) return;
 
     Promise.all(
-      changes.map(({ g, done }) => markReached(g.id, done ? today() : null))
+      changes.map(({ g, done }) =>
+        markReached(g.id, done ? localToday() : null)
+      )
     ).then((problems) => {
       if (!problems.every((problem) => !problem)) return;
       if (!prefersReducedMotion())
@@ -185,23 +187,22 @@ const GoalsPage = () => {
       document.querySelector<HTMLElement>(`.${styles.sugg} > summary`)
     )?.focus();
 
-    status.show({
-      text: ticked.length
+    offerUndo({
+      said: ticked.length
         ? m.goals_removed_unticked({
             goal: goalName(goal.name),
             books: m.count_book({ count: ticked.length }),
           })
         : m.goals_removed({ goal: goalName(goal.name) }),
-      action: {
-        label: m.common_undo(),
-        icon: <ArrowCounterClockwiseIcon aria-hidden="true" />,
-        run: async () => {
-          const problem = await restoreGoal(goal, ticked);
+      // back, it takes focus again once its row shows up
+      undo: async () => {
+        const problem = await restoreGoal(goal, ticked);
 
-          if (problem) return say(problem);
-          saved(m.goals_back({ goal: goalName(goal.name) }), goal.name);
-        },
+        if (!problem) focusName.current = goal.name.trim().toLowerCase();
+
+        return problem;
       },
+      undone: m.goals_back({ goal: goalName(goal.name) }),
     });
   };
 

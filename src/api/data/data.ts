@@ -6,6 +6,7 @@ import getBooks from '../getBooks';
 import { getGoals } from '../goals/goals';
 import { getNextReads } from '../nextReads/nextReads';
 import { getWorlds } from '../worlds/worlds';
+import { failed, made, type Made, type Problem } from '../outcome';
 
 // The whole atlas as the Full backup (JSON) writes it, and as restore_backup reads it back
 export type Backup = {
@@ -40,18 +41,18 @@ export async function getBackup(userId: string): Promise<Backup> {
 // a reading list in, all or nothing; books already on the shelf (same title and author) are skipped
 export async function importBooks(
   books: ImportedBook[]
-): Promise<{ added: number; duplicates: number } | { error: string }> {
-  if (!books.length) return { added: 0, duplicates: 0 };
+): Promise<Made<{ added: number; duplicates: number }>> {
+  if (!books.length) return made({ added: 0, duplicates: 0 });
   const done = await supabase.rpc('import_books', { p_books: books });
 
   if (done.error) console.error(done.error);
 
   return done.error
-    ? { error: m.data_import_failed() }
-    : (done.data as { added: number; duplicates: number });
+    ? failed(m.data_import_failed())
+    : made(done.data as { added: number; duplicates: number });
 }
 
-export async function restoreBackup(backup: Backup): Promise<string | null> {
+export async function restoreBackup(backup: Backup): Promise<Problem> {
   const { error } = await supabase.rpc('restore_backup', { p_backup: backup });
 
   if (error) console.error(error);
@@ -59,10 +60,33 @@ export async function restoreBackup(backup: Backup): Promise<string | null> {
   return error ? m.data_restore_failed() : null;
 }
 
-export async function clearAtlas(): Promise<string | null> {
+export async function clearAtlas(): Promise<Problem> {
   const { error } = await supabase.rpc('clear_atlas');
 
   if (error) console.error(error);
 
   return error ? m.account_clear_failed() : null;
+}
+
+/** Undo for Clear this atlas: the atlas as it was comes back, and anything logged since the clear stays beside it
+    (a goal of the same name keeps the one from before). Returns what went wrong, or null. */
+export async function restoreCleared(
+  was: Backup,
+  userId: string
+): Promise<Problem> {
+  const since = await getBackup(userId).catch(() => null);
+
+  if (!since) return m.data_restore_failed();
+  const taken = new Set(was.goals.map((goal) => goal.name.toLowerCase()));
+
+  return restoreBackup({
+    ...was,
+    books: [...since.books, ...was.books],
+    goals: [
+      ...was.goals,
+      ...since.goals.filter((goal) => !taken.has(goal.name.toLowerCase())),
+    ],
+    nextReads: [...(since.nextReads ?? []), ...(was.nextReads ?? [])],
+    worlds: [...(was.worlds ?? []), ...(since.worlds ?? [])],
+  });
 }

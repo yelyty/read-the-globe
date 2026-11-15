@@ -26,7 +26,7 @@ import {
   MAX_THEME_TARGET,
   REGIONS,
   goalName,
-} from './goals';
+} from './catalogue';
 import * as styles from './GoalsPage.css';
 
 const NAME_HINT: Record<GoalKind, () => string> = {

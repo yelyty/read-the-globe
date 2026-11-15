@@ -22,7 +22,7 @@ import {
 import { useCountryNames } from '../../hooks/useCountryNames';
 import type { BookEntry } from '../../types';
 import { list as bookList } from '../../components/BookRow/BookRow.css';
-import { byReadDate, readYear } from '../../utils/readDate';
+import { readYear } from '../../utils/readDate';
 import {
   CONTINENT_NAMES,
   CONTINENT_OF,
@@ -30,28 +30,29 @@ import {
   type Continent,
 } from '../../utils/continents';
 import { atlasMarks } from '../../utils/atlasMarks';
-import { countryFrom, PARENT } from '../../utils/countryFrom';
-import { getLocale } from '../../paraglide/runtime.js';
 import { m } from '../../paraglide/messages.js';
 import BookRow from '../../components/BookRow/BookRow';
 import { useStatus } from '../../hooks/useStatus';
 import PageTitle from '../../components/PageTitle/PageTitle';
 import Select from '../../components/Select/Select';
-import { authorCountry, storyCountries } from '../../utils/book';
-import { countryStamp, loadCountries } from '../postcard/drawPostcard';
-import { goalHas, goalName } from '../goals/goals';
+import { countryStamp, loadCountries } from '../../utils/countryStamps';
+import { goalName } from '../goals/catalogue';
 import ImportCsv from '../account/features/YourData/ImportCsv';
 import { exportExample } from '../account/features/YourData/readingList';
 import * as styles from './ShelfPage.css';
 import NextToRead from './features/NextToRead';
 import YearHead from './YearHead';
+import {
+  shelfQuery,
+  shelfYears,
+  yearNotes,
+  type Mark,
+  type Sort,
+} from './shelfQuery';
 import { hatchSize } from './hatch';
 
 const app = getRouteApi('/app');
 const shelfRoute = getRouteApi('/app/shelf');
-
-type Sort = 'new' | 'title' | 'country';
-type Mark = '' | 'set' | 'author';
 
 const CONTINENTS = (Object.keys(CONTINENT_NAMES) as Continent[]).filter(
   (continent) => continent !== 'AN'
@@ -81,10 +82,7 @@ const ShelfPage = () => {
 
   const marks = useMemo(() => atlasMarks(books), [books]);
 
-  const years = useMemo(
-    () => [...new Set(books.map(readYear).filter(Boolean))].sort().reverse(),
-    [books]
-  );
+  const years = useMemo(() => shelfYears(books), [books]);
 
   // earlier years start folded; this year and the newest logged year stay open
   const [folded, setFolded] = useState(
@@ -98,89 +96,17 @@ const ShelfPage = () => {
       )
   );
 
-  // a place filter can count where the story is set, where the author is from, or either
-  const hits = (book: BookEntry, test: (code: string) => boolean) => {
-    const author = authorCountry(book);
-
-    return (
-      (mark !== 'author' && storyCountries(book).some(test)) ||
-      (mark !== 'set' && !!author && test(author))
-    );
-  };
-
   const goal = goals.find((candidate) => String(candidate.id) === goalId);
   const term = query.trim().toLowerCase();
 
-  const list = books.filter((book) => {
-    if (country && !hits(book, (code) => code === country)) return false;
-    if (continent && !hits(book, (code) => CONTINENT_OF[code] === continent))
-      return false;
-    if (year && readYear(book) !== year) return false;
-    if (
-      goal &&
-      !(goal.kind === 'theme'
-        ? book.goals?.some((link) => link.goalId === goal.id)
-        : hits(book, (code) => goalHas(goal, code)))
-    )
-      return false;
-    if (!term) return true;
-
-    const hay = [
-      book.title,
-      book.author?.name,
-      name(authorCountry(book)),
-      ...(book.places ?? []).flatMap((place) => [
-        place.name,
-        name(place.countryCode ?? undefined),
-      ]),
-    ];
-
-    return hay.join(' ').toLowerCase().includes(term);
-  });
-
-  if (sort === 'new') list.sort(byReadDate);
-  const locale = getLocale();
-
-  if (sort === 'title')
-    list.sort((first, second) =>
-      first.title.localeCompare(second.title, locale)
-    );
-  if (sort === 'country')
-    list.sort(
-      (first, second) =>
-        name(authorCountry(first)).localeCompare(
-          name(authorCountry(second)),
-          locale
-        ) || first.title.localeCompare(second.title, locale)
-    );
-  const unfiltered = list.length === books.length;
-  // a search that names a country with nothing on the shelf is an invitation, not a dead end
-  const named = !list.length ? countryFrom(query, names) : null;
-
-  const invite =
-    named && !marks[PARENT[named.code] ?? named.code]
-      ? (PARENT[named.code] ?? named.code)
-      : null;
+  const { list, unfiltered, invite } = shelfQuery(
+    books,
+    { query, country, continent, mark, year, goal, sort },
+    { names, marks }
+  );
 
   // each year's line says where that year's reading went: books and countries
-  const yearNotes = useMemo(() => {
-    const by: Record<string, { books: number; codes: Set<string> }> = {};
-
-    for (const book of books) {
-      const note = (by[readYear(book)] ??= { books: 0, codes: new Set() });
-
-      note.books++;
-      for (const code of [authorCountry(book), ...storyCountries(book)])
-        if (code) note.codes.add(code);
-    }
-
-    return Object.fromEntries(
-      Object.entries(by).map(([noteYear, note]) => [
-        noteYear,
-        `${m.count_book({ count: note.books })} · ${m.count_country({ count: note.codes.size })}`,
-      ])
-    );
-  }, [books]);
+  const notes = useMemo(() => yearNotes(books), [books]);
 
   // the country page's outline, from the same map file as Home and the postcard
   const [stamp, setStamp] = useState<
@@ -324,7 +250,7 @@ const ShelfPage = () => {
             year={bookYear}
             foldable={unfiltered}
             folded={isFolded}
-            note={yearNotes[bookYear]}
+            note={notes[bookYear]}
             onToggle={handleYearToggle(bookYear)}
           />
         )}

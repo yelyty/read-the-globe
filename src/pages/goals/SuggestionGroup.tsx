@@ -1,6 +1,6 @@
 import type { GoalKind } from '../../types';
 import GoalChip from './GoalChip';
-import { KIND_GROUP, type CatalogueGoal, type Suggestion } from './goals';
+import { KIND_GROUP, type CatalogueGoal, type Suggestion } from './catalogue';
 import * as styles from './GoalsPage.css';
 
 type SuggestionGroupProps = {

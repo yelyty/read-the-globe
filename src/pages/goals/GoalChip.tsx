@@ -1,7 +1,8 @@
 import { PlusIcon } from '@phosphor-icons/react';
 
 import { m } from '../../paraglide/messages.js';
-import { goalName, type CatalogueGoal, type Progress } from './goals';
+import { goalName, type CatalogueGoal } from './catalogue';
+import { type Progress } from './goalProgress';
 import * as styles from './GoalsPage.css';
 
 type GoalChipProps = {

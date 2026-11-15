@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 
-import { MAX_ROUTE_STOPS } from './goals';
+import { MAX_ROUTE_STOPS } from './plate';
 import * as styles from './GoalsPage.css';
 
 type GoalRouteProps = { done: number; total: number; theme?: boolean };

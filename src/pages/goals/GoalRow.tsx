@@ -13,22 +13,17 @@ import type { Marks } from '../../utils/atlasMarks';
 import { continentName } from '../../utils/continents';
 import { getLocale } from '../../paraglide/runtime.js';
 import { m } from '../../paraglide/messages.js';
-import {
-  CATALOGUE,
-  goalName,
-  isDone,
-  MAX_ROUTE_STOPS,
-  romanDate,
-  withBold,
-  type Progress,
-} from './goals';
+import { romanDate } from '../../utils/formatDate';
+import { withBold, byName } from '../../utils/text';
+import { CATALOGUE, goalName } from './catalogue';
+import { isDone, type Progress } from './goalProgress';
+import { MAX_ROUTE_STOPS } from './plate';
 import Compass from './Compass';
 import { GoalPlate } from './GoalPlate';
 import GoalShelf from './GoalShelf';
 import Postmark from './Postmark';
 import { GoalRoute } from './GoalsRoute';
 import * as styles from './GoalsPage.css';
-import { byName } from './goals';
 
 const PERCENT = 100;
 

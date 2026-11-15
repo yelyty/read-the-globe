@@ -6,11 +6,12 @@ import {
   type SyntheticEvent,
 } from 'react';
 import { useRouter } from '@tanstack/react-router';
-import { ArrowCounterClockwiseIcon, PlusIcon } from '@phosphor-icons/react';
+import { PlusIcon } from '@phosphor-icons/react';
 
 import type { World } from '../../types';
 import { addWorld, removeWorld } from '../../api/worlds/worlds';
 import { useStatus } from '../../hooks/useStatus';
+import { useUndo } from '../../hooks/useUndo';
 import { sameWorld, type WorldRow } from '../../utils/worlds';
 import { m } from '../../paraglide/messages.js';
 import * as styles from './HomePage.css';
@@ -25,6 +26,7 @@ const OPEN = 'rtg-beyond';
 const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
   const router = useRouter();
   const status = useStatus();
+  const offerUndo = useUndo();
 
   const [open, setOpen] = useState(() => {
     try {
@@ -67,18 +69,9 @@ const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
     await router.invalidate();
     input.current?.focus();
 
-    status.show({
-      text: m.world_removed({ name: world.name }),
-      action: {
-        label: m.common_undo(),
-        icon: <ArrowCounterClockwiseIcon aria-hidden="true" />,
-        run: async () => {
-          const again = await addWorld(world.name);
-
-          if (again) return status.show({ text: again });
-          await router.invalidate();
-        },
-      },
+    offerUndo({
+      said: m.world_removed({ name: world.name }),
+      undo: () => addWorld(world.name),
     });
   };
 

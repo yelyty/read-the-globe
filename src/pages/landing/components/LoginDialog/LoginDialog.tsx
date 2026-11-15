@@ -98,9 +98,10 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
     const email = values.email.trim();
 
     if (view === 'reset') {
-      if (await sendPasswordReset(email))
-        setNotice(m.auth_reset_sent({ email }));
-      else setFormError(m.common_try_again());
+      const problem = await sendPasswordReset(email);
+
+      if (problem) setFormError(problem);
+      else setNotice(m.auth_reset_sent({ email }));
     } else if (view === 'login') {
       const problem = await signIn(email, values.password);
 

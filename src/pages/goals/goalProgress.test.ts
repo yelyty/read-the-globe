@@ -4,7 +4,7 @@ import type { BookEntry } from '../../types';
 import { atlasMarks } from '../../utils/atlasMarks';
 import { CONTINENT_OF } from '../../utils/continents';
 import { MAP_CODES } from '../../utils/world';
-import { goalProgress, isDone, type GoalDraft } from './goals';
+import { goalProgress, isDone, type GoalDraft } from './goalProgress';
 
 const FRANCE = '250';
 const ITALY = '380';

@@ -1,6 +1,7 @@
 import type { Goal } from '../../types';
 import { supabase } from '../../utils/supabase';
 import { m } from '../../paraglide/messages.js';
+import type { Problem } from '../outcome';
 
 type GoalInput = Pick<
   Goal,
@@ -35,7 +36,7 @@ export async function getGoals(userId: string): Promise<Goal[]> {
   return data ?? [];
 }
 
-export async function addGoal(goal: GoalInput): Promise<string | null> {
+export async function addGoal(goal: GoalInput): Promise<Problem> {
   const { error } = await supabase.from('goals').insert(toRow(goal));
 
   return message(error);
@@ -45,7 +46,7 @@ export async function addGoal(goal: GoalInput): Promise<string | null> {
 export async function updateGoal(
   id: number,
   goal: GoalInput
-): Promise<string | null> {
+): Promise<Problem> {
   const { error } = await supabase
     .from('goals')
     .update(toRow(goal))
@@ -54,7 +55,7 @@ export async function updateGoal(
   return message(error);
 }
 
-export async function deleteGoal(id: number): Promise<string | null> {
+export async function deleteGoal(id: number): Promise<Problem> {
   const { error } = await supabase.from('goals').delete().eq('id', id);
 
   return error?.message ?? null;
@@ -63,7 +64,7 @@ export async function deleteGoal(id: number): Promise<string | null> {
 export async function markReached(
   id: number,
   date: string | null
-): Promise<string | null> {
+): Promise<Problem> {
   const { error } = await supabase
     .from('goals')
     .update({ reached_on: date })
@@ -75,7 +76,7 @@ export async function markReached(
 export async function setGoalBooks(
   goalId: number,
   bookIds: string[]
-): Promise<string | null> {
+): Promise<Problem> {
   const { error } = await supabase.rpc('set_goal_books', {
     p_goal_id: goalId,
     p_book_ids: bookIds,
@@ -87,7 +88,7 @@ export async function setGoalBooks(
 export async function restoreGoal(
   goal: Goal,
   bookIds: string[]
-): Promise<string | null> {
+): Promise<Problem> {
   const { data, error } = await supabase
     .from('goals')
     .insert({ ...toRow(goal), reached_on: goal.reachedOn })

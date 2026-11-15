@@ -7,7 +7,7 @@ import {
 
 import type { Goal, NextRead } from '../../../types';
 import { m } from '../../../paraglide/messages.js';
-import { goalName } from '../../goals/goals';
+import { goalName } from '../../goals/catalogue';
 import * as styles from '../ShelfPage.css';
 
 type NextItemProps = {

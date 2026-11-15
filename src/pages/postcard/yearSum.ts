@@ -4,7 +4,7 @@ import { m } from '../../paraglide/messages.js';
 import { getLocale } from '../../paraglide/runtime.js';
 import { bookCountries } from '../../utils/book';
 import { readDate, readYear } from '../../utils/readDate';
-import { goalName } from '../goals/goals';
+import { goalName } from '../goals/catalogue';
 
 // the years that have books, newest first: one year-end card each
 export const bookYears = (books: BookEntry[]) =>

@@ -34,16 +34,18 @@ const ImportCsv = ({ className, children, onDone }: ImportCsvProps) => {
 
     const result = await importBooks(books);
 
-    if ('error' in result) {
+    if (result.problem !== null) {
       setBusy(false);
-      onDone(result.error);
+      onDone(result.problem);
 
       return;
     }
 
-    if (result.added) await router.invalidate();
+    const { added, duplicates } = result.data;
+
+    if (added) await router.invalidate();
     setBusy(false);
-    onDone(importReport(result.added, result.duplicates, problems));
+    onDone(importReport(added, duplicates, problems));
   };
 
   const handleChooseFile = () => file.current?.click();

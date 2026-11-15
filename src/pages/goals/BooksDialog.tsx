@@ -11,8 +11,9 @@ import DialogActions from '../../components/Dialog/DialogActions';
 import DialogText from '../../components/Dialog/DialogText';
 import { m } from '../../paraglide/messages.js';
 import { fold } from '../../utils/text';
+import { withBold } from '../../utils/text';
 import * as styles from './GoalsPage.css';
-import { goalName, withBold } from './goals';
+import { goalName } from './catalogue';
 
 type BooksDialogProps = {
   goal: Goal;

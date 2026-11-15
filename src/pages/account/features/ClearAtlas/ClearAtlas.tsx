@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import { useRouter } from '@tanstack/react-router';
-import { ArrowCounterClockwiseIcon, EraserIcon } from '@phosphor-icons/react';
+import { EraserIcon } from '@phosphor-icons/react';
 
 import type { BookEntry, Goal } from '../../../../types';
 import {
   clearAtlas,
   getBackup,
-  restoreBackup,
+  restoreCleared,
 } from '../../../../api/data/data';
 import { useStatus } from '../../../../hooks/useStatus';
+import { useUndo } from '../../../../hooks/useUndo';
 import { Button } from '../../../../components/Button/Button';
 import Dialog from '../../../../components/Dialog/Dialog';
 import DialogActions from '../../../../components/Dialog/DialogActions';
@@ -29,6 +30,7 @@ type ClearAtlasProps = {
 const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
   const router = useRouter();
   const status = useStatus();
+  const offerUndo = useUndo();
   const [open, setOpen] = useState(false);
   const [round, setRound] = useState(0);
   const [clearing, setClearing] = useState(false);
@@ -60,42 +62,11 @@ const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
     await router.invalidate();
     await router.navigate({ to: '/app' });
 
-    status.show({
-      text: m.account_cleared({ what: lost }),
-      action: {
-        label: m.common_undo(),
-        icon: <ArrowCounterClockwiseIcon aria-hidden="true" />,
-        run: async () => {
-          // anything logged since the clear stays, beside the atlas as it was
-          const since = await getBackup(userId).catch(() => null);
-
-          const taken = new Set(
-            was.goals.map((goal) => goal.name.toLowerCase())
-          );
-
-          const problem = since
-            ? await restoreBackup({
-                ...was,
-                books: [...since.books, ...was.books],
-                goals: [
-                  ...was.goals,
-                  ...since.goals.filter(
-                    (goal) => !taken.has(goal.name.toLowerCase())
-                  ),
-                ],
-                nextReads: [
-                  ...(since.nextReads ?? []),
-                  ...(was.nextReads ?? []),
-                ],
-                worlds: [...(was.worlds ?? []), ...(since.worlds ?? [])],
-              })
-            : m.data_restore_failed();
-
-          if (problem) return status.show({ text: problem });
-          await router.invalidate();
-          status.show({ text: m.account_atlas_back() });
-        },
-      },
+    // anything logged since the clear stays, beside the atlas as it was
+    offerUndo({
+      said: m.account_cleared({ what: lost }),
+      undo: () => restoreCleared(was, userId),
+      undone: m.account_atlas_back(),
     });
   };
 

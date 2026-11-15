@@ -1,5 +1,6 @@
 import { supabase } from '../../utils/supabase';
 import { m } from '../../paraglide/messages.js';
+import { failed, made, type Made, type Problem } from '../outcome';
 
 export type BookDraft = {
   title: string;
@@ -16,7 +17,7 @@ export type BookDraft = {
 export async function saveBook(
   draft: BookDraft,
   id?: string
-): Promise<{ id?: string; error?: string }> {
+): Promise<Made<string>> {
   const saved = await supabase.rpc('save_book', {
     p_book_id: id ?? null,
     p_title: draft.title,
@@ -31,10 +32,10 @@ export async function saveBook(
 
   if (error) console.error(error);
 
-  return error ? { error: m.book_save_failed() } : { id: saved.data as string };
+  return error ? failed(m.book_save_failed()) : made(saved.data as string);
 }
 
-export async function deleteBook(id: string): Promise<string | null> {
+export async function deleteBook(id: string): Promise<Problem> {
   const { error } = await supabase.from('books').delete().eq('id', id);
 
   if (error) console.error(error);

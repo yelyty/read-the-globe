@@ -1,6 +1,7 @@
 import type { World } from '../../types';
 import { supabase } from '../../utils/supabase';
 import { m } from '../../paraglide/messages.js';
+import type { Problem } from '../outcome';
 
 // Imagined worlds saved by hand from Home's "Beyond the map"; the rest come from the books' imagined places.
 export async function getWorlds(userId: string): Promise<World[]> {
@@ -17,7 +18,7 @@ export async function getWorlds(userId: string): Promise<World[]> {
   return data ?? [];
 }
 
-export async function addWorld(name: string): Promise<string | null> {
+export async function addWorld(name: string): Promise<Problem> {
   const { error } = await supabase.from('worlds').insert({ name });
 
   if (error) console.error(error);
@@ -25,7 +26,7 @@ export async function addWorld(name: string): Promise<string | null> {
   return error ? m.world_save_failed() : null;
 }
 
-export async function removeWorld(id: string): Promise<string | null> {
+export async function removeWorld(id: string): Promise<Problem> {
   const { error } = await supabase.from('worlds').delete().eq('id', id);
 
   if (error) console.error(error);

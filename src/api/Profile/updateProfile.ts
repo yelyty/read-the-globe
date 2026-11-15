@@ -1,6 +1,7 @@
 import type { Profile } from '../../types';
 import { supabase } from '../../utils/supabase';
 import { m } from '../../paraglide/messages.js';
+import type { Problem } from '../outcome';
 
 // only the fields given are written, so the Postcard page can save its set-up without touching the name
 export async function updateProfile(
@@ -8,7 +9,7 @@ export async function updateProfile(
   changes: Partial<Pick<Profile, 'displayName' | 'handle'>> & {
     postcard?: object;
   }
-): Promise<string | null> {
+): Promise<Problem> {
   const { error } = await supabase
     .from('profiles')
     .update({

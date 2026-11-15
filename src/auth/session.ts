@@ -3,6 +3,7 @@ import type { User } from '@supabase/supabase-js';
 import { supabase } from '../utils/supabase';
 import { adoptAccountLang } from '../utils/lang';
 import { m } from '../paraglide/messages.js';
+import type { Problem } from '../api/outcome';
 
 export interface Reader {
   id: string;
@@ -101,21 +102,23 @@ export function seedIfWished(user: User): Promise<void> {
 }
 
 // Always the same neutral answer, so the form never tells whether an email has an account.
-export async function sendPasswordReset(email: string): Promise<boolean> {
+export async function sendPasswordReset(email: string): Promise<Problem> {
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${window.location.origin}/reset-password`,
   });
 
   if (error) console.error(error);
 
-  return !error || error.code === 'user_not_found';
+  return !error || error.code === 'user_not_found'
+    ? null
+    : m.common_try_again();
 }
 
 export async function signOut(): Promise<void> {
   await supabase.auth.signOut();
 }
 
-export async function updateDisplayName(name: string): Promise<string | null> {
+export async function updateDisplayName(name: string): Promise<Problem> {
   const { error } = await supabase.auth.updateUser({
     data: { display_name: name },
   });
@@ -123,7 +126,7 @@ export async function updateDisplayName(name: string): Promise<string | null> {
   return error ? m.auth_name_save_failed() : null;
 }
 
-export async function changePassword(password: string): Promise<string | null> {
+export async function changePassword(password: string): Promise<Problem> {
   const { error } = await supabase.auth.updateUser({ password });
 
   if (!error) return null;

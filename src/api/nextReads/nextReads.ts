@@ -1,5 +1,7 @@
 import type { NextRead } from '../../types';
 import { supabase } from '../../utils/supabase';
+import { m } from '../../paraglide/messages.js';
+import { failed, made, type Made, type Problem } from '../outcome';
 
 const FIELDS =
   'id, title, author, countryCode:country_code, mark, createdAt:created_at';
@@ -21,7 +23,7 @@ export async function getNextReads(
 
 export async function addNextRead(
   item: Pick<NextRead, 'title' | 'author' | 'countryCode' | 'mark'>
-): Promise<NextRead | null> {
+): Promise<Made<NextRead>> {
   const { data, error } = await supabase
     .from('next_reads')
     .insert({
@@ -35,13 +37,18 @@ export async function addNextRead(
 
   if (error) console.error(error);
 
-  return data;
+  return data ? made(data) : failed(m.next_save_failed());
 }
 
-export async function removeNextRead(id: string): Promise<boolean> {
-  const { error } = await supabase.from('next_reads').delete().eq('id', id);
+export async function removeNextRead(
+  item: Pick<NextRead, 'id' | 'title'>
+): Promise<Problem> {
+  const { error } = await supabase
+    .from('next_reads')
+    .delete()
+    .eq('id', item.id);
 
   if (error) console.error(error);
 
-  return !error;
+  return error ? m.next_remove_failed({ title: item.title }) : null;
 }
