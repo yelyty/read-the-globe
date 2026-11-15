@@ -13,6 +13,7 @@ import { m } from '../../paraglide/messages.js';
 import { fold } from '../../utils/text';
 import { withBold } from '../../utils/text';
 import * as styles from './GoalsPage.css';
+import BookPick from './BookPick';
 import { goalName } from './catalogue';
 
 type BooksDialogProps = {
@@ -71,22 +72,6 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
   const handleQueryChange = (event: ChangeEvent<HTMLInputElement>) =>
     setQuery(event.target.value);
 
-  const handleBookTick = (id: string) => () => toggle(id);
-
-  const renderBook = (book: BookEntry) => (
-    <li key={book.id}>
-      <label>
-        <input
-          type="checkbox"
-          checked={picked.has(book.id)}
-          onChange={handleBookTick(book.id)}
-        />
-        <span className={styles.pickTitle}>{book.title}</span>
-        <span className={styles.pickAuthor}>{book.author?.name}</span>
-      </label>
-    </li>
-  );
-
   return (
     <Dialog
       open
@@ -127,7 +112,16 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
                 <legend className={styles.srOnly}>
                   {m.goals_books_legend({ goal: title })}
                 </legend>
-                <ul>{shown.map(renderBook)}</ul>
+                <ul>
+                  {shown.map((book) => (
+                    <BookPick
+                      key={book.id}
+                      book={book}
+                      checked={picked.has(book.id)}
+                      onToggle={toggle}
+                    />
+                  ))}
+                </ul>
               </fieldset>
             ) : (
               <Hint role="status">

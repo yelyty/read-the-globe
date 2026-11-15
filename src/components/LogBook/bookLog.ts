@@ -265,3 +265,26 @@ export function landingFor(
       : null,
   };
 }
+
+// an error's field: its input's id, and its name in the summary
+const fieldOf = (key: string): [id: string, label: string] =>
+  ({
+    title: ['f-title', m.log_f_title()] as [string, string],
+    author: ['f-author', m.log_f_author()] as [string, string],
+    country: ['f-country', m.log_f_country()] as [string, string],
+  })[key] ?? [`pr-country-${key.slice(PLACE_KEY.length)}`, m.log_f_place()];
+
+// what the form says over its errors: the one error, or which fields need a look; and the field to focus
+export function errorSummary(errors: Record<string, string>) {
+  const bad = Object.keys(errors);
+
+  const text =
+    bad.length === 1
+      ? errors[bad[0]]
+      : m.log_fields_need({
+          fields: m.count_field({ count: bad.length }),
+          list: [...new Set(bad.map((key) => fieldOf(key)[1]))].join(', '),
+        });
+
+  return { text, focusId: bad.length ? fieldOf(bad[0])[0] : null };
+}

@@ -13,6 +13,7 @@ import { button } from '../../../../components/Button/Button.css';
 import { m } from '../../../../paraglide/messages.js';
 import * as styles from '../../AccountPage.css';
 import Block from '../../components/Block';
+import StatusLine from '../../../../components/StatusLine/StatusLine';
 import {
   bookCount,
   exportBackup,
@@ -80,9 +81,7 @@ const YourData = ({ userId, books, names, goals }: YourDataProps) => {
             <FileCodeIcon aria-hidden="true" />
             {backingUp ? m.account_backup_preparing() : m.account_full_backup()}
           </Button>
-          <p className={styles.status} role="status">
-            {status}
-          </p>
+          <StatusLine>{status}</StatusLine>
         </div>
       </div>
       <div className={styles.item}>
@@ -108,9 +107,7 @@ const YourData = ({ userId, books, names, goals }: YourDataProps) => {
             goals={goals}
             onFail={setImported}
           />
-          <p className={styles.status} role="status">
-            {imported}
-          </p>
+          <StatusLine>{imported}</StatusLine>
         </div>
       </div>
     </Block>

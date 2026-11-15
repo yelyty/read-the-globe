@@ -5,7 +5,6 @@ import {
   PencilSimpleIcon,
   TrashIcon,
 } from '@phosphor-icons/react';
-import { Link } from '@tanstack/react-router';
 import type { Feature } from 'geojson';
 
 import type { Goal } from '../../types';
@@ -15,6 +14,8 @@ import { getLocale } from '../../paraglide/runtime.js';
 import { m } from '../../paraglide/messages.js';
 import { romanDate } from '../../utils/formatDate';
 import { withBold, byName } from '../../utils/text';
+import { Button } from '../../components/Button/Button';
+import ButtonLink from '../../components/Button/ButtonLink';
 import { CATALOGUE, goalName } from './catalogue';
 import { isDone, type Progress } from './goalProgress';
 import { MAX_ROUTE_STOPS } from './plate';
@@ -166,53 +167,54 @@ const GoalRow = ({
           )}
           <div className={styles.goalActions}>
             {theme && (
-              <button
+              <Button
                 type="button"
-                className={`${styles.linkBtn} ${styles.chooseBtn}`}
+                variant="link"
+                className={styles.chooseBtn}
                 aria-haspopup="dialog"
                 onClick={onChooseBooks}
               >
                 <CheckSquareIcon aria-hidden="true" />
                 {m.goals_choose_books()}
-              </button>
+              </Button>
             )}
             {journal && (
-              <Link className={styles.linkBtn} to="/journal">
+              <ButtonLink variant="link" to="/journal">
                 <BooksIcon aria-hidden="true" />
                 {m.goals_reading_ideas()}
-              </Link>
+              </ButtonLink>
             )}
             {done && goal.reachedOn && (
-              <Link
-                className={styles.linkBtn}
+              <ButtonLink
+                variant="link"
                 to="/app/postcard"
                 search={{ goal: goal.id }}
                 aria-label={m.goals_postcard_for({ goal: title })}
               >
                 <ImageIcon aria-hidden="true" />
                 {m.nav_postcard()}
-              </Link>
+              </ButtonLink>
             )}
-            <button
+            <Button
               type="button"
-              className={styles.linkBtn}
+              variant="link"
               aria-haspopup="dialog"
               aria-label={m.goals_edit_label({ goal: title })}
               onClick={onEdit}
             >
               <PencilSimpleIcon aria-hidden="true" />
               {m.common_edit()}
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
-              className={styles.linkBtn}
+              variant="link"
               data-remove-goal
               aria-label={m.goals_remove_label({ goal: title })}
               onClick={onRemove}
             >
               <TrashIcon aria-hidden="true" />
               {m.goals_remove()}
-            </button>
+            </Button>
           </div>
         </div>
       </div>

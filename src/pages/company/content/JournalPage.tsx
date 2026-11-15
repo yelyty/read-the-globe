@@ -1,7 +1,8 @@
 import * as styles from '../CompanyPage.css';
 import CompanyPage from '../CompanyPage';
+import JournalPost, { type Post } from './JournalPost';
 
-const POSTS = [
+const POSTS: Post[] = [
   {
     date: '2026-10-14',
     shown: '14 October 2026',
@@ -24,14 +25,6 @@ const POSTS = [
 
 // ponytail: three teasers, no post pages yet; add a /journal/$post route when there's a post to read
 const JournalPage = () => {
-  const renderPost = (post: (typeof POSTS)[number]) => (
-    <li key={post.date} className={styles.post}>
-      <time dateTime={post.date}>{post.shown}</time>
-      <h2>{post.title}</h2>
-      <p>{post.text}</p>
-    </li>
-  );
-
   return (
     <CompanyPage
       title="Journal"
@@ -43,7 +36,11 @@ const JournalPage = () => {
         Notes on reading the world: what’s new in the atlas, and ideas for where
         to read next.
       </p>
-      <ul className={styles.posts}>{POSTS.map(renderPost)}</ul>
+      <ul className={styles.posts}>
+        {POSTS.map((post) => (
+          <JournalPost key={post.date} post={post} />
+        ))}
+      </ul>
     </CompanyPage>
   );
 };

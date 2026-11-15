@@ -3,6 +3,7 @@ import { XIcon } from '@phosphor-icons/react';
 import type { World } from '../../types';
 import type { WorldRow } from '../../utils/worlds';
 import { m } from '../../paraglide/messages.js';
+import MarkDot from '../../components/MarkDot/MarkDot';
 import * as styles from './HomePage.css';
 
 type WorldItemProps = {
@@ -24,7 +25,7 @@ const WorldItem = ({ world, onOpen, onRemove }: WorldItemProps) => {
         aria-haspopup="dialog"
         onClick={handleOpen}
       >
-        <i className={styles.dotImagined} aria-hidden="true" />
+        <MarkDot kind="imagined" />
         <span
           className={styles.worldName}
           data-saved={!world.books.length || undefined}

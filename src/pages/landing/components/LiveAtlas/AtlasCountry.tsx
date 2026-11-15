@@ -1,3 +1,4 @@
+import { markWhich } from '../../../../utils/atlasMarks';
 import * as styles from './LiveAtlas.css';
 
 type AtlasCountryProps = {
@@ -12,13 +13,7 @@ type AtlasCountryProps = {
 // one country on Mira's map, coloured by the marks her books have given it so far
 const AtlasCountry = ({ d, set, author }: AtlasCountryProps) => {
   const className =
-    set && author
-      ? styles.both
-      : set
-        ? styles.set
-        : author
-          ? styles.author
-          : styles.land;
+    set || author ? styles[markWhich(set, author)] : styles.land;
 
   return <path d={d} className={className} />;
 };

@@ -4,7 +4,7 @@ import {
   type KeyboardEvent,
   type SubmitEvent,
 } from 'react';
-import { CheckIcon, PlusIcon, XIcon } from '@phosphor-icons/react';
+import { CheckIcon, PlusIcon } from '@phosphor-icons/react';
 
 import Field from '../../components/Field/Field';
 import Select from '../../components/Select/Select';
@@ -14,7 +14,6 @@ import { continentName, type Continent } from '../../utils/continents';
 import { addGoal, updateGoal } from '../../api/goals/goals';
 import { getLocale } from '../../paraglide/runtime.js';
 import { m } from '../../paraglide/messages.js';
-import { fieldError } from '../../components/Field/Field.css';
 import Hint from '../../components/Hint/Hint';
 import { Button } from '../../components/Button/Button';
 import { useDirty } from '../../hooks/useUnsaved';
@@ -28,6 +27,7 @@ import {
   goalName,
 } from './catalogue';
 import * as styles from './GoalsPage.css';
+import PickedCountry from './PickedCountry';
 
 const NAME_HINT: Record<GoalKind, () => string> = {
   region: m.goals_cat_europe,
@@ -162,7 +162,7 @@ const GoalDialog = ({
     addCountry(country);
   };
 
-  const handleCountryRemove = (code: string) => () =>
+  const handleCountryRemove = (code: string) =>
     setCodes(codes.filter((other) => other !== code));
 
   const handleTargetChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -175,18 +175,17 @@ const GoalDialog = ({
     label: continentName(region),
   }));
 
-  // a country chosen for the goal, with the way to take it off again
-  const renderPicked = (code: string) => (
-    <li key={code}>
-      {names[code] ?? code}
-      <button
-        type="button"
-        aria-label={m.goals_remove_country({ country: names[code] ?? code })}
-        onClick={handleCountryRemove(code)}
-      >
-        <XIcon aria-hidden="true" />
-      </button>
-    </li>
+  const countryControl = (
+    <Suggest
+      options={countryNames}
+      placeholder={m.goals_country_placeholder()}
+      autoComplete="off"
+      value={country}
+      onValue={setCountry}
+      // a name picked from the list goes straight onto the goal
+      onPick={addCountry}
+      onKeyDown={handleCountryKeyDown}
+    />
   );
 
   return (
@@ -247,38 +246,29 @@ const GoalDialog = ({
         )}
 
         {kind === 'countries' && (
-          <div className={styles.field}>
-            <label className={styles.label} htmlFor="g-country">
-              {m.goals_countries()}
-            </label>
-            <Suggest
-              id="g-country"
-              className={styles.input}
-              options={countryNames}
-              placeholder={m.goals_country_placeholder()}
-              autoComplete="off"
-              aria-describedby={
-                errorAt('g-country')
-                  ? 'g-country-hint g-country-err'
-                  : 'g-country-hint'
-              }
-              aria-invalid={errorAt('g-country') ? true : undefined}
-              value={country}
-              onValue={setCountry}
-              // a name picked from the list goes straight onto the goal
-              onPick={addCountry}
-              onKeyDown={handleCountryKeyDown}
-            />
+          <Field
+            id="g-country"
+            label={m.goals_countries()}
+            error={errorAt('g-country')}
+            aria-describedby="g-country-hint"
+            control={countryControl}
+            below={
+              codes.length > 0 && (
+                <ul className={styles.picked}>
+                  {codes.map((code) => (
+                    <PickedCountry
+                      key={code}
+                      code={code}
+                      name={names[code] ?? code}
+                      onRemove={handleCountryRemove}
+                    />
+                  ))}
+                </ul>
+              )
+            }
+          >
             <Hint id="g-country-hint">{m.goals_country_hint()}</Hint>
-            {errorAt('g-country') && (
-              <p id="g-country-err" className={fieldError}>
-                {errorAt('g-country')}
-              </p>
-            )}
-            {codes.length > 0 && (
-              <ul className={styles.picked}>{codes.map(renderPicked)}</ul>
-            )}
-          </div>
+          </Field>
         )}
 
         {kind === 'theme' && (

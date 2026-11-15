@@ -2,6 +2,7 @@ import { useRef, useState, type ChangeEvent, type SubmitEvent } from 'react';
 import { WarningCircleIcon } from '@phosphor-icons/react';
 
 import Field from '../../../components/Field/Field';
+import FieldTextarea from '../../../components/Field/FieldTextarea';
 import * as fieldStyles from '../../../components/Field/Field.css';
 import {
   sendContactMessage,
@@ -68,6 +69,17 @@ const ContactPage = () => {
     }
   };
 
+  const handleMessageChange = update('message');
+
+  const messageControl = (
+    <FieldTextarea
+      className={styles.textarea}
+      maxLength={4000}
+      value={values.message}
+      onChange={handleMessageChange}
+    />
+  );
+
   return (
     <CompanyPage
       title="Contact"
@@ -121,28 +133,12 @@ const ContactPage = () => {
             onChange={update('email')}
             error={errors.email}
           />
-          <div
-            className={fieldStyles.field}
-            data-invalid={Boolean(errors.message)}
-          >
-            <label htmlFor="c-message" className={fieldStyles.fieldLabel}>
-              {m.contact_message()}
-            </label>
-            <textarea
-              id="c-message"
-              className={`${fieldStyles.input} ${styles.textarea}`}
-              maxLength={4000}
-              value={values.message}
-              onChange={update('message')}
-              aria-invalid={errors.message ? true : undefined}
-              aria-describedby={errors.message ? 'c-message-err' : undefined}
-            />
-            {errors.message && (
-              <div id="c-message-err" className={fieldStyles.fieldError}>
-                {errors.message}
-              </div>
-            )}
-          </div>
+          <Field
+            id="c-message"
+            label={m.contact_message()}
+            error={errors.message}
+            control={messageControl}
+          />
           <button
             type="submit"
             className={`${btnPrimary} ${styles.send}`}

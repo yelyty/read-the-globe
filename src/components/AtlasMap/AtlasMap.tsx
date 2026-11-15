@@ -14,15 +14,17 @@ import {
   type ProjectionFunction,
 } from 'react-simple-maps';
 
-import type { Geo } from '../../types';
 import type { Marks } from '../../utils/atlasMarks';
 import {
   flatProjection,
   MAP_HEIGHT as HEIGHT,
   MAP_WIDTH as WIDTH,
 } from '../../utils/flatMap';
+import type { Geo } from '../../types';
 import { GEO_URL } from '../../utils/world';
 import { m } from '../../paraglide/messages.js';
+import HatchPattern from '../HatchPattern/HatchPattern';
+import { HATCH_MAP } from '../HatchPattern/hatchSize';
 import * as styles from './AtlasMap.css';
 import { Drawn } from './Drawn';
 import MapCountry from './MapCountry';
@@ -155,22 +157,6 @@ const AtlasMap = memo(
       }
     };
 
-    const renderCountry = (geo: Geo) => (
-      <MapCountry
-        key={geo.rsmKey}
-        geo={geo}
-        mark={marks[geo.id]}
-        open={open && geo.id !== ANTARCTICA}
-        landed={Boolean(landed?.has(geo.id))}
-      />
-    );
-
-    const renderDot = (dot: Dot) => (
-      <Marker key={dot.id} coordinates={[dot.lon, dot.lat]}>
-        <circle r={2.6} className={styles.dot} />
-      </Marker>
-    );
-
     return (
       <figure className={styles.plate} data-show={show}>
         <div
@@ -188,26 +174,31 @@ const AtlasMap = memo(
             aria-hidden="true"
           >
             <defs>
-              <pattern
-                id="both-hatch"
-                patternUnits="userSpaceOnUse"
-                width="4"
-                height="4"
-                patternTransform="rotate(45)"
-              >
-                <rect width="4" height="4" className={styles.hatchSet} />
-                <rect width="2" height="4" className={styles.hatchAuthor} />
-              </pattern>
+              <HatchPattern id="both-hatch" size={HATCH_MAP} />
             </defs>
             <Geographies geography={GEO_URL}>
               {({ geographies }) => (
                 <>
-                  {geographies.map(renderCountry)}
+                  {geographies.map((geo: Geo) => (
+                    <MapCountry
+                      key={geo.rsmKey}
+                      geo={geo}
+                      mark={marks[geo.id]}
+                      open={open && geo.id !== ANTARCTICA}
+                      landed={Boolean(landed?.has(geo.id))}
+                    />
+                  ))}
                   {geographies.length > 0 && <Drawn onDrawn={frame} />}
                 </>
               )}
             </Geographies>
-            <g className={styles.dots}>{dots.map(renderDot)}</g>
+            <g className={styles.dots}>
+              {dots.map((dot) => (
+                <Marker key={dot.id} coordinates={[dot.lon, dot.lat]}>
+                  <circle r={2.6} className={styles.dot} />
+                </Marker>
+              ))}
+            </g>
           </ComposableMap>
         </div>
         {hint && (

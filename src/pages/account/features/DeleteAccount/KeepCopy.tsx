@@ -3,6 +3,7 @@ import { DownloadSimpleIcon } from '@phosphor-icons/react';
 
 import type { BookEntry } from '../../../../types';
 import { Button } from '../../../../components/Button/Button';
+import StatusLine from '../../../../components/StatusLine/StatusLine';
 import { m } from '../../../../paraglide/messages.js';
 import { exportReadingList } from '../YourData/readingList';
 import * as styles from './DeleteAccount.css';
@@ -35,9 +36,7 @@ const KeepCopy = ({ books, names }: KeepCopyProps) => {
         <DownloadSimpleIcon aria-hidden="true" />
         {m.account_download_list()}
       </Button>
-      <span className={styles.status} role="status">
-        {kept}
-      </span>
+      <StatusLine>{kept}</StatusLine>
     </div>
   );
 };

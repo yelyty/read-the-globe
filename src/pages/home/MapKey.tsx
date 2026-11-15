@@ -1,5 +1,6 @@
 import type { Show } from '../../components/AtlasMap/AtlasMap.tsx';
 import { m } from '../../paraglide/messages.js';
+import ToggleGroup from '../../components/ToggleGroup/ToggleGroup';
 import * as styles from './HomePage.css';
 
 const SHOW: [Show, () => string, (() => string)?][] = [
@@ -16,20 +17,13 @@ type MapKeyProps = {
 
 // What the colours mean, and a filter once there is more than one book to filter.
 const MapKey = ({ show, onShow, canFilter }: MapKeyProps) => {
-  const handleShow = (value: Show) => () => onShow(value);
+  const showOption = ([value, label, long]: (typeof SHOW)[number]) => ({
+    value,
+    content: label(),
+    ariaLabel: long?.(),
+  });
 
-  const renderShow = ([value, label, long]: (typeof SHOW)[number]) => (
-    <button
-      key={value}
-      type="button"
-      className={styles.showBtn}
-      aria-pressed={show === value}
-      aria-label={long?.()}
-      onClick={handleShow(value)}
-    >
-      {label()}
-    </button>
-  );
+  const showOptions = SHOW.map(showOption);
 
   return (
     <div className={styles.legend}>
@@ -48,16 +42,18 @@ const MapKey = ({ show, onShow, canFilter }: MapKeyProps) => {
         </li>
       </ul>
       {canFilter && (
-        <div
+        <ToggleGroup
           className={styles.showGroup}
-          role="group"
-          aria-label={m.map_show_label()}
+          optionClassName={styles.showBtn}
+          label={m.map_show_label()}
+          value={show}
+          options={showOptions}
+          onChange={onShow}
         >
           <span className={styles.capsLabel} aria-hidden="true">
             {m.map_show()}
           </span>
-          {SHOW.map(renderShow)}
-        </div>
+        </ToggleGroup>
       )}
     </div>
   );

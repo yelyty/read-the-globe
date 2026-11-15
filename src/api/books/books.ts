@@ -13,7 +13,6 @@ export type BookDraft = {
   goalIds: number[];
 };
 
-// the saved book's id, or what went wrong
 export async function saveBook(
   draft: BookDraft,
   id?: string

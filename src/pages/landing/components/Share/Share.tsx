@@ -5,6 +5,8 @@ import { srOnly } from '../../../../styles/global.css';
 import { m } from '../../../../paraglide/messages.js';
 import { btnPrimary } from '../LoginDialog/LoginDialog.css';
 import * as styles from './Share.css';
+import ShareCard from './ShareCard';
+import ShareChoice from './ShareChoice';
 
 const KINDS = [
   {
@@ -27,7 +29,7 @@ const KINDS = [
   },
 ] as const;
 
-type Kind = (typeof KINDS)[number];
+export type Kind = (typeof KINDS)[number];
 
 // The kinds of postcard on the left; the app's card for the chosen kind on the right (always the day cards).
 const Share = ({ onSignUp }: { onSignUp: () => void }) => {
@@ -36,40 +38,10 @@ const Share = ({ onSignUp }: { onSignUp: () => void }) => {
   const [live, setLive] = useState('');
 
   // screen readers are told which card now shows
-  const handleKindChange = (variant: Kind) => () => {
+  const handleKindChange = (variant: Kind) => {
     setKind(variant.id);
     setLive(m.landing_share_showing({ name: variant.name() }));
   };
-
-  const renderChoice = (variant: Kind) => (
-    <label key={variant.id} className={styles.variant}>
-      <input
-        type="radio"
-        name="pcv"
-        value={variant.id}
-        aria-controls="pc-stack"
-        checked={kind === variant.id}
-        onChange={handleKindChange(variant)}
-      />
-      <b>{variant.name()}</b> <span>{variant.detail()}</span>
-    </label>
-  );
-
-  // every card is in the stack; the chosen one shows, and only the first loads up front
-  const renderCard = (variant: Kind) => (
-    <img
-      key={variant.id}
-      className={
-        kind === variant.id ? `${styles.card} ${styles.on}` : styles.card
-      }
-      src={`/landing/postcard-${variant.id}-day.webp`}
-      width={1080}
-      height={1080}
-      alt={variant.alt()}
-      loading={variant.id === KINDS[0].id ? undefined : 'lazy'}
-      decoding="async"
-    />
-  );
 
   return (
     <section className={styles.share} id="share" aria-labelledby="share-h">
@@ -85,7 +57,14 @@ const Share = ({ onSignUp }: { onSignUp: () => void }) => {
           role="radiogroup"
           aria-labelledby="pcv-label"
         >
-          {KINDS.map(renderChoice)}
+          {KINDS.map((variant) => (
+            <ShareChoice
+              key={variant.id}
+              variant={variant}
+              checked={kind === variant.id}
+              onChoose={handleKindChange}
+            />
+          ))}
         </div>
         <button
           type="button"
@@ -97,7 +76,15 @@ const Share = ({ onSignUp }: { onSignUp: () => void }) => {
         </button>
       </div>
       <figure className={styles.stack} id="pc-stack">
-        {KINDS.map(renderCard)}
+        {/* every card is in the stack; the chosen one shows, and only the first loads up front */}
+        {KINDS.map((variant, i) => (
+          <ShareCard
+            key={variant.id}
+            variant={variant}
+            shown={kind === variant.id}
+            lazy={i > 0}
+          />
+        ))}
         <figcaption className={styles.caption}>
           {m.landing_share_caption()}
         </figcaption>

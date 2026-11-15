@@ -2,6 +2,7 @@ import { useRef } from 'react';
 
 import { countryFrom, splitStates, tidy } from '../../utils/countryFrom';
 import { m } from '../../paraglide/messages.js';
+import ToggleGroup from '../ToggleGroup/ToggleGroup';
 import * as styles from './LogBook.css';
 import Bold, { BOLD } from './Bold';
 
@@ -44,21 +45,12 @@ const ThenNote = ({
     focusIn('[aria-pressed="true"], button');
   };
 
-  const handlePick = (code: string) => () => {
+  const handlePick = (code: string) => {
     onPick(code);
     focusIn('button');
   };
 
-  const renderPick = (code: string) => (
-    <button
-      key={code}
-      type="button"
-      aria-pressed={pick === code}
-      onClick={handlePick(code)}
-    >
-      {names[code]}
-    </button>
-  );
+  const pickOption = (code: string) => ({ value: code, content: names[code] });
 
   let content = null;
 
@@ -88,7 +80,12 @@ const ThenNote = ({
           })}{' '}
           {author ? m.log_then_author() : m.log_then_place()}
         </p>
-        <div className={styles.thenPicks}>{states.map(renderPick)}</div>
+        <ToggleGroup
+          className={styles.thenPicks}
+          value={pick}
+          options={states.map(pickOption)}
+          onChange={handlePick}
+        />
       </>
     );
   else if (match?.then)

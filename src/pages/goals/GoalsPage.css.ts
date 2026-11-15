@@ -2,7 +2,6 @@ import { globalStyle, keyframes, style } from '@vanilla-extract/css';
 
 import { fontSize, space, vars } from '../../styles/theme.css';
 import {
-  buttonSize,
   easeOut,
   easeSoft,
   focusRing,
@@ -230,97 +229,12 @@ export const chipNote = style({
   color: vars.color.textMuted,
 });
 
-const button = {
-  ...press,
-  display: 'inline-flex',
-  alignItems: 'center',
-  borderRadius: 999,
-  fontFamily: vars.font.sans,
-  fontWeight: 500,
-  cursor: 'pointer',
-  ':focus-visible': focusRing,
-  ':disabled': { opacity: 0.5, cursor: 'not-allowed' },
-} as const;
-
-export const primary = style([
-  buttonSize,
-  {
-    ...button,
-    border: 0,
-    background: vars.color.primary,
-    color: vars.color.onAccent,
-    '@media': {
-      [hover]: {
-        selectors: {
-          '&:not(:disabled):hover': { background: vars.color.primaryHover },
-        },
-      },
-    },
-  },
-]);
-export const outline = style([
-  buttonSize,
-  {
-    ...button,
-    marginTop: space.sp4,
-    background: vars.color.background,
-    color: vars.color.oliveInk,
-    border: 0,
-    boxShadow: `inset 0 0 0 1.5px ${vars.color.primary}`,
-    '@media': {
-      [hover]: {
-        selectors: {
-          '&:not(:disabled):hover': { background: vars.color.oliveWash },
-        },
-      },
-    },
-  },
-]);
-
-globalStyle(`${primary} svg, ${outline} svg`, {
-  width: 16,
-  height: 16,
-  flex: 'none',
-});
-
 // no goals yet: the sticker sits below a hairline, where the goals will be
 export const empty = style({
   marginTop: space.sp7,
   borderTop: `1px solid ${vars.color.border}`,
-  display: 'grid',
-  justifyItems: 'center',
-  gap: space.sp2,
-  textAlign: 'center',
-  padding: `${space.sp6} 0`,
-});
-
-globalStyle(`${empty} p`, {
-  margin: 0,
-  maxWidth: '52ch',
-  color: vars.color.textSecondary,
-});
-
-export const sticker = style({
-  width: 120,
-  height: 100,
-  marginBottom: space.sp2,
-});
-export const gsHill = style({
-  fill: goldBand,
-  stroke: vars.color.mark,
-  strokeWidth: 2.2,
-});
-export const gsPath = style({
-  stroke: vars.color.textMuted,
-  strokeWidth: 1.8,
-  strokeDasharray: '3.5 4',
-});
-export const gsStart = style({ fill: vars.color.olive });
-export const gsPole = style({ stroke: vars.color.textMuted, strokeWidth: 2.6 });
-export const gsCloth = style({
-  fill: vars.color.primary,
-  stroke: vars.color.oliveInk,
-  strokeWidth: 2,
+  // the hairline runs the page's width, the words stay centred in EmptyState's column
+  selectors: { '&&': { maxWidth: 'none' } },
 });
 
 export const goalList = style({
@@ -520,27 +434,6 @@ export const goalActions = style({
   columnGap: 16,
   marginLeft: 'auto',
 });
-export const linkBtn = style({
-  display: 'inline-flex',
-  textDecoration: 'none',
-  alignItems: 'center',
-  gap: 8,
-  minHeight: 40,
-  padding: 0,
-  background: 'none',
-  border: 0,
-  whiteSpace: 'nowrap',
-  fontFamily: vars.font.sans,
-  fontSize: fontSize.body,
-  fontWeight: 500,
-  color: vars.color.textSecondary,
-  cursor: 'pointer',
-  ':focus-visible': focusRing,
-  '@media': {
-    [hover]: { selectors: { '&:hover': { color: vars.color.text } } },
-  },
-});
-globalStyle(`${linkBtn} svg`, { width: 16, height: 16, flex: 'none' });
 // Choose books on the left; Edit and Remove goal together on the right
 export const chooseBtn = style({ marginRight: 'auto' });
 globalStyle(`${goalActions}:has(${chooseBtn})`, { flex: 1, marginLeft: 0 });
@@ -908,3 +801,6 @@ globalStyle(`${goalArriving} ${goalReached}`, {
 globalStyle(`${goalArriving} ${stamp}`, {
   animation: arrive(stampIn, 450, 1100),
 });
+
+// Make your own goal sits a step below the suggestions
+export const addOwn = style({ marginTop: space.sp4 });

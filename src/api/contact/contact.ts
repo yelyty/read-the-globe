@@ -4,7 +4,6 @@ import type { Problem } from '../outcome';
 
 export type ContactMessage = { name: string; email: string; message: string };
 
-// insert-only for everyone (contact-messages SQL): the form can send, never read back
 export async function sendContactMessage(
   message: ContactMessage
 ): Promise<Problem> {

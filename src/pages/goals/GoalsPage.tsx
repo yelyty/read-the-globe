@@ -1,42 +1,27 @@
 import { useEffect, useRef, useState } from 'react';
 import { getRouteApi, useNavigate, useRouter } from '@tanstack/react-router';
 import type { Feature } from 'geojson';
-import { PlusIcon } from '@phosphor-icons/react';
 
-import type { Goal, GoalKind } from '../../types';
+import type { Goal } from '../../types';
 import { atlasMarks } from '../../utils/atlasMarks';
 import { worldShapes } from '../../utils/world';
-import {
-  addGoal,
-  deleteGoal,
-  markReached,
-  restoreGoal,
-} from '../../api/goals/goals';
+import { addGoal, deleteGoal, restoreGoal } from '../../api/goals/goals';
 import { useStatus } from '../../hooks/useStatus';
 import { useUndo } from '../../hooks/useUndo';
 import { prefersReducedMotion } from '../../utils/motion';
 import { useCountryNames } from '../../hooks/useCountryNames';
 import { m } from '../../paraglide/messages.js';
 import PageTitle from '../../components/PageTitle/PageTitle';
-import { localToday } from '../../utils/readDate';
-import { withBold } from '../../utils/text';
-import {
-  CATALOGUE,
-  KIND_GROUP,
-  MAX_GOALS,
-  goalName,
-  type Suggestion,
-} from './catalogue';
+import EmptyState from '../../components/EmptyState/EmptyState';
+import HilltopSticker from '../../components/Sticker/HilltopSticker';
+import { CATALOGUE, MAX_GOALS, goalName } from './catalogue';
 import { goalProgress, isDone, type GoalDraft } from './goalProgress';
-import GoalDestination from './GoalDestination';
-import SuggestionGroup from './SuggestionGroup';
+import { useReachedStamps } from './useReachedStamps';
 import GoalRow from './GoalRow';
+import GoalSuggestions from './GoalSuggestions';
 import GoalDialog from './GoalsDialog';
 import BooksDialog from './BooksDialog';
 import * as styles from './GoalsPage.css';
-
-// the suggestions offered: the best few, then one of each kind of goal if it isn't there yet
-const TOP_SUGGESTIONS = 4;
 
 const app = getRouteApi('/app');
 const route = getRouteApi('/app/goals');
@@ -53,8 +38,6 @@ const GoalsPage = () => {
   const say = (text: string) => status.show({ text });
   const { add: addSlug } = route.useSearch();
   const navigate = useNavigate();
-  // goals that crossed their flag while the reader looked: each gets the arrival once
-  const [arriving, setArriving] = useState<number[]>([]);
   // the goal to focus once it shows up in the list: one just added, or back from Undo
   const focusName = useRef<string | null>(null);
 
@@ -69,37 +52,10 @@ const GoalsPage = () => {
   };
 
   const marks = atlasMarks(books);
+  const arriving = useReachedStamps(goals, books);
 
   const progress = (draft: GoalDraft & { id?: number }) =>
     goalProgress(draft, marks, books);
-
-  // a goal is stamped reached the first time it is seen full, and loses the stamp if a book is removed
-  useEffect(() => {
-    const changes = goals
-      .map((goal) => ({
-        g: goal,
-        done: isDone(goalProgress(goal, atlasMarks(books), books)),
-      }))
-      .filter(({ g, done }) => done !== !!g.reachedOn);
-
-    if (!changes.length) return;
-
-    Promise.all(
-      changes.map(({ g, done }) =>
-        markReached(g.id, done ? localToday() : null)
-      )
-    ).then((problems) => {
-      if (!problems.every((problem) => !problem)) return;
-      if (!prefersReducedMotion())
-        setArriving((prev) => [
-          ...prev,
-          ...changes
-            .filter((change) => change.done)
-            .map((change) => change.g.id),
-        ]);
-      router.invalidate();
-    });
-  }, [goals, books, router]);
 
   useEffect(() => {
     const focused = goals.find(
@@ -206,101 +162,9 @@ const GoalsPage = () => {
     });
   };
 
-  // the suggestions: the ones your books already go furthest into lead as destinations (four, one row),
-  // topped up with one of each kind; the rest fold under More goals
-  const have = new Set(goals.map((goal) => goal.name.toLowerCase()));
-
-  const left = CATALOGUE.filter(
-    (entry) => !have.has(entry.name.toLowerCase())
-  ).map((entry, i) => {
-    const prog = progress(entry);
-
-    return {
-      c: entry,
-      i,
-      p: prog,
-      score: entry.kind === 'theme' ? -1 : prog.done / prog.total,
-    };
-  });
-
-  const pick = !goals.length
-    ? left
-        .filter((option) => option.score > 0 && option.score < 1)
-        .sort(
-          (first, second) => second.score - first.score || first.i - second.i
-        )[0]
-    : undefined;
-
-  const offered = left.filter((option) => option !== pick);
-
-  const top = offered
-    .filter((option) => option.score > 0 && option.score < 1)
-    .sort((first, second) => second.score - first.score || first.i - second.i)
-    .slice(0, TOP_SUGGESTIONS);
-
-  for (const kind of Object.keys(KIND_GROUP) as GoalKind[]) {
-    const extra = offered.find(
-      (option) => option.c.kind === kind && !top.includes(option)
-    );
-
-    if (
-      extra &&
-      top.length < TOP_SUGGESTIONS &&
-      !top.some((option) => option.c.kind === kind)
-    )
-      top.push(extra);
-  }
-
-  const rest = offered.filter((option) => !top.includes(option));
-
-  // More goals, by kind; a kind with nothing left to offer isn't shown
-  const groups = (Object.keys(KIND_GROUP) as GoalKind[])
-    .map((kind) => ({
-      kind,
-      items: rest.filter((option) => option.c.kind === kind),
-    }))
-    .filter((group) => group.items.length);
-
   /* ---------- lists ---------- */
-  const renderDestination = ({ c, p }: Suggestion) => (
-    <GoalDestination
-      key={c.name}
-      goal={c}
-      progress={p}
-      marks={marks}
-      shapes={shapes}
-      disabled={full}
-      onAdd={add}
-    />
-  );
-
-  const renderGroup = ({ kind, items }: (typeof groups)[number]) => (
-    <SuggestionGroup
-      key={kind}
-      kind={kind}
-      items={items}
-      disabled={full}
-      onAdd={add}
-    />
-  );
-
-  const renderGoal = (goal: Goal) => (
-    <GoalRow
-      key={goal.id}
-      goal={goal}
-      progress={progress(goal)}
-      marks={marks}
-      shapes={shapes}
-      name={name}
-      onEdit={handleEdit(goal)}
-      onRemove={handleRemove(goal)}
-      onChooseBooks={handleChooseBooks(goal)}
-      arriving={arriving.includes(goal.id)}
-    />
-  );
 
   /* ---------- handlers ---------- */
-  const handleAdd = (draft: GoalDraft) => () => add(draft);
   const handleNewGoal = () => setEditing('new');
   const handleEdit = (goal: Goal) => () => setEditing(goal);
   const handleRemove = (goal: Goal) => () => remove(goal);
@@ -321,67 +185,19 @@ const GoalsPage = () => {
     choosing &&
     saved(m.goals_books_counted({ count, goal: goalName(choosing.name) }));
 
-  const suggestions = (
-    <section className={styles.addGoal} aria-labelledby="add-goal-title">
-      <details className={styles.sugg} open={!goals.length || undefined}>
-        <summary>
-          <h2 id="add-goal-title" className={styles.h2}>
-            {m.goals_aim()}
-          </h2>
-        </summary>
-        {pick && (
-          <div className={styles.pick}>
-            <p>
-              {withBold(
-                m.goals_pick({
-                  done: pick.p.done,
-                  count: pick.p.total,
-                  goal: goalName(pick.c.name),
-                })
-              )}
-            </p>
-            <button
-              type="button"
-              className={styles.primary}
-              onClick={handleAdd(pick.c)}
-            >
-              <PlusIcon aria-hidden="true" />
-              {m.goals_add_named({ goal: goalName(pick.c.name) })}
-            </button>
-          </div>
-        )}
-        {full && <p className={styles.full}>{m.goals_full()}</p>}
-        {top.length > 0 && (
-          <ul className={styles.dests}>{top.map(renderDestination)}</ul>
-        )}
-        {rest.length > 0 && (
-          <details className={styles.more}>
-            <summary>
-              {m.goals_more()}{' '}
-              <span className={styles.moreN}>· {rest.length}</span>
-            </summary>
-            {groups.map(renderGroup)}
-          </details>
-        )}
-      </details>
-      <button
-        type="button"
-        className={styles.outline}
-        aria-haspopup="dialog"
-        disabled={full}
-        onClick={handleNewGoal}
-      >
-        <PlusIcon aria-hidden="true" />
-        {m.goals_make_own()}
-      </button>
-    </section>
-  );
-
   return (
     <>
       <PageTitle>{m.nav_goals()}</PageTitle>
 
-      {suggestions}
+      <GoalSuggestions
+        goals={goals}
+        marks={marks}
+        shapes={shapes}
+        progress={progress}
+        full={full}
+        onAdd={add}
+        onNewGoal={handleNewGoal}
+      />
       {goals.length ? (
         <>
           <details className={styles.yours} open>
@@ -394,45 +210,36 @@ const GoalsPage = () => {
                 {full && ` · ${m.goals_sum_full()}`}
               </span>
             </summary>
-            <ul className={styles.goalList}>{sorted.map(renderGoal)}</ul>
+            <ul className={styles.goalList}>
+              {sorted.map((goal) => (
+                <GoalRow
+                  key={goal.id}
+                  goal={goal}
+                  progress={progress(goal)}
+                  marks={marks}
+                  shapes={shapes}
+                  name={name}
+                  onEdit={handleEdit(goal)}
+                  onRemove={handleRemove(goal)}
+                  onChooseBooks={handleChooseBooks(goal)}
+                  arriving={arriving.includes(goal.id)}
+                />
+              ))}
+            </ul>
           </details>
         </>
       ) : (
         <>
-          <div className={styles.empty}>
-            {/* a pennant planted on a hilltop at the end of a dashed path, in the landing's sticker style */}
-            <svg
-              className={styles.sticker}
-              viewBox="0 0 120 100"
-              aria-hidden="true"
-              focusable="false"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path
-                className={styles.gsHill}
-                d="M6 88 C 26 70, 44 58, 64 52 C 82 47, 100 56, 114 88 Z"
-              />
-              <path
-                className={styles.gsPath}
-                d="M14 86 C 30 80, 34 74, 46 70 C 58 66, 56 60, 66 56"
-              />
-              <circle className={styles.gsStart} cx="14" cy="86" r="3" />
-              <path className={styles.gsPole} d="M66 56 V 18" />
-              <path
-                className={styles.gsCloth}
-                d="M66 19 H 92 L 84 28 L 92 37 H 66 Z"
-              />
-            </svg>
-            <h2 className={styles.h2}>{m.goals_empty_title()}</h2>
-            <p>
-              {m.goals_empty_text()}{' '}
-              {books.length
+          <EmptyState
+            className={styles.empty}
+            art={<HilltopSticker />}
+            title={m.goals_empty_title()}
+            text={`${m.goals_empty_text()} ${
+              books.length
                 ? m.goals_empty_have_books()
-                : m.goals_empty_no_books()}
-            </p>
-          </div>
+                : m.goals_empty_no_books()
+            }`}
+          />
         </>
       )}
 

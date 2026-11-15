@@ -28,26 +28,6 @@ const ContinentRow = ({
   open,
   onFocusCountry,
 }: ContinentRowProps) => {
-  const renderPeek = (code: string) => (
-    <CountryShape
-      key={code}
-      code={code}
-      mark={marks[code]}
-      width={56}
-      height={35}
-    />
-  );
-
-  const renderStamp = (code: string) => (
-    <CountryStamp
-      key={code}
-      code={code}
-      name={name(code)}
-      mark={marks[code]}
-      onFocusCountry={onFocusCountry}
-    />
-  );
-
   return (
     <details className={styles.ccRow} open={open}>
       <summary className={styles.ccSummary}>
@@ -61,13 +41,31 @@ const ContinentRow = ({
           </span>
         </h3>
         <span className={styles.ccPeek} aria-hidden="true">
-          {codes.slice(0, PEEK).map(renderPeek)}
+          {codes.slice(0, PEEK).map((code) => (
+            <CountryShape
+              key={code}
+              code={code}
+              mark={marks[code]}
+              width={56}
+              height={35}
+            />
+          ))}
           {codes.length > PEEK && (
             <span className={styles.ccMore}>+{codes.length - PEEK}</span>
           )}
         </span>
       </summary>
-      <ul className={styles.ccStamps}>{codes.map(renderStamp)}</ul>
+      <ul className={styles.ccStamps}>
+        {codes.map((code) => (
+          <CountryStamp
+            key={code}
+            code={code}
+            name={name(code)}
+            mark={marks[code]}
+            onFocusCountry={onFocusCountry}
+          />
+        ))}
+      </ul>
     </details>
   );
 };

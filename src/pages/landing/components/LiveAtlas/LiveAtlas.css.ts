@@ -61,8 +61,6 @@ export const land = style({
 export const set = style({ fill: vars.color.olive });
 export const author = style({ fill: vars.color.markerAuthor });
 export const both = style({ fill: 'url(#al-hatch)' });
-export const hatchSet = style({ fill: vars.color.olive });
-export const hatchAuthor = style({ fill: vars.color.markerAuthor });
 
 const pingOut = keyframes({
   from: { opacity: 0.9, scale: '.3' },

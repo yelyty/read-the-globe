@@ -1,7 +1,6 @@
 import { useLayoutEffect, useRef } from 'react';
 
 import type { Marks } from '../../utils/atlasMarks';
-import type { BookEntry } from '../../types';
 import { m } from '../../paraglide/messages.js';
 import * as styles from './HomePage.css';
 import TipBook from './TipBook';
@@ -69,15 +68,6 @@ const MapTip = ({ tip, marks, names }: MapTipProps) => {
     key: one ? m.tip_key_one : m.tip_key_many,
   }[tip.by]();
 
-  const renderBook = (book: BookEntry) => (
-    <TipBook
-      key={book.id}
-      book={book}
-      set={mark.set.includes(book)}
-      author={mark.author.includes(book)}
-    />
-  );
-
   return (
     <div ref={ref} className={styles.tip} role="tooltip">
       <p className={`${styles.tipHead} ${styles.tipHeadBooks}`}>
@@ -85,7 +75,14 @@ const MapTip = ({ tip, marks, names }: MapTipProps) => {
         <span>{m.count_book({ count: books.length })}</span>
       </p>
       <ul className={styles.tipList}>
-        {books.slice(0, SHOWN).map(renderBook)}
+        {books.slice(0, SHOWN).map((book) => (
+          <TipBook
+            key={book.id}
+            book={book}
+            set={mark.set.includes(book)}
+            author={mark.author.includes(book)}
+          />
+        ))}
       </ul>
       <p className={`${styles.tipFoot} ${styles.tipFootRule}`}>
         {books.length > SHOWN &&

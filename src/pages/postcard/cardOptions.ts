@@ -46,3 +46,17 @@ export const countLabel = (count: number) =>
   count ? m.postcard_top({ n: count }) : m.postcard_all();
 
 export const COUNTS = [TOP_FEW, TOP_MORE, 0] as const;
+
+export const FRAMES = {
+  perforated: m.postcard_frame_perforated,
+  framed: m.postcard_frame_framed,
+  plain: m.postcard_frame_plain,
+} as const;
+
+export type ColorKey = keyof typeof COLORS;
+
+// the choices in the order they're offered
+export const KIND_KEYS = keys(KINDS);
+export const PAPER_KEYS = keys(PAPERS);
+export const FRAME_KEYS = keys(FRAMES);
+export const COLOR_KEYS = keys(COLORS);

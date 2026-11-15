@@ -65,11 +65,25 @@ export default defineConfig([
             'Declare the handler as a named function before the return (e.g. const handleClick = …) and pass it by name.',
         },
         {
-          // {books.map((book) => <li>…</li>)} → {books.map(renderBook)}, or an item component when it's big
+          // a list item is a component: {books.map((book) => <BookItem key={book.id} book={book} />)}
           selector:
-            'JSXExpressionContainer CallExpression[callee.property.name=/^(map|flatMap|filter|sort|find|some|every|reduce)$/] > :matches(ArrowFunctionExpression, FunctionExpression)',
+            'JSXExpressionContainer CallExpression[callee.property.name=/^(map|flatMap)$/] > :matches(ArrowFunctionExpression:not([body.type="JSXElement"]), ArrowFunctionExpression[body.openingElement.name.name=/^([a-z]|Fragment$)/], FunctionExpression)',
           message:
-            'Name the list callback before the return (const renderItem = …, or const options = list.map(…)); a big item gets its own component.',
+            'Render each list item as its own component, inline: list.map((item) => <ItemComponent key={…} item={item} />).',
+        },
+        {
+          // {books.filter((book) => …)} → const shown = books.filter(…) before the return
+          selector:
+            'JSXExpressionContainer CallExpression[callee.property.name=/^(filter|sort|find|some|every|reduce)$/] > :matches(ArrowFunctionExpression, FunctionExpression)',
+          message:
+            'Name the derived value before the return (const shown = list.filter(…)).',
+        },
+        {
+          // no render functions or render props: a piece of JSX is a component, a value, or children
+          selector:
+            ':matches(VariableDeclarator[id.name=/^render[A-Z]/], FunctionDeclaration[id.name=/^render[A-Z]/], JSXAttribute[name.name=/^render[A-Z]/], TSPropertySignature[key.name=/^render[A-Z]/])',
+          message:
+            'No renderX functions or props: make it a component, a JSX value (const footer = <…/>), or pass children.',
         },
       ],
     },

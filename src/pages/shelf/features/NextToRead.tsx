@@ -17,13 +17,12 @@ import { useUndo } from '../../../hooks/useUndo';
 import { useDirty, useLeaveGuard } from '../../../hooks/useUnsaved';
 import Select from '../../../components/Select/Select';
 import Suggest from '../../../components/Suggest/Suggest';
-import { fieldError } from '../../../components/Field/Field.css';
-import {
-  countryStamp,
-  loadCountries,
-  type Country,
-} from '../../../utils/countryStamps';
-import { goalHas } from '../../goals/goalProgress';
+import Field from '../../../components/Field/Field';
+import { Button } from '../../../components/Button/Button';
+import EmptyState from '../../../components/EmptyState/EmptyState';
+import RibbonSticker from '../../../components/Sticker/RibbonSticker';
+import StatusLine from '../../../components/StatusLine/StatusLine';
+import { loadCountries, type Country } from '../../../utils/countryStamps';
 import * as styles from '../ShelfPage.css';
 import NextItem from './NextItem';
 
@@ -197,93 +196,64 @@ const NextToRead = ({
     setError(undefined);
   };
 
-  /* ---------- lists ---------- */
+  // a field's own error, shown under it
+  const errorAt = (at: string) => (error?.at === at ? error.text : undefined);
+
   const countryNames = sorted.map(([, countryName]) => countryName);
 
-  const renderItem = (item: NextRead) => {
-    const code = item.countryCode;
-    const countryInfo = code && countries?.get(code);
-    // the goals this book would move along
-    const itemGoals = code ? goals.filter((goal) => goalHas(goal, code)) : [];
+  const countryControl = (
+    <Suggest
+      options={countryNames}
+      maxLength={60}
+      placeholder={m.next_placeholder_country()}
+      autoComplete="off"
+      value={country}
+      onValue={handleCountryValue}
+    />
+  );
 
-    return (
-      <NextItem
-        key={item.id}
-        item={item}
-        stamp={countryInfo ? countryStamp(countryInfo) : null}
-        place={code ? (names[code] ?? '') : ''}
-        fresh={Boolean(code && !marks[code])}
-        goals={itemGoals}
-        onRemove={remove}
-      />
-    );
-  };
+  /* ---------- lists ---------- */
 
   return (
     <div>
       <form className={styles.nextForm} onSubmit={submit} noValidate>
-        <div>
-          <label className={styles.fieldLabel} htmlFor="n-title">
-            {m.next_label_title()}
-          </label>
-          <input
-            ref={titleRef}
-            id="n-title"
-            className={styles.input}
-            maxLength={200}
-            placeholder={m.next_placeholder_title()}
-            value={title}
-            aria-invalid={error?.at === 'n-title' || undefined}
-            aria-describedby={
-              error?.at === 'n-title' ? 'n-title-err' : undefined
-            }
-            onChange={handleTitleChange}
-          />
-          {error?.at === 'n-title' && (
-            <p id="n-title-err" className={fieldError}>
-              {error.text}
-            </p>
-          )}
-        </div>
-        <div>
-          <label className={styles.fieldLabel} htmlFor="n-author">
-            {m.next_label_author()}{' '}
-            <span className={styles.optional}>{m.common_optional()}</span>
-          </label>
-          <input
-            id="n-author"
-            className={styles.input}
-            maxLength={120}
-            placeholder={m.next_placeholder_author()}
-            value={author}
-            onChange={handleAuthorChange}
-          />
-        </div>
-        <div>
-          <label className={styles.fieldLabel} htmlFor="n-country">
-            {m.next_label_country()}{' '}
-            <span className={styles.optional}>{m.common_optional()}</span>
-          </label>
-          <Suggest
-            id="n-country"
-            className={styles.input}
-            options={countryNames}
-            maxLength={60}
-            placeholder={m.next_placeholder_country()}
-            autoComplete="off"
-            value={country}
-            aria-invalid={error?.at === 'n-country' || undefined}
-            aria-describedby={
-              error?.at === 'n-country' ? 'n-country-err' : undefined
-            }
-            onValue={handleCountryValue}
-          />
-          {error?.at === 'n-country' && (
-            <p id="n-country-err" className={fieldError}>
-              {error.text}
-            </p>
-          )}
-        </div>
+        <Field
+          ref={titleRef}
+          id="n-title"
+          compact
+          label={m.next_label_title()}
+          maxLength={200}
+          placeholder={m.next_placeholder_title()}
+          value={title}
+          error={errorAt('n-title')}
+          onChange={handleTitleChange}
+        />
+        <Field
+          id="n-author"
+          compact
+          label={
+            <>
+              {m.next_label_author()}{' '}
+              <span className={styles.optional}>{m.common_optional()}</span>
+            </>
+          }
+          maxLength={120}
+          placeholder={m.next_placeholder_author()}
+          value={author}
+          onChange={handleAuthorChange}
+        />
+        <Field
+          id="n-country"
+          compact
+          label={
+            <>
+              {m.next_label_country()}{' '}
+              <span className={styles.optional}>{m.common_optional()}</span>
+            </>
+          }
+          error={errorAt('n-country')}
+          control={countryControl}
+        />
         {code && (
           <div className={styles.nextWide}>
             <label
@@ -312,62 +282,41 @@ const NextToRead = ({
           </p>
         )}
         <div className={`${styles.nextWide} ${styles.formRow}`}>
-          <button
+          <Button
             type="submit"
-            className={styles.primary}
+            variant="primary"
             disabled={saving}
             aria-busy={saving || undefined}
           >
             <BookmarkSimpleIcon aria-hidden="true" />
             {saving ? m.log_saving() : m.next_save()}
-          </button>
-          <p className={styles.status} role="status">
-            {said}
-          </p>
+          </Button>
+          <StatusLine>{said}</StatusLine>
         </div>
       </form>
 
       {failed && <p className={styles.emptyNote}>{m.next_load_failed()}</p>}
       {items.length > 0 ? (
-        <ul className={styles.nextList}>{items.map(renderItem)}</ul>
+        <ul className={styles.nextList}>
+          {items.map((item) => (
+            <NextItem
+              key={item.id}
+              item={item}
+              countries={countries}
+              names={names}
+              marks={marks}
+              goals={goals}
+              onRemove={remove}
+            />
+          ))}
+        </ul>
       ) : (
         !failed && (
-          <div className={styles.nextEmpty}>
-            {/* a closed book with a ribbon marking where you'll start, its dotted road running to a pin not yet placed */}
-            <svg
-              className={styles.sticker}
-              viewBox="0 0 120 100"
-              aria-hidden="true"
-              focusable="false"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path
-                className={styles.nsRoad}
-                d="M50 74 C 64 80, 76 74, 84 64 C 90 56, 94 50, 98 44"
-              />
-              <rect
-                className={styles.nsBook}
-                x="14"
-                y="30"
-                width="44"
-                height="50"
-                rx="3"
-              />
-              <path className={styles.nsSpine} d="M22 30 V 80" />
-              <path
-                className={styles.nsRibbon}
-                d="M44 26 V 92 L 40 88 L 36 92 V 26 Z"
-              />
-              <path
-                className={styles.nsPin}
-                d="M101 18c-6 0-10.5 4.6-10.5 10.4 0 7.6 10.5 17.6 10.5 17.6s10.5-10 10.5-17.6C111.5 22.6 107 18 101 18Z"
-              />
-              <circle className={styles.nsPinEye} cx="101" cy="28.6" r="3.4" />
-            </svg>
-            <p>{m.next_empty()}</p>
-          </div>
+          <EmptyState
+            className={styles.nextEmpty}
+            art={<RibbonSticker />}
+            text={m.next_empty()}
+          />
         )
       )}
     </div>

@@ -1,5 +1,11 @@
-import type { Mark } from '../../utils/atlasMarks';
+import { markOf, type Mark, type MarkWhich } from '../../utils/atlasMarks';
 import * as styles from './GoalsPage.css';
+
+const SHAPE: Record<MarkWhich, string> = {
+  set: styles.shapeSet,
+  author: styles.shapeAuthor,
+  both: styles.shapeMarked,
+};
 
 type PlateCountryProps = {
   /** its outline, already projected onto the plate */
@@ -11,15 +17,9 @@ type PlateCountryProps = {
 
 // one country on a goal's plate: to do, or coloured by its marks
 const PlateCountry = ({ d, mark, hatch }: PlateCountryProps) => {
-  const both = mark && mark.set.length > 0 && mark.author.length > 0;
-
-  const className = !mark
-    ? styles.shapeTodo
-    : both
-      ? styles.shapeMarked
-      : mark.set.length
-        ? styles.shapeSet
-        : styles.shapeAuthor;
+  const which = mark && markOf(mark);
+  const both = which === 'both';
+  const className = which ? SHAPE[which] : styles.shapeTodo;
 
   return (
     <path

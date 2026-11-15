@@ -3,7 +3,8 @@ import LanguagePicker from '../../../../components/LanguagePicker/LanguagePicker
 import { m } from '../../../../paraglide/messages.js';
 import { SECTIONS } from '../../sections';
 import * as styles from './Footer.css';
-import FooterColumn, { type Column } from './FooterColumn';
+import FooterColumn from './FooterColumn';
+import FooterItem from './FooterItem';
 
 const COLUMNS = [
   {
@@ -26,19 +27,6 @@ const COLUMNS = [
 ] as const;
 
 const Footer = () => {
-  // the landing's own sections, as links back to them
-  const renderSection = (section: (typeof SECTIONS)[number]) => (
-    <li key={section.hash}>
-      <a className={styles.footerLink} href={`/#${section.hash}`}>
-        {section.label()}
-      </a>
-    </li>
-  );
-
-  const renderColumn = (column: Column) => (
-    <FooterColumn key={column.id} column={column} />
-  );
-
   return (
     <footer className={styles.footer}>
       <div className={styles.wrap}>
@@ -58,9 +46,20 @@ const Footer = () => {
             <h2 className={styles.footerHead} id="footer-product">
               {m.footer_product()}
             </h2>
-            <ul className={styles.footerList}>{SECTIONS.map(renderSection)}</ul>
+            {/* the landing's own sections, as links back to them */}
+            <ul className={styles.footerList}>
+              {SECTIONS.map((section) => (
+                <FooterItem
+                  key={section.hash}
+                  href={`/#${section.hash}`}
+                  label={section.label()}
+                />
+              ))}
+            </ul>
           </nav>
-          {COLUMNS.map(renderColumn)}
+          {COLUMNS.map((column) => (
+            <FooterColumn key={column.id} column={column} />
+          ))}
         </div>
         <div className={styles.footerTail}>
           <span>{m.footer_copyright({ year: 2026 })}</span>

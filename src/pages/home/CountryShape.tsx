@@ -1,9 +1,12 @@
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { geoEquirectangular, geoPath } from 'd3-geo';
 import type { Feature } from 'geojson';
 
-import type { Mark } from '../../utils/atlasMarks';
+import { markOf, type Mark } from '../../utils/atlasMarks';
 import { mainPiece, worldShapes } from '../../utils/world';
+import { useSvgId } from '../../hooks/useSvgId';
+import HatchPattern from '../../components/HatchPattern/HatchPattern';
+import { HATCH_STAMP } from '../../components/HatchPattern/hatchSize';
 import * as styles from './HomePage.css';
 
 // the space round a country's shape, as a share of its box's shorter side
@@ -19,8 +22,7 @@ type CountryShapeProps = {
 // One country's outline, filled with its mark from the map: olive, rust, or the hatch for both.
 const CountryShape = ({ code, mark, width, height }: CountryShapeProps) => {
   const [shape, setShape] = useState<Feature>();
-  // useId gives «r0»-style ids; an SVG url() wants plain letters
-  const hatch = 'hatch-' + useId().replace(/[^\w-]/g, '');
+  const hatch = useSvgId('hatch');
 
   useEffect(() => {
     worldShapes().then((all) => setShape(all[code]));
@@ -38,7 +40,7 @@ const CountryShape = ({ code, mark, width, height }: CountryShapeProps) => {
     mainPiece(shape)
   );
 
-  const both = mark.set.length > 0 && mark.author.length > 0;
+  const both = markOf(mark) === 'both';
 
   const fill = both
     ? `url(#${hatch})`
@@ -56,16 +58,7 @@ const CountryShape = ({ code, mark, width, height }: CountryShapeProps) => {
     >
       {both && (
         <defs>
-          <pattern
-            id={hatch}
-            patternUnits="userSpaceOnUse"
-            width="6"
-            height="6"
-            patternTransform="rotate(45)"
-          >
-            <rect width="6" height="6" className={styles.shapeSet} />
-            <rect width="3" height="6" className={styles.shapeAuthor} />
-          </pattern>
+          <HatchPattern id={hatch} size={HATCH_STAMP} />
         </defs>
       )}
       <path

@@ -1,7 +1,6 @@
-import { PlusIcon } from '@phosphor-icons/react';
-
 import { m } from '../../../../paraglide/messages.js';
 import * as styles from './Faq.css';
+import FaqItem from './FaqItem';
 
 const QUESTIONS = [
   { q: m.landing_faq_q1, a: m.landing_faq_a1 },
@@ -14,23 +13,17 @@ const QUESTIONS = [
 
 // A big heading on the left, the questions as rows on the grey band, each opening in place.
 const Faq = () => {
-  const renderQuestion = ({ q, a }: (typeof QUESTIONS)[number], i: number) => (
-    <details key={i} className={styles.item}>
-      <summary className={styles.summary}>
-        {q()}
-        <PlusIcon className={styles.plus} aria-hidden="true" />
-      </summary>
-      <p className={styles.answer}>{a()}</p>
-    </details>
-  );
-
   return (
     <section className={styles.faq} id="faq" aria-labelledby="faq-h">
       <div className={styles.inner}>
         <h2 className={styles.title} id="faq-h">
           {m.landing_faq_title()}
         </h2>
-        <div className={styles.list}>{QUESTIONS.map(renderQuestion)}</div>
+        <div className={styles.list}>
+          {QUESTIONS.map(({ q, a }, i) => (
+            <FaqItem key={i} question={q()} answer={a()} />
+          ))}
+        </div>
       </div>
     </section>
   );

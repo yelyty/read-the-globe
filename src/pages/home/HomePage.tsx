@@ -1,17 +1,15 @@
 import {
   useCallback,
-  useEffect,
   useMemo,
   useRef,
   useState,
   type MouseEvent,
   type PointerEvent,
 } from 'react';
-import { getRouteApi, Link, useNavigate } from '@tanstack/react-router';
+import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import {
   ArrowsInIcon,
   ArrowsOutIcon,
-  FlagIcon,
   PushPinIcon,
 } from '@phosphor-icons/react';
 
@@ -24,50 +22,28 @@ import { worldsOf } from '../../utils/worlds';
 import { useAuth } from '../../auth/auth-context';
 import { useCountryNames } from '../../hooks/useCountryNames';
 import { useLanding } from '../../hooks/useLanding';
-import { useStatus } from '../../hooks/useStatus';
 import PageTitle from '../../components/PageTitle/PageTitle';
+import ButtonLink from '../../components/Button/ButtonLink';
 import { byLogged } from '../../utils/readDate';
-import { prefersReducedMotion } from '../../utils/motion';
 import { m } from '../../paraglide/messages.js';
 import * as styles from './HomePage.css';
 import AtlasCountries from './AtlasCountries';
 import BeyondMap from './BeyondMap';
 import Cartouche from './features/Cartouche';
 import MapKey from './MapKey';
-import MapTip, { type Tip } from './MapTip';
+import MapTip from './MapTip';
 import RecentReads from './features/RecentReads';
-import { ringAt, plateInView, drawn } from './pinFlight';
+import { useFullScreen } from './useFullScreen';
+import { useMapTip } from './useMapTip';
+import { usePinFlight } from './usePinFlight';
 
 const app = getRouteApi('/app');
 const RECENT = 3;
 
-const PIN =
-  '<svg viewBox="0 0 24 24"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"/><circle cx="12" cy="9" r="2.8"/></svg>';
-
-// the line said when the pins land
-const SAID_MS = 6000;
-// a goal reached is announced after the pins settle
-const GOAL_SAY_MS = 900;
-// a flying pin arcs up by a share of its sideways distance, within these bounds
-const MIN_LIFT = 60;
-const MAX_LIFT = 160;
-const LIFT_SHARE = 0.25;
-// pins leave one after another and fly for this long
-const FLIGHT_MS = 820;
-const FIRST_PIN_DELAY_MS = 120;
-const PIN_STAGGER_MS = 110;
-// a country smaller than this, both ways, gets the ring
-const TINY_COUNTRY = 24;
-// a beat after the last pin lands before what comes next
-const LAND_PAUSE_MS = 260;
-
 const HomePage = () => {
   const [show, setShow] = useState<Show>('all');
-  const [full, setFull] = useState(false);
-  const [tip, setTip] = useState<Tip | null>(null);
-  const [landed, setLanded] = useState<Set<string>>(() => new Set());
-  const [said, setSaid] = useState('');
-  const [tick, setTick] = useState(0);
+  const [full, setFull] = useFullScreen();
+  const { tip, setTip, tipAt, focusCountry } = useMapTip();
   const pointer = useRef<'mouse' | 'touch'>('mouse');
   const plate = useRef<HTMLDivElement>(null);
 
@@ -75,50 +51,7 @@ const HomePage = () => {
   const { user } = useAuth();
   const names = useCountryNames();
   const [landing, setLanding] = useLanding();
-  const { show: say } = useStatus();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!full) return;
-
-    const close = (keyEvent: KeyboardEvent) =>
-      keyEvent.key === 'Escape' && setFull(false);
-
-    document.addEventListener('keydown', close);
-    document.documentElement.style.overflow = 'hidden';
-
-    return () => {
-      document.removeEventListener('keydown', close);
-      document.documentElement.style.overflow = '';
-    };
-  }, [full]);
-
-  // a tip goes on Escape, or a press anywhere but the map and the country list
-  useEffect(() => {
-    if (!tip) return;
-
-    const away = (dismissEvent: Event) =>
-      (dismissEvent instanceof KeyboardEvent
-        ? dismissEvent.key === 'Escape'
-        : !(dismissEvent.target as Element).closest('[data-tips]')) &&
-      setTip(null);
-
-    document.addEventListener('pointerdown', away);
-    document.addEventListener('keydown', away);
-
-    return () => {
-      document.removeEventListener('pointerdown', away);
-      document.removeEventListener('keydown', away);
-    };
-  }, [tip]);
-
-  // the line said when the pins land stays a few seconds
-  useEffect(() => {
-    if (!said) return;
-    const timer = setTimeout(() => setSaid(''), SAID_MS);
-
-    return () => clearTimeout(timer);
-  }, [said]);
 
   /* A book just pinned: until its pins land, Home draws the atlas as it was (map, count, rows), and each country
      takes its mark as its pin arrives. ponytail: leaving Home mid-flight keeps the landing, so it flies again
@@ -127,6 +60,9 @@ const HomePage = () => {
     landing && books.some((book) => book.id === landing.bookId)
       ? landing
       : null;
+
+  const clearLanding = useCallback(() => setLanding(null), [setLanding]);
+  const { landed, said, tick } = usePinFlight(plate, flying, clearLanding);
 
   const marks = useMemo(() => atlasMarks(books), [books]);
 
@@ -170,149 +106,6 @@ const HomePage = () => {
 
   const stats = useMemo(() => atlasStats(shown, held), [shown, held]);
 
-  /* The one authored moment: an ink pin with a gold head leaves Log a book, arcs to each country the book adds,
-     and the country takes its mark as the pin lands. The count, the line and the goal news wait for the last
-     pin. Reduced motion lands everything at once. */
-  useEffect(() => {
-    const box = plate.current;
-
-    if (!flying || !box) return;
-    let live = true;
-    const pins: HTMLElement[] = [];
-
-    const land = () => {
-      if (!live) return;
-      setLanded(new Set(flying.targets));
-      setLanding(null);
-      setTick((prev) => prev + 1);
-      setSaid(flying.line);
-      // the bigger news, a beat after the pin: a goal crossed its flag with this book
-      const reached = flying.reached;
-
-      if (reached)
-        setTimeout(
-          () =>
-            say({
-              text: reached,
-              action: {
-                label: m.home_see_it(),
-                icon: <FlagIcon aria-hidden="true" />,
-                run: () => navigate({ to: '/app/goals' }),
-              },
-            }),
-          prefersReducedMotion() ? 0 : GOAL_SAY_MS
-        );
-    };
-
-    (async () => {
-      setLanded(new Set());
-      await drawn(box);
-      await plateInView(box);
-      if (!live) return;
-
-      const paths = flying.targets
-        .map((code) =>
-          box.querySelector<SVGPathElement>(`[data-code="${code}"]`)
-        )
-        .filter((path): path is SVGPathElement => !!path);
-
-      if (prefersReducedMotion() || !paths.length) return land();
-      // phones: bring the first country into view before anything lands on it
-      const scroller = paths[0].ownerSVGElement?.parentElement;
-
-      if (scroller && scroller.scrollWidth > scroller.clientWidth + 1) {
-        const scrollerRect = scroller.getBoundingClientRect();
-        const targetRect = paths[0].getBoundingClientRect();
-
-        scroller.scrollLeft +=
-          targetRect.left +
-          targetRect.width / 2 -
-          (scrollerRect.left + scrollerRect.width / 2);
-
-        await new Promise(requestAnimationFrame);
-      }
-
-      // a return visit: no flight to a country already marked, just a ring where the book went back to
-      if (flying.returning) {
-        ringAt(paths[0].getBoundingClientRect());
-
-        return land();
-      }
-
-      const launch =
-        [...document.querySelectorAll('[data-log-toggle]')].find(
-          (toggle) =>
-            toggle.getClientRects().length &&
-            getComputedStyle(toggle).visibility !== 'hidden'
-        ) ?? document.querySelector('header');
-
-      const from = launch!.getBoundingClientRect();
-      const x0 = from.left + from.width / 2;
-      const y0 = from.top + from.height / 2;
-      let count = 0;
-
-      paths.forEach((path, index) => {
-        const rect = path.getBoundingClientRect();
-        const dx = rect.left + rect.width / 2 - x0;
-        const dy = rect.top + rect.height / 2 - y0;
-        const lift = Math.min(MAX_LIFT, Math.abs(dx) * LIFT_SHARE + MIN_LIFT);
-        const pin = document.createElement('div');
-
-        pin.className = styles.flyPin;
-        pin.setAttribute('aria-hidden', 'true');
-        pin.innerHTML = PIN;
-        pin.style.left = `${x0}px`;
-        pin.style.top = `${y0}px`;
-        document.body.appendChild(pin);
-        pins.push(pin);
-
-        pin.animate(
-          [
-            { transform: 'translate(-50%, -100%) scale(1.2)', opacity: 0 },
-            {
-              transform: 'translate(-50%, -100%) scale(1)',
-              opacity: 1,
-              offset: 0.12,
-            },
-            {
-              transform: `translate(calc(-50% + ${dx / 2}px), calc(-100% + ${dy / 2 - lift}px)) scale(1)`,
-              offset: 0.55,
-            },
-            {
-              transform: `translate(calc(-50% + ${dx}px), calc(-100% + ${dy}px)) scale(1)`,
-              opacity: 1,
-              offset: 0.9,
-            },
-            {
-              transform: `translate(calc(-50% + ${dx}px), calc(-100% + ${dy}px)) scale(.6)`,
-              opacity: 0,
-            },
-          ],
-          {
-            duration: FLIGHT_MS,
-            delay: FIRST_PIN_DELAY_MS + index * PIN_STAGGER_MS,
-            easing: 'cubic-bezier(.45,.05,.3,1)',
-            fill: 'forwards',
-          }
-        ).onfinish = () => {
-          pin.remove();
-          if (!live) return;
-          const code = path.dataset.code!;
-
-          setLanded((prev) => new Set(prev).add(code));
-          if (rect.width < TINY_COUNTRY && rect.height < TINY_COUNTRY)
-            ringAt(rect);
-          if (++count === paths.length) setTimeout(land, LAND_PAUSE_MS);
-        };
-      });
-    })();
-
-    return () => {
-      live = false;
-      pins.forEach((pin) => pin.remove());
-    };
-  }, [flying, setLanding, say, navigate]);
-
   const firstName = String(user?.signUpName ?? '')
     .trim()
     .split(/\s+/)[0];
@@ -333,25 +126,6 @@ const HomePage = () => {
 
     return el && code && code !== ANTARCTICA ? { el, code } : null;
   };
-
-  const tipAt = useCallback((code: string, el: Element, by: Tip['by']) => {
-    const rect = el.getBoundingClientRect();
-
-    setTip({
-      code,
-      x: rect.left + rect.width / 2,
-      y: rect.top,
-      bottom: rect.bottom,
-      by,
-    });
-  }, []);
-
-  // a country chip reached from the keyboard shows the map's tip for it; leaving the chips hides it
-  const handleFocusCountry = useCallback(
-    (code: string, el: Element | null) =>
-      el ? tipAt(code, el, 'key') : setTip(null),
-    [tipAt]
-  );
 
   const imagined = worlds.filter((world) => world.books.length).length;
 
@@ -391,11 +165,11 @@ const HomePage = () => {
           <AtlasCountries
             marks={held}
             names={names}
-            onFocusCountry={handleFocusCountry}
+            onFocusCountry={focusCountry}
           />
         </>
       ),
-    [blank, worlds, shown, names, held, handleFocusCountry]
+    [blank, worlds, shown, names, held, focusCountry]
   );
 
   /* ---------- the plate's mouse shortcuts ---------- */
@@ -475,14 +249,15 @@ const HomePage = () => {
       {blank && (
         <div className={styles.firstRun}>
           <p>{m.home_first_run()}</p>
-          <Link
-            className={styles.primary}
+          <ButtonLink
+            variant="primary"
+            className={styles.cta}
             to="."
             search={(prev) => ({ ...prev, log: true })}
           >
             <PushPinIcon weight="fill" aria-hidden="true" />
             {m.home_log_first()}
-          </Link>
+          </ButtonLink>
         </div>
       )}
 

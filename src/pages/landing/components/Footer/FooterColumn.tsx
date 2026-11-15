@@ -1,6 +1,7 @@
-import { Link, type LinkProps } from '@tanstack/react-router';
+import type { LinkProps } from '@tanstack/react-router';
 
 import * as styles from './Footer.css';
+import FooterItem from './FooterItem';
 
 type FooterLink = { label: () => string; to: LinkProps['to'] };
 
@@ -13,20 +14,16 @@ export type Column = {
 
 // a column of the footer: its heading and its links
 const FooterColumn = ({ column }: { column: Column }) => {
-  const renderLink = (link: FooterLink) => (
-    <li key={link.to}>
-      <Link className={styles.footerLink} to={link.to}>
-        {link.label()}
-      </Link>
-    </li>
-  );
-
   return (
     <nav aria-labelledby={column.id}>
       <h2 className={styles.footerHead} id={column.id}>
         {column.title()}
       </h2>
-      <ul className={styles.footerList}>{column.links.map(renderLink)}</ul>
+      <ul className={styles.footerList}>
+        {column.links.map((link) => (
+          <FooterItem key={link.to} to={link.to} label={link.label()} />
+        ))}
+      </ul>
     </nav>
   );
 };

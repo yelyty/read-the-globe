@@ -12,8 +12,11 @@ import {
 } from '../../../../utils/flatMap';
 import { prefersReducedMotion } from '../../../../utils/motion';
 import { m } from '../../../../paraglide/messages.js';
+import HatchPattern from '../../../../components/HatchPattern/HatchPattern';
+import { HATCH_STAMP } from '../../../../components/HatchPattern/hatchSize';
 import { atlasAfter, BOOKS } from './miraAtlas';
 import AtlasCountry from './AtlasCountry';
+import AtlasPing from './AtlasPing';
 import * as styles from './LiveAtlas.css';
 
 // the window grows to full size over this share of the screen's height as it scrolls in
@@ -154,26 +157,6 @@ const LiveAtlas = () => {
       ? `${m.count_book({ count: BOOKS.length })}, ${m.count_country({ count: atlas.countries })}`
       : m.landing_atlas_latest({ title: latest[0], author: latest[1] });
 
-  const renderCountry = ({ code, d }: (typeof countries)[number]) => (
-    <AtlasCountry
-      key={code}
-      d={d}
-      set={atlas.set.has(code)}
-      author={atlas.author.has(code)}
-    />
-  );
-
-  // a ring where a book just pinned itself
-  const renderPing = (ping: Ping) => (
-    <circle
-      key={ping.key}
-      className={styles.ping}
-      cx={ping.x}
-      cy={ping.y}
-      r={14}
-    />
-  );
-
   return (
     <figure className={styles.frame} id="atlas" ref={figure}>
       <div className={styles.sheet}>
@@ -189,19 +172,24 @@ const LiveAtlas = () => {
           focusable="false"
         >
           <defs>
-            <pattern
-              id="al-hatch"
-              width="6"
-              height="6"
-              patternUnits="userSpaceOnUse"
-              patternTransform="rotate(45)"
-            >
-              <rect width="3" height="6" className={styles.hatchSet} />
-              <rect x="3" width="3" height="6" className={styles.hatchAuthor} />
-            </pattern>
+            <HatchPattern id="al-hatch" size={HATCH_STAMP} />
           </defs>
-          <g>{countries.map(renderCountry)}</g>
-          <g>{pings.map(renderPing)}</g>
+          <g>
+            {countries.map(({ code, d }) => (
+              <AtlasCountry
+                key={code}
+                d={d}
+                set={atlas.set.has(code)}
+                author={atlas.author.has(code)}
+              />
+            ))}
+          </g>
+          {/* a ring where a book just pinned itself */}
+          <g>
+            {pings.map((ping) => (
+              <AtlasPing key={ping.key} x={ping.x} y={ping.y} />
+            ))}
+          </g>
         </svg>
         <p className={srOnly} id="al-desc">
           {m.landing_atlas_desc()}

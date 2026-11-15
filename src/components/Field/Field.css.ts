@@ -37,6 +37,8 @@ export const formNotice = style({
 });
 
 export const field = style({ marginBottom: 16 });
+// an inline form's field: the form's grid spaces it
+export const fieldCompact = style({ marginBottom: 0 });
 
 export const fieldLabel = style({
   display: 'block',
@@ -68,6 +70,15 @@ export const input = style({
     outline: 'none',
   },
   selectors: { '&[aria-invalid="true"]': { borderColor: vars.color.error } },
+});
+
+// an inline form's input: 40px tall, body-size type, on the field tint
+export const inputCompact = style({
+  height: 'auto',
+  minHeight: 40,
+  padding: '8px 16px',
+  background: vars.color.field,
+  fontSize: 15,
 });
 
 export const inputPassword = style({ paddingRight: 72 });

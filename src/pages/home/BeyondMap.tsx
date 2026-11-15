@@ -88,15 +88,6 @@ const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
     }
   };
 
-  const renderWorld = (world: WorldRow) => (
-    <WorldItem
-      key={world.name}
-      world={world}
-      onOpen={setShown}
-      onRemove={remove}
-    />
-  );
-
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) =>
     setName(event.target.value);
 
@@ -116,7 +107,16 @@ const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
         </summary>
         <div className={styles.beyondBody}>
           {worlds.length > 0 && (
-            <ul className={styles.beyondList}>{worlds.map(renderWorld)}</ul>
+            <ul className={styles.beyondList}>
+              {worlds.map((world) => (
+                <WorldItem
+                  key={world.name}
+                  world={world}
+                  onOpen={setShown}
+                  onRemove={remove}
+                />
+              ))}
+            </ul>
           )}
           <form className={styles.beyondAdd} onSubmit={add} noValidate>
             <label className={styles.srOnly} htmlFor="w-name">

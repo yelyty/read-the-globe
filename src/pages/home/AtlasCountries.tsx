@@ -50,18 +50,6 @@ const AtlasCountries = ({
     ),
   }));
 
-  const renderRow = ({ continent, codes }: (typeof rows)[number]) => (
-    <ContinentRow
-      key={continent}
-      continent={continent}
-      codes={codes}
-      marks={marks}
-      name={name}
-      open={continent === biggest}
-      onFocusCountry={onFocusCountry}
-    />
-  );
-
   return (
     <section className={styles.section} aria-labelledby="countries-title">
       <div className={styles.subHead}>
@@ -72,7 +60,17 @@ const AtlasCountries = ({
         <p className={styles.subNote}>{m.home_countries_note()}</p>
       </div>
       <div className={styles.cc} data-tips>
-        {rows.map(renderRow)}
+        {rows.map(({ continent, codes }) => (
+          <ContinentRow
+            key={continent}
+            continent={continent}
+            codes={codes}
+            marks={marks}
+            name={name}
+            open={continent === biggest}
+            onFocusCountry={onFocusCountry}
+          />
+        ))}
       </div>
     </section>
   );

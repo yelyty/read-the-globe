@@ -7,6 +7,14 @@ import { PARENT } from './countryFrom';
 // A territory (Greenland) marks its own shape and the country it belongs to (Denmark).
 export type Mark = { set: BookEntry[]; author: BookEntry[] };
 export type Marks = Record<string, Mark>;
+export type MarkWhich = 'set' | 'author' | 'both';
+
+// which mark a country wears: a story set there, an author from there, or both (the hatch)
+export const markWhich = (set: boolean, author: boolean): MarkWhich =>
+  set && author ? 'both' : set ? 'set' : 'author';
+
+export const markOf = (mark: Mark): MarkWhich =>
+  markWhich(mark.set.length > 0, mark.author.length > 0);
 
 export function atlasMarks(books: BookEntry[]): Marks {
   const marks: Marks = {};

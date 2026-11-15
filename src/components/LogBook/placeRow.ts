@@ -19,3 +19,21 @@ export const row = (name = '', country = '', imagined = false): Row => ({
   pick: '',
   open: false,
 });
+
+// the rows a form starts with: an edited book's places, or one row from where Log a book was opened
+export const startRows = (
+  places: { name: string; countryCode?: string | null; imagined?: boolean }[],
+  start: { world?: string; country: string },
+  name: (code?: string | null) => string
+): Row[] =>
+  places.length
+    ? places.map((place) =>
+        place.imagined
+          ? row(place.name, '', true)
+          : // a place saved as just its country shows as an empty name beside that country
+            row(
+              place.name === name(place.countryCode) ? '' : place.name,
+              name(place.countryCode)
+            )
+      )
+    : [start.world ? row(start.world, '', true) : row('', start.country)];

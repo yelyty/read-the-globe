@@ -53,11 +53,3 @@ export const itemText = style({
   maxWidth: '52ch',
   color: vars.color.textSecondary,
 });
-
-export const status = style({
-  margin: 0,
-  fontFamily: vars.font.sans,
-  fontSize: 15,
-  fontWeight: 500,
-  color: vars.color.oliveInk,
-});

@@ -10,10 +10,6 @@ import * as styles from '../HomePage.css';
 type RecentReadsProps = { books: BookEntry[]; names: Record<string, string> };
 
 const RecentReads = ({ books, names }: RecentReadsProps) => {
-  const renderBook = (book: BookEntry) => (
-    <BookRow key={book.id} book={book} names={names} />
-  );
-
   return (
     <section className={styles.section} aria-labelledby="recent-title">
       <div className={styles.subHead}>
@@ -25,7 +21,11 @@ const RecentReads = ({ books, names }: RecentReadsProps) => {
           {m.nav_shelf()} <ArrowRightIcon aria-hidden="true" />
         </Link>
       </div>
-      <ul className={list}>{books.map(renderBook)}</ul>
+      <ul className={list}>
+        {books.map((book) => (
+          <BookRow key={book.id} book={book} names={names} />
+        ))}
+      </ul>
     </section>
   );
 };

@@ -9,9 +9,8 @@ import { m } from '../../../../paraglide/messages.js';
 import { skip } from '../../LandingPage.css';
 import { SECTIONS } from '../../sections';
 import * as styles from './Header.css';
+import SectionLink from './SectionLink';
 import { useCurrentSection } from './useCurrentSection';
-
-type Section = (typeof SECTIONS)[number];
 
 type HeaderProps = {
   onLogIn: () => void;
@@ -70,30 +69,6 @@ const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
     onLogIn();
   };
 
-  // the bar's section links mark the one on screen
-  const renderTrackLink = (section: Section) => (
-    <a
-      key={section.hash}
-      className={styles.trackLink}
-      href={`/#${section.hash}`}
-      aria-current={current === section.hash ? 'true' : undefined}
-    >
-      {section.label()}
-    </a>
-  );
-
-  // the phone menu's section links close the menu
-  const renderMenuLink = (section: Section) => (
-    <a
-      key={section.hash}
-      className={styles.menuItem}
-      href={`/#${section.hash}`}
-      onClick={handleMenuClose}
-    >
-      {section.label()}
-    </a>
-  );
-
   return (
     <>
       <a className={skip} href="#main">
@@ -107,7 +82,15 @@ const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
           </a>
 
           <nav className={styles.track} aria-label={m.landing_sections()}>
-            {SECTIONS.map(renderTrackLink)}
+            {/* the bar's section links mark the one on screen */}
+            {SECTIONS.map((section) => (
+              <SectionLink
+                key={section.hash}
+                section={section}
+                className={styles.trackLink}
+                current={current === section.hash}
+              />
+            ))}
           </nav>
           <div className={styles.tools}>
             <ThemeButton />
@@ -144,7 +127,15 @@ const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
             aria-label={m.landing_menu()}
             hidden={!menuOpen}
           >
-            {SECTIONS.map(renderMenuLink)}
+            {/* the phone menu's section links close the menu */}
+            {SECTIONS.map((section) => (
+              <SectionLink
+                key={section.hash}
+                section={section}
+                className={styles.menuItem}
+                onClick={handleMenuClose}
+              />
+            ))}
             {isAuthenticated ? (
               <Link
                 to="/app"

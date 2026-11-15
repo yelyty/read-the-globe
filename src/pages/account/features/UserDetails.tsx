@@ -8,6 +8,7 @@ import { Button } from '../../../components/Button/Button';
 import { m } from '../../../paraglide/messages.js';
 import * as styles from '../AccountPage.css';
 import Block from '../components/Block';
+import StatusLine from '../../../components/StatusLine/StatusLine';
 
 type UserDetailsProps = {
   user: Reader;
@@ -77,9 +78,7 @@ const UserDetails = ({ user }: UserDetailsProps) => {
             <CheckIcon aria-hidden="true" />
             {saving ? m.log_saving() : m.common_save()}
           </Button>
-          <p className={styles.status} role="status">
-            {status}
-          </p>
+          <StatusLine>{status}</StatusLine>
         </div>
       </form>
     </Block>

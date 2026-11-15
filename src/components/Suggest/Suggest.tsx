@@ -13,7 +13,9 @@ import {
 } from 'react';
 
 import { fold } from '../../utils/text';
+import { joinClass, useFieldControl } from '../Field/fieldControl';
 import * as styles from './Suggest.css';
+import SuggestOption from './SuggestOption';
 
 // space kept between the list and the screen's edge, and between the list and its field
 const SCREEN_MARGIN = 16;
@@ -48,6 +50,15 @@ const Suggest = ({
   ...input
 }: SuggestProps) => {
   const id = `sug-${useId().replace(/[^\w-]/g, '')}`;
+  // inside a Field it takes the field's id, class and aria props
+  const fieldControl = useFieldControl();
+
+  const inputProps = {
+    ...fieldControl,
+    ...input,
+    className: joinClass(fieldControl?.className, input.className),
+  };
+
   const field = useRef<HTMLInputElement>(null);
   const menu = useRef<HTMLUListElement>(null);
   const [open, setOpen] = useState(false);
@@ -183,24 +194,11 @@ const Suggest = ({
     if (li) pick(hits[Number(li.dataset.i)]);
   };
 
-  const renderHit = (option: string, i: number) => (
-    <li
-      key={option}
-      id={`${id}-${i}`}
-      data-i={i}
-      className={styles.option}
-      role="option"
-      aria-selected={i === at}
-    >
-      {option}
-    </li>
-  );
-
   // nothing to suggest (a real place's name): a plain field
   if (!options.length)
     return (
       <input
-        {...input}
+        {...inputProps}
         value={value}
         onChange={handlePlainChange}
         onKeyDown={onKeyDown}
@@ -210,7 +208,7 @@ const Suggest = ({
   return (
     <>
       <input
-        {...input}
+        {...inputProps}
         ref={field}
         value={value}
         role="combobox"
@@ -232,7 +230,17 @@ const Suggest = ({
         onMouseDown={handleMenuMouseDown}
         onClick={handleMenuClick}
       >
-        {shown && hits.map(renderHit)}
+        {shown &&
+          hits.map((option, i) => (
+            <SuggestOption
+              key={option}
+              id={`${id}-${i}`}
+              index={i}
+              active={i === at}
+            >
+              {option}
+            </SuggestOption>
+          ))}
       </ul>
     </>
   );

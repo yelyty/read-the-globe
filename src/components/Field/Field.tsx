@@ -1,20 +1,30 @@
-import { useState, type ComponentPropsWithoutRef, type ReactNode } from 'react';
+import { useState, type ComponentProps, type ReactNode } from 'react';
 
 import { m } from '../../paraglide/messages.js';
 import * as styles from './Field.css';
+import { FieldControlContext, type FieldInputProps } from './fieldControl';
 
 type FieldProps = Omit<
-  ComponentPropsWithoutRef<'input'>,
+  ComponentProps<'input'>,
   'id' | 'className' | 'children'
 > & {
   id: string;
-  label: string;
+  label: ReactNode;
   /** shown under the input once the form has been submitted */
   error?: string;
   /** adds a Show/Hide toggle */
   password?: boolean;
+  /** the smaller field of an inline form: 40px tall, no space under it */
+  compact?: boolean;
+  /** for the wrapper, e.g. a grid column */
+  className?: string;
+  /** another control in place of the <input> (Suggest, FieldTextarea): it reads the field's id and aria
+      props from context; the input props above are then unused */
+  control?: ReactNode;
   /** rendered between the input and the error, e.g. a strength meter */
   children?: ReactNode;
+  /** rendered last, under the error, e.g. a Hint or the picks so far */
+  below?: ReactNode;
 };
 
 const Field = ({
@@ -22,7 +32,11 @@ const Field = ({
   label,
   error,
   password = false,
+  compact = false,
+  className,
+  control,
   children,
+  below,
   ...inputProps
 }: FieldProps) => {
   const [visible, setVisible] = useState(false);
@@ -33,23 +47,39 @@ const Field = ({
       .filter(Boolean)
       .join(' ') || undefined;
 
-  const input = (
+  const inputClass = [
+    styles.input,
+    compact && styles.inputCompact,
+    password && styles.inputPassword,
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  const controlProps: FieldInputProps = {
+    id,
+    className: inputClass,
+    'aria-invalid': error ? true : undefined,
+    'aria-describedby': describedBy,
+  };
+
+  const input = control ? (
+    <FieldControlContext value={controlProps}>{control}</FieldControlContext>
+  ) : (
     <input
       {...inputProps}
-      id={id}
-      className={
-        password ? `${styles.input} ${styles.inputPassword}` : styles.input
-      }
+      {...controlProps}
       type={password ? (visible ? 'text' : 'password') : inputProps.type}
-      aria-invalid={error ? true : undefined}
-      aria-describedby={describedBy}
     />
   );
 
   const handleToggleVisible = () => setVisible((shown) => !shown);
 
+  const fieldClass = [styles.field, compact && styles.fieldCompact, className]
+    .filter(Boolean)
+    .join(' ');
+
   return (
-    <div className={styles.field} data-invalid={Boolean(error)}>
+    <div className={fieldClass} data-invalid={Boolean(error)}>
       <label htmlFor={id} className={styles.fieldLabel}>
         {label}
       </label>
@@ -74,6 +104,7 @@ const Field = ({
           {error}
         </div>
       )}
+      {below}
     </div>
   );
 };

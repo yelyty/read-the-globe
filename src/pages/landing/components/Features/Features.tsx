@@ -1,6 +1,6 @@
 import { useTheme } from '../../../../hooks/useTheme';
 import { m } from '../../../../paraglide/messages.js';
-import FeaturePanel, { type Panel } from './FeaturePanel';
+import FeaturePanel from './FeaturePanel';
 import * as styles from './Features.css';
 
 const PANELS = [
@@ -31,10 +31,6 @@ const PANELS = [
 const Features = () => {
   const night = useTheme() === 'dark' ? '-night' : '';
 
-  const renderPanel = (panel: Panel) => (
-    <FeaturePanel key={panel.shot} panel={panel} night={night} />
-  );
-
   return (
     <section className={styles.band} id="features" aria-labelledby="band-h">
       <svg
@@ -53,7 +49,11 @@ const Features = () => {
           {m.landing_band_title()}
         </h2>
         <p className={styles.sub}>{m.landing_band_sub()}</p>
-        <div className={styles.panels}>{PANELS.map(renderPanel)}</div>
+        <div className={styles.panels}>
+          {PANELS.map((panel) => (
+            <FeaturePanel key={panel.shot} panel={panel} night={night} />
+          ))}
+        </div>
       </div>
     </section>
   );

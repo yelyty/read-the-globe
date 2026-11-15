@@ -3,7 +3,6 @@ import { globalStyle, keyframes, style } from '@vanilla-extract/css';
 import { fontSize, space, vars } from '../../styles/theme.css';
 import {
   band as paperBand,
-  buttonSize,
   coarse,
   easeOut,
   easeSoft,
@@ -21,15 +20,7 @@ const band = `color-mix(in srgb, ${vars.color.secondary} 11%, ${vars.color.backg
 const fill = `color-mix(in srgb, ${vars.color.text} 6%, ${vars.color.background})`;
 const fillOn = `color-mix(in srgb, ${vars.color.text} 14%, ${vars.color.background})`;
 
-export const srOnly = style({
-  position: 'absolute',
-  width: 1,
-  height: 1,
-  margin: -1,
-  overflow: 'hidden',
-  clipPath: 'inset(50%)',
-  whiteSpace: 'nowrap',
-});
+export { srOnly } from '../../styles/global.css';
 
 /* ---------- the title: left over the map; centred while the atlas is blank ---------- */
 export const viewHead = style({
@@ -507,23 +498,6 @@ export const ccWhat = style({
 export const shapeSet = style({ fill: vars.color.olive });
 export const shapeAuthor = style({ fill: vars.color.markerAuthor });
 
-export const primary = style([
-  buttonSize,
-  {
-    // the app mock's .btn: body size, 40px tall like the fields beside it, no hero buttons
-    display: 'inline-flex',
-    alignItems: 'center',
-    marginTop: space.sp4,
-    borderRadius: 999,
-    background: vars.color.primary,
-    color: vars.color.onAccent,
-    fontFamily: vars.font.sans,
-    fontWeight: 500,
-    textDecoration: 'none',
-    ':hover': { background: vars.color.primaryHover },
-  },
-]);
-
 /* ---------- the map's tip: a marked country's books, or what a click on an unmarked one does ---------- */
 // a floating layer keeps a thin edge in place of a blurred shadow
 export const tip = style({
@@ -778,14 +752,6 @@ export const worldOpen = style({
   cursor: 'pointer',
   ':focus-visible': { ...focusRing, borderRadius: 8 },
 });
-export const dotImagined = style({
-  alignSelf: 'center',
-  flex: 'none',
-  width: 10,
-  height: 10,
-  borderRadius: '50%',
-  border: `1.5px dashed ${vars.color.textSecondary}`,
-});
 export const worldName = style({
   fontFamily: vars.font.serif,
   fontSize: fontSize.item,
@@ -903,3 +869,6 @@ globalStyle(`${worldBooks} li > div`, {
 });
 
 globalStyle(`${worldBooks} time`, { color: vars.color.textMuted });
+
+// the first-run invitation's button sits a step below its line
+export const cta = style({ marginTop: space.sp4 });

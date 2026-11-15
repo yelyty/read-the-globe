@@ -147,8 +147,6 @@ export const dot = style({
 });
 
 globalStyle(`${land}${set}${author}`, { fill: 'url(#both-hatch)' });
-export const hatchSet = style({ fill: vars.color.olive });
-export const hatchAuthor = style({ fill: vars.color.markerAuthor });
 
 globalStyle(`${plate}[data-show="set"] ${land}${set}${author}`, {
   fill: vars.color.olive,

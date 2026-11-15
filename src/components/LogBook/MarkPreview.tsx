@@ -1,4 +1,6 @@
+import { markWhich } from '../../utils/atlasMarks';
 import { m } from '../../paraglide/messages.js';
+import MarkDot from '../MarkDot/MarkDot';
 import * as styles from './LogBook.css';
 
 type MarkPreviewProps = {
@@ -11,9 +13,6 @@ type MarkPreviewProps = {
 
 // one country Pin it will mark, with its swatch and, for screen readers, which mark
 const MarkPreview = ({ name, set, author }: MarkPreviewProps) => {
-  const swatch =
-    set && author ? styles.swatch : set ? styles.dotSet : styles.dotAuthor;
-
   const which =
     set && author
       ? m.log_mark_both()
@@ -23,7 +22,7 @@ const MarkPreview = ({ name, set, author }: MarkPreviewProps) => {
 
   return (
     <span className={styles.mark}>
-      <i className={swatch} aria-hidden="true" />
+      <MarkDot kind={markWhich(Boolean(set), Boolean(author))} />
       {name}
       <span className={styles.srOnly}>, {which}</span>
     </span>

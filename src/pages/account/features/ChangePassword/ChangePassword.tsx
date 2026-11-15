@@ -7,6 +7,7 @@ import Hint from '../../../../components/Hint/Hint';
 import { Button } from '../../../../components/Button/Button';
 import { m } from '../../../../paraglide/messages.js';
 import Block from '../../components/Block';
+import StatusLine from '../../../../components/StatusLine/StatusLine';
 import * as styles from '../../AccountPage.css';
 import { validate, type Errors } from './validate';
 
@@ -99,9 +100,7 @@ const ChangePassword = ({ email }: { email: string }) => {
             <LockKeyIcon aria-hidden="true" />
             {saving ? m.log_saving() : m.account_password_title()}
           </Button>
-          <p className={styles.status} role="status">
-            {status}
-          </p>
+          <StatusLine>{status}</StatusLine>
         </div>
       </form>
     </Block>

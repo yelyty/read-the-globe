@@ -59,13 +59,5 @@ export const row = style({
   marginTop: 8,
 });
 
-export const status = style({
-  margin: 0,
-  fontFamily: vars.font.sans,
-  fontSize: 15,
-  fontWeight: 500,
-  color: vars.color.oliveInk,
-});
-
 // Download an example CSV, tucked under the import's description
 export const example = style({ margin: '-8px 0 8px' });

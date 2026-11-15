@@ -1,7 +1,6 @@
 import { useNavigate } from '@tanstack/react-router';
 import { PushPinIcon } from '@phosphor-icons/react';
 
-import type { BookEntry } from '../../types';
 import { byReadDate } from '../../utils/readDate';
 import { type WorldRow } from '../../utils/worlds';
 import { Button } from '../../components/Button/Button';
@@ -33,10 +32,6 @@ const WorldDialog = ({
     });
   };
 
-  const renderBook = (book: BookEntry) => (
-    <WorldBook key={book.id} book={book} onEdit={onClose} />
-  );
-
   return (
     <Dialog
       open
@@ -53,7 +48,11 @@ const WorldDialog = ({
       initialFocus="world-log"
     >
       {books.length ? (
-        <ul className={styles.worldBooks}>{books.map(renderBook)}</ul>
+        <ul className={styles.worldBooks}>
+          {books.map((book) => (
+            <WorldBook key={book.id} book={book} onEdit={onClose} />
+          ))}
+        </ul>
       ) : (
         <DialogText>{m.world_no_books()}</DialogText>
       )}

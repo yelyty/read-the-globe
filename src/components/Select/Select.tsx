@@ -223,19 +223,6 @@ const Select = <T extends string>({
   const handleOptionClick = (index: number) => () => choose(index);
   const handleOptionPointerMove = (index: number) => () => setActive(index);
 
-  const renderOption = (option: SelectOption<T>, index: number) => (
-    <SelectItem
-      key={option.value}
-      id={optionId(index)}
-      label={option.label}
-      lang={option.lang}
-      selected={index === chosen}
-      active={index === active}
-      onClick={handleOptionClick(index)}
-      onPointerMove={handleOptionPointerMove(index)}
-    />
-  );
-
   const current = options[chosen];
 
   return (
@@ -279,7 +266,18 @@ const Select = <T extends string>({
         className={styles.list}
         onKeyDown={onListKeyDown}
       >
-        {options.map(renderOption)}
+        {options.map((option, index) => (
+          <SelectItem
+            key={option.value}
+            id={optionId(index)}
+            label={option.label}
+            lang={option.lang}
+            selected={index === chosen}
+            active={index === active}
+            onClick={handleOptionClick(index)}
+            onPointerMove={handleOptionPointerMove(index)}
+          />
+        ))}
       </ul>
     </div>
   );

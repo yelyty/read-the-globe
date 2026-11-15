@@ -7,6 +7,8 @@ import { worldShapes } from '../../../../utils/world';
 import { m } from '../../../../paraglide/messages.js';
 import { getLocale } from '../../../../paraglide/runtime.js';
 import { toAlpha2 } from '../../../../utils/toIsoNumeric';
+import HatchPattern from '../../../../components/HatchPattern/HatchPattern';
+import { HATCH_STAMP } from '../../../../components/HatchPattern/hatchSize';
 import { btnPrimary } from '../LoginDialog/LoginDialog.css';
 import * as styles from './Closing.css';
 import ClosingStamp, { type Mark, type Stamp } from './ClosingStamp';
@@ -87,18 +89,6 @@ const Closing = ({ onSignUp }: { onSignUp: () => void }) => {
     if (revealed) void worldShapes().then(setShapes);
   }, [revealed]);
 
-  const renderStamp = (stamp: Stamp, i: number) => (
-    <ClosingStamp
-      key={stamp.code}
-      stamp={stamp}
-      index={i}
-      label={LABEL[stamp.mark]({
-        country: names.of(toAlpha2(stamp.code)) ?? stamp.code,
-      })}
-      shape={shapes?.[stamp.code]}
-    />
-  );
-
   return (
     <section
       ref={ref}
@@ -106,18 +96,19 @@ const Closing = ({ onSignUp }: { onSignUp: () => void }) => {
       aria-labelledby="close-h"
     >
       <svg width="0" height="0" aria-hidden="true" className={styles.defs}>
-        <pattern
-          id="close-hatch"
-          width="6"
-          height="6"
-          patternUnits="userSpaceOnUse"
-          patternTransform="rotate(45)"
-        >
-          <rect width="3" height="6" fill="var(--olive)" />
-          <rect x="3" width="3" height="6" fill="var(--rust)" />
-        </pattern>
+        <HatchPattern id="close-hatch" size={HATCH_STAMP} />
       </svg>
-      {STAMPS.map(renderStamp)}
+      {STAMPS.map((stamp, i) => (
+        <ClosingStamp
+          key={stamp.code}
+          stamp={stamp}
+          index={i}
+          label={LABEL[stamp.mark]({
+            country: names.of(toAlpha2(stamp.code)) ?? stamp.code,
+          })}
+          shape={shapes?.[stamp.code]}
+        />
+      ))}
       <div className={styles.inner}>
         <h2 className={styles.title} id="close-h">
           {m.landing_close_title()}

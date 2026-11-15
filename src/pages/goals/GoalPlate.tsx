@@ -1,10 +1,12 @@
-import { useId } from 'react';
 import { geoEquirectangular, geoPath } from 'd3-geo';
 import type { Feature, FeatureCollection } from 'geojson';
 
 import type { Marks } from '../../utils/atlasMarks';
 import type { Continent } from '../../utils/continents';
 import { mainPiece } from '../../utils/world';
+import { useSvgId } from '../../hooks/useSvgId';
+import HatchPattern from '../../components/HatchPattern/HatchPattern';
+import { HATCH_MAP } from '../../components/HatchPattern/hatchSize';
 import { HEIGHT, INSET, WIDTH } from './plate';
 import * as styles from './GoalsPage.css';
 import PlateCountry from './PlateCountry';
@@ -42,7 +44,7 @@ export const GoalPlate = ({
   shapes,
   continent,
 }: GoalPlateProps) => {
-  const hatch = 'goal-hatch-' + useId().replace(/[^\w-]/g, '');
+  const hatch = useSvgId('goal-hatch');
 
   const features = codes
     .map((code) => [code, shapes[code]] as const)
@@ -68,15 +70,6 @@ export const GoalPlate = ({
     )
   );
 
-  const renderCountry = ([code, shape]: (typeof features)[number]) => (
-    <PlateCountry
-      key={code}
-      d={path(shape) ?? ''}
-      mark={marks[code]}
-      hatch={hatch}
-    />
-  );
-
   return (
     <svg
       className={styles.plate}
@@ -85,18 +78,16 @@ export const GoalPlate = ({
       focusable="false"
     >
       <defs>
-        <pattern
-          id={hatch}
-          patternUnits="userSpaceOnUse"
-          width="4"
-          height="4"
-          patternTransform="rotate(45)"
-        >
-          <rect width="4" height="4" className={styles.shapeSet} />
-          <rect width="2" height="4" className={styles.shapeAuthor} />
-        </pattern>
+        <HatchPattern id={hatch} size={HATCH_MAP} />
       </defs>
-      {features.map(renderCountry)}
+      {features.map(([code, shape]) => (
+        <PlateCountry
+          key={code}
+          d={path(shape) ?? ''}
+          mark={marks[code]}
+          hatch={hatch}
+        />
+      ))}
     </svg>
   );
 };

@@ -135,28 +135,6 @@ export const filterBtn = style([
   },
 ]);
 
-export const linkBtn = style({
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: 8,
-  padding: '8px 2px',
-  background: 'none',
-  border: 0,
-  fontFamily: vars.font.sans,
-  fontSize: 15,
-  fontWeight: 500,
-  color: vars.color.textSecondary,
-  textDecoration: 'underline',
-  textUnderlineOffset: 3,
-  cursor: 'pointer',
-  ':focus-visible': focusRing,
-  '@media': {
-    [hover]: { selectors: { '&:hover': { color: vars.color.text } } },
-    [coarse]: { minHeight: 44 },
-  },
-});
-globalStyle(`${linkBtn} svg`, { width: 16, height: 16, flex: 'none' });
-
 export const country = style({
   display: 'grid',
   gridTemplateColumns: '184px minmax(0, 1fr)',
@@ -189,8 +167,6 @@ export const shape = style({
     '&[data-mark="both"]': { fill: 'url(#shelf-hatch)' },
   },
 });
-export const hatchSet = style({ fill: vars.color.markerSetting });
-export const hatchAuthor = style({ fill: vars.color.markerAuthor });
 
 export const countryName = style({
   margin: 0,
@@ -220,15 +196,6 @@ globalStyle(`${countryWhy} span`, {
   gap: 8,
 });
 
-const dot = {
-  display: 'inline-block',
-  width: 8,
-  height: 8,
-  borderRadius: '50%',
-} as const;
-
-export const dotSet = style({ ...dot, background: vars.color.markerSetting });
-export const dotAuthor = style({ ...dot, background: vars.color.markerAuthor });
 export const countryActions = style({
   display: 'flex',
   flexWrap: 'wrap',
@@ -291,40 +258,6 @@ globalStyle(`${yearToggle} svg`, {
 globalStyle(`${yearToggle}[aria-expanded="false"] svg`, { rotate: '-90deg' });
 
 /* ---------- empty states and more ---------- */
-// one centred column under a sticker, as on Goals
-export const emptyPanel = style({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  maxWidth: 560,
-  marginInline: 'auto',
-  padding: '32px 0 40px',
-  textAlign: 'center',
-});
-
-globalStyle(`${emptyPanel} h2`, {
-  margin: '0 0 8px',
-  fontFamily: vars.font.display,
-  fontSize: 22,
-  fontWeight: 500,
-  color: vars.color.text,
-});
-
-globalStyle(`${emptyPanel} p`, {
-  margin: '0 auto',
-  maxWidth: '56ch',
-  color: vars.color.textSecondary,
-});
-
-// Log a book, and (step 3) the reading list import under an "or"
-export const emptyActions = style({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  gap: 16,
-  marginTop: 32,
-});
-globalStyle(`${emptyActions} > a`, { marginTop: 0 });
 // an "or" between two lines, under Log a book
 export const orRule = style({
   display: 'flex',
@@ -342,21 +275,11 @@ export const orRule = style({
     },
   },
 });
-// what the CSV holds, with the example to download under it
-export const hint = style({});
-
-globalStyle(`${emptyPanel} p${hint}`, {
-  maxWidth: '48ch',
-  marginTop: 24,
-  fontSize: fontSize.meta,
-  lineHeight: 1.6,
-  color: vars.color.textMuted,
-});
-
-globalStyle(`${hint} ${linkBtn}`, {
+// the example to download, on its own line under the CSV note. && outranks the Button's own size
+export const noteLink = style({
   display: 'flex',
   margin: '8px auto 0',
-  fontSize: fontSize.meta,
+  selectors: { '&&': { fontSize: fontSize.meta } },
 });
 
 // Import a reading list (CSV) and the example, above a shelf that has books
@@ -365,67 +288,6 @@ export const importLine = style({
   flexWrap: 'wrap',
   gap: '0 24px',
   margin: '0 0 16px',
-});
-
-/* ---------- the stickers: a shelf with a gap (no books), a book with a ribbon (nothing saved) ---------- */
-const deepRust = `color-mix(in srgb, ${vars.color.markerAuthor} 80%, black)`;
-
-export const sticker = style({ width: 120, height: 100, marginBottom: 24 });
-export const ssPlank = style({
-  stroke: vars.color.textMuted,
-  strokeWidth: 2.6,
-});
-const book = { strokeWidth: 2 } as const;
-
-export const ssBookA = style({
-  ...book,
-  fill: vars.color.primary,
-  stroke: vars.color.oliveInk,
-});
-export const ssBookB = style({
-  ...book,
-  fill: vars.color.backgroundDeep,
-  stroke: vars.color.mark,
-});
-export const ssBookC = style({
-  ...book,
-  fill: vars.color.markerAuthor,
-  stroke: deepRust,
-});
-// a light band on the dark book, a deep one on the pale book, as on the landing's stack
-export const ssBandA = style({ stroke: vars.color.onAccent, strokeWidth: 1.6 });
-export const ssBandB = style({ stroke: vars.color.mark, strokeWidth: 1.6 });
-// a space kept for the next book
-export const ssGap = style({
-  stroke: vars.color.textMuted,
-  strokeWidth: 1.6,
-  strokeDasharray: '3 3.5',
-});
-export const nsBook = style({
-  fill: vars.color.backgroundDeep,
-  stroke: vars.color.mark,
-  strokeWidth: 2.2,
-});
-export const nsSpine = style({ stroke: vars.color.mark, strokeWidth: 1.6 });
-export const nsRibbon = style({
-  fill: vars.color.markerAuthor,
-  stroke: deepRust,
-  strokeWidth: 1.6,
-});
-export const nsRoad = style({
-  stroke: vars.color.textMuted,
-  strokeWidth: 1.8,
-  strokeDasharray: '3.5 4',
-});
-// the pin still to be placed
-export const nsPin = style({
-  stroke: vars.color.textMuted,
-  strokeWidth: 1.8,
-  strokeDasharray: '3 3.5',
-});
-export const nsPinEye = style({
-  stroke: vars.color.textMuted,
-  strokeWidth: 1.6,
 });
 
 const button = {
@@ -438,23 +300,6 @@ const button = {
   cursor: 'pointer',
   ':focus-visible': focusRing,
 } as const;
-
-export const primary = style([
-  buttonSize,
-  {
-    ...button,
-    marginTop: 16,
-    border: 0,
-    background: vars.color.primary,
-    color: vars.color.onAccent,
-    '@media': {
-      [hover]: {
-        selectors: { '&:hover': { background: vars.color.primaryHover } },
-      },
-    },
-  },
-]);
-globalStyle(`${primary} svg`, { width: 16, height: 16 });
 
 export const emptyNote = style({
   maxWidth: '60ch',
@@ -502,20 +347,6 @@ export const fieldLabel = style({
   color: vars.color.textSecondary,
 });
 export const optional = style({ fontWeight: 400, color: vars.color.textMuted });
-export const input = style({
-  width: '100%',
-  minHeight: 40,
-  padding: '8px 16px',
-  borderRadius: 12,
-  background: vars.color.field,
-  border: `1.5px solid ${vars.color.fieldLine}`,
-  fontFamily: vars.font.sans,
-  fontSize: 15,
-  color: vars.color.text,
-  '::placeholder': { color: vars.color.textMuted, opacity: 1 },
-  ':focus': { borderColor: vars.color.primary, outline: 'none' },
-  selectors: { '&[aria-invalid="true"]': { borderColor: vars.color.error } },
-});
 export const error = style({
   margin: 0,
   fontSize: 15,
@@ -528,15 +359,6 @@ export const formRow = style({
   alignItems: 'center',
   gap: '12px 16px',
 });
-globalStyle(`${formRow} ${primary}`, { marginTop: 0 });
-// a status, so not green: green is only for what the reader can press
-export const status = style({
-  margin: 0,
-  fontSize: 15,
-  fontWeight: 500,
-  color: vars.color.oliveInk,
-});
-
 export const nextList = style({
   listStyle: 'none',
   margin: '24px 0 0',
@@ -613,7 +435,8 @@ export const nextActs = style({
   gap: 16,
   '@media': { [phone]: { gridColumn: 2 } },
 });
-export const nextEmpty = style([emptyPanel, { paddingTop: 40 }]);
+// nothing saved yet: a little more air under the form. && outranks EmptyState's own padding
+export const nextEmpty = style({ selectors: { '&&': { paddingTop: 40 } } });
 // a goal this book would move along
 export const nextGoal = style({
   padding: '0 8px',

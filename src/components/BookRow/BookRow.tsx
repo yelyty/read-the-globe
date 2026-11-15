@@ -1,14 +1,15 @@
-import { Fragment } from 'react';
 import { PencilSimpleIcon } from '@phosphor-icons/react';
 import { Link } from '@tanstack/react-router';
 
-import type { BookEntry, Place } from '../../types';
+import type { BookEntry } from '../../types';
 import { coverColor } from '../../utils/coverColors';
 import { readDate } from '../../utils/readDate';
 import { m } from '../../paraglide/messages.js';
 import { isoYearMonth } from '../../utils/isoDate';
 import { formatMonth } from '../../utils/formatDate';
+import MarkDot from '../MarkDot/MarkDot';
 import * as styles from './BookRow.css';
+import BookPlace from './BookPlace';
 
 type BookRowProps = { book: BookEntry; names: Record<string, string> };
 
@@ -19,17 +20,6 @@ const BookRow = ({ book, names }: BookRowProps) => {
 
   const worlds = (book.places ?? []).filter(
     (place) => place.imagined && place.name
-  );
-
-  // a place is its name with its country after it, or the country alone
-  const renderPlace = (place: Place, i: number) => (
-    <Fragment key={place.id}>
-      {i > 0 && ', '}
-      {place.name || (place.countryCode && names[place.countryCode])}
-      {place.name && place.countryCode && names[place.countryCode] && (
-        <em className={styles.markCountry}> · {names[place.countryCode]}</em>
-      )}
-    </Fragment>
   );
 
   const worldNames = worlds.map((world) => world.name).join(', ');
@@ -57,10 +47,17 @@ const BookRow = ({ book, names }: BookRowProps) => {
       <div className={styles.rowMarks}>
         {places.length ? (
           <span className={styles.mark}>
-            <i className={styles.dotSet} aria-hidden="true" />
+            <MarkDot kind="set" />
             <span>
               <span className={styles.srOnly}>{m.book_set_in()} </span>
-              {places.map(renderPlace)}
+              {places.map((place, i) => (
+                <BookPlace
+                  key={place.id}
+                  place={place}
+                  names={names}
+                  first={i === 0}
+                />
+              ))}
             </span>
           </span>
         ) : (
@@ -70,7 +67,7 @@ const BookRow = ({ book, names }: BookRowProps) => {
         )}
         {worlds.length > 0 && (
           <span className={styles.mark}>
-            <i className={styles.dotImagined} aria-hidden="true" />
+            <MarkDot kind="imagined" />
             <span>
               <span className={styles.srOnly}>{m.book_set_in_world()} </span>
               {worldNames}
@@ -80,7 +77,7 @@ const BookRow = ({ book, names }: BookRowProps) => {
         )}
         {book.author?.country && (
           <span className={styles.mark}>
-            <i className={styles.dotAuthor} aria-hidden="true" />
+            <MarkDot kind="author" />
             <span>
               <span className={styles.srOnly}>{m.book_author_from()} </span>
               {names[book.author.country.code] ?? book.author.country.name}

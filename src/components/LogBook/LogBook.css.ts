@@ -2,29 +2,19 @@ import { globalStyle, style } from '@vanilla-extract/css';
 
 import { vars } from '../../styles/theme.css';
 import {
-  buttonSize,
   caps,
   coarse,
   easeOut,
   fill,
   fillHover,
   focusRing,
-  hatch,
   hover,
   phone,
   reducedMotion,
 } from '../../styles/global.css';
 import { hint } from '../Hint/Hint.css';
 
-export const srOnly = style({
-  position: 'absolute',
-  width: 1,
-  height: 1,
-  margin: -1,
-  overflow: 'hidden',
-  clipPath: 'inset(50%)',
-  whiteSpace: 'nowrap',
-});
+export { srOnly } from '../../styles/global.css';
 
 /* the shared Dialog's sheet variant; an edit wears a gold edge so it isn't mistaken for a new book */
 export const sheet = style({
@@ -91,35 +81,8 @@ export const mark = style({
   gap: 8,
 });
 
-const dot = {
-  display: 'inline-block',
-  flex: 'none',
-  width: 9,
-  height: 9,
-  borderRadius: '50%',
-  marginRight: 8,
-  verticalAlign: '0.05em',
-} as const;
-
-export const dotSet = style({ ...dot, background: vars.color.olive });
-export const dotAuthor = style({
-  ...dot,
-  boxShadow: `inset 0 0 0 2.5px ${vars.color.markerAuthor}`,
-});
-
-export const swatch = style({
-  ...dot,
-  borderRadius: 2,
-  background: hatch,
-});
-globalStyle(`${mark} i`, { marginRight: 0 });
-// an imagined world: a dashed ring, on no map
-export const dotImagined = style({
-  ...dot,
-  border: `1.5px dashed ${vars.color.textSecondary}`,
-  width: 10,
-  height: 10,
-});
+// a mark's dot before a field's label
+export const labelDot = style({ marginRight: 8 });
 export const markNote = style({ color: vars.color.textMuted });
 
 /* ---------- places ---------- */
@@ -316,54 +279,14 @@ export const actions = style({
   },
 });
 
-export const linkBtn = style({
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: 8,
-  padding: '8px 2px',
-  background: 'none',
-  border: 0,
-  fontFamily: vars.font.sans,
-  fontSize: 16,
-  fontWeight: 500,
-  color: vars.color.textSecondary,
-  cursor: 'pointer',
-  ':focus-visible': focusRing,
-  ':disabled': { opacity: 0.6, cursor: 'not-allowed' },
-  '@media': {
-    [hover]: { selectors: { '&:hover': { color: vars.color.text } } },
-    [coarse]: { minHeight: 44 },
-  },
+// Remove: a link-styled Button in the error colour, pushed to the left. && outranks the Button's own colour
+export const danger = style({
+  marginRight: 'auto',
+  selectors: { '&&': { color: vars.color.error } },
 });
-globalStyle(`${linkBtn} svg`, { width: 16, height: 16, flex: 'none' });
 
-export const danger = style({ marginRight: 'auto', color: vars.color.error });
-
-export const primary = style([
-  buttonSize,
-  {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    border: 0,
-    borderRadius: 999,
-    background: vars.color.primary,
-    color: vars.color.onAccent,
-    fontFamily: vars.font.sans,
-    fontWeight: 500,
-    cursor: 'pointer',
-    transition: `scale .16s ${easeOut}, background-color .16s ${easeOut}`,
-    ':focus-visible': focusRing,
-    ':active': { scale: '.97' },
-    ':disabled': { cursor: 'progress', opacity: 0.8 },
-    '@media': {
-      [hover]: {
-        selectors: {
-          '&:hover:not(:disabled)': { background: vars.color.primaryHover },
-        },
-      },
-      [phone]: { flex: 1 },
-      [reducedMotion]: { transition: 'none' },
-    },
-  },
-]);
+// the primary Button fills the row on a phone
+export const submit = style({
+  justifyContent: 'center',
+  '@media': { [phone]: { flex: 1 } },
+});

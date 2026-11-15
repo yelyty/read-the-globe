@@ -3,7 +3,6 @@ import { globalStyle, keyframes, style } from '@vanilla-extract/css';
 import { vars } from '../../styles/theme.css';
 import {
   band,
-  buttonSize,
   coarse,
   easeOut,
   focusRing,
@@ -18,24 +17,12 @@ const picked = `color-mix(in srgb, ${vars.color.secondary} 22%, ${vars.color.bac
 const pickHover = `color-mix(in srgb, ${vars.color.secondary} 16%, ${vars.color.background})`;
 
 /* ---------- empty: no books yet ---------- */
+// the empty state between two hairlines
 export const empty = style({
-  padding: '24px 0',
   borderTop: `1px solid ${vars.color.border}`,
   borderBottom: `1px solid ${vars.color.border}`,
-});
-
-globalStyle(`${empty} h2`, {
-  margin: 0,
-  fontFamily: vars.font.display,
-  fontSize: 22,
-  fontWeight: 500,
-  color: vars.color.text,
-});
-
-globalStyle(`${empty} p`, {
-  margin: '4px 0 0',
-  maxWidth: '56ch',
-  color: vars.color.textSecondary,
+  // the hairline runs the page's width, the words stay centred in EmptyState's column
+  selectors: { '&&': { maxWidth: 'none' } },
 });
 
 /* ---------- layout ---------- */
@@ -382,59 +369,13 @@ export const send = style({ marginTop: 32, paddingTop: 24 });
 
 export const actions = style({ display: 'flex', flexWrap: 'wrap', gap: 16 });
 
-const button = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  borderRadius: 999,
-  fontFamily: vars.font.sans,
-  fontWeight: 500,
-  textDecoration: 'none',
-  cursor: 'pointer',
-  ':focus-visible': focusRing,
-} as const;
-
-export const primary = style([
-  buttonSize,
-  {
-    ...button,
-    border: 0,
-    background: vars.color.primary,
-    color: vars.color.onAccent,
-    '@media': {
-      [hover]: {
-        selectors: { '&:hover': { background: vars.color.primaryHover } },
-      },
-    },
-  },
-]);
-
-export const quiet = style([
-  buttonSize,
-  {
-    ...button,
-    border: `1px solid ${vars.color.border}`,
-    background: vars.color.surface,
-    color: vars.color.text,
-    selectors: { '&[disabled]': { cursor: 'progress', opacity: 0.72 } },
-    '@media': {
-      [hover]: {
-        selectors: { '&:hover': { background: vars.color.backgroundDeep } },
-      },
-    },
-  },
-]);
-
-globalStyle(`${primary} svg, ${quiet} svg`, {
-  width: 16,
-  height: 16,
-  flex: 'none',
-});
-
+// under Save and Share, in quieter grey; gone while there's nothing to say
 export const status = style({
-  margin: '16px 0 0',
-  fontSize: 15,
-  color: vars.color.textSecondary,
-  selectors: { '&:empty': { display: 'none' } },
+  marginTop: 16,
+  selectors: {
+    '&&': { color: vars.color.textSecondary, fontWeight: 400 },
+    '&:empty': { display: 'none' },
+  },
 });
 
 // the Postcard menu: which card to make

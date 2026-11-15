@@ -18,20 +18,20 @@ const SuggestionGroup = ({
   disabled,
   onAdd,
 }: SuggestionGroupProps) => {
-  const renderChip = ({ c, p }: Suggestion) => (
-    <GoalChip
-      key={c.name}
-      goal={c}
-      progress={p}
-      disabled={disabled}
-      onAdd={onAdd}
-    />
-  );
-
   return (
     <div className={styles.group}>
       <h3>{KIND_GROUP[kind]()}</h3>
-      <ul className={styles.chips}>{items.map(renderChip)}</ul>
+      <ul className={styles.chips}>
+        {items.map(({ c, p }) => (
+          <GoalChip
+            key={c.name}
+            goal={c}
+            progress={p}
+            disabled={disabled}
+            onAdd={onAdd}
+          />
+        ))}
+      </ul>
     </div>
   );
 };
