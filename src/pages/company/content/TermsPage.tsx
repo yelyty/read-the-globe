@@ -1,8 +1,8 @@
-import * as styles from '../CompanyPage.css';
-import CompanyPage from '../CompanyPage';
+import * as styles from '../../../layout/PublicLayout/PublicLayout.css';
+import PublicLayout from '../../../layout/PublicLayout/PublicLayout';
 
 const TermsPage = () => (
-  <CompanyPage
+  <PublicLayout
     title="Terms of use"
     description="Plain rules for a free reading atlas."
     draft
@@ -45,7 +45,7 @@ const TermsPage = () => (
       Questions about these terms:{' '}
       <a href="mailto:hello@readtheglobe.app">hello@readtheglobe.app</a>.
     </p>
-  </CompanyPage>
+  </PublicLayout>
 );
 
 export default TermsPage;

@@ -1,10 +1,10 @@
 import { Link } from '@tanstack/react-router';
 
-import * as styles from '../CompanyPage.css';
-import CompanyPage from '../CompanyPage';
+import * as styles from '../../../layout/PublicLayout/PublicLayout.css';
+import PublicLayout from '../../../layout/PublicLayout/PublicLayout';
 
 const AboutPage = () => (
-  <CompanyPage
+  <PublicLayout
     title="About"
     description="Read The Globe is a reading atlas: every book you log marks where its story is set and where its author comes from."
     draft
@@ -37,7 +37,7 @@ const AboutPage = () => (
     <p className={styles.meta}>
       Questions or ideas? <Link to="/contact">Write to us</Link>.
     </p>
-  </CompanyPage>
+  </PublicLayout>
 );
 
 export default AboutPage;

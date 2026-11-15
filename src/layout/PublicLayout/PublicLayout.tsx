@@ -2,14 +2,14 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 
 import { useAuth } from '../../auth/auth-context';
-import Footer from '../landing/features/Footer/Footer';
-import Header from '../landing/features/Header/Header';
-import LoginDialog from '../landing/features/LoginDialog/LoginDialog';
-import type { AuthMode } from '../landing/features/LoginDialog/validate';
-import { page } from '../landing/LandingPage.css';
-import * as styles from './CompanyPage.css';
+import Footer from '../../pages/landing/features/Footer/Footer';
+import Header from '../../pages/landing/features/Header/Header';
+import LoginDialog from '../../pages/landing/features/LoginDialog/LoginDialog';
+import type { AuthMode } from '../../pages/landing/features/LoginDialog/validate';
+import { page } from '../../pages/landing/LandingPage.css';
+import * as styles from './PublicLayout.css';
 
-type CompanyPageProps = {
+type PublicLayoutProps = {
   title: string;
   description: string;
   /** marks text that's still a draft, to be reviewed before launch */
@@ -19,12 +19,12 @@ type CompanyPageProps = {
   children: ReactNode;
 };
 
-const CompanyPage = ({
+const PublicLayout = ({
   title,
   description,
   translated = false,
   children,
-}: CompanyPageProps) => {
+}: PublicLayoutProps) => {
   const [auth, setAuth] = useState<AuthMode | null>(null);
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -62,4 +62,4 @@ const CompanyPage = ({
   );
 };
 
-export default CompanyPage;
+export default PublicLayout;

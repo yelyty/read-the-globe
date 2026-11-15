@@ -4,10 +4,10 @@ import { Outlet, useRouterState } from '@tanstack/react-router';
 import '../../App.css';
 import { LandingContext, type Landing } from '../../hooks/useLanding';
 import { m } from '../../paraglide/messages.js';
+import LogBook from '../../components/LogBook/LogBook';
 import AppHeader from '../AppHeader/AppHeader';
 import AppFooter from '../AppFooter/AppFooter';
 import StatusBar from '../StatusBar/StatusBar';
-import LogBook from '../LogBook/LogBook';
 import * as styles from './AppLayout.css';
 import LogPill from './LogPill';
 

@@ -1,4 +1,4 @@
-import * as styles from '../CompanyPage.css';
+import * as styles from '../../../layout/PublicLayout/PublicLayout.css';
 
 export type Post = {
   date: string;

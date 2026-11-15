@@ -2,7 +2,7 @@ import { globalStyle, style } from '@vanilla-extract/css';
 
 import { vars } from '../../styles/theme.css';
 import { band } from '../../styles/global.css';
-import { headline } from '../landing/LandingPage.css';
+import { headline } from '../../pages/landing/LandingPage.css';
 
 // one reading column in the landing's own type
 export const main = style({

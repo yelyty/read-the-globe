@@ -1,8 +1,8 @@
-import * as styles from '../CompanyPage.css';
-import CompanyPage from '../CompanyPage';
+import * as styles from '../../../layout/PublicLayout/PublicLayout.css';
+import PublicLayout from '../../../layout/PublicLayout/PublicLayout';
 
 const PrivacyPage = () => (
-  <CompanyPage
+  <PublicLayout
     title="Privacy"
     description="What Read The Globe keeps, why, and how to take it with you or delete it."
     draft
@@ -52,7 +52,7 @@ const PrivacyPage = () => (
       <a href="mailto:hello@readtheglobe.app">hello@readtheglobe.app</a> and
       we’ll answer.
     </p>
-  </CompanyPage>
+  </PublicLayout>
 );
 
 export default PrivacyPage;

@@ -12,7 +12,7 @@ import {
 } from '../paraglide/runtime.js';
 import { m } from '../paraglide/messages.js';
 import type { AuthContextValue } from '../auth/auth-context';
-import CompanyPage from '../pages/company/CompanyPage';
+import PublicLayout from '../layout/PublicLayout/PublicLayout';
 import { wantedLocale } from '../utils/lang';
 
 export interface RouterContext {
@@ -37,22 +37,22 @@ export const Route = createRootRouteWithContext<RouterContext>()({
   component: Outlet,
   notFoundComponent: () => (
     // TODO: Redesign 404 page
-    <CompanyPage
+    <PublicLayout
       title={m.not_found_title()}
       description={m.not_found_text()}
       translated
     >
       <h1>{m.not_found_title()}</h1>
-    </CompanyPage>
+    </PublicLayout>
   ),
   // TODO: make nice
   errorComponent: () => (
-    <CompanyPage
+    <PublicLayout
       title={m.common_try_again()}
       description={m.common_try_again()}
       translated
     >
       <h1>{m.common_try_again()}</h1>
-    </CompanyPage>
+    </PublicLayout>
   ),
 });

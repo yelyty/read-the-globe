@@ -3,8 +3,8 @@ import { PushPinIcon } from '@phosphor-icons/react';
 
 import * as headerStyles from '../../pages/landing/features/Header/Header.css';
 import { m } from '../../paraglide/messages.js';
-import ThemeButton from '../ThemeButton/ThemeButton';
-import Logo from '../Logo/Logo';
+import ThemeButton from '../../components/ThemeButton/ThemeButton';
+import Logo from '../../components/Logo/Logo';
 import AccountMenu from '../AccountMenu/AccountMenu';
 import * as styles from './AppHeader.css';
 

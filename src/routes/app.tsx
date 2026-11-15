@@ -1,7 +1,7 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
 
 import getBooks from '../api/getBooks';
-import AppLayout from '../components/AppLayout/AppLayout';
+import AppLayout from '../layout/AppLayout/AppLayout';
 import { getGoals } from '../api/goals/goals';
 import { getWorlds } from '../api/worlds/worlds';
 import { m } from '../paraglide/messages.js';

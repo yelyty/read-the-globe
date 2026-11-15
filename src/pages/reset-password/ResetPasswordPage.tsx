@@ -8,10 +8,10 @@ import { useAuth } from '../../auth/auth-context';
 import { changePassword } from '../../auth/session';
 import { newPasswordProblem } from '../../auth/forms';
 import { m } from '../../paraglide/messages.js';
-import CompanyPage from '../company/CompanyPage';
+import PublicLayout from '../../layout/PublicLayout/PublicLayout';
+import * as styles from '../../layout/PublicLayout/PublicLayout.css';
 import PasswordStrength from '../landing/features/LoginDialog/PasswordStrength';
 import { btnPrimary } from '../landing/features/LoginDialog/LoginDialog.css';
-import * as styles from '../company/CompanyPage.css';
 
 // Where the "Forgot your password?" email lands: Supabase signs the reader in from the link, then they pick a new one.
 const ResetPasswordPage = () => {
@@ -48,7 +48,7 @@ const ResetPasswordPage = () => {
     setPassword(event.target.value);
 
   return (
-    <CompanyPage
+    <PublicLayout
       title={m.reset_title()}
       description={m.reset_description()}
       translated
@@ -97,7 +97,7 @@ const ResetPasswordPage = () => {
           </button>
         </form>
       )}
-    </CompanyPage>
+    </PublicLayout>
   );
 };
 

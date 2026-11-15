@@ -11,9 +11,9 @@ import {
 import { m } from '../../../paraglide/messages.js';
 import { getLocale } from '../../../paraglide/runtime.js';
 import { useDirty, useLeaveGuard } from '../../../hooks/useUnsaved';
+import PublicLayout from '../../../layout/PublicLayout/PublicLayout';
+import * as styles from '../../../layout/PublicLayout/PublicLayout.css';
 import { btnPrimary } from '../../landing/features/LoginDialog/LoginDialog.css';
-import CompanyPage from '../CompanyPage';
-import * as styles from '../CompanyPage.css';
 import { validate } from '../utils/validateContact';
 
 const FIELD_ORDER: (keyof ContactMessage)[] = ['name', 'email', 'message'];
@@ -81,7 +81,7 @@ const ContactPage = () => {
   );
 
   return (
-    <CompanyPage
+    <PublicLayout
       title="Contact"
       description="A question, a bug, a book we should suggest? Write to Read The Globe."
       draft
@@ -148,7 +148,7 @@ const ContactPage = () => {
           </button>
         </form>
       )}
-    </CompanyPage>
+    </PublicLayout>
   );
 };
 

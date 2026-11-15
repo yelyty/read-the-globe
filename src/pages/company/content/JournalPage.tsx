@@ -1,5 +1,5 @@
-import * as styles from '../CompanyPage.css';
-import CompanyPage from '../CompanyPage';
+import * as styles from '../../../layout/PublicLayout/PublicLayout.css';
+import PublicLayout from '../../../layout/PublicLayout/PublicLayout';
 import JournalPost, { type Post } from '../components/JournalPost';
 
 const POSTS: Post[] = [
@@ -26,7 +26,7 @@ const POSTS: Post[] = [
 // ponytail: three teasers, no post pages yet; add a /journal/$post route when there's a post to read
 const JournalPage = () => {
   return (
-    <CompanyPage
+    <PublicLayout
       title="Journal"
       description="Notes on reading the world: what’s new in the atlas, and ideas for where to read next."
       draft
@@ -41,7 +41,7 @@ const JournalPage = () => {
           <JournalPost key={post.date} post={post} />
         ))}
       </ul>
-    </CompanyPage>
+    </PublicLayout>
   );
 };
 
