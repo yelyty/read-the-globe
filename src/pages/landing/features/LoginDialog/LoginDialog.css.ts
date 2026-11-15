@@ -159,13 +159,6 @@ export const example = style({
   cursor: 'pointer',
 });
 
-globalStyle(`${example} input`, {
-  width: 20,
-  height: 20,
-  margin: 0,
-  accentColor: vars.color.primary,
-});
-
 export const exampleHint = style({
   gridColumn: 2,
   fontWeight: 400,

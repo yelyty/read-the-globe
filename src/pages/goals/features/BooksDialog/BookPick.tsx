@@ -1,4 +1,5 @@
 import type { BookEntry } from '../../../../types';
+import Checkbox from '../../../../components/Checkbox/Checkbox';
 import * as styles from '../../GoalsPage.css';
 
 type BookPickProps = {
@@ -14,7 +15,11 @@ const BookPick = ({ book, checked, onToggle }: BookPickProps) => {
   return (
     <li>
       <label>
-        <input type="checkbox" checked={checked} onChange={handleChange} />
+        <Checkbox
+          className={styles.pickBox}
+          checked={checked}
+          onChange={handleChange}
+        />
         <span className={styles.pickTitle}>{book.title}</span>
         <span className={styles.pickAuthor}>{book.author?.name}</span>
       </label>

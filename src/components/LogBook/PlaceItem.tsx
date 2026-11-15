@@ -2,6 +2,7 @@ import type { ChangeEvent } from 'react';
 import { XIcon } from '@phosphor-icons/react';
 
 import { m } from '../../paraglide/messages.js';
+import Checkbox from '../Checkbox/Checkbox';
 import * as fieldStyles from '../Field/Field.css';
 import Suggest from '../Suggest/Suggest';
 import * as styles from './LogBook.css';
@@ -106,11 +107,7 @@ const PlaceItem = ({
     )}
     {/* an imagined world has no country: ticking it sets the country aside (kept, in case it's unticked) */}
     <label className={styles.imagined}>
-      <input
-        type="checkbox"
-        checked={placeRow.imagined}
-        onChange={onImaginedChange}
-      />
+      <Checkbox checked={placeRow.imagined} onChange={onImaginedChange} />
       {m.log_imagined()}
     </label>
   </li>

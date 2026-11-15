@@ -1,0 +1,19 @@
+import type { ComponentProps } from 'react';
+import { CheckIcon } from '@phosphor-icons/react';
+
+import * as styles from './Checkbox.css';
+
+type CheckboxProps = Omit<ComponentProps<'input'>, 'type'>;
+
+// the app's checkbox: a rounded box like the fields', filled green with a tick when checked.
+// It goes inside the <label> that names it.
+const Checkbox = ({ className, ...props }: CheckboxProps) => (
+  <span
+    className={className ? `${styles.checkbox} ${className}` : styles.checkbox}
+  >
+    <input {...props} type="checkbox" className={styles.box} />
+    <CheckIcon className={styles.tick} weight="bold" aria-hidden="true" />
+  </span>
+);
+
+export default Checkbox;

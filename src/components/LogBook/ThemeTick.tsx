@@ -1,6 +1,7 @@
 import type { ChangeEvent } from 'react';
 
 import type { Goal } from '../../types';
+import Checkbox from '../Checkbox/Checkbox';
 
 type ThemeTickProps = {
   theme: Goal;
@@ -16,7 +17,7 @@ const ThemeTick = ({ theme, checked, onTick }: ThemeTickProps) => {
   return (
     <li>
       <label>
-        <input type="checkbox" checked={checked} onChange={handleChange} />
+        <Checkbox checked={checked} onChange={handleChange} />
         {theme.name}
       </label>
     </li>

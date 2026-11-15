@@ -3,6 +3,7 @@ import { PushPinIcon, WarningCircleIcon } from '@phosphor-icons/react';
 
 import Dialog from '../../../../components/Dialog/Dialog';
 import Field from '../../../../components/Field/Field';
+import Checkbox from '../../../../components/Checkbox/Checkbox';
 import { sendPasswordReset, signIn, signUp } from '../../../../auth/session';
 import { m } from '../../../../paraglide/messages.js';
 import * as styles from './LoginDialog.css';
@@ -217,11 +218,7 @@ const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
         )}
         {view === 'signup' && (
           <label className={styles.example}>
-            <input
-              type="checkbox"
-              checked={example}
-              onChange={handleExampleChange}
-            />
+            <Checkbox checked={example} onChange={handleExampleChange} />
             {m.auth_example()}
             <span className={styles.exampleHint}>{m.auth_example_hint()}</span>
           </label>

@@ -652,12 +652,8 @@ globalStyle(`${picker} label`, {
   cursor: 'pointer',
 });
 
-globalStyle(`${picker} input`, {
-  margin: 0,
-  alignSelf: 'center',
-  gridRow: '1 / span 2',
-  accentColor: vars.color.primary,
-});
+// the checkbox sits centred beside the title and author
+export const pickBox = style({ alignSelf: 'center', gridRow: '1 / span 2' });
 
 export const pickTitle = style({ fontWeight: 500, overflowWrap: 'break-word' });
 export const pickAuthor = style({
