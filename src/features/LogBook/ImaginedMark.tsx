@@ -1,5 +1,5 @@
 import { m } from '../../paraglide/messages.js';
-import MarkDot from '../MarkDot/MarkDot';
+import MarkDot from '../../components/MarkDot/MarkDot';
 import * as styles from './LogBook.css';
 
 // an imagined world in Will mark: on no map, so it says so

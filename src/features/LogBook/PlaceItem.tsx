@@ -2,9 +2,9 @@ import type { ChangeEvent } from 'react';
 import { XIcon } from '@phosphor-icons/react';
 
 import { m } from '../../paraglide/messages.js';
-import Checkbox from '../Checkbox/Checkbox';
-import * as fieldStyles from '../Field/Field.css';
-import Suggest from '../Suggest/Suggest';
+import Checkbox from '../../components/Checkbox/Checkbox';
+import * as fieldStyles from '../../components/Field/Field.css';
+import Suggest from '../../components/Suggest/Suggest';
 import * as styles from './LogBook.css';
 import type { Row } from './placeRow';
 import ThenNote from './ThenNote';

@@ -1,8 +1,8 @@
 import { getLocale } from '../../paraglide/runtime.js';
 import { m } from '../../paraglide/messages.js';
-import * as fieldStyles from '../Field/Field.css';
-import Hint from '../Hint/Hint';
-import Select from '../Select/Select';
+import * as fieldStyles from '../../components/Field/Field.css';
+import Hint from '../../components/Hint/Hint';
+import Select from '../../components/Select/Select';
 import * as styles from './LogBook.css';
 
 const MONTHS_IN_YEAR = 12;

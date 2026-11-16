@@ -12,7 +12,7 @@ import {
   phone,
   reducedMotion,
 } from '../../styles/global.css';
-import { hint } from '../Hint/Hint.css';
+import { hint } from '../../components/Hint/Hint.css';
 
 export { srOnly } from '../../styles/global.css';
 

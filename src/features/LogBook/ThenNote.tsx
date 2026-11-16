@@ -2,7 +2,7 @@ import { useRef } from 'react';
 
 import { countryFrom, splitStates, tidy } from '../../utils/countryFrom';
 import { m } from '../../paraglide/messages.js';
-import ToggleGroup from '../ToggleGroup/ToggleGroup';
+import ToggleGroup from '../../components/ToggleGroup/ToggleGroup';
 import * as styles from './LogBook.css';
 import Bold, { BOLD } from './Bold';
 
