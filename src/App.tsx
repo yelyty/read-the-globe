@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { RouterProvider } from '@tanstack/react-router';
 
 import { useAuth } from './auth/auth-context';
+import { queryClient } from './api/queryClient';
 import { router } from './router';
 
 export function App() {
@@ -20,6 +21,7 @@ export function App() {
       router.state.location.pathname.startsWith('/app')
     ) {
       router.clearCache();
+      queryClient.clear();
       void router.navigate({ to: '/' });
     }
 
@@ -28,5 +30,5 @@ export function App() {
 
   if (auth.loading) return null;
 
-  return <RouterProvider router={router} context={{ auth }} />;
+  return <RouterProvider router={router} context={{ auth, queryClient }} />;
 }

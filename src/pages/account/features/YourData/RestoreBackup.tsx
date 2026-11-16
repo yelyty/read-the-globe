@@ -1,5 +1,4 @@
 import { useRef, useState, type ChangeEvent } from 'react';
-import { useRouter } from '@tanstack/react-router';
 import { UploadSimpleIcon } from '@phosphor-icons/react';
 
 import type { BookEntry, Goal } from '../../../../types';
@@ -8,6 +7,7 @@ import {
   restoreBackup,
   type Backup,
 } from '../../../../api/data/data';
+import { useRefresh } from '../../../../hooks/useReader';
 import { useStatus } from '../../../../hooks/useStatus';
 import { useUndo } from '../../../../hooks/useUndo';
 import { Button } from '../../../../components/Button/Button';
@@ -34,7 +34,7 @@ const RestoreBackup = ({
   goals,
   onFail,
 }: RestoreBackupProps) => {
-  const router = useRouter();
+  const refresh = useRefresh();
   const status = useStatus();
   const offerUndo = useUndo();
   const file = useRef<HTMLInputElement>(null);
@@ -86,7 +86,7 @@ const RestoreBackup = ({
       return;
     }
 
-    await router.invalidate();
+    await refresh();
 
     offerUndo({
       said: m.account_restored({

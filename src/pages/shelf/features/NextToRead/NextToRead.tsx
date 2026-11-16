@@ -1,10 +1,4 @@
-import {
-  useEffect,
-  useRef,
-  useState,
-  type ChangeEvent,
-  type SubmitEvent,
-} from 'react';
+import { useRef, useState, type ChangeEvent, type SubmitEvent } from 'react';
 import { BookmarkSimpleIcon } from '@phosphor-icons/react';
 
 import type { Goal, NextRead } from '../../../../types';
@@ -15,6 +9,7 @@ import {
 } from '../../../../api/nextReads/nextReads';
 import { getLocale } from '../../../../paraglide/runtime.js';
 import { m } from '../../../../paraglide/messages.js';
+import { useCountries } from '../../../../hooks/useCountries';
 import { useStatus } from '../../../../hooks/useStatus';
 import { useUndo } from '../../../../hooks/useUndo';
 import { useDirty, useLeaveGuard } from '../../../../hooks/useUnsaved';
@@ -25,7 +20,6 @@ import { Button } from '../../../../components/Button/Button';
 import EmptyState from '../../../../components/EmptyState/EmptyState';
 import RibbonSticker from '../../../../components/Sticker/RibbonSticker';
 import StatusLine from '../../../../components/StatusLine/StatusLine';
-import { loadCountries, type Country } from '../../../../utils/countryStamps';
 import * as styles from '../../ShelfPage.css';
 import NextItem from './NextItem';
 
@@ -56,14 +50,10 @@ const NextToRead = ({
   const status = useStatus();
   const offerUndo = useUndo();
   const [saving, setSaving] = useState(false);
-  const [countries, setCountries] = useState<Map<string, Country>>();
+  const countries = useCountries();
   const titleRef = useRef<HTMLInputElement>(null);
 
   useLeaveGuard(useDirty([title, author, country]));
-
-  useEffect(() => {
-    loadCountries().then(setCountries);
-  }, []);
 
   const sorted = Object.entries(names).sort(([, left], [, right]) =>
     left.localeCompare(right, getLocale())

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useRouter } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import { EraserIcon } from '@phosphor-icons/react';
 
 import type { BookEntry, Goal } from '../../../../types';
@@ -8,6 +8,7 @@ import {
   getBackup,
   restoreCleared,
 } from '../../../../api/data/data';
+import { useRefresh } from '../../../../hooks/useReader';
 import { useStatus } from '../../../../hooks/useStatus';
 import { useUndo } from '../../../../hooks/useUndo';
 import { Button } from '../../../../components/Button/Button';
@@ -28,7 +29,8 @@ type ClearAtlasProps = {
 
 // Clear this atlas: books, goals, next reads and saved worlds go; the account stays. Undo puts them back.
 const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
-  const router = useRouter();
+  const refresh = useRefresh();
+  const navigate = useNavigate();
   const status = useStatus();
   const offerUndo = useUndo();
   const [open, setOpen] = useState(false);
@@ -59,8 +61,8 @@ const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
       return;
     }
 
-    await router.invalidate();
-    await router.navigate({ to: '/app' });
+    await refresh();
+    await navigate({ to: '/app' });
 
     // anything logged since the clear stays, beside the atlas as it was
     offerUndo({

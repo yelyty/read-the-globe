@@ -5,11 +5,11 @@ import {
   type SubmitEvent,
   type SyntheticEvent,
 } from 'react';
-import { useRouter } from '@tanstack/react-router';
 import { PlusIcon } from '@phosphor-icons/react';
 
 import type { World } from '../../../../types';
 import { addWorld, removeWorld } from '../../../../api/worlds/worlds';
+import { useRefresh } from '../../../../hooks/useReader';
 import { useStatus } from '../../../../hooks/useStatus';
 import { useUndo } from '../../../../hooks/useUndo';
 import { sameWorld, type WorldRow } from '../../../../utils/worlds';
@@ -24,7 +24,7 @@ const OPEN = 'rtg-beyond';
    A world can be saved before any book goes there, and removed (with Undo) until one does. The fold is
    remembered on this device. */
 const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
-  const router = useRouter();
+  const refresh = useRefresh();
   const status = useStatus();
   const offerUndo = useUndo();
 
@@ -58,7 +58,7 @@ const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
 
     if (error) return status.show({ text: error });
     setName('');
-    await router.invalidate();
+    await refresh('worlds');
     status.show({ text: m.world_saved({ name: typed }) });
   };
 
@@ -66,7 +66,7 @@ const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
     const error = await removeWorld(world.id);
 
     if (error) return status.show({ text: error });
-    await router.invalidate();
+    await refresh('worlds');
     input.current?.focus();
 
     offerUndo({

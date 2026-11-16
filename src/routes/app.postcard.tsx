@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
 import PostcardPage from '../pages/postcard/PostcardPage';
-import { getProfile } from '../api/Profile/getProfile';
+import { profileQuery } from '../api/queries';
 
 type PostcardSearch = { goal?: number; year?: string };
 
@@ -14,6 +14,8 @@ export const Route = createFileRoute('/app/postcard')({
       ? String(search.year)
       : undefined,
   }),
-  loader: ({ context }) => getProfile(context.auth.user!.id),
+  loader: async ({ context: { queryClient, readerId } }) => {
+    await queryClient.ensureQueryData(profileQuery(readerId));
+  },
   component: () => <PostcardPage />,
 });

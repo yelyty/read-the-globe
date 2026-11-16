@@ -1,3 +1,4 @@
+import type { QueryClient } from '@tanstack/react-query';
 import {
   createRootRouteWithContext,
   Outlet,
@@ -17,6 +18,7 @@ import { wantedLocale } from '../utils/lang';
 
 export interface RouterContext {
   auth: AuthContextValue;
+  queryClient: QueryClient;
 }
 
 export const Route = createRootRouteWithContext<RouterContext>()({

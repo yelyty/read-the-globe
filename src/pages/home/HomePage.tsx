@@ -6,7 +6,7 @@ import {
   type MouseEvent,
   type PointerEvent,
 } from 'react';
-import { getRouteApi, useNavigate } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import {
   ArrowsInIcon,
   ArrowsOutIcon,
@@ -21,6 +21,7 @@ import { atlasMarks, atlasStats } from '../../utils/atlasMarks';
 import { worldsOf } from '../../utils/worlds';
 import { useAuth } from '../../auth/auth-context';
 import { useCountryNames } from '../../hooks/useCountryNames';
+import { useBooks, useWorlds } from '../../hooks/useReader';
 import { useLanding } from '../../hooks/useLanding';
 import PageTitle from '../../components/PageTitle/PageTitle';
 import ButtonLink from '../../components/Button/ButtonLink';
@@ -37,7 +38,6 @@ import { useFullScreen } from './hooks/useFullScreen';
 import { useMapTip } from './hooks/useMapTip';
 import { usePinFlight } from './hooks/usePinFlight';
 
-const app = getRouteApi('/app');
 const RECENT = 3;
 
 const HomePage = () => {
@@ -47,7 +47,8 @@ const HomePage = () => {
   const pointer = useRef<'mouse' | 'touch'>('mouse');
   const plate = useRef<HTMLDivElement>(null);
 
-  const { books, worlds: savedWorlds } = app.useLoaderData();
+  const books = useBooks();
+  const savedWorlds = useWorlds();
   const { user } = useAuth();
   const names = useCountryNames();
   const [landing, setLanding] = useLanding();

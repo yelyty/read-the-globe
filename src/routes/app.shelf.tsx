@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
 import ShelfPage from '../pages/shelf/ShelfPage';
-import { getNextReads } from '../api/nextReads/nextReads';
+import { nextReadsQuery } from '../api/queries';
 
 type ShelfSearch = { country?: string; tab?: 'next'; q?: string };
 
@@ -11,6 +11,8 @@ export const Route = createFileRoute('/app/shelf')({
     tab: search.tab === 'next' ? 'next' : undefined,
     q: typeof search.q === 'string' ? search.q : undefined, // a link to the shelf can bring its search
   }),
-  loader: ({ context }) => getNextReads(context.auth.user!.id),
+  loader: async ({ context: { queryClient, readerId } }) => {
+    await queryClient.ensureQueryData(nextReadsQuery(readerId));
+  },
   component: ShelfPage,
 });

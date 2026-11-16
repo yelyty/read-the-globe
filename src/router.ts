@@ -1,11 +1,14 @@
 import { createRouter } from '@tanstack/react-router';
 
 import { routeTree } from './routeTree.gen';
+import { queryClient } from './api/queryClient';
 import { deLocalizeUrl, localizeUrl } from './paraglide/runtime.js';
 
 export const router = createRouter({
   routeTree,
-  context: { auth: undefined! },
+  context: { auth: undefined!, queryClient },
+  // TanStack Query decides what is fresh; the router always runs its loaders, which read the cache
+  defaultPreloadStaleTime: 0,
   // routes and links stay unprefixed; the router adds and strips /cs or /uk
   rewrite: {
     input: ({ url }) => deLocalizeUrl(url),

@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { getRouteApi } from '@tanstack/react-router';
 
 import { useCountryNames } from '../../hooks/useCountryNames';
+import { useBooks, useGoals, useNextReads } from '../../hooks/useReader';
 import { atlasMarks } from '../../utils/atlasMarks';
 import { m } from '../../paraglide/messages.js';
 import PageTitle from '../../components/PageTitle/PageTitle';
@@ -9,15 +10,15 @@ import NextToRead from './features/NextToRead/NextToRead';
 import ShelfRead from './features/ShelfRead/ShelfRead';
 import ShelfTabs from './features/ShelfTabs';
 
-const app = getRouteApi('/app');
 const shelfRoute = getRouteApi('/app/shelf');
 
 // the Shelf: what's been read, and what's to read next, in two folder tabs
 const ShelfPage = () => {
-  const { books, goals } = app.useLoaderData();
+  const books = useBooks();
+  const goals = useGoals();
   const { tab } = shelfRoute.useSearch();
-  const next = shelfRoute.useLoaderData();
-  const [nextItems, setNextItems] = useState(next.items);
+  // the cached list itself: adding and removing change it in place, and a reload after logging a book shows here
+  const next = useNextReads();
   const names = useCountryNames();
 
   const marks = useMemo(() => atlasMarks(books), [books]);
@@ -29,14 +30,14 @@ const ShelfPage = () => {
       <ShelfTabs
         tab={tab === 'next' ? 'next' : 'read'}
         readCount={books.length}
-        nextCount={nextItems.length}
+        nextCount={next.items.length}
       />
 
       {tab === 'next' ? (
         <div role="tabpanel" id="shelf-next" aria-labelledby="tab-next">
           <NextToRead
-            items={nextItems}
-            setItems={setNextItems}
+            items={next.items}
+            setItems={next.setItems}
             failed={next.failed}
             names={names}
             marks={marks}

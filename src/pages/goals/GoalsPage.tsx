@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { getRouteApi, useNavigate, useRouter } from '@tanstack/react-router';
+import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import type { Feature } from 'geojson';
 
 import type { Goal } from '../../types';
@@ -10,6 +10,7 @@ import { useStatus } from '../../hooks/useStatus';
 import { useUndo } from '../../hooks/useUndo';
 import { prefersReducedMotion } from '../../utils/motion';
 import { useCountryNames } from '../../hooks/useCountryNames';
+import { useBooks, useGoals, useRefresh } from '../../hooks/useReader';
 import { m } from '../../paraglide/messages.js';
 import PageTitle from '../../components/PageTitle/PageTitle';
 import EmptyState from '../../components/EmptyState/EmptyState';
@@ -23,12 +24,12 @@ import GoalDialog from './features/GoalsDialog/GoalsDialog';
 import BooksDialog from './features/BooksDialog/BooksDialog';
 import * as styles from './GoalsPage.css';
 
-const app = getRouteApi('/app');
 const route = getRouteApi('/app/goals');
 
 const GoalsPage = () => {
-  const { books, goals } = app.useLoaderData();
-  const router = useRouter();
+  const books = useBooks();
+  const goals = useGoals();
+  const refresh = useRefresh();
   const [shapes, setShapes] = useState<Record<string, Feature>>();
   const [editing, setEditing] = useState<Goal | 'new' | null>(null);
   const [choosing, setChoosing] = useState<Goal | null>(null);
@@ -48,7 +49,7 @@ const GoalsPage = () => {
   const saved = async (message: string, focus?: string) => {
     say(message);
     if (focus) focusName.current = focus.trim().toLowerCase();
-    await router.invalidate();
+    await refresh('goals', 'books');
   };
 
   const marks = atlasMarks(books);
@@ -134,7 +135,7 @@ const GoalsPage = () => {
     const problem = await deleteGoal(goal.id);
 
     if (problem) return say(problem);
-    await router.invalidate();
+    await refresh('goals', 'books');
     // focus goes to the row now in its place, or to the suggestions when it was the last one
     const left = document.querySelectorAll<HTMLElement>('[data-remove-goal]');
 

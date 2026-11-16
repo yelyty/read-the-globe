@@ -1,9 +1,7 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
 
-import getBooks from '../api/getBooks';
 import AppLayout from '../layout/AppLayout/AppLayout';
-import { getGoals } from '../api/goals/goals';
-import { getWorlds } from '../api/worlds/worlds';
+import { booksQuery, goalsQuery, worldsQuery } from '../api/queries';
 import { m } from '../paraglide/messages.js';
 
 type AppSearch = {
@@ -25,20 +23,21 @@ export const Route = createFileRoute('/app')({
     world: typeof search.world === 'string' ? search.world : undefined,
   }),
   beforeLoad: ({ context, location }) => {
-    if (!context.auth.isAuthenticated) {
+    const { user } = context.auth;
+
+    if (!user) {
       throw redirect({ to: '/', search: { redirect: location.href } });
     }
+
+    return { readerId: user.id };
   },
-  loader: async ({ context }) => {
-    const userId = context.auth.user!.id;
-
-    const [books, goals, worlds] = await Promise.all([
-      getBooks(userId),
-      getGoals(userId),
-      getWorlds(userId),
+  // every /app page reads these (useBooks, useGoals, useWorlds); they're in the cache before it shows
+  loader: async ({ context: { queryClient, readerId } }) => {
+    await Promise.all([
+      queryClient.ensureQueryData(booksQuery(readerId)),
+      queryClient.ensureQueryData(goalsQuery(readerId)),
+      queryClient.ensureQueryData(worldsQuery(readerId)),
     ]);
-
-    return { books, goals, worlds };
   },
   //   TODO: Create error component
   errorComponent: () => <p>{m.common_try_again()}</p>,

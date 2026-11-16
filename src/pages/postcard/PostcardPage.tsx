@@ -4,6 +4,7 @@ import { PushPinIcon } from '@phosphor-icons/react';
 
 import { useAuth } from '../../auth/auth-context';
 import { useCountryNames } from '../../hooks/useCountryNames';
+import { useBooks, useGoals, useProfile } from '../../hooks/useReader';
 import { atlasMarks } from '../../utils/atlasMarks';
 import { m } from '../../paraglide/messages.js';
 import PageTitle from '../../components/PageTitle/PageTitle';
@@ -27,13 +28,13 @@ import { bookYears, yearSum } from './utils/yearSum';
 import CardSend from './features/CardSend';
 import CardSetup from './features/CardSetup/CardSetup';
 
-const app = getRouteApi('/app');
 const route = getRouteApi('/app/postcard');
 
 // the Postcard: a card of the reader's atlas, a year, or a reached goal, to save or share
 const PostcardPage = () => {
-  const { books, goals } = app.useLoaderData();
-  const profile = route.useLoaderData();
+  const books = useBooks();
+  const goals = useGoals();
+  const profile = useProfile();
   const search = route.useSearch();
   const navigate = useNavigate();
   const { user } = useAuth();

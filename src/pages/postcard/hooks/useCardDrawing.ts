@@ -1,8 +1,8 @@
-import { useEffect, useState, type RefObject } from 'react';
+import { useEffect, type RefObject } from 'react';
 
 import type { BookEntry, Goal } from '../../../types';
 import type { Marks } from '../../../utils/atlasMarks';
-import { loadCountries, type Country } from '../../../utils/countryStamps';
+import { useCountries } from '../../../hooks/useCountries';
 import { goalProgress } from '../../goals/utils/goalProgress';
 import type { CardOptions } from '../utils/cardOptions';
 import { drawGoalCard } from '../utils/drawGoalCard';
@@ -37,11 +37,7 @@ export function useCardDrawing({
   goal,
   yearSummary,
 }: CardDrawing) {
-  const [countries, setCountries] = useState<Map<string, Country>>();
-
-  useEffect(() => {
-    loadCountries().then(setCountries);
-  }, []);
+  const countries = useCountries();
 
   useEffect(() => {
     const canvas = canvasRef.current;

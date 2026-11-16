@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
-import { useRouter } from '@tanstack/react-router';
 import { ArrowCounterClockwiseIcon } from '@phosphor-icons/react';
 
 import { m } from '../paraglide/messages.js';
+import { useRefresh } from './useReader';
 import { useStatus, type Status } from './useStatus';
 
 /** a change the reader can take back from the status line */
@@ -42,14 +42,13 @@ export const offerUndo = (
     },
   });
 
-/** offerUndo, wired to the status line and the router */
+/** offerUndo, wired to the status line and the reader's data */
 export function useUndo() {
   const { show } = useStatus();
-  const router = useRouter();
+  const refresh = useRefresh();
 
   return useCallback(
-    (change: UndoableChange) =>
-      offerUndo(change, { show, refresh: () => router.invalidate() }),
-    [show, router]
+    (change: UndoableChange) => offerUndo(change, { show, refresh }),
+    [show, refresh]
   );
 }

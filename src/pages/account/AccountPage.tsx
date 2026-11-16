@@ -1,7 +1,6 @@
-import { getRouteApi } from '@tanstack/react-router';
-
 import { useAuth } from '../../auth/auth-context';
 import { useCountryNames } from '../../hooks/useCountryNames';
+import { useBooks, useGoals } from '../../hooks/useReader';
 import LanguagePicker from '../../components/LanguagePicker/LanguagePicker';
 import * as fieldStyles from '../../components/Field/Field.css';
 import { m } from '../../paraglide/messages.js';
@@ -14,11 +13,10 @@ import ClearAtlas from './features/ClearAtlas/ClearAtlas';
 import Block from './components/Block';
 import * as styles from './AccountPage.css';
 
-const app = getRouteApi('/app');
-
 const AccountPage = () => {
   const { user } = useAuth();
-  const { books, goals } = app.useLoaderData();
+  const books = useBooks();
+  const goals = useGoals();
   const names = useCountryNames();
 
   if (!user) return null;

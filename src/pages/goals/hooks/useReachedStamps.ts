@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useRouter } from '@tanstack/react-router';
 
 import type { BookEntry, Goal } from '../../../types';
+import { useRefresh } from '../../../hooks/useReader';
 import { markReached } from '../../../api/goals/goals';
 import { atlasMarks } from '../../../utils/atlasMarks';
 import { prefersReducedMotion } from '../../../utils/motion';
@@ -11,7 +11,7 @@ import { goalProgress, isDone } from '../utils/goalProgress';
 // A goal is stamped reached the first time it is seen full, and loses the stamp if a book is removed.
 // Returns the goals that crossed their flag while the reader looked: each gets the arrival once.
 export function useReachedStamps(goals: Goal[], books: BookEntry[]) {
-  const router = useRouter();
+  const refresh = useRefresh();
   const [arriving, setArriving] = useState<number[]>([]);
 
   useEffect(() => {
@@ -37,9 +37,9 @@ export function useReachedStamps(goals: Goal[], books: BookEntry[]) {
             .filter((change) => change.done)
             .map((change) => change.g.id),
         ]);
-      router.invalidate();
+      refresh('goals');
     });
-  }, [goals, books, router]);
+  }, [goals, books, refresh]);
 
   return arriving;
 }

@@ -1,6 +1,6 @@
 import { useRef, useState, type ChangeEvent, type ReactNode } from 'react';
-import { useRouter } from '@tanstack/react-router';
 
+import { useRefresh } from '../../../../hooks/useReader';
 import { importBooks } from '../../../../api/data/data';
 import { getCountryNames } from '../../../../utils/countryNames';
 import { booksFromCsv } from '../../../../utils/readingListCsv';
@@ -16,7 +16,7 @@ type ImportCsvProps = {
 
 // Import a reading list (CSV): a button that opens the file picker. Books are added, never replaced, all or nothing.
 const ImportCsv = ({ className, children, onDone }: ImportCsvProps) => {
-  const router = useRouter();
+  const refresh = useRefresh();
   const file = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
 
@@ -43,7 +43,7 @@ const ImportCsv = ({ className, children, onDone }: ImportCsvProps) => {
 
     const { added, duplicates } = result.data;
 
-    if (added) await router.invalidate();
+    if (added) await refresh();
     setBusy(false);
     onDone(importReport(added, duplicates, problems));
   };

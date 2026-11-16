@@ -1,13 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
-import { getCountryNames } from '../utils/countryNames';
+import { countryNamesQuery } from '../api/queries';
 
+const NONE: Record<string, string> = {};
+
+/** code → country name in the reader's language; empty until the map's names load */
 export function useCountryNames() {
-  const [names, setNames] = useState<Record<string, string>>({});
-
-  useEffect(() => {
-    getCountryNames().then(setNames);
-  }, []);
-
-  return names;
+  return useQuery(countryNamesQuery).data ?? NONE;
 }

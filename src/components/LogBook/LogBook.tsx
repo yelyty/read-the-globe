@@ -1,17 +1,24 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import {
   getRouteApi,
   useNavigate,
-  useRouter,
   useRouterState,
 } from '@tanstack/react-router';
 
 import { useUndo } from '../../hooks/useUndo';
 import { useLanding, type Landing } from '../../hooks/useLanding';
-import type { BookEntry, NextRead } from '../../types';
+import {
+  useBooks,
+  useGoals,
+  useReaderId,
+  useRefresh,
+  useWorlds,
+} from '../../hooks/useReader';
+import type { BookEntry } from '../../types';
 import { saveBook } from '../../api/books/books';
+import { countryNamesQuery, nextReadsQuery } from '../../api/queries';
 import { worldsOf } from '../../utils/worlds';
-import { getCountryNames } from '../../utils/countryNames';
 import { m } from '../../paraglide/messages.js';
 import { draftOf } from './bookLog';
 import * as styles from './LogBook.css';
@@ -23,10 +30,12 @@ const app = getRouteApi('/app');
 const LogBook = () => {
   const offerUndo = useUndo();
   const { log, edit, next, country, world } = app.useSearch();
-  const { books, goals, worlds } = app.useLoaderData();
+  const books = useBooks();
+  const goals = useGoals();
+  const worlds = useWorlds();
+  const readerId = useReaderId();
   const navigate = useNavigate();
-  const router = useRouter();
-  const [names, setNames] = useState<Record<string, string>>();
+  const refresh = useRefresh();
   const [said, setSaid] = useState('');
   const [, setLanding] = useLanding();
 
@@ -38,20 +47,15 @@ const LogBook = () => {
   const book = edit ? books.find((entry) => entry.id === edit) : undefined;
   const open = Boolean(log || book);
 
-  // the item "Log it" came from, from the Shelf's loader (the only place it can be pressed)
-  const nextItem = useRouterState({
-    select: (st) =>
-      (
-        st.matches.find((mt) => mt.routeId === '/app/shelf')?.loaderData as
-          { items: NextRead[] } | undefined
-      )?.items.find((it) => it.id === next),
+  // the item "Log it" came from, from the Shelf's list (the only place it can be pressed)
+  const { data: nextItem } = useQuery({
+    ...nextReadsQuery(readerId),
+    enabled: Boolean(next),
+    select: (list) => list.items.find((it) => it.id === next),
   });
 
   // the countries in the reader's language, with the English ones kept so a country typed in English still matches
-  useEffect(() => {
-    if (!open || names) return;
-    getCountryNames().then(setNames);
-  }, [open, names]);
+  const { data: names } = useQuery({ ...countryNamesQuery, enabled: open });
 
   const close = () =>
     navigate({
@@ -72,7 +76,8 @@ const LogBook = () => {
       setLanding(landing);
       await navigate({ to: '/app', search: {} });
     } else await close();
-    await router.invalidate();
+    // a book logged from the Shelf's next reads leaves that list
+    await refresh('books', 'nextReads');
     // Home says where the new book went when its pins land
     if (!landing) setSaid(message);
   };
@@ -81,7 +86,7 @@ const LogBook = () => {
   // read date and goal ticks. ponytail: it counts as logged again, so it returns to the top of Recent reads
   const removed = async (gone: BookEntry) => {
     await close();
-    await router.invalidate();
+    await refresh('books');
 
     offerUndo({
       said: m.log_removed({ title: gone.title }),
