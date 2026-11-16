@@ -115,7 +115,7 @@ export function useSaveBook({
       : m.log_pinning()
     : book
       ? m.log_save_changes()
-      : dupOk
+      : dupOk !== null
         ? m.log_pin_again()
         : m.log_pin_it();
 

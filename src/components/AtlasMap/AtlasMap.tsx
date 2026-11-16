@@ -45,7 +45,7 @@ export type Show = 'all' | 'set' | 'author';
 export const ANTARCTICA = '010'; // no country, never counted, never offered
 
 /** a pin of its own, off any country (an imagined world's place) */
-type Dot = { id: string; lon: number; lat: number };
+type Dot = { id: number; lon: number; lat: number };
 
 type AtlasMapProps = {
   marks: Marks;

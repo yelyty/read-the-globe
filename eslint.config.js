@@ -10,6 +10,8 @@ import { defineConfig, globalIgnores } from 'eslint/config';
 
 export default defineConfig([
   globalIgnores([
+    // installed agent skills (npx skills add): third-party code
+    '.agents',
     'dist',
     'storybook-static',
     'src/routeTree.gen.ts',

@@ -15,8 +15,8 @@ export type BookDraft = {
 
 export async function saveBook(
   draft: BookDraft,
-  id?: string
-): Promise<Made<string>> {
+  id?: number
+): Promise<Made<number>> {
   const saved = await supabase.rpc('save_book', {
     p_book_id: id ?? null,
     p_title: draft.title,
@@ -31,10 +31,10 @@ export async function saveBook(
 
   if (error) console.error(error);
 
-  return error ? failed(m.book_save_failed()) : made(saved.data as string);
+  return error ? failed(m.book_save_failed()) : made(saved.data as number);
 }
 
-export async function deleteBook(id: string): Promise<Problem> {
+export async function deleteBook(id: number): Promise<Problem> {
   const { error } = await supabase.from('books').delete().eq('id', id);
 
   if (error) console.error(error);

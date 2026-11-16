@@ -5,6 +5,7 @@ import { ListIcon, PushPinIcon } from '@phosphor-icons/react';
 import { useAuth } from '../../../../auth/auth-context';
 import ThemeButton from '../../../../components/ThemeButton/ThemeButton';
 import Logo from '../../../../components/Logo/Logo';
+import BetaChip from '../../../../components/BetaChip/BetaChip';
 import { m } from '../../../../paraglide/messages.js';
 import { skip } from '../../LandingPage.css';
 import { SECTIONS } from '../../utils/sections';
@@ -44,7 +45,7 @@ const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
         setMenuOpen(false);
     };
 
-    const wide = window.matchMedia('(min-width: 800px)');
+    const wide = window.matchMedia(styles.wideHeader);
 
     const onWide = (event: MediaQueryListEvent) => {
       if (event.matches) setMenuOpen(false);
@@ -79,6 +80,7 @@ const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
           <a href="/#top" className={styles.brand} aria-label={m.brand_home()}>
             <Logo className={styles.logo} />
             <span className={styles.brandWord}>Read The Globe</span>
+            <BetaChip className={styles.brandChip} />
           </a>
 
           <nav className={styles.track} aria-label={m.landing_sections()}>

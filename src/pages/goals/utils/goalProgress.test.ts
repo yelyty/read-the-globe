@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import type { BookEntry } from '../../../types';
+import { idFor } from '../../../testing/idFor';
 import { atlasMarks } from '../../../utils/atlasMarks';
 import { CONTINENT_OF } from '../../../utils/continents';
 import { MAP_CODES } from '../../../utils/world';
@@ -22,18 +23,18 @@ const book = (
     goals = [],
   }: { author?: string; places?: string[]; goals?: number[] }
 ): BookEntry => ({
-  id,
+  id: idFor(id),
   title: id,
   author: author
     ? { name: 'Someone', country: { code: author, name: '' } }
     : null,
   places: places.map((countryCode, i) => ({
-    id: `${id}-${i}`,
+    id: i,
     name: '',
     lon: 0,
     lat: 0,
     countryCode,
-    bookId: id,
+    bookId: idFor(id),
   })),
   goals: goals.map((goalId) => ({ goalId })),
 });

@@ -57,25 +57,25 @@ describe('countryFrom', () => {
 
 describe('worldsOf', () => {
   const place = (name: string, imagined: boolean) => ({
-    id: name,
+    id: 0,
     name,
     lon: 0,
     lat: 0,
-    bookId: 'b',
+    bookId: 1,
     imagined,
   });
 
   it('groups imagined places by name, then saved worlds with no books', () => {
     const books = [
       {
-        id: '1',
+        id: 1,
         title: '1',
         author: null,
         goals: [],
         places: [place('Earthsea', true), place('Paris', false)],
       },
       {
-        id: '2',
+        id: 2,
         title: '2',
         author: null,
         goals: [],

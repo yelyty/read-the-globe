@@ -59,7 +59,7 @@ const draft = {
 };
 
 const item = {
-  id: 'n1',
+  id: 1,
   title: 'Eden',
   author: null,
   countryCode: null,

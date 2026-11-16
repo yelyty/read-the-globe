@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { PencilSimpleIcon } from '@phosphor-icons/react';
 
 import type { BookEntry } from '../../../../types';
-import { coverColor } from '../../../../utils/coverColors';
+import BookCover from '../../../../components/BookCover/BookCover';
 import { formatDay } from '../../../../utils/formatDate';
 import { readDate } from '../../../../utils/readDate';
 import { m } from '../../../../paraglide/messages.js';
@@ -14,19 +14,13 @@ type WorldBookProps = {
   onEdit: () => void;
 };
 
-// a book set in an imagined world: its cover colour, title, author, when it was read, and Edit
+// a book set in an imagined world: its cover, title, author, when it was read, and Edit
 const WorldBook = ({ book, onEdit }: WorldBookProps) => {
   const day = readDate(book);
 
   return (
     <li>
-      <i
-        className={styles.tipCover}
-        style={{
-          background: coverColor(book.title + (book.author?.name ?? '')),
-        }}
-        aria-hidden="true"
-      />
+      <BookCover title={book.title} author={book.author?.name} size="small" />
       <div>
         <span className={styles.tipTitle}>{book.title}</span>
         <span>{book.author?.name}</span>

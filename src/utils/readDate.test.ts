@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import type { BookEntry } from '../types';
+import { idFor } from '../testing/idFor';
 import { byLogged, byReadDate, readOnFor } from './readDate';
 
 const book = (
@@ -8,7 +9,7 @@ const book = (
   readOn: string | null,
   createdAt: string
 ): BookEntry => ({
-  id,
+  id: idFor(id),
   title: id,
   readOn,
   createdAt,
@@ -24,16 +25,14 @@ describe('read date', () => {
 
   it('sorts newest read first, falling back to the logged day', () => {
     expect(
-      [old, mid, legacy].sort(byReadDate).map((entry) => entry.id)
+      [old, mid, legacy].sort(byReadDate).map((entry) => entry.title)
     ).toEqual(['legacy', 'mid', 'old']);
   });
 
   it('sorts most recently logged first', () => {
-    expect([mid, legacy, old].sort(byLogged).map((entry) => entry.id)).toEqual([
-      'old',
-      'legacy',
-      'mid',
-    ]);
+    expect(
+      [mid, legacy, old].sort(byLogged).map((entry) => entry.title)
+    ).toEqual(['old', 'legacy', 'mid']);
   });
 
   it("turns the form's month into a read_on date", () => {

@@ -38,7 +38,11 @@ const fields = (extra: Partial<LogFields> = {}): LogFields => ({
 const read = (extra: Partial<LogFields> = {}) =>
   readLog(fields(extra), names, TODAY);
 
-const entry = (draft: BookDraft, id = 'b1'): BookEntry => ({
+// a book saved earlier, and the one being saved now
+const OLD_ID = 2;
+const NEW_ID = 3;
+
+const entry = (draft: BookDraft, id = 1): BookEntry => ({
   id,
   title: draft.title,
   readOn: draft.readOn,
@@ -47,7 +51,7 @@ const entry = (draft: BookDraft, id = 'b1'): BookEntry => ({
     country: { code: draft.authorCountry, name: '' },
   },
   places: draft.places.map((place, i) => ({
-    id: `${id}-${i}`,
+    id: i,
     name: place.name,
     lon: 0,
     lat: 0,
@@ -159,7 +163,7 @@ describe('the same book twice', () => {
       entry({ ...lem, title: 'SOLARIS', author: 'stanisław lem' }),
     ];
 
-    expect(duplicateOf(lem, shelf)?.id).toBe('b1');
+    expect(duplicateOf(lem, shelf)?.id).toBe(1);
   });
 
   it('lets a different book through', () => {
@@ -201,13 +205,13 @@ describe('where a new book lands', () => {
   it('says nothing of goals when none is crossed', () => {
     const draft = read({ rows: [row('Kyoto', 'Japan')] }).draft!;
 
-    const landing = landingFor('new', draft, {
+    const landing = landingFor(NEW_ID, draft, {
       books: [],
       goals: [japanGoal],
       names,
     });
 
-    expect(landing.bookId).toBe('new');
+    expect(landing.bookId).toBe(NEW_ID);
     expect(landing.reached).toBeNull();
     expect(landing.targets).toContain('392');
   });
@@ -215,12 +219,12 @@ describe('where a new book lands', () => {
   it('names the goal a new book carries over its flag', () => {
     const earlier = entry(
       read({ rows: [row('Rome', 'Italy')], country: 'Italy' }).draft!,
-      'old'
+      OLD_ID
     );
 
     const draft = read({ rows: [row('Kyoto', 'Japan')] }).draft!;
 
-    const landing = landingFor('new', draft, {
+    const landing = landingFor(NEW_ID, draft, {
       books: [earlier],
       goals: [japanGoal],
       names,
@@ -232,12 +236,12 @@ describe('where a new book lands', () => {
   it('doesn’t claim a goal already stamped reached', () => {
     const earlier = entry(
       read({ rows: [row('Rome', 'Italy')], country: 'Italy' }).draft!,
-      'old'
+      OLD_ID
     );
 
     const draft = read({ rows: [row('Kyoto', 'Japan')] }).draft!;
 
-    const landing = landingFor('new', draft, {
+    const landing = landingFor(NEW_ID, draft, {
       books: [earlier],
       goals: [{ ...japanGoal, reachedOn: '2026-01-01' }],
       names,

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import type { BookEntry } from '../types';
+import { idFor } from '../testing/idFor';
 import { atlasMarks, atlasStats } from './atlasMarks';
 
 const book = (
@@ -8,18 +9,18 @@ const book = (
   author: string | null,
   places: string[]
 ): BookEntry => ({
-  id,
+  id: idFor(id),
   title: id,
   author: author
     ? { name: 'A', country: { name: author, code: author } }
     : null,
   places: places.map((countryCode, i) => ({
-    id: `${id}${i}`,
+    id: i,
     name: '',
     lon: 0,
     lat: 0,
     countryCode,
-    bookId: id,
+    bookId: idFor(id),
   })),
   goals: [],
 });
@@ -28,9 +29,9 @@ describe('atlasMarks', () => {
   it('marks set-in and author countries separately', () => {
     const marks = atlasMarks([book('b1', '250', ['392'])]);
 
-    expect(marks['392'].set.map((entry) => entry.id)).toEqual(['b1']);
+    expect(marks['392'].set.map((entry) => entry.title)).toEqual(['b1']);
     expect(marks['392'].author).toEqual([]);
-    expect(marks['250'].author.map((entry) => entry.id)).toEqual(['b1']);
+    expect(marks['250'].author.map((entry) => entry.title)).toEqual(['b1']);
   });
 
   it('counts a book once per country even with several places there', () => {

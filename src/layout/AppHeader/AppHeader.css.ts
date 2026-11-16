@@ -12,7 +12,11 @@ import {
 } from '../../styles/global.css';
 import { wrap } from '../../pages/landing/LandingPage.css';
 
+/* One row (brand, the five-tab nav centred, theme and Log a book) needs about 1120px in Ukrainian, the longest.
+   Narrower, the header takes two rows: brand and the buttons first, then the nav across the full width. */
 const wide = 'screen and (min-width: 1120px)';
+
+export const twoRows = 'screen and (max-width: 1119px)';
 
 export const row = style([
   wrap,
@@ -23,7 +27,10 @@ export const row = style([
     alignItems: 'center',
     gap: '0 24px',
     minHeight: 72,
-    '@media': { [phone]: { minHeight: 0, gap: 8, paddingTop: 16 } },
+    '@media': {
+      [twoRows]: { minHeight: 0, gap: '12px 24px', paddingTop: 16 },
+      [phone]: { gap: 8 },
+    },
   },
 ]);
 
@@ -41,7 +48,8 @@ export const nav = style({
       translate: '-50% 0',
       marginLeft: 0,
     },
-    [phone]: { order: 10, flexBasis: '100%', gap: 2, margin: '0 0 8px' },
+    [twoRows]: { order: 10, flexBasis: '100%', margin: '0 0 8px' },
+    [phone]: { gap: 2 },
     [tiny]: { gap: 0 },
   },
 });
@@ -81,8 +89,9 @@ export const navLink = style({
       },
     },
     [reducedMotion]: { transition: 'none' },
+    // two rows: the tabs share the nav's full width
+    [twoRows]: { flex: '1 1 auto' },
     [phone]: {
-      flex: '1 1 auto',
       minHeight: 44,
       padding: '0 8px',
       fontSize: 15,
@@ -95,10 +104,7 @@ export const tools = style({
   display: 'flex',
   alignItems: 'center',
   gap: 8,
-  '@media': {
-    [wide]: { marginLeft: 'auto' },
-    [phone]: { marginLeft: 'auto' },
-  },
+  marginLeft: 'auto',
 });
 globalStyle(`${tools} > a`, { textDecoration: 'none' });
 

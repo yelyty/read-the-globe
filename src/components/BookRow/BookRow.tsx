@@ -2,11 +2,11 @@ import { PencilSimpleIcon } from '@phosphor-icons/react';
 import { Link } from '@tanstack/react-router';
 
 import type { BookEntry } from '../../types';
-import { coverColor } from '../../utils/coverColors';
 import { readDate } from '../../utils/readDate';
 import { m } from '../../paraglide/messages.js';
 import { isoYearMonth } from '../../utils/isoDate';
 import { formatMonth } from '../../utils/formatDate';
+import BookCover from '../BookCover/BookCover';
 import MarkDot from '../MarkDot/MarkDot';
 import * as styles from './BookRow.css';
 import BookPlace from './BookPlace';
@@ -27,12 +27,10 @@ const BookRow = ({ book, names }: BookRowProps) => {
   return (
     <li className={styles.row}>
       <div className={styles.rowMain}>
-        <i
+        <BookCover
+          title={book.title}
+          author={book.author?.name}
           className={styles.cover}
-          style={{
-            background: coverColor(book.title + (book.author?.name ?? '')),
-          }}
-          aria-hidden="true"
         />
         <span className={styles.rowTitle}>{book.title}</span>
         <span className={styles.rowAuthor}>

@@ -141,7 +141,10 @@ export const appHeader = style({});
 globalStyle(`${appHeader} :is(a, button)`, { fontFamily: vars.font.display });
 
 /* ---------- the landing's own header, as in the latest mock (e2e-mock/index.html, .top) ---------- */
-const narrow = 'screen and (max-width: 799px)';
+/* The full row (brand with its Beta chip, four section links, theme, Log in, Start your atlas) needs about 976px
+   in Ukrainian, plus the page's side padding. Narrower than this, the sections and Log in fold into the menu. */
+export const wideHeader = 'screen and (min-width: 1100px)';
+const narrow = 'screen and (max-width: 1099px)';
 const tiny = 'screen and (max-width: 479px)';
 const easeOut = 'cubic-bezier(.23, 1, .32, 1)';
 const fill = `color-mix(in srgb, ${vars.color.text} 6%, ${vars.color.background})`;
@@ -178,6 +181,11 @@ export const brandWord = style({
   '@media': { [tiny]: { display: 'none' } },
 });
 
+// the Beta chip needs the room beside the wordmark and buttons (about 555px); on a phone the logo goes alone
+export const brandChip = style({
+  '@media': { [phone]: { display: 'none' } },
+});
+
 // the sections sit in a track; the one on screen would be a page-white pill inside it
 export const track = style({
   display: 'flex',
@@ -201,6 +209,8 @@ export const trackLink = style({
   lineHeight: 1,
   color: vars.color.textSecondary,
   textDecoration: 'none',
+  // a section's name stays on one line ("How it works"), never stacked in the pill
+  whiteSpace: 'nowrap',
   transition: 'background-color .15s ease-out, color .15s ease-out',
   selectors: {
     '&[aria-current="true"]': {
@@ -311,7 +321,7 @@ export const menu = style({
   animation: `${menuIn} .15s ${easeOut}`,
   selectors: { '&[hidden]': { display: 'none' } },
   '@media': {
-    'screen and (min-width: 800px)': { display: 'none' },
+    [wideHeader]: { display: 'none' },
     [reducedMotion]: { animation: 'none' },
   },
 });

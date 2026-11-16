@@ -5,7 +5,7 @@ import * as styles from '../../GoalsPage.css';
 type BookPickProps = {
   book: BookEntry;
   checked: boolean;
-  onToggle: (id: string) => void;
+  onToggle: (id: number) => void;
 };
 
 // a book to tick toward a goal

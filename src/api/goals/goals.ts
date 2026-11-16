@@ -75,7 +75,7 @@ export async function markReached(
 
 export async function setGoalBooks(
   goalId: number,
-  bookIds: string[]
+  bookIds: number[]
 ): Promise<Problem> {
   const { error } = await supabase.rpc('set_goal_books', {
     p_goal_id: goalId,
@@ -87,7 +87,7 @@ export async function setGoalBooks(
 
 export async function restoreGoal(
   goal: Goal,
-  bookIds: string[]
+  bookIds: number[]
 ): Promise<Problem> {
   const { data, error } = await supabase
     .from('goals')

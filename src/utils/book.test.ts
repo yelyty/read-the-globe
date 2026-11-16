@@ -9,17 +9,17 @@ const ITALY = '380';
 const JAPAN = '392';
 
 const place = (code: string | null, imagined = false): Place => ({
-  id: `p-${code ?? 'world'}`,
+  id: 0,
   name: imagined ? 'Narnia' : '',
   lon: 0,
   lat: 0,
   countryCode: code,
-  bookId: 'b',
+  bookId: 1,
   imagined,
 });
 
 const book = (extra: Partial<BookEntry>): BookEntry => ({
-  id: 'b',
+  id: 1,
   title: 'A book',
   author: null,
   places: [],

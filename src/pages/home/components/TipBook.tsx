@@ -1,5 +1,5 @@
 import type { BookEntry } from '../../../types';
-import { coverColor } from '../../../utils/coverColors';
+import BookCover from '../../../components/BookCover/BookCover';
 import { m } from '../../../paraglide/messages.js';
 import * as styles from '../HomePage.css';
 
@@ -11,7 +11,7 @@ type TipBookProps = {
   author: boolean;
 };
 
-// a book in a country's tip: its cover colour, title and author, and why it's there
+// a book in a country's tip: its cover, title and author, and why it's there
 const TipBook = ({ book, set, author }: TipBookProps) => {
   const swatch =
     set && author
@@ -24,13 +24,7 @@ const TipBook = ({ book, set, author }: TipBookProps) => {
 
   return (
     <li>
-      <i
-        className={styles.tipCover}
-        style={{
-          background: coverColor(book.title + (book.author?.name ?? '')),
-        }}
-        aria-hidden="true"
-      />
+      <BookCover title={book.title} author={book.author?.name} size="small" />
       <span className={styles.tipBook}>
         <span className={styles.tipTitle}>{book.title}</span>
         <span>{book.author?.name}</span>

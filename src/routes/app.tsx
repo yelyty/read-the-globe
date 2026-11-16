@@ -2,6 +2,7 @@ import { createFileRoute, redirect } from '@tanstack/react-router';
 
 import AppLayout from '../layout/AppLayout/AppLayout';
 import { booksQuery, goalsQuery, worldsQuery } from '../api/queries';
+import { searchId } from '../utils/searchId';
 import { m } from '../paraglide/messages.js';
 
 type AppSearch = {
@@ -10,15 +11,15 @@ type AppSearch = {
   country?: string;
   /** Log a book with a place in this imagined world filled in */
   world?: string;
-  edit?: string;
-  next?: string;
+  edit?: number;
+  next?: number;
 };
 
 export const Route = createFileRoute('/app')({
   validateSearch: (search: Record<string, unknown>): AppSearch => ({
     log: search.log === true ? true : undefined,
-    edit: typeof search.edit === 'string' ? search.edit : undefined,
-    next: typeof search.next === 'string' ? search.next : undefined,
+    edit: searchId(search.edit),
+    next: searchId(search.next),
     country: typeof search.country === 'string' ? search.country : undefined,
     world: typeof search.world === 'string' ? search.world : undefined,
   }),

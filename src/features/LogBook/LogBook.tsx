@@ -44,7 +44,7 @@ const LogBook = () => {
     select: (st) => st.matches.some((mt) => mt.routeId === '/app/shelf'),
   });
 
-  const book = edit ? books.find((entry) => entry.id === edit) : undefined;
+  const book = books.find((entry) => entry.id === edit);
   const open = Boolean(log || book);
 
   // the item "Log it" came from, from the Shelf's list (the only place it can be pressed)

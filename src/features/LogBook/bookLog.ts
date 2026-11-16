@@ -193,7 +193,7 @@ export const draftOf = (book: BookEntry): BookDraft => ({
 
 // the book as it will be on the atlas, before the saved row comes back
 const entryOf = (
-  id: string,
+  id: number,
   draft: BookDraft,
   names: Record<string, string>
 ): BookEntry => ({
@@ -207,7 +207,7 @@ const entryOf = (
     },
   },
   places: draft.places.map((place, i) => ({
-    id: String(i),
+    id: i,
     name: place.name,
     lon: 0,
     lat: 0,
@@ -226,7 +226,7 @@ type Shelf = {
 
 /** Where a new book lands on Home: the pin line, and the goal it carried over its flag, if any. */
 export function landingFor(
-  id: string,
+  id: number,
   draft: BookDraft,
   { books, goals, names }: Shelf
 ): Landing {

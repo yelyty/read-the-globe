@@ -11,7 +11,8 @@ export interface Author {
 }
 
 export interface BookEntry {
-  id: string;
+  /** the database's numeric id (bigint) */
+  id: number;
   title: string;
   /** when it was logged */
   createdAt?: string;
@@ -35,12 +36,12 @@ export interface CountryData {
 }
 
 export interface Place {
-  id: string;
+  id: number;
   name: string;
   lon: number;
   lat: number;
   countryCode?: string | null;
-  bookId: string;
+  bookId: number;
   /** not on any map: name is the imagined world, and there is no country */
   imagined?: boolean;
 }
@@ -69,7 +70,7 @@ export interface Profile {
 }
 
 export interface NextRead {
-  id: string;
+  id: number;
   title: string;
   author: string | null;
   countryCode: string | null;

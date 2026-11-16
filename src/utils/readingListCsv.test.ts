@@ -53,7 +53,7 @@ describe('booksFromCsv', () => {
 
   it('reads back what the export writes', () => {
     const book: BookEntry = {
-      id: 'b1',
+      id: 1,
       title: 'Norwegian Wood, "the" novel',
       readOn: '2025-05-20',
       author: {
@@ -62,29 +62,29 @@ describe('booksFromCsv', () => {
       },
       places: [
         {
-          id: 'p1',
+          id: 1,
           name: 'Tokyo',
           countryCode: '392',
           lon: 0,
           lat: 0,
-          bookId: 'b1',
+          bookId: 1,
         },
         {
-          id: 'p2',
+          id: 2,
           name: 'United Kingdom',
           countryCode: '826',
           lon: 0,
           lat: 0,
-          bookId: 'b1',
+          bookId: 1,
         },
         {
-          id: 'p3',
+          id: 3,
           name: 'Narnia',
           countryCode: null,
           imagined: true,
           lon: 0,
           lat: 0,
-          bookId: 'b1',
+          bookId: 1,
         },
       ],
       goals: [],

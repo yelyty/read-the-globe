@@ -553,23 +553,6 @@ globalStyle(`${tipList} li`, {
   gap: 8,
 });
 
-// the covers, drawn small: a cloth colour with a band near the top
-export const tipCover = style({
-  flex: 'none',
-  position: 'relative',
-  width: 26,
-  height: 37,
-  borderRadius: 2,
-  '::before': {
-    content: '""',
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: '18%',
-    height: 1.2,
-    background: 'rgba(255, 255, 255, .45)',
-  },
-});
 export const tipBook = style({
   display: 'flex',
   flexDirection: 'column',

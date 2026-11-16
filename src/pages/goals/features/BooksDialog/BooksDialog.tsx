@@ -51,7 +51,7 @@ const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
       fold(`${book.title} ${book.author?.name ?? ''}`).includes(needle)
   );
 
-  const toggle = (id: string) => {
+  const toggle = (id: number) => {
     const next = new Set(picked);
 
     if (!next.delete(id)) next.add(id);

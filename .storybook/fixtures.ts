@@ -14,7 +14,7 @@ export const COUNTRY_NAMES: Record<string, string> = {
 
 export const BOOKS: BookEntry[] = [
   {
-    id: 'b1',
+    id: 1,
     title: 'One Hundred Years of Solitude',
     readOn: '2026-03-14',
     author: {
@@ -23,18 +23,18 @@ export const BOOKS: BookEntry[] = [
     },
     places: [
       {
-        id: 'p1',
+        id: 1,
         name: 'Macondo',
         lon: -74.2,
         lat: 10.4,
         countryCode: '170',
-        bookId: 'b1',
+        bookId: 1,
       },
     ],
     goals: [],
   },
   {
-    id: 'b2',
+    id: 2,
     title: 'Things Fall Apart',
     readOn: '2026-01-02',
     author: {
@@ -43,45 +43,45 @@ export const BOOKS: BookEntry[] = [
     },
     places: [
       {
-        id: 'p2',
+        id: 2,
         name: '',
         lon: 7.5,
         lat: 6.5,
         countryCode: '566',
-        bookId: 'b2',
+        bookId: 2,
       },
     ],
     goals: [],
   },
   {
-    id: 'b3',
+    id: 3,
     title: 'The Remains of the Day',
     readOn: '2025-11-20',
     author: { name: 'Kazuo Ishiguro', country: { name: 'Japan', code: '392' } },
     places: [
       {
-        id: 'p3',
+        id: 3,
         name: 'Darlington Hall',
         lon: -1.5,
         lat: 52.1,
         countryCode: '826',
-        bookId: 'b3',
+        bookId: 3,
       },
     ],
     goals: [],
   },
   {
-    id: 'b4',
+    id: 4,
     title: 'A Wizard of Earthsea',
     readOn: null,
     author: null,
     places: [
       {
-        id: 'p4',
+        id: 4,
         name: 'Earthsea',
         lon: 0,
         lat: 0,
-        bookId: 'b4',
+        bookId: 4,
         imagined: true,
       },
     ],

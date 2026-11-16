@@ -26,6 +26,9 @@ const START_ZOOM = 0.8;
 const START_TILT_DEG = 18;
 // all the books are pinned once the window's top is this share of the screen from the top
 const PINNED_AT = 0.12;
+// the map opens with Mira's first books already pinned (8 countries on 4 continents), so it never greets a
+// visitor blank; scrolling pins the rest
+const START_PINNED = 6;
 // digits the CSS variables are written with
 const ZOOM_DIGITS = 4;
 const TILT_DIGITS = 2;
@@ -38,7 +41,8 @@ const ANTARCTICA = '010';
 
 type Ping = { key: string; x: number; y: number };
 
-// Mira's 48 books pin themselves, oldest first, as the map rises through the screen; scrolling back unpins them.
+// Mira's 48 books pin themselves, oldest first, as the map rises through the screen; scrolling back unpins them,
+// down to the first few she starts with.
 // The map itself zooms in and lies flat as it rises. Reduced motion: the finished map, still.
 const LiveAtlas = () => {
   const figure = useRef<HTMLElement>(null);
@@ -48,7 +52,7 @@ const LiveAtlas = () => {
 
   // how many books are pinned, and whether the last scroll added one (only then do rings ping)
   const [{ shown, grew }, setPinned] = useState(() => ({
-    shown: prefersReducedMotion() ? BOOKS.length : 0,
+    shown: prefersReducedMotion() ? BOOKS.length : START_PINNED,
     grew: false,
   }));
 
@@ -97,12 +101,15 @@ const LiveAtlas = () => {
         `${(START_TILT_DEG * (1 - progress)).toFixed(TILT_DIGITS)}deg`
       );
 
-      // the books: none at the top of the page, all of them once the window's top is near the top of the screen
+      // the books: the first few at the top of the page, all of them once the window's top is near the top of the screen
       const end = Math.max(1, top + scrollY - innerHeight * PINNED_AT);
 
-      const next = Math.round(
-        Math.min(1, Math.max(0, scrollY / end)) * BOOKS.length
-      );
+      const next =
+        START_PINNED +
+        Math.round(
+          Math.min(1, Math.max(0, scrollY / end)) *
+            (BOOKS.length - START_PINNED)
+        );
 
       setPinned((prev) =>
         prev.shown === next ? prev : { shown: next, grew: next > prev.shown }
@@ -152,11 +159,13 @@ const LiveAtlas = () => {
   const atlas = atlasAfter(shown);
   const latest = BOOKS[shown - 1];
 
-  const now = !latest
-    ? m.landing_atlas_scroll()
-    : shown === BOOKS.length && prefersReducedMotion()
-      ? `${m.count_book({ count: BOOKS.length })}, ${m.count_country({ count: atlas.countries })}`
-      : m.landing_atlas_latest({ title: latest[0], author: latest[1] });
+  // before any scrolling, the line under the map says how to pin the rest
+  const now =
+    !latest || shown <= START_PINNED
+      ? m.landing_atlas_scroll()
+      : shown === BOOKS.length && prefersReducedMotion()
+        ? `${m.count_book({ count: BOOKS.length })}, ${m.count_country({ count: atlas.countries })}`
+        : m.landing_atlas_latest({ title: latest[0], author: latest[1] });
 
   return (
     <figure className={styles.frame} id="atlas" ref={figure}>

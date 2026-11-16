@@ -5,6 +5,7 @@ import * as headerStyles from '../../pages/landing/features/Header/Header.css';
 import { m } from '../../paraglide/messages.js';
 import ThemeButton from '../../components/ThemeButton/ThemeButton';
 import Logo from '../../components/Logo/Logo';
+import BetaChip from '../../components/BetaChip/BetaChip';
 import AccountMenu from '../AccountMenu/AccountMenu';
 import * as styles from './AppHeader.css';
 
@@ -19,6 +20,7 @@ const AppHeader = () => {
         >
           <Logo className={headerStyles.logo} />
           <span className={headerStyles.brandWord}>Read The Globe</span>
+          <BetaChip className={headerStyles.brandChip} />
         </Link>
 
         <nav className={styles.nav} aria-label={m.nav_main()}>

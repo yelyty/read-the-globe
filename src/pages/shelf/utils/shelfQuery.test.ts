@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import type { BookEntry, Goal } from '../../../types';
+import { idFor } from '../../../testing/idFor';
 import { atlasMarks } from '../../../utils/atlasMarks';
 import {
   shelfQuery,
@@ -41,19 +42,19 @@ const book = (
     goals?: number[];
   } = {}
 ): BookEntry => ({
-  id,
+  id: idFor(id),
   title: id,
   readOn: read,
   author: author
     ? { name: author, country: from ? { code: from, name: '' } : null }
     : null,
   places: setIn.map((countryCode, i) => ({
-    id: `${id}-${i}`,
+    id: i,
     name: i ? '' : place,
     lon: 0,
     lat: 0,
     countryCode,
-    bookId: id,
+    bookId: idFor(id),
   })),
   goals: goals.map((goalId) => ({ goalId })),
 });
@@ -100,7 +101,7 @@ const ids = (extra: Partial<ShelfFilters> = {}, books = shelf) =>
   shelfQuery(books, filters(extra), {
     names,
     marks: atlasMarks(books),
-  }).list.map((entry) => entry.id);
+  }).list.map((entry) => entry.title);
 
 describe('the Shelf query', () => {
   it('shows every book when nothing is chosen', () => {

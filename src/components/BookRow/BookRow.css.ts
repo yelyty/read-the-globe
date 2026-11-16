@@ -14,21 +14,10 @@ export const row = style({
   '@media': { [phone]: { gridTemplateColumns: 'minmax(0, 1fr)', gap: 10 } },
 });
 export const rowMain = style({ minWidth: 0 });
+// the cover sits to the left of the title and author, which wrap beside it
 export const cover = style({
   float: 'left',
-  width: 44,
-  height: 62,
   margin: '0 14px 4px 0',
-  borderRadius: 3,
-  boxShadow: `inset -3px 0 4px rgba(0, 0, 0, .18), 0 1px 2px rgba(${vars.shadow.ink}, .25)`,
-  '::before': {
-    content: '""',
-    display: 'block',
-    width: 3,
-    height: '100%',
-    marginLeft: 5,
-    background: 'rgba(255, 255, 255, .14)',
-  },
 });
 export const rowTitle = style({
   display: 'block',

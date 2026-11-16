@@ -1,12 +1,12 @@
 import { globalStyle, keyframes, style } from '@vanilla-extract/css';
 
 import { vars } from '../../styles/theme.css';
-import { hover, phone, reducedMotion } from '../../styles/global.css';
-import { navLink } from '../AppHeader/AppHeader.css';
+import { hover, reducedMotion } from '../../styles/global.css';
+import { navLink, twoRows } from '../AppHeader/AppHeader.css';
 
 export const menu = style({
   position: 'relative',
-  '@media': { [phone]: { flex: '1 1 auto' } },
+  '@media': { [twoRows]: { flex: '1 1 auto' } },
 });
 
 export const button = style([
@@ -20,7 +20,7 @@ export const button = style([
         color: vars.color.text,
       },
     },
-    '@media': { [phone]: { width: '100%' } },
+    '@media': { [twoRows]: { width: '100%', justifyContent: 'center' } },
   },
 ]);
 
