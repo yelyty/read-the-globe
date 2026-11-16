@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { Feature } from 'geojson';
 import { geoPath } from 'd3-geo';
 
-import { mainPiece, worldShapes } from '../../../../utils/world';
+import { mainPiece } from '../../../../utils/world';
+import { useWorldShapes } from '../../../../hooks/useWorldShapes';
 import { toNumeric } from '../../../../utils/toIsoNumeric';
 import { srOnly } from '../../../../styles/global.css';
 import {
@@ -42,7 +42,9 @@ type Ping = { key: string; x: number; y: number };
 // The map itself zooms in and lies flat as it rises. Reduced motion: the finished map, still.
 const LiveAtlas = () => {
   const figure = useRef<HTMLElement>(null);
-  const [shapes, setShapes] = useState<Record<string, Feature>>();
+  // the world's shapes are big: fetch them only once the map is a screen away
+  const [near, setNear] = useState(false);
+  const shapes = useWorldShapes(near);
 
   // how many books are pinned, and whether the last scroll added one (only then do rings ping)
   const [{ shown, grew }, setPinned] = useState(() => ({
@@ -50,7 +52,6 @@ const LiveAtlas = () => {
     grew: false,
   }));
 
-  // the world's shapes are big: fetch them only once the map is a screen away
   useEffect(() => {
     const el = figure.current;
 
@@ -60,7 +61,7 @@ const LiveAtlas = () => {
       ([entry]) => {
         if (!entry.isIntersecting) return;
         io.disconnect();
-        void worldShapes().then(setShapes);
+        setNear(true);
       },
       { rootMargin: '100% 0px' }
     );

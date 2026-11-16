@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
 import { geoEquirectangular, geoPath } from 'd3-geo';
-import type { Feature } from 'geojson';
 
 import { markOf, type Mark } from '../../../../utils/atlasMarks';
-import { mainPiece, worldShapes } from '../../../../utils/world';
+import { mainPiece } from '../../../../utils/world';
 import { useSvgId } from '../../../../hooks/useSvgId';
+import { useWorldShapes } from '../../../../hooks/useWorldShapes';
 import HatchPattern from '../../../../components/HatchPattern/HatchPattern';
 import { HATCH_STAMP } from '../../../../components/HatchPattern/hatchSize';
 import * as styles from '../../HomePage.css';
@@ -21,12 +20,8 @@ type CountryShapeProps = {
 
 // One country's outline, filled with its mark from the map: olive, rust, or the hatch for both.
 const CountryShape = ({ code, mark, width, height }: CountryShapeProps) => {
-  const [shape, setShape] = useState<Feature>();
+  const shape = useWorldShapes()?.[code];
   const hatch = useSvgId('hatch');
-
-  useEffect(() => {
-    worldShapes().then((all) => setShape(all[code]));
-  }, [code]);
 
   if (!shape) return <svg width={width} height={height} aria-hidden="true" />;
 

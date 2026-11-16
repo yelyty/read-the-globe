@@ -1,9 +1,7 @@
-import { useEffect, useState } from 'react';
-import type { Feature } from 'geojson';
 import { PushPinIcon } from '@phosphor-icons/react';
 
 import { useReveal } from '../../../../hooks/useReveal';
-import { worldShapes } from '../../../../utils/world';
+import { useWorldShapes } from '../../../../hooks/useWorldShapes';
 import { m } from '../../../../paraglide/messages.js';
 import { getLocale } from '../../../../paraglide/runtime.js';
 import { toAlpha2 } from '../../../../utils/toIsoNumeric';
@@ -83,11 +81,8 @@ const Closing = ({ onSignUp }: { onSignUp: () => void }) => {
   const [ref, revealed] = useReveal<HTMLElement>();
   // the countries in the reader's language, from the browser
   const names = new Intl.DisplayNames([getLocale()], { type: 'region' });
-  const [shapes, setShapes] = useState<Record<string, Feature>>();
-
-  useEffect(() => {
-    if (revealed) void worldShapes().then(setShapes);
-  }, [revealed]);
+  // the map file is big: it loads once the stamps are in view
+  const shapes = useWorldShapes(revealed);
 
   return (
     <section

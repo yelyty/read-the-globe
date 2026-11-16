@@ -1,14 +1,13 @@
-import { useEffect, useState, type ChangeEvent, type SubmitEvent } from 'react';
 import { PushPinIcon, WarningCircleIcon } from '@phosphor-icons/react';
 
 import Dialog from '../../../../components/Dialog/Dialog';
 import Field from '../../../../components/Field/Field';
 import Checkbox from '../../../../components/Checkbox/Checkbox';
-import { sendPasswordReset, signIn, signUp } from '../../../../auth/session';
 import { m } from '../../../../paraglide/messages.js';
 import * as styles from './LoginDialog.css';
 import PasswordStrength from './PasswordStrength';
-import { type AuthMode, type Values, validate } from './validate';
+import { useAuthForm } from './useAuthForm';
+import type { AuthMode } from './validate';
 
 const COPY = {
   signup: {
@@ -28,8 +27,6 @@ const COPY = {
   },
 };
 
-const FIELD_ORDER: (keyof Values)[] = ['name', 'email', 'password'];
-
 type LoginDialogProps = {
   /** null keeps the dialog closed */
   mode: AuthMode | null;
@@ -38,110 +35,21 @@ type LoginDialogProps = {
 };
 
 const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
-  const [values, setValues] = useState<Values>({
-    name: '',
-    email: '',
-    password: '',
-  });
-
-  const [example, setExample] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [pending, setPending] = useState(false);
-  const [formError, setFormError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
-
-  // the first field takes focus as the dialog opens, and again when it switches between sign up, log in and reset
-  useEffect(() => {
-    if (mode)
-      document
-        .getElementById(mode === 'signup' ? 'au-name' : 'au-email')
-        ?.focus();
-  }, [mode]);
-
-  const view = mode ?? 'login';
-  const errors = submitted ? validate(view, values) : {};
-
-  const clearMessages = () => {
-    setSubmitted(false);
-    setFormError(null);
-    setNotice(null);
-  };
-
-  const switchTo = (next: AuthMode) => {
-    clearMessages();
-    onMode(next);
-  };
-
-  const close = () => {
-    clearMessages();
-    onClose();
-  };
-
-  const update =
-    (key: keyof Values) => (event: ChangeEvent<HTMLInputElement>) =>
-      setValues((current) => ({ ...current, [key]: event.target.value }));
-
-  const submit = async (event: SubmitEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setSubmitted(true);
-    const found = validate(view, values);
-    const firstInvalid = FIELD_ORDER.find((key) => found[key]);
-
-    if (firstInvalid) {
-      document.getElementById(`au-${firstInvalid}`)?.focus();
-
-      return;
-    }
-
-    setPending(true);
-    setFormError(null);
-    setNotice(null);
-    const email = values.email.trim();
-
-    if (view === 'reset') {
-      const problem = await sendPasswordReset(email);
-
-      if (problem) setFormError(problem);
-      else setNotice(m.auth_reset_sent({ email }));
-    } else if (view === 'login') {
-      const problem = await signIn(email, values.password);
-
-      if (problem)
-        setFormError(
-          problem === 'wrong-credentials'
-            ? m.auth_wrong_credentials()
-            : m.common_try_again()
-        );
-    } else {
-      const { problem, confirmEmail } = await signUp({
-        email,
-        password: values.password,
-        name: values.name.trim(),
-        example,
-      });
-
-      if (problem)
-        setFormError(
-          problem === 'email-taken'
-            ? m.auth_email_taken()
-            : m.common_try_again()
-        );
-      else if (confirmEmail) setNotice(m.auth_confirm_email({ email }));
-    }
-
-    // a session, if there is one now, takes the reader to /app from the page
-    setPending(false);
-  };
-
-  const handleExampleChange = (event: ChangeEvent<HTMLInputElement>) =>
-    setExample(event.target.checked);
-
-  // sign up ⇄ log in, and log in ⇄ reset the password
-  const handleSwitchAccount = () =>
-    switchTo(view === 'signup' ? 'login' : 'signup');
-
-  const handleSwitchReset = () =>
-    switchTo(view === 'login' ? 'reset' : 'login');
+  const {
+    view,
+    values,
+    errors,
+    example,
+    pending,
+    formError,
+    notice,
+    update,
+    close,
+    submit,
+    handleExampleChange,
+    handleSwitchAccount,
+    handleSwitchReset,
+  } = useAuthForm({ mode, onMode, onClose });
 
   return (
     <Dialog

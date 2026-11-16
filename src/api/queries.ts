@@ -2,6 +2,7 @@ import { queryOptions } from '@tanstack/react-query';
 
 import { loadCountries } from '../utils/countryStamps';
 import { getCountryNames } from '../utils/countryNames';
+import { worldShapes } from '../utils/world';
 import getBooks from './getBooks';
 import { getGoals } from './goals/goals';
 import { getWorlds } from './worlds/worlds';
@@ -59,5 +60,11 @@ export const countriesQuery = queryOptions({
 export const countryNamesQuery = queryOptions({
   queryKey: ['countryNames'],
   queryFn: getCountryNames,
+  staleTime: Infinity,
+});
+
+export const worldShapesQuery = queryOptions({
+  queryKey: ['worldShapes'],
+  queryFn: worldShapes,
   staleTime: Infinity,
 });

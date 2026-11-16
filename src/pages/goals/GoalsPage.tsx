@@ -1,22 +1,16 @@
-import { useEffect, useRef, useState } from 'react';
-import { getRouteApi, useNavigate } from '@tanstack/react-router';
-import type { Feature } from 'geojson';
-
 import type { Goal } from '../../types';
-import { atlasMarks } from '../../utils/atlasMarks';
-import { worldShapes } from '../../utils/world';
-import { addGoal, deleteGoal, restoreGoal } from '../../api/goals/goals';
-import { useStatus } from '../../hooks/useStatus';
-import { useUndo } from '../../hooks/useUndo';
-import { prefersReducedMotion } from '../../utils/motion';
 import { useCountryNames } from '../../hooks/useCountryNames';
-import { useBooks, useGoals, useRefresh } from '../../hooks/useReader';
+import { useBooks, useGoals } from '../../hooks/useReader';
+import { useWorldShapes } from '../../hooks/useWorldShapes';
 import { m } from '../../paraglide/messages.js';
 import PageTitle from '../../components/PageTitle/PageTitle';
 import EmptyState from '../../components/EmptyState/EmptyState';
 import HilltopSticker from '../../components/Sticker/HilltopSticker';
-import { CATALOGUE, MAX_GOALS, goalName } from './utils/catalogue';
-import { goalProgress, isDone, type GoalDraft } from './utils/goalProgress';
+import { useAddFromLink } from './hooks/useAddFromLink';
+import { useGoalActions } from './hooks/useGoalActions';
+import { useGoalDialogs } from './hooks/useGoalDialogs';
+import { useGoalFocus } from './hooks/useGoalFocus';
+import { useGoalList } from './hooks/useGoalList';
 import { useReachedStamps } from './hooks/useReachedStamps';
 import GoalRow from './components/GoalRow';
 import GoalSuggestions from './features/GoalSuggestions/GoalSuggestions';
@@ -24,167 +18,47 @@ import GoalDialog from './features/GoalsDialog/GoalsDialog';
 import BooksDialog from './features/BooksDialog/BooksDialog';
 import * as styles from './GoalsPage.css';
 
-const route = getRouteApi('/app/goals');
-
 const GoalsPage = () => {
   const books = useBooks();
   const goals = useGoals();
-  const refresh = useRefresh();
-  const [shapes, setShapes] = useState<Record<string, Feature>>();
-  const [editing, setEditing] = useState<Goal | 'new' | null>(null);
-  const [choosing, setChoosing] = useState<Goal | null>(null);
-  const status = useStatus();
-  const offerUndo = useUndo();
+  const shapes = useWorldShapes();
   const names = useCountryNames();
-  const say = (text: string) => status.show({ text });
-  const { add: addSlug } = route.useSearch();
-  const navigate = useNavigate();
-  // the goal to focus once it shows up in the list: one just added, or back from Undo
-  const focusName = useRef<string | null>(null);
+  // both come from the one map, a moment apart: wait for the names too, so no country shows as a bare code
+  const ready = Boolean(shapes && Object.keys(names).length);
 
-  useEffect(() => {
-    worldShapes().then(setShapes);
-  }, []);
+  const { marks, progress, sorted, reachedCount, full } = useGoalList(
+    goals,
+    books
+  );
 
-  const saved = async (message: string, focus?: string) => {
-    say(message);
-    if (focus) focusName.current = focus.trim().toLowerCase();
-    await refresh('goals', 'books');
-  };
-
-  const marks = atlasMarks(books);
   const arriving = useReachedStamps(goals, books);
+  const focusGoal = useGoalFocus(goals, ready);
 
-  const progress = (draft: GoalDraft & { id?: number }) =>
-    goalProgress(draft, marks, books);
-
-  useEffect(() => {
-    const focused = goals.find(
-      (goal) => goal.name.toLowerCase() === focusName.current
-    );
-
-    const heading =
-      focused &&
-      document.querySelector<HTMLElement>(`[data-goal="${focused.id}"] h3`);
-
-    if (!heading) return;
-    focusName.current = null;
-
-    heading.scrollIntoView({
-      block: 'center',
-      behavior: prefersReducedMotion() ? 'auto' : 'smooth',
-    });
-
-    heading.focus({ preventScroll: true });
-  }, [goals, shapes]);
-
-  // ?add=<slug>: a Journal article's "Add this goal" lands here and adds it once, or shows it if it's already there
-  const added = useRef<string | null>(null);
-
-  useEffect(() => {
-    if (!addSlug || added.current === addSlug) return;
-    added.current = addSlug;
-    navigate({ to: '/app/goals', search: {}, replace: true });
-    const entry = CATALOGUE.find((item) => item.slug === addSlug);
-
-    if (!entry) return;
-    const name = entry.name.toLowerCase();
-
-    if (goals.some((goal) => goal.name.toLowerCase() === name)) {
-      focusName.current = name;
-
-      return;
-    }
-
-    if (goals.length >= MAX_GOALS) return;
-
-    addGoal(entry).then((problem) => {
-      if (problem) return say(problem);
-      saved(m.goals_added({ goal: goalName(entry.name) }), entry.name);
-    });
+  const { saved, add, remove } = useGoalActions({
+    books,
+    sorted,
+    full,
+    focusGoal,
   });
 
-  // both come from the one map, a moment apart: wait for the names too, so no country shows as a bare code
-  if (!shapes || !Object.keys(names).length) return <div />;
+  useAddFromLink({ goals, add, focusGoal });
+
+  const {
+    editing,
+    choosing,
+    handleNewGoal,
+    handleEdit,
+    handleChooseBooks,
+    handleEditClose,
+    handleChooseClose,
+    handleGoalSaved,
+    handleBooksSaved,
+  } = useGoalDialogs(saved);
+
+  if (!shapes || !ready) return <div />;
 
   const name = (code: string) => names[code] ?? code;
-  const full = goals.length >= MAX_GOALS;
-
-  const sorted = [
-    ...goals.filter((goal) => !isDone(progress(goal))),
-    ...goals.filter((goal) => isDone(progress(goal))),
-  ];
-
-  const nReached =
-    goals.length - goals.filter((goal) => !isDone(progress(goal))).length;
-
-  const add = async (draft: GoalDraft) => {
-    if (full) return;
-    const problem = await addGoal(draft);
-
-    if (problem) return say(problem);
-    saved(m.goals_added({ goal: goalName(draft.name) }), draft.name);
-  };
-
-  const remove = async (goal: Goal) => {
-    const ticked = books
-      .filter((book) => book.goals.some((link) => link.goalId === goal.id))
-      .map((book) => book.id);
-
-    const at = sorted.indexOf(goal);
-    const problem = await deleteGoal(goal.id);
-
-    if (problem) return say(problem);
-    await refresh('goals', 'books');
-    // focus goes to the row now in its place, or to the suggestions when it was the last one
-    const left = document.querySelectorAll<HTMLElement>('[data-remove-goal]');
-
-    (
-      left[Math.min(at, left.length - 1)] ??
-      document.querySelector<HTMLElement>(`.${styles.sugg} > summary`)
-    )?.focus();
-
-    offerUndo({
-      said: ticked.length
-        ? m.goals_removed_unticked({
-            goal: goalName(goal.name),
-            books: m.count_book({ count: ticked.length }),
-          })
-        : m.goals_removed({ goal: goalName(goal.name) }),
-      // back, it takes focus again once its row shows up
-      undo: async () => {
-        const problem = await restoreGoal(goal, ticked);
-
-        if (!problem) focusName.current = goal.name.trim().toLowerCase();
-
-        return problem;
-      },
-      undone: m.goals_back({ goal: goalName(goal.name) }),
-    });
-  };
-
-  /* ---------- lists ---------- */
-
-  /* ---------- handlers ---------- */
-  const handleNewGoal = () => setEditing('new');
-  const handleEdit = (goal: Goal) => () => setEditing(goal);
   const handleRemove = (goal: Goal) => () => remove(goal);
-  const handleChooseBooks = (goal: Goal) => () => setChoosing(goal);
-  const handleEditClose = () => setEditing(null);
-  const handleChooseClose = () => setChoosing(null);
-
-  // the line said after a save names the goal; a new one is also scrolled to
-  const handleGoalSaved = (savedName: string) =>
-    saved(
-      (editing === 'new' ? m.goals_added : m.goals_saved)({
-        goal: goalName(savedName),
-      }),
-      savedName
-    );
-
-  const handleBooksSaved = (count: number) =>
-    choosing &&
-    saved(m.goals_books_counted({ count, goal: goalName(choosing.name) }));
 
   return (
     <>
@@ -206,8 +80,8 @@ const GoalsPage = () => {
               <h2 className={styles.h2}>{m.goals_yours()}</h2>
               <span className={styles.sum}>
                 {m.count_goal({ count: goals.length })}
-                {nReached > 0 &&
-                  ` · ${m.goals_sum_reached({ count: nReached })}`}
+                {reachedCount > 0 &&
+                  ` · ${m.goals_sum_reached({ count: reachedCount })}`}
                 {full && ` · ${m.goals_sum_full()}`}
               </span>
             </summary>

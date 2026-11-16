@@ -6,10 +6,10 @@
 
 :root {
   /* Type */
-  --font-display: Alegreya, Georgia, "Times New Roman", serif;
-  --font-serif: "EB Garamond", Georgia, "Times New Roman", serif;
+  --font-display: Alegreya, Georgia, 'Times New Roman', serif;
+  --font-serif: 'EB Garamond', Georgia, 'Times New Roman', serif;
   --font-sans:
-    "Alegreya Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    'Alegreya Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
   /* Brand */
   --color-primary: #4a6a40;
@@ -52,7 +52,7 @@
   font-family: var(--font-sans);
 }
 
-[data-theme="dark"] {
+[data-theme='dark'] {
   /* Brand */
   --color-primary: #4e6d44;
   --color-secondary: #d9b94f;

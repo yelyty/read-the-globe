@@ -1,18 +1,10 @@
-import { useRef, useState, type ChangeEvent, type SubmitEvent } from 'react';
+import { useRef } from 'react';
 import { BookmarkSimpleIcon } from '@phosphor-icons/react';
 
 import type { Goal, NextRead } from '../../../../types';
 import type { Marks } from '../../../../utils/atlasMarks';
-import {
-  addNextRead,
-  removeNextRead,
-} from '../../../../api/nextReads/nextReads';
-import { getLocale } from '../../../../paraglide/runtime.js';
 import { m } from '../../../../paraglide/messages.js';
 import { useCountries } from '../../../../hooks/useCountries';
-import { useStatus } from '../../../../hooks/useStatus';
-import { useUndo } from '../../../../hooks/useUndo';
-import { useDirty, useLeaveGuard } from '../../../../hooks/useUnsaved';
 import Select from '../../../../components/Select/Select';
 import Suggest from '../../../../components/Suggest/Suggest';
 import Field from '../../../../components/Field/Field';
@@ -22,6 +14,8 @@ import RibbonSticker from '../../../../components/Sticker/RibbonSticker';
 import StatusLine from '../../../../components/StatusLine/StatusLine';
 import * as styles from '../../ShelfPage.css';
 import NextItem from './NextItem';
+import { useNextReadActions } from './useNextReadActions';
+import { useNextReadForm } from './useNextReadForm';
 
 type NextToReadProps = {
   items: NextRead[];
@@ -40,159 +34,27 @@ const NextToRead = ({
   marks,
   goals,
 }: NextToReadProps) => {
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [country, setCountry] = useState('');
-  const [mark, setMark] = useState<'set' | 'author'>('author');
-  // `at` names the field the error is about; without it the error is about the whole form
-  const [error, setError] = useState<{ text: string; at?: string }>();
-  const [said, setSaid] = useState('');
-  const status = useStatus();
-  const offerUndo = useUndo();
-  const [saving, setSaving] = useState(false);
   const countries = useCountries();
   const titleRef = useRef<HTMLInputElement>(null);
+  const actions = useNextReadActions({ items, setItems, titleRef });
 
-  useLeaveGuard(useDirty([title, author, country]));
-
-  const sorted = Object.entries(names).sort(([, left], [, right]) =>
-    left.localeCompare(right, getLocale())
-  );
-
-  const codeFor = (typed: string) =>
-    sorted.find(
-      ([, countryName]) =>
-        countryName.toLowerCase() === typed.trim().toLowerCase()
-    )?.[0];
-
-  const code = codeFor(country);
-
-  const submit = async (event: SubmitEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setSaid('');
-    const trimmed = title.trim();
-
-    if (!trimmed) {
-      setError({ text: m.next_err_title(), at: 'n-title' });
-      titleRef.current?.focus();
-
-      return;
-    }
-
-    if (country.trim() && !code) {
-      setError({
-        text: m.next_err_country({ country: country.trim() }),
-        at: 'n-country',
-      });
-
-      document.getElementById('n-country')?.focus();
-
-      return;
-    }
-
-    const dup = items.find(
-      (it) =>
-        it.title.toLowerCase() === trimmed.toLowerCase() &&
-        it.countryCode === (code ?? null)
-    );
-
-    if (dup) {
-      status.show({
-        text: m.next_dup({ title: dup.title }),
-        action: {
-          label: m.next_see_it(),
-          icon: <BookmarkSimpleIcon aria-hidden="true" />,
-          run: () => {
-            const row = document.getElementById(`next-${dup.id}`);
-
-            row?.scrollIntoView({ block: 'center' });
-            row?.focus({ preventScroll: true });
-          },
-        },
-      });
-
-      return;
-    }
-
-    setSaving(true);
-
-    const saved = await addNextRead({
-      title: trimmed,
-      author: author.trim() || null,
-      countryCode: code ?? null,
-      mark: code ? mark : null,
-    });
-
-    setSaving(false);
-
-    if (saved.problem !== null) {
-      setError({ text: saved.problem });
-
-      return;
-    }
-
-    setItems((list) => [saved.data, ...list]);
-    setTitle('');
-    setAuthor('');
-    setCountry('');
-    setMark('author');
-    setError(undefined);
-    setSaid(m.next_saved({ title: saved.data.title }));
-    titleRef.current?.focus();
-  };
-
-  const remove = async (item: NextRead) => {
-    const problem = await removeNextRead(item);
-
-    if (problem) {
-      status.show({ text: problem });
-
-      return;
-    }
-
-    const at = items.indexOf(item);
-
-    setItems((list) => list.filter((it) => it.id !== item.id));
-
-    // the list is this card's own: Undo puts the item back where it was, without reloading the Shelf
-    offerUndo({
-      said: m.next_removed({ title: item.title }),
-      undo: async () => {
-        const back = await addNextRead(item);
-
-        if (back.problem !== null) return back.problem;
-
-        setItems((list) => [
-          ...list.slice(0, at),
-          back.data,
-          ...list.slice(at),
-        ]);
-
-        return null;
-      },
-      refresh: false,
-    });
-
-    titleRef.current?.focus();
-  };
-
-  const handleTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setTitle(event.target.value);
-    setError(undefined);
-  };
-
-  const handleAuthorChange = (event: ChangeEvent<HTMLInputElement>) =>
-    setAuthor(event.target.value);
-
-  const handleCountryValue = (value: string) => {
-    setCountry(value);
-    setError(undefined);
-  };
-
-  // a field's own error, shown under it
-  const errorAt = (at: string) => (error?.at === at ? error.text : undefined);
-
-  const countryNames = sorted.map(([, countryName]) => countryName);
+  const {
+    title,
+    author,
+    country,
+    mark,
+    setMark,
+    code,
+    countryNames,
+    error,
+    errorAt,
+    said,
+    saving,
+    submit,
+    handleTitleChange,
+    handleAuthorChange,
+    handleCountryValue,
+  } = useNextReadForm({ items, names, titleRef, actions });
 
   const countryControl = (
     <Suggest
@@ -204,8 +66,6 @@ const NextToRead = ({
       onValue={handleCountryValue}
     />
   );
-
-  /* ---------- lists ---------- */
 
   return (
     <div>
@@ -299,7 +159,7 @@ const NextToRead = ({
               names={names}
               marks={marks}
               goals={goals}
-              onRemove={remove}
+              onRemove={actions.remove}
             />
           ))}
         </ul>
