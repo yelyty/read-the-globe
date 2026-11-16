@@ -5,10 +5,16 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import stylistic from '@stylistic/eslint-plugin';
 import tseslint from 'typescript-eslint';
+import storybook from 'eslint-plugin-storybook';
 import { defineConfig, globalIgnores } from 'eslint/config';
 
 export default defineConfig([
-  globalIgnores(['dist', 'src/routeTree.gen.ts', 'src/paraglide']),
+  globalIgnores([
+    'dist',
+    'storybook-static',
+    'src/routeTree.gen.ts',
+    'src/paraglide',
+  ]),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -89,9 +95,15 @@ export default defineConfig([
     },
   },
   {
-    // components and functions name their numbers; styles and tests may write them as they are
+    // components and functions name their numbers; styles, tests and stories may write them as they are
     files: ['**/*.{ts,tsx}'],
-    ignores: ['**/*.css.ts', '**/*.test.ts', '**/*.test.tsx'],
+    ignores: [
+      '**/*.css.ts',
+      '**/*.test.ts',
+      '**/*.test.tsx',
+      '**/*.stories.tsx',
+      '.storybook/**',
+    ],
     rules: {
       '@typescript-eslint/no-magic-numbers': [
         'error',
@@ -150,4 +162,5 @@ export default defineConfig([
       ],
     },
   },
+  ...storybook.configs['flat/recommended'],
 ]);

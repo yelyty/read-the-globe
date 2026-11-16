@@ -12,7 +12,9 @@
     "format": "prettier --write .",
     "preview": "vite preview",
     "prepare": "husky && pnpm i18n",
-    "test": "pnpm i18n && vitest run"
+    "test": "pnpm i18n && vitest run",
+    "storybook": "pnpm i18n && storybook dev -p 6006",
+    "build-storybook": "pnpm i18n && storybook build"
   },
   "dependencies": {
     "@phosphor-icons/react": "2.1.10",
@@ -31,6 +33,9 @@
   "devDependencies": {
     "@eslint/js": "10.0.1",
     "@inlang/paraglide-js": "2.29.1",
+    "@storybook/addon-a11y": "10.6.7",
+    "@storybook/addon-docs": "10.6.7",
+    "@storybook/react-vite": "10.6.7",
     "@stylistic/eslint-plugin": "5.10.0",
     "@tanstack/router-plugin": "1.168.18",
     "@types/d3-geo": "2.0.7",
@@ -47,10 +52,12 @@
     "eslint-plugin-jsx-a11y": "6.10.2",
     "eslint-plugin-react-hooks": "7.1.1",
     "eslint-plugin-react-refresh": "0.5.2",
+    "eslint-plugin-storybook": "10.6.7",
     "globals": "17.6.0",
     "husky": "9.1.7",
     "lint-staged": "16.4.0",
     "prettier": "3.9.10",
+    "storybook": "10.6.7",
     "typescript": "6.0.2",
     "typescript-eslint": "8.59.2",
     "vite": "8.1.7",

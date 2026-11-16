@@ -28,7 +28,6 @@ const ShelfTabs = ({ tab, readCount, nextCount }: ShelfTabsProps) => {
 
   const handleTab = (to: ShelfTab) => () => openTab(to);
 
-  // the arrow keys move between the two tabs
   const handleTabKey = (keyEvent: KeyboardEvent) => {
     if (keyEvent.key === 'ArrowRight' || keyEvent.key === 'ArrowLeft')
       openTab(tab === 'next' ? 'read' : 'next');
