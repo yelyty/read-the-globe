@@ -19,6 +19,11 @@ type ConfirmationDialogProps = {
   onClose: () => void;
 };
 
+/**
+ * Shows the dialog that confirms the removal of the account.
+ * The reader must type a confirmation word in the language of the app. Then the Delete button becomes available.
+ * Before the removal, the reader can save the reading list from the dialog.
+ */
 const ConfirmationDialog = ({
   books,
   names,

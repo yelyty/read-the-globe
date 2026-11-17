@@ -14,6 +14,10 @@ type UserDetailsProps = {
   user: Reader;
 };
 
+/**
+ * Shows the Details section, where the reader can change the display name.
+ * If the name is empty, the form shows an error. After a save, a status line shows the result.
+ */
 const UserDetails = ({ user }: UserDetailsProps) => {
   const [name, setName] = useState(user.signUpName ?? '');
   const [error, setError] = useState<string>();

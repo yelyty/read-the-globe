@@ -13,7 +13,10 @@ type KeepCopyProps = {
   names: Record<string, string>;
 };
 
-// The dialogs that remove books offer the reading list first, so nothing is lost by accident
+/**
+ * Shows a box where the reader can save the reading list before a dialog removes the books.
+ * The dialogs that remove books show this box first. This prevents an accidental loss of books.
+ */
 const KeepCopy = ({ books, names }: KeepCopyProps) => {
   const [kept, setKept] = useState('');
 

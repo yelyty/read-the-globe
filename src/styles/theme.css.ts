@@ -198,12 +198,7 @@ const dark = {
     gold: '0, 0, 0',
   },
 
-  radius: {
-    xs: '6px',
-    sm: '12px',
-    md: '15px',
-    lg: '24px',
-  },
+  radius: light.radius,
 };
 
 export const space = createGlobalTheme(':root', {

@@ -8,6 +8,10 @@ type AccountSectionProps = {
   children: ReactNode;
 };
 
+/**
+ * Shows one section of the Account page, with a heading and the content of the section.
+ * @param danger - If true, the heading shows in the danger color.
+ */
 const AccountSection = ({ title, danger, children }: AccountSectionProps) => {
   const id = useId();
 

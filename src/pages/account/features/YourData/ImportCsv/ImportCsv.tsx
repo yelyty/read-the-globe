@@ -14,7 +14,12 @@ type ImportCsvProps = {
   onDone: (text: string) => void;
 };
 
-// Import a reading list (CSV): a button that opens the file picker. Books are added, never replaced, all or nothing.
+/**
+ * Shows a button that imports a reading list from a CSV file.
+ * The button opens the file picker. The import adds books to the atlas. It does not replace books.
+ * If one book cannot be added, the import adds no books.
+ * @param onDone - Receives a sentence about the result, or the error message.
+ */
 const ImportCsv = ({ className, children, onDone }: ImportCsvProps) => {
   const refresh = useRefresh();
   const file = useRef<HTMLInputElement>(null);

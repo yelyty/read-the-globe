@@ -27,7 +27,11 @@ type RestoreBackupProps = {
   onFail: (text: string) => void;
 };
 
-// Restore a backup (JSON): it replaces the atlas after a confirmation, and Undo puts the atlas back as it was
+/**
+ * Shows a button that restores a backup from a JSON file.
+ * The backup replaces the atlas after the reader confirms the restore.
+ * The reader can use Undo to put back the atlas as it was before.
+ */
 const RestoreBackup = ({
   userId,
   books,

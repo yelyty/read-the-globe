@@ -12,6 +12,10 @@ type DeleteAccountProps = {
   names: Record<string, string>;
 };
 
+/**
+ * Shows the Delete account action.
+ * The button opens a dialog where the reader confirms the removal of the account and the atlas.
+ */
 const DeleteAccount = ({ books, names }: DeleteAccountProps) => {
   const [open, setOpen] = useState(false);
 
