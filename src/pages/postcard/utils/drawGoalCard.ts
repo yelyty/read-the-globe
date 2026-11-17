@@ -158,9 +158,13 @@ type Draw = {
   logo: HTMLImageElement | null;
 };
 
-/* A postcard for a reached goal, drawn like a real one. Landscape 3:2. Left, the picture side: "Greetings from" over the
-   goal's name and its map (or a shelf, for a theme). Right, the back: a stamp from the last country reached, the
-   goal-reached postmark over it, a message in the reader's voice and three address lines. */
+/**
+ * Draws the postcard for a reached goal on the canvas. The card is landscape, with a ratio of 3:2.
+ * The left side is the picture side. It shows "Greetings from", the name of the goal, and the map of the goal.
+ * For a theme goal, the left side shows a shelf in place of the map.
+ * The right side is the back. It shows a stamp from the last country reached, with the goal-reached postmark on it.
+ * The back also shows a message from the reader and three address lines.
+ */
 export async function drawGoalCard({
   canvas,
   goal: goal,
@@ -401,7 +405,7 @@ export async function drawGoalCard({
     sh = STAMP.height;
 
   ctx.save();
-  ctx.translate(sx, sy); // the stamp sits straight
+  ctx.translate(sx, sy);
   ctx.fillStyle = PALETTE.field;
   ctx.fillRect(0, 0, sw, sh);
   ctx.fillStyle = paper;
@@ -623,7 +627,10 @@ export async function drawGoalCard({
   });
 }
 
-// the saved file's name: read-the-globe-the-silk-road-postcard.png
+/**
+ * Makes the file name for a goal card, for example `read-the-globe-the-silk-road-postcard.png`.
+ * Each group of characters that are not a lowercase letter or a digit becomes one dash.
+ */
 export const goalCardName = (goal: Goal) =>
   `read-the-globe-${goal.name
     .toLowerCase()

@@ -66,6 +66,7 @@ export const vars = createThemeContract({
   },
 
   radius: {
+    xs: null,
     sm: null,
     md: null,
     lg: null,
@@ -135,6 +136,7 @@ export const light = {
   },
 
   radius: {
+    xs: '4px',
     sm: '8px',
     md: '10px',
     lg: '16px',
@@ -197,6 +199,7 @@ const dark = {
   },
 
   radius: {
+    xs: '6px',
     sm: '12px',
     md: '15px',
     lg: '24px',

@@ -3,7 +3,7 @@ import { lower } from '../../../../utils/text';
 import ToggleGroup, {
   type ToggleOption,
 } from '../../../../components/ToggleGroup/ToggleGroup';
-import * as styles from '../../PostCardPage.css';
+import * as styles from './CardStyle.css';
 import {
   COLOR_KEYS,
   COUNTS,
@@ -22,7 +22,11 @@ type CardStyleProps = {
   onChange: (change: Partial<CardOptions>) => void;
 };
 
-// the folded Style choices of an atlas or year card: how many stamps, the frame, the colour
+/**
+ * Shows the Style controls of an atlas card or a year-end card.
+ * The controls set the number of stamps, the frame, and the color.
+ * The reader can open and close this section.
+ */
 const CardStyle = ({ options, color, onChange }: CardStyleProps) => {
   const handleCount = (count: Options['count']) => onChange({ count });
   const handleFrame = (frame: Options['frame']) => onChange({ frame });

@@ -188,11 +188,18 @@ export type Options = {
   kind: Kind;
   count: StampCount;
   frame: 'perforated' | 'framed' | 'plain';
-  color: keyof typeof COLORS | null; // null: the kind's own mark, rust for authors, olive for settings
+  /** The color of the stamps. Null uses the mark of the kind: rust for authors, olive for settings. */
+  color: keyof typeof COLORS | null;
   paper: keyof typeof PAPERS;
 };
 
-// the kind's countries, newest book first, and the numbers under the stamps
+/**
+ * Gets the countries of one card type, and the numbers below the stamps.
+ * The countries are in the order of the books, with the newest book first.
+ * A country is included only if the atlas has a mark of that type for it.
+ * @param spec - The card type: the author countries, the story countries, or a year.
+ * @returns The country codes in order, and the number of countries, continents, and books.
+ */
 export function postcardStats(books: BookEntry[], marks: Marks, spec: Spec) {
   const known = (code: string | null | undefined): code is string =>
     !!code && !!marks[code] && spec.count(marks[code]) > 0;
@@ -213,7 +220,11 @@ export function postcardStats(books: BookEntry[], marks: Marks, spec: Spec) {
 }
 
 /* ---------- the card ---------- */
-// the canvas's two text tools, shared with the goal card
+/**
+ * Makes the two text tools for a canvas. The postcard and the goal card use these tools.
+ * `text` writes a line of text and returns its width.
+ * `fit` gets the largest font size at which a line fits in a width.
+ */
 export const pen = (ctx: CanvasRenderingContext2D) => ({
   text: (
     str: string,
@@ -260,6 +271,11 @@ type Draw = {
   year: { books: BookEntry[]; line: string } | null;
 };
 
+/**
+ * Draws an atlas card or a year-end card on the canvas. The card is a square of 1080 px.
+ * The card shows the title, a stamp for each country, and the numbers below the stamps.
+ * The function loads the fonts before it draws.
+ */
 export async function drawPostcard({
   canvas,
   names,
@@ -390,7 +406,8 @@ export async function drawPostcard({
       ctx.restore();
     }
 
-    const fb = opt.frame === 'framed' ? sw * STAMP.band : 0; // names sit above the frame's band
+    // names sit above the frame's band
+    const fb = opt.frame === 'framed' ? sw * STAMP.band : 0;
 
     if (sub)
       text(
@@ -506,7 +523,7 @@ export async function drawPostcard({
       ),
       PALETTE.text,
       { align: 'center' }
-    ); // the year in one sentence
+    );
   else
     text(
       spec.caption?.() ?? '',
@@ -589,8 +606,9 @@ export async function drawPostcard({
   const inLast = shown.length - lastRow * cols;
 
   shown.forEach((code, i) => {
+    // the last row centres
     const ox =
-      Math.floor(i / cols) === lastRow ? ((cols - inLast) * (sw + gap)) / 2 : 0; // the last row centres
+      Math.floor(i / cols) === lastRow ? ((cols - inLast) * (sw + gap)) / 2 : 0;
 
     const bookCount = booksIn(code);
 
@@ -662,6 +680,7 @@ export async function drawPostcard({
     { align: 'right' }
   );
 
+  // full Ink: it has to survive the card being shrunk in a feed
   text(
     'readtheglobe.app',
     SIZE - mg,
@@ -671,5 +690,5 @@ export async function drawPostcard({
     {
       align: 'right',
     }
-  ); // full Ink: it has to survive the card being shrunk in a feed
+  );
 }

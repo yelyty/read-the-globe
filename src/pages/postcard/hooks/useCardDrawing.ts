@@ -12,7 +12,6 @@ import type { yearSum } from '../utils/yearSum';
 
 type CardDrawing = {
   canvasRef: RefObject<HTMLCanvasElement | null>;
-  /** holds the hidden <Logo /> the card draws in its header */
   logoRef: RefObject<HTMLDivElement | null>;
   books: BookEntry[];
   marks: Marks;
@@ -24,7 +23,11 @@ type CardDrawing = {
   yearSummary: ReturnType<typeof yearSum> | null;
 };
 
-// draws the card on the canvas once the world's shapes have loaded, and again at every change
+/**
+ * Draws the card on the canvas.
+ * The hook waits until the country shapes are loaded. Then it draws the card again after each change.
+ * For a reached goal, the hook draws a goal card. For all other cards, it draws a postcard.
+ */
 export function useCardDrawing({
   canvasRef,
   logoRef,

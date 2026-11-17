@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 
-import type { BookEntry, Goal, Profile } from '../../../types';
-import type { SavedPostcard } from '../../../api/Profile/getProfile';
-import { atlasMarks } from '../../../utils/atlasMarks';
-import { firstName } from '../../../utils/firstName';
-import { goalProgress } from '../../goals/utils/goalProgress';
-import { readOptions, type CardOptions } from '../utils/cardOptions';
-import { cardLabel, cardTitle } from '../utils/cardText';
-import { KINDS, postcardStats } from '../utils/drawPostcard';
-import { bookYears, yearSum } from '../utils/yearSum';
+import type { BookEntry, Goal, Profile } from '../../../../types';
+import type { SavedPostcard } from '../../../../api/Profile/getProfile';
+import { atlasMarks } from '../../../../utils/atlasMarks';
+import { firstName } from '../../../../utils/firstName';
+import { goalProgress } from '../../../goals/utils/goalProgress';
+import { readOptions, type CardOptions } from '../../utils/cardOptions';
+import { cardLabel, cardTitle } from '../../utils/cardText';
+import { KINDS, postcardStats } from '../../utils/drawPostcard';
+import { bookYears, yearSum } from '../../utils/yearSum';
 import { useSavedSetup } from './useSavedSetup';
 
 const route = getRouteApi('/app/postcard');
@@ -21,9 +21,14 @@ type CardChoice = {
   user: { id: string; signUpName: string | null } | null;
 };
 
-/** Which card the Postcard page shows, and what goes on it: the saved set-up, unless a link chose a reached goal
-    (?goal=) or a year (?year=); the cards there are (the atlas, one per year with books, one per reached goal);
-    and the card's title, numbers and words for screen readers. The set-up is saved as it changes. */
+/**
+ * Gets the card that the Postcard page shows, and the data for that card.
+ * The saved set-up is the start point. A link with ?goal= or ?year= changes the card to that goal or year.
+ * After that, the hook removes the search parameters from the address.
+ * The hook saves the set-up when it changes.
+ * @returns The set-up and a function to change it, the years and reached goals that have a card,
+ *   and the title, numbers, color, and screen-reader label of the card.
+ */
 export function useCardChoice({ books, goals, profile, user }: CardChoice) {
   const search = route.useSearch();
   const navigate = useNavigate();
@@ -55,7 +60,6 @@ export function useCardChoice({ books, goals, profile, user }: CardChoice) {
   const stats = postcardStats(books, marks, KINDS[options.kind]);
   const first = firstName(profile?.displayName ?? user?.signUpName);
 
-  // ponytail: "reached" is the date GoalsPage stamps, not a fresh count, so a card waits for a visit to Goals
   const years = bookYears(books);
   const reached = goals.filter((candidate) => candidate.reachedOn);
   const goal = reached.find((item) => item.id === options.goal) ?? null;
