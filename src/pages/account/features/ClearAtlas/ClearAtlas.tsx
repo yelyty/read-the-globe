@@ -16,9 +16,9 @@ import Dialog from '../../../../components/Dialog/Dialog';
 import DialogActions from '../../../../components/Dialog/DialogActions';
 import DialogText from '../../../../components/Dialog/DialogText';
 import { m } from '../../../../paraglide/messages.js';
-import { atlasWords } from '../YourData/readingList';
+import { atlasWords } from '../YourData/readingList/readingList';
 import KeepCopy from '../DeleteAccount/KeepCopy';
-import * as styles from '../DeleteAccount/DeleteAccount.css';
+import * as styles from '../../AccountPage.css';
 
 type ClearAtlasProps = {
   userId: string;
@@ -37,13 +37,12 @@ const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
   const [round, setRound] = useState(0);
   const [clearing, setClearing] = useState(false);
 
-  // nothing to clear on a blank atlas: the button says so rather than opening an empty dialog
   const blank = !books.length && !goals.length;
   const lost = atlasWords(books.length, goals.length);
 
   const close = () => {
     setOpen(false);
-    setRound((current) => current + 1); // a fresh KeepCopy next time
+    setRound((current) => current + 1);
   };
 
   const clear = async () => {
@@ -96,7 +95,7 @@ const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
         open={open}
         onClose={close}
         title={m.account_clear_question()}
-        initialFocus="ac-clear-keep" // the safe choice takes focus
+        initialFocus="ac-clear-keep"
         aria-describedby="ac-clear-q"
       >
         <DialogText id="ac-clear-q">

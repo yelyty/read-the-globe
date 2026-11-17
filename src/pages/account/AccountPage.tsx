@@ -5,12 +5,12 @@ import LanguagePicker from '../../components/LanguagePicker/LanguagePicker';
 import * as fieldStyles from '../../components/Field/Field.css';
 import { m } from '../../paraglide/messages.js';
 import PageTitle from '../../components/PageTitle/PageTitle';
-import UserDetails from './features/UserDetails';
+import UserDetails from './features/UserDetails/UserDetails';
 import ChangePassword from './features/ChangePassword/ChangePassword';
 import DeleteAccount from './features/DeleteAccount/DeleteAccount';
 import YourData from './features/YourData/YourData';
 import ClearAtlas from './features/ClearAtlas/ClearAtlas';
-import Block from './components/Block';
+import AccountSection from './components/AccountSection';
 import * as styles from './AccountPage.css';
 
 const AccountPage = () => {
@@ -25,17 +25,17 @@ const AccountPage = () => {
     <div className={styles.wrapper}>
       <PageTitle>{m.nav_account()}</PageTitle>
       <UserDetails user={user} />
-      <Block title={m.language()}>
+      <AccountSection title={m.language()}>
         <LanguagePicker
           label={m.language_app()}
           className={fieldStyles.field}
           labelClassName={fieldStyles.fieldLabel}
           variant="field"
         />
-      </Block>
+      </AccountSection>
       <ChangePassword email={user.email ?? ''} />
       <YourData userId={user.id} books={books} goals={goals} names={names} />
-      <Block title={m.account_start_over()} danger>
+      <AccountSection title={m.account_start_over()} danger>
         <ClearAtlas
           userId={user.id}
           books={books}
@@ -43,7 +43,7 @@ const AccountPage = () => {
           names={names}
         />
         <DeleteAccount books={books} names={names} />
-      </Block>
+      </AccountSection>
     </div>
   );
 };

@@ -1,16 +1,16 @@
 import { globalStyle, style } from '@vanilla-extract/css';
 
-import { vars } from '../../styles/theme.css';
+import { fontSize, space, vars } from '../../styles/theme.css';
 import { band } from '../../styles/global.css';
 import { phone } from '../landing/LandingPage.css';
 
 export const item = style({
-  marginTop: 16,
-  padding: 24,
-  borderRadius: 16,
+  marginTop: space.sp4,
+  padding: space.sp5,
+  borderRadius: vars.radius.lg,
   background: band,
   selectors: { '&:first-of-type': { marginTop: 0 } },
-  '@media': { [phone]: { padding: 16 } },
+  '@media': { [phone]: { padding: space.sp4 } },
 });
 
 export const dangerItem = style([
@@ -23,7 +23,7 @@ export const dangerItem = style([
 export const itemTitle = style({
   margin: 0,
   fontFamily: vars.font.display,
-  fontSize: 18,
+  fontSize: fontSize.item,
   fontWeight: 500,
   lineHeight: 1.2,
   color: vars.color.text,
@@ -31,7 +31,7 @@ export const itemTitle = style({
 });
 
 export const itemText = style({
-  margin: '8px 0 16px',
+  margin: `${space.sp2} 0 ${space.sp4}`,
   maxWidth: '52ch',
   color: vars.color.textSecondary,
 });
@@ -55,9 +55,10 @@ export const row = style({
   display: 'flex',
   flexWrap: 'wrap',
   alignItems: 'center',
-  gap: '12px 16px',
-  marginTop: 8,
+  gap: `${space.sp3} ${space.sp4}`,
+  marginTop: space.sp2,
 });
 
-// Download an example CSV, tucked under the import's description
-export const example = style({ margin: '-8px 0 8px' });
+export const example = style({
+  margin: `calc(-1 * ${space.sp2}) 0 ${space.sp2}`,
+});

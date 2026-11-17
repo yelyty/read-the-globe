@@ -1,12 +1,12 @@
-import type { BookEntry } from '../../../../types';
-import type { Backup } from '../../../../api/data/data';
+import type { BookEntry } from '../../../../../types';
+import type { Backup } from '../../../../../api/data/data';
 import {
   CSV_HEAD,
   readingListRows,
   toCsv,
-} from '../../../../utils/readingListCsv';
-import { m } from '../../../../paraglide/messages.js';
-import { localToday as today } from '../../../../utils/readDate';
+} from '../../../../../utils/readingListCsv';
+import { m } from '../../../../../paraglide/messages.js';
+import { localToday as today } from '../../../../../utils/readDate';
 
 const download = (text: string, name: string, type: string) => {
   const link = document.createElement('a');
@@ -17,7 +17,6 @@ const download = (text: string, name: string, type: string) => {
   setTimeout(() => URL.revokeObjectURL(link.href), 0);
 };
 
-// in the importer's own columns, so it round-trips
 export function exportReadingList(
   books: BookEntry[],
   names: Record<string, string>

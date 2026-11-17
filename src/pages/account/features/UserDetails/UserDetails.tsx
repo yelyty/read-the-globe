@@ -1,14 +1,14 @@
 import { useState, type ChangeEvent, type SubmitEvent } from 'react';
 import { CheckIcon } from '@phosphor-icons/react';
 
-import Field from '../../../components/Field/Field';
-import { updateDisplayName, type Reader } from '../../../auth/session';
-import Hint from '../../../components/Hint/Hint';
-import { Button } from '../../../components/Button/Button';
-import { m } from '../../../paraglide/messages.js';
-import * as styles from '../AccountPage.css';
-import Block from '../components/Block';
-import StatusLine from '../../../components/StatusLine/StatusLine';
+import Field from '../../../../components/Field/Field';
+import { updateDisplayName, type Reader } from '../../../../auth/session';
+import Hint from '../../../../components/Hint/Hint';
+import { Button } from '../../../../components/Button/Button';
+import { m } from '../../../../paraglide/messages.js';
+import * as styles from '../../AccountPage.css';
+import AccountSection from '../../components/AccountSection';
+import StatusLine from '../../../../components/StatusLine/StatusLine';
 
 type UserDetailsProps = {
   user: Reader;
@@ -48,7 +48,7 @@ const UserDetails = ({ user }: UserDetailsProps) => {
   };
 
   return (
-    <Block title={m.account_details_title()}>
+    <AccountSection title={m.account_details_title()}>
       <form className={styles.form} onSubmit={submit} noValidate>
         <Field
           id="ac-name"
@@ -81,7 +81,7 @@ const UserDetails = ({ user }: UserDetailsProps) => {
           <StatusLine>{status}</StatusLine>
         </div>
       </form>
-    </Block>
+    </AccountSection>
   );
 };
 

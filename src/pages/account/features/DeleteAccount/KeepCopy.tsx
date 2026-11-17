@@ -5,7 +5,7 @@ import type { BookEntry } from '../../../../types';
 import { Button } from '../../../../components/Button/Button';
 import StatusLine from '../../../../components/StatusLine/StatusLine';
 import { m } from '../../../../paraglide/messages.js';
-import { exportReadingList } from '../YourData/readingList';
+import { exportReadingList } from '../YourData/readingList/readingList';
 import * as styles from './DeleteAccount.css';
 
 type KeepCopyProps = {
@@ -13,7 +13,7 @@ type KeepCopyProps = {
   names: Record<string, string>;
 };
 
-// the dialogs that remove books offer the reading list first, so nothing is lost by accident
+// The dialogs that remove books offer the reading list first, so nothing is lost by accident
 const KeepCopy = ({ books, names }: KeepCopyProps) => {
   const [kept, setKept] = useState('');
 

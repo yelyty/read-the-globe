@@ -6,7 +6,7 @@ import Field from '../../../../components/Field/Field';
 import Hint from '../../../../components/Hint/Hint';
 import { Button } from '../../../../components/Button/Button';
 import { m } from '../../../../paraglide/messages.js';
-import Block from '../../components/Block';
+import AccountSection from '../../components/AccountSection';
 import StatusLine from '../../../../components/StatusLine/StatusLine';
 import * as styles from '../../AccountPage.css';
 import { validate, type Errors } from './validate';
@@ -59,7 +59,7 @@ const ChangePassword = ({ email }: { email: string }) => {
   };
 
   return (
-    <Block title={m.account_password_title()}>
+    <AccountSection title={m.account_password_title()}>
       <form className={styles.form} onSubmit={submit} noValidate>
         <input
           type="text"
@@ -103,7 +103,7 @@ const ChangePassword = ({ email }: { email: string }) => {
           <StatusLine>{status}</StatusLine>
         </div>
       </form>
-    </Block>
+    </AccountSection>
   );
 };
 

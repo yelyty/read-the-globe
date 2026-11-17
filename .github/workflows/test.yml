@@ -1,0 +1,28 @@
+name: Test
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # the pnpm version comes from packageManager in package.json
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # the tests never reach Supabase, but importing its client needs a URL and key to exist
+      - run: pnpm test
+        env:
+          VITE_SUPABASE_URL: http://localhost:54321
+          VITE_SUPABASE_PUBLISHABLE_KEY: ci-placeholder

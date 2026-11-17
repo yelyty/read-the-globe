@@ -4,7 +4,7 @@ import { TrashIcon } from '@phosphor-icons/react';
 import type { BookEntry } from '../../../../types';
 import { Button } from '../../../../components/Button/Button';
 import { m } from '../../../../paraglide/messages.js';
-import * as styles from './DeleteAccount.css';
+import * as styles from '../../AccountPage.css';
 import ConfirmationDialog from './ConfirmationDialog';
 
 type DeleteAccountProps = {

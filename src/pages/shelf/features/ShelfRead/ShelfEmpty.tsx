@@ -10,8 +10,8 @@ import ButtonLink from '../../../../components/Button/ButtonLink';
 import { button } from '../../../../components/Button/Button.css';
 import EmptyState from '../../../../components/EmptyState/EmptyState';
 import ShelfSticker from '../../../../components/Sticker/ShelfSticker';
-import ImportCsv from '../../../account/features/YourData/ImportCsv';
-import { exportExample } from '../../../account/features/YourData/readingList';
+import ImportCsv from '../../../account/features/YourData/ImportCsv/ImportCsv';
+import { exportExample } from '../../../account/features/YourData/readingList/readingList';
 import * as styles from '../../ShelfPage.css';
 
 type ShelfEmptyProps = {

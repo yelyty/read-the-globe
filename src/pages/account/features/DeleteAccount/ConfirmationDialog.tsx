@@ -31,7 +31,6 @@ const ConfirmationDialog = ({
   const [error, setError] = useState<string>();
   const [deleting, setDeleting] = useState(false);
 
-  // closed, it starts over: no typed word, no error, a fresh KeepCopy
   const close = () => {
     onClose();
     setWord('');
@@ -39,7 +38,7 @@ const ConfirmationDialog = ({
     setError(undefined);
   };
 
-  // the word is typed in the reader's language: delete, smazat, видалити
+  // the word is typed in the reader's language
   const confirmed =
     word.trim().toLocaleLowerCase(getLocale()) === m.account_delete_word();
 
@@ -64,7 +63,7 @@ const ConfirmationDialog = ({
       return;
     }
 
-    // the account is gone and signed out: App takes the reader back to '/'
+    // the account is gone and signed out
     close();
   };
 

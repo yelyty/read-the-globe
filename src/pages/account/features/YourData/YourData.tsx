@@ -12,16 +12,16 @@ import { Button } from '../../../../components/Button/Button';
 import { button } from '../../../../components/Button/Button.css';
 import { m } from '../../../../paraglide/messages.js';
 import * as styles from '../../AccountPage.css';
-import Block from '../../components/Block';
+import AccountSection from '../../components/AccountSection';
 import StatusLine from '../../../../components/StatusLine/StatusLine';
 import {
   bookCount,
   exportBackup,
   exportExample,
   exportReadingList,
-} from './readingList';
-import ImportCsv from './ImportCsv';
-import RestoreBackup from './RestoreBackup';
+} from './readingList/readingList';
+import ImportCsv from './ImportCsv/ImportCsv';
+import RestoreBackup from './RestoreBackup/RestoreBackup';
 
 type YourDataProps = {
   userId: string;
@@ -40,7 +40,6 @@ const YourData = ({ userId, books, names, goals }: YourDataProps) => {
     setStatus(m.account_exported({ books: bookCount(books.length) }));
   };
 
-  // the backup is read fresh, so it carries next reads and saved worlds too
   const onExportFullBackup = async () => {
     setBackingUp(true);
     const backup = await getBackup(userId).catch(() => null);
@@ -58,7 +57,7 @@ const YourData = ({ userId, books, names, goals }: YourDataProps) => {
   };
 
   return (
-    <Block title={m.account_data_title()}>
+    <AccountSection title={m.account_data_title()}>
       <div className={styles.item}>
         <h3 className={styles.itemTitle}>{m.account_export()}</h3>
         <p className={styles.itemText}>{m.account_export_text()}</p>
@@ -110,7 +109,7 @@ const YourData = ({ userId, books, names, goals }: YourDataProps) => {
           <StatusLine>{imported}</StatusLine>
         </div>
       </div>
-    </Block>
+    </AccountSection>
   );
 };
 

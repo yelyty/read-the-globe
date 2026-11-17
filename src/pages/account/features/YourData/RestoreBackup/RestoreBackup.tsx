@@ -1,23 +1,23 @@
 import { useRef, useState, type ChangeEvent } from 'react';
 import { UploadSimpleIcon } from '@phosphor-icons/react';
 
-import type { BookEntry, Goal } from '../../../../types';
+import type { BookEntry, Goal } from '../../../../../types';
 import {
   getBackup,
   restoreBackup,
   type Backup,
-} from '../../../../api/data/data';
-import { useRefresh } from '../../../../hooks/useReader';
-import { useStatus } from '../../../../hooks/useStatus';
-import { useUndo } from '../../../../hooks/useUndo';
-import { Button } from '../../../../components/Button/Button';
-import { button } from '../../../../components/Button/Button.css';
-import Dialog from '../../../../components/Dialog/Dialog';
-import DialogActions from '../../../../components/Dialog/DialogActions';
-import DialogText from '../../../../components/Dialog/DialogText';
-import { m } from '../../../../paraglide/messages.js';
-import { getLocale } from '../../../../paraglide/runtime.js';
-import { atlasWords, bookCount, goalCount } from './readingList';
+} from '../../../../../api/data/data';
+import { useRefresh } from '../../../../../hooks/useReader';
+import { useStatus } from '../../../../../hooks/useStatus';
+import { useUndo } from '../../../../../hooks/useUndo';
+import { Button } from '../../../../../components/Button/Button';
+import { button } from '../../../../../components/Button/Button.css';
+import Dialog from '../../../../../components/Dialog/Dialog';
+import DialogActions from '../../../../../components/Dialog/DialogActions';
+import DialogText from '../../../../../components/Dialog/DialogText';
+import { m } from '../../../../../paraglide/messages.js';
+import { getLocale } from '../../../../../paraglide/runtime.js';
+import { atlasWords, bookCount, goalCount } from '../readingList/readingList';
 
 type RestoreBackupProps = {
   userId: string;
@@ -133,7 +133,7 @@ const RestoreBackup = ({
         open={open}
         onClose={close}
         title={m.account_restore_question()}
-        initialFocus="ac-restore-keep" // the safe choice takes focus
+        initialFocus="ac-restore-keep"
         aria-describedby="ac-restore-q"
       >
         {pending && (
