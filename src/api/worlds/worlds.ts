@@ -15,7 +15,6 @@ export const getWorlds = async (userId: string): Promise<World[]> => {
     .order('created_at')
     .returns<World[]>();
 
-  // ponytail: a missing worlds table (app-2-atlas.sql not run yet) just means no saved worlds
   if (error) console.error(error);
 
   return data ?? [];

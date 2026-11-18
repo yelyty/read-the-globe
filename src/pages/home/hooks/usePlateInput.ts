@@ -15,7 +15,6 @@ type PlateInput = {
 };
 
 // the countries a tip and a click are for: every marked one, and every unmarked one but Antarctica.
-// ponytail: the mock offers only the 195; here Taiwan or Kosovo invite a book too, as the form already lists them
 const codeAt = (target: EventTarget) => {
   const el = (target as Element).closest<SVGElement>('[data-code]');
   const code = el?.dataset.code;

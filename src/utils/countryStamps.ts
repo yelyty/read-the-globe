@@ -68,8 +68,7 @@ export const loadCountries = () => {
   return stamped;
 };
 
-// a ring's size and frame on the flat map. ponytail: planar on purpose; d3's spherical area and bounds read
-// a ring that wraps the date line (Russia's mainland) as nearly the whole globe. A ring that runs on past 180°
+// a ring's size and frame on the flat map. A ring that runs on past 180°
 // (into Chukotka) is unwrapped first, so its frame sits on the mainland and the far end is clipped by the stamp.
 const flatBox = ([outer]: Position[][]) => {
   const lons = outer.map((point) => point[0]);

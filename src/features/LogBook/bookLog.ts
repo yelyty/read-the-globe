@@ -148,7 +148,6 @@ export const readLog = (
             fields.startMonth,
             today
           ),
-          // ponytail: an old name or a territory isn't kept beside the country; it only names an unnamed place
           places: places.map((place) =>
             place.imagined
               ? { name: place.name, country: null, imagined: true }

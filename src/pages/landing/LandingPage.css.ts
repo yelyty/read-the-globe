@@ -63,7 +63,6 @@ export const page = style({
     '--band': band,
   },
 });
-// ponytail: follows data-theme only, which index.html's head script always sets
 globalStyle(`:root[data-theme="dark"] ${page}`, { vars: illustration.dark });
 
 /* :where() keeps these at one class of specificity, so component classes win. */
