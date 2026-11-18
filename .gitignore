@@ -28,5 +28,8 @@ storybook-static
 .env*
 !.env.example
 
+# TypeScript incremental build cache
+*.tsbuildinfo
+
 # test coverage reports
 coverage
