@@ -1,6 +1,6 @@
-import type { BookEntry } from '../types';
-import { countryFrom } from './countryFrom';
-import { readDate } from './readDate';
+import type { BookEntry, ImportedBook } from '../../../../../types';
+import { countryFrom } from '../../../../../utils/countryFrom';
+import { readDate } from '../../../../../utils/readDate';
 
 /* A reading list as CSV: title, author, the author's country, places ("City, Country; City") and an optional
    date (YYYY-MM-DD, or just YYYY-MM). The export writes these columns and the import reads them, so it round-trips. */
@@ -90,15 +90,6 @@ export function readingListRows(
     ]),
   ];
 }
-
-export type ImportedBook = {
-  title: string;
-  author: string;
-  authorCountry: string;
-  /** YYYY-MM-DD; null is today */
-  readOn: string | null;
-  places: { name: string; country: string | null; imagined?: boolean }[];
-};
 
 /**
  * Gets the books in a reading list, and the number of rows that cannot be a book.

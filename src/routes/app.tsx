@@ -2,8 +2,8 @@ import { createFileRoute, redirect } from '@tanstack/react-router';
 
 import AppLayout from '../layout/AppLayout/AppLayout';
 import { booksQuery, goalsQuery, worldsQuery } from '../api/queries';
-import { searchId } from '../utils/searchId';
 import { m } from '../paraglide/messages.js';
+import { searchId } from './-utils/searchId';
 
 type AppSearch = {
   log?: true;

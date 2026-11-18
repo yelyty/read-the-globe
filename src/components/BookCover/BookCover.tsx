@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 
-import { coverBinding } from '../../utils/coverColors';
+import { coverBinding } from './coverColors';
 import * as styles from './BookCover.css';
 
 type BookCoverProps = {
