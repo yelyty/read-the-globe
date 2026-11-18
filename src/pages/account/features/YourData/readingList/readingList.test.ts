@@ -1,12 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { Backup } from '../../../../../api/data/data';
-import {
-  CSV_HEAD,
-  parseCsv,
-  readingListRows,
-  toCsv,
-} from '../../../../../utils/readingListCsv';
+import { CSV_HEAD, parseCsv, readingListRows, toCsv } from './readingListCsv';
 import {
   atlasWords,
   bookCount,

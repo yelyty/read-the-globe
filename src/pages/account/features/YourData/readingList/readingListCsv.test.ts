@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { BookEntry } from '../types';
+import type { BookEntry } from '../../../../../types';
 import {
   booksFromCsv,
   parseCsv,

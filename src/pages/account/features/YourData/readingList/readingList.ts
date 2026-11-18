@@ -1,12 +1,8 @@
 import type { BookEntry } from '../../../../../types';
 import type { Backup } from '../../../../../api/data/data';
-import {
-  CSV_HEAD,
-  readingListRows,
-  toCsv,
-} from '../../../../../utils/readingListCsv';
 import { m } from '../../../../../paraglide/messages.js';
 import { localToday as today } from '../../../../../utils/readDate';
+import { CSV_HEAD, readingListRows, toCsv } from './readingListCsv';
 
 const download = (text: string, name: string, type: string) => {
   const link = document.createElement('a');
