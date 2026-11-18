@@ -35,7 +35,8 @@ export default defineConfig({
         'src/routeTree.gen.ts',
         'src/testing/**',
       ],
-      reporter: ['text-summary', 'html'],
+      // json-summary feeds the coverage badge in the README (the badge job in test.yml)
+      reporter: ['text-summary', 'html', 'json-summary'],
       // a little under where coverage stands, so CI fails when new code lands without tests
       thresholds: { statements: 60, branches: 70, functions: 75, lines: 60 },
     },
