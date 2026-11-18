@@ -11,7 +11,7 @@ const HilltopSticker = () => (
       d="M6 88 C 26 70, 44 58, 64 52 C 82 47, 100 56, 114 88 Z"
     />
     <path
-      className={styles.hillPath}
+      className={styles.road}
       d="M14 86 C 30 80, 34 74, 46 70 C 58 66, 56 60, 66 56"
     />
     <circle className={styles.hillStart} cx="14" cy="86" r="3" />

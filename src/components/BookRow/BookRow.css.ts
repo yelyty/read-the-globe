@@ -1,51 +1,53 @@
 import { globalStyle, style } from '@vanilla-extract/css';
 
-import { vars } from '../../styles/theme.css';
+import { fontSize, space, vars } from '../../styles/theme.css';
 import { focusRing, phone } from '../../styles/global.css';
 
 export const list = style({ listStyle: 'none', margin: 0, padding: 0 });
 export const row = style({
   display: 'grid',
   gridTemplateColumns: 'minmax(0, 1.1fr) minmax(0, 1.4fr) auto',
-  gap: '8px 24px',
+  gap: `${space.sp2} ${space.sp5}`,
   alignItems: 'start',
-  padding: '12px 0',
+  padding: `${space.sp3} 0`,
   borderBottom: `1px solid ${vars.color.border}`,
-  '@media': { [phone]: { gridTemplateColumns: 'minmax(0, 1fr)', gap: 10 } },
+  '@media': {
+    [phone]: { gridTemplateColumns: 'minmax(0, 1fr)', gap: space.sp3 },
+  },
 });
 export const rowMain = style({ minWidth: 0 });
 // the cover sits to the left of the title and author, which wrap beside it
 export const cover = style({
   float: 'left',
-  margin: '0 14px 4px 0',
+  margin: `0 ${space.sp4} ${space.sp1} 0`,
 });
 export const rowTitle = style({
   display: 'block',
   fontFamily: vars.font.display,
-  fontSize: 18,
+  fontSize: fontSize.item,
   lineHeight: 1.15,
   color: vars.color.text,
 });
 export const rowAuthor = style({
   display: 'block',
   marginTop: 2,
-  fontSize: 14,
+  fontSize: fontSize.body,
   color: vars.color.textSecondary,
 });
 export const rowMarks = style({
   display: 'flex',
   flexDirection: 'column',
-  gap: 4,
+  gap: space.sp1,
   minWidth: 0,
   paddingTop: 2,
-  fontSize: 14,
+  fontSize: fontSize.body,
   color: vars.color.textSecondary,
   '@media': { [phone]: { clear: 'both' } },
 });
 export const mark = style({
   display: 'flex',
   alignItems: 'baseline',
-  gap: 8,
+  gap: space.sp2,
   minWidth: 0,
   overflowWrap: 'anywhere',
 });
@@ -62,7 +64,7 @@ export const markNone = style({
 globalStyle(`${rowAuthor} time`, {
   display: 'block',
   marginTop: 2,
-  fontSize: 13,
+  fontSize: fontSize.meta,
   color: vars.color.textMuted,
   fontVariantNumeric: 'tabular-nums',
   whiteSpace: 'nowrap',
@@ -75,9 +77,9 @@ export const rowSide = style({
 export const edit = style({
   display: 'inline-flex',
   alignItems: 'center',
-  gap: 8,
-  padding: '8px 2px',
-  fontSize: 15,
+  gap: space.sp2,
+  padding: `${space.sp2} 2px`,
+  fontSize: fontSize.body,
   fontWeight: 500,
   color: vars.color.textSecondary,
   textDecoration: 'none',

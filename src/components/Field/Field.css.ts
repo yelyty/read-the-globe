@@ -1,18 +1,18 @@
 import { globalStyle, style } from '@vanilla-extract/css';
 
-import { vars } from '../../styles/theme.css';
+import { fontSize, space, vars } from '../../styles/theme.css';
 import { focusGlow } from '../../styles/global.css';
 
 export const note = {
   display: 'flex',
-  gap: 9,
+  gap: space.sp2,
   alignItems: 'flex-start',
   fontFamily: vars.font.sans,
-  fontSize: 14,
+  fontSize: fontSize.body,
   lineHeight: 1.4,
   borderRadius: 6,
-  padding: '11px 13px',
-  marginBottom: 20,
+  padding: `${space.sp3} ${space.sp3}`,
+  marginBottom: space.sp5,
 } as const;
 
 export const formError = style({
@@ -36,15 +36,15 @@ export const formNotice = style({
   background: vars.color.oliveWash,
 });
 
-export const field = style({ marginBottom: 16 });
+export const field = style({ marginBottom: space.sp4 });
 // an inline form's field: the form's grid spaces it
 export const fieldCompact = style({ marginBottom: 0 });
 
 export const fieldLabel = style({
   display: 'block',
-  marginBottom: 8,
+  marginBottom: space.sp2,
   fontFamily: vars.font.sans,
-  fontSize: 15,
+  fontSize: fontSize.body,
   fontWeight: 500,
   lineHeight: 1.2,
   color: vars.color.textSecondary,
@@ -57,9 +57,9 @@ export const input = style({
   background: vars.color.background,
   border: `1.5px solid ${vars.color.fieldLine}`,
   borderRadius: 12,
-  padding: '0 16px',
+  padding: `0 ${space.sp4}`,
   fontFamily: vars.font.sans,
-  fontSize: 17,
+  fontSize: fontSize.item,
   fontWeight: 400,
   color: vars.color.text,
   transition: 'border-color .15s, box-shadow .15s',
@@ -76,12 +76,12 @@ export const input = style({
 export const inputCompact = style({
   height: 'auto',
   minHeight: 40,
-  padding: '8px 16px',
+  padding: `${space.sp2} ${space.sp4}`,
   background: vars.color.field,
-  fontSize: 15,
+  fontSize: fontSize.body,
 });
 
-export const inputPassword = style({ paddingRight: 72 });
+export const inputPassword = style({ paddingRight: space.sp8 });
 
 export const pwWrap = style({ position: 'relative' });
 
@@ -93,10 +93,10 @@ export const pwToggle = style({
   background: 'none',
   border: 0,
   fontFamily: vars.font.sans,
-  fontSize: 15,
+  fontSize: fontSize.body,
   fontWeight: 500,
   color: vars.color.textSecondary,
-  padding: '0 8px',
+  padding: `0 ${space.sp2}`,
   height: 32,
   borderRadius: 8,
   cursor: 'pointer',
@@ -105,16 +105,16 @@ export const pwToggle = style({
 
 export const fieldError = style({
   fontFamily: vars.font.sans,
-  fontSize: 15,
+  fontSize: fontSize.body,
   fontWeight: 500,
   lineHeight: 1.3,
   color: vars.color.error,
-  margin: '8px 0 0',
+  margin: `${space.sp2} 0 0`,
 });
 
 export const strength = style({
   display: 'flex',
   alignItems: 'center',
-  gap: 10,
-  marginTop: 10,
+  gap: space.sp3,
+  marginTop: space.sp3,
 });

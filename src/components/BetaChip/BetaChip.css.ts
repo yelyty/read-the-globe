@@ -1,6 +1,6 @@
 import { style } from '@vanilla-extract/css';
 
-import { vars } from '../../styles/theme.css';
+import { fontSize, space, vars } from '../../styles/theme.css';
 import { forcedColors } from '../../styles/global.css';
 
 // a small olive tag beside the wordmark: the app is still in beta
@@ -8,12 +8,12 @@ export const betaChip = style({
   display: 'inline-flex',
   alignItems: 'center',
   flex: 'none',
-  padding: '3px 8px',
+  padding: `${space.sp1} ${space.sp2}`,
   borderRadius: 999,
   background: vars.color.oliveWash,
   color: vars.color.oliveInk,
   fontFamily: vars.font.sans,
-  fontSize: 11,
+  fontSize: fontSize.label,
   fontWeight: 700,
   lineHeight: 1.2,
   letterSpacing: '0.06em',

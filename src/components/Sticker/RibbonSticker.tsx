@@ -7,7 +7,7 @@ import * as styles from './Sticker.css';
 const RibbonSticker = () => (
   <Sticker>
     <path
-      className={styles.ribbonRoad}
+      className={styles.road}
       d="M50 74 C 64 80, 76 74, 84 64 C 90 56, 94 50, 98 44"
     />
     <rect

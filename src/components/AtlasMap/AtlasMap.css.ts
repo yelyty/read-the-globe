@@ -1,7 +1,13 @@
 import { globalStyle, keyframes, style } from '@vanilla-extract/css';
 
-import { fontSize, vars } from '../../styles/theme.css';
-import { easeSoft, hover, phone, reducedMotion } from '../../styles/global.css';
+import { fontSize, space, vars } from '../../styles/theme.css';
+import {
+  easeSoft,
+  gutter,
+  hover,
+  phone,
+  reducedMotion,
+} from '../../styles/global.css';
 
 export const plate = style({ position: 'relative', margin: 0 });
 
@@ -12,8 +18,8 @@ export const scroll = style({
       overscrollBehaviorX: 'contain',
       scrollbarWidth: 'thin',
       scrollbarColor: `${vars.color.border} transparent`,
-      marginInline: 'calc(-1 * clamp(18px, 4vw, 40px))',
-      paddingInline: 'clamp(18px, 4vw, 40px)',
+      marginInline: `calc(-1 * ${gutter})`,
+      paddingInline: gutter,
       // the edge that hides more of the world fades out, so the map reads as wider than the screen
       selectors: {
         '&[data-more-right]': {
@@ -39,8 +45,8 @@ export const hint = style({
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      gap: 8,
-      margin: '8px 0 0',
+      gap: space.sp2,
+      margin: `${space.sp2} 0 0`,
       fontSize: fontSize.meta,
       color: vars.color.textSecondary,
     },

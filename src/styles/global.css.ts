@@ -1,6 +1,6 @@
 import { globalStyle, style } from '@vanilla-extract/css';
 
-import { fontSize, vars } from './theme.css';
+import { fontSize, space, vars } from './theme.css';
 
 export const hover = '(hover: hover)';
 export const narrowNav = 'screen and (max-width: 1119px)';
@@ -12,6 +12,9 @@ export const tablet = 'screen and (max-width: 999px)';
 export const phone = 'screen and (max-width: 639px)';
 export const small = 'screen and (max-width: 479px)';
 export const tiny = 'screen and (max-width: 379px)';
+
+// the space between a page's content and the screen's sides
+export const gutter = 'clamp(18px, 4vw, 40px)';
 
 export const easeOut = 'cubic-bezier(.23, 1, .32, 1)';
 export const easeSoft = 'cubic-bezier(.2, .8, .25, 1)';
@@ -59,6 +62,8 @@ globalStyle('html, body', {
 
 globalStyle('*', {
   boxSizing: 'border-box',
+  margin: 0,
+  padding: 0,
 });
 
 globalStyle(
@@ -80,9 +85,9 @@ globalStyle('*, *::before, *::after', {
    Compose it first (style([buttonSize, { … }])) and leave height, padding, type size and gap to it. */
 export const buttonSize = style({
   minHeight: 40,
-  gap: 8,
-  padding: '0 16px',
-  fontSize: 18,
+  gap: space.sp2,
+  padding: `0 ${space.sp4}`,
+  fontSize: fontSize.item,
   lineHeight: 1,
   '@media': { [coarse]: { minHeight: 44 } },
 });

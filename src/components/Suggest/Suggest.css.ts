@@ -1,6 +1,6 @@
 import { style } from '@vanilla-extract/css';
 
-import { fontSize, vars } from '../../styles/theme.css';
+import { fontSize, space, vars } from '../../styles/theme.css';
 import { hover } from '../../styles/global.css';
 
 // a floating layer: a thin edge in place of a shadow
@@ -11,7 +11,7 @@ export const menu = style({
   boxSizing: 'border-box',
   overflow: 'auto',
   overscrollBehavior: 'contain',
-  padding: 8,
+  padding: space.sp2,
   listStyle: 'none',
   background: vars.color.surface,
   color: vars.color.textSecondary,
@@ -26,7 +26,7 @@ export const option = style({
   display: 'flex',
   alignItems: 'center',
   minHeight: 40,
-  padding: '0 16px',
+  padding: `0 ${space.sp4}`,
   borderRadius: 8,
   cursor: 'pointer',
   selectors: {

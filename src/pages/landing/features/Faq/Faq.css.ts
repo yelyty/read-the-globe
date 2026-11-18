@@ -6,7 +6,7 @@ import {
   hover,
   reducedMotion,
 } from '../../../../styles/global.css';
-import { vars } from '../../../../styles/theme.css';
+import { space, vars } from '../../../../styles/theme.css';
 import { sectionTitle } from '../../LandingPage.css';
 
 export const faq = style({ marginTop: 112, background: band });
@@ -14,22 +14,22 @@ export const faq = style({ marginTop: 112, background: band });
 export const inner = style({
   display: 'grid',
   gridTemplateColumns: 'minmax(0, .8fr) minmax(0, 1.2fr)',
-  gap: 48,
+  gap: space.sp7,
   alignItems: 'start',
   width: 'min(1180px, 100% - 32px)',
   marginInline: 'auto',
-  padding: '96px 0',
+  padding: `${space.sp9} 0`,
   '@media': {
     'screen and (max-width: 799px)': {
       gridTemplateColumns: 'minmax(0, 1fr)',
-      gap: 32,
-      padding: '72px 0',
+      gap: space.sp6,
+      padding: `${space.sp8} 0`,
     },
   },
 });
 
 export const title = style(sectionTitle);
-export const list = style({ display: 'grid', gap: 8 });
+export const list = style({ display: 'grid', gap: space.sp2 });
 export const item = style({
   background: vars.color.background,
   borderRadius: 16,
@@ -39,9 +39,9 @@ export const summary = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  gap: 16,
+  gap: space.sp4,
   minHeight: 56,
-  padding: '16px 24px',
+  padding: `${space.sp4} ${space.sp5}`,
   borderRadius: 16,
   fontWeight: 500,
   lineHeight: 1.35,
@@ -65,7 +65,7 @@ export const plus = style({
 
 export const answer = style({
   maxWidth: '62ch',
-  padding: '0 24px 24px',
+  padding: `0 ${space.sp5} ${space.sp5}`,
   color: vars.color.textSecondary,
   textWrap: 'pretty',
 });

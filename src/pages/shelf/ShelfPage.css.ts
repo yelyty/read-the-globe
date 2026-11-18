@@ -1,6 +1,6 @@
 import { globalStyle, style } from '@vanilla-extract/css';
 
-import { fontSize, vars } from '../../styles/theme.css';
+import { fontSize, space, vars } from '../../styles/theme.css';
 import {
   band,
   buttonSize,
@@ -14,22 +14,22 @@ import {
 
 export const tabs = style({
   display: 'flex',
-  gap: 8,
-  marginBottom: 24,
+  gap: space.sp2,
+  marginBottom: space.sp5,
   borderBottom: `1px solid ${vars.color.border}`,
 });
 
 export const tab = style({
   display: 'inline-flex',
   alignItems: 'baseline',
-  gap: 8,
-  padding: '8px 24px',
+  gap: space.sp2,
+  padding: `${space.sp2} ${space.sp5}`,
   background: fill,
   border: '1px solid transparent',
   borderBottom: 0,
   borderRadius: '16px 16px 0 0',
   fontFamily: vars.font.sans,
-  fontSize: 16,
+  fontSize: fontSize.action,
   fontWeight: 500,
   color: vars.color.textSecondary,
   cursor: 'pointer',
@@ -37,7 +37,7 @@ export const tab = style({
     // it reaches 1px over the rule, so the open folder has no bottom edge
     '&[aria-selected="true"]': {
       marginBottom: -1,
-      paddingBottom: 9,
+      paddingBottom: space.sp2,
       color: vars.color.text,
       background: vars.color.background,
       borderColor: vars.color.border,
@@ -50,7 +50,7 @@ export const tab = style({
   },
 });
 export const tabN = style({
-  fontSize: 13,
+  fontSize: fontSize.meta,
   fontWeight: 400,
   color: vars.color.textSecondary,
   fontVariantNumeric: 'lining-nums tabular-nums',
@@ -60,8 +60,8 @@ export const toolbar = style({
   display: 'flex',
   flexWrap: 'wrap',
   alignItems: 'center',
-  gap: 12,
-  marginBottom: 16,
+  gap: space.sp3,
+  marginBottom: space.sp4,
 });
 export const search = style({ position: 'relative', flex: '1 1 260px' });
 
@@ -79,12 +79,12 @@ globalStyle(`${search} svg`, {
 globalStyle(`${search} input`, {
   width: '100%',
   minHeight: 40,
-  padding: '8px 16px 8px 40px',
+  padding: `${space.sp2} ${space.sp4} ${space.sp2} ${space.sp7}`,
   borderRadius: 999,
   background: vars.color.field,
   border: `1.5px solid ${vars.color.fieldLine}`,
   fontFamily: vars.font.sans,
-  fontSize: 15,
+  fontSize: fontSize.body,
   color: vars.color.text,
 });
 
@@ -108,7 +108,7 @@ export const filters = style({
           display: 'flex',
           flexWrap: 'wrap',
           flexBasis: '100%',
-          gap: 12,
+          gap: space.sp3,
         },
       },
     },
@@ -138,9 +138,9 @@ export const filterBtn = style([
 export const country = style({
   display: 'grid',
   gridTemplateColumns: '184px minmax(0, 1fr)',
-  gap: '8px 24px',
+  gap: `${space.sp2} ${space.sp5}`,
   alignItems: 'center',
-  margin: '8px 0 24px',
+  margin: `${space.sp2} 0 ${space.sp5}`,
   '@media': { [phone]: { gridTemplateColumns: 'minmax(0, 1fr)' } },
 });
 // the same stamp as a country on Home's list: a 128 × 80 outline on the band, 16px in
@@ -148,7 +148,7 @@ export const countryMap = style({
   boxSizing: 'border-box',
   width: 184,
   height: 112,
-  padding: 16,
+  padding: space.sp4,
   borderRadius: 16,
   background: band,
 });
@@ -171,36 +171,36 @@ export const shape = style({
 export const countryName = style({
   margin: 0,
   fontFamily: vars.font.display,
-  fontSize: 22,
+  fontSize: fontSize.heading,
   fontWeight: 500,
   lineHeight: 1.15,
   color: vars.color.text,
 });
 export const countryMeta = style({
-  margin: '4px 0 0',
-  fontSize: 13,
+  margin: `${space.sp1} 0 0`,
+  fontSize: fontSize.meta,
   color: vars.color.textMuted,
 });
 export const countryWhy = style({
   display: 'flex',
   flexWrap: 'wrap',
-  gap: '4px 16px',
-  margin: '8px 0 0',
-  fontSize: 15,
+  gap: `${space.sp1} ${space.sp4}`,
+  margin: `${space.sp2} 0 0`,
+  fontSize: fontSize.body,
   color: vars.color.textSecondary,
 });
 
 globalStyle(`${countryWhy} span`, {
   display: 'inline-flex',
   alignItems: 'center',
-  gap: 8,
+  gap: space.sp2,
 });
 
 export const countryActions = style({
   display: 'flex',
   flexWrap: 'wrap',
-  gap: '8px 24px',
-  marginTop: 16,
+  gap: `${space.sp2} ${space.sp5}`,
+  marginTop: space.sp4,
 });
 
 /* ---------- the list ---------- */
@@ -211,22 +211,22 @@ export const yearHead = style({
   display: 'flex',
   flexWrap: 'wrap',
   alignItems: 'baseline',
-  gap: '2px 16px',
-  padding: '16px 0 8px',
+  gap: `2px ${space.sp4}`,
+  padding: `${space.sp4} 0 ${space.sp2}`,
   borderBottom: `1px solid ${vars.color.border}`,
 });
 
 // the year's count sits right, opposite the year
 globalStyle(`${yearHead} p`, {
   margin: '0 0 0 auto',
-  fontSize: 13,
+  fontSize: fontSize.meta,
   color: vars.color.textMuted,
 });
 
 export const yearTitle = style({
   margin: 0,
   fontFamily: vars.font.display,
-  fontSize: 22,
+  fontSize: fontSize.heading,
   fontWeight: 500,
   color: vars.color.text,
   fontVariantNumeric: 'lining-nums',
@@ -235,7 +235,7 @@ export const yearTitle = style({
 export const yearToggle = style({
   display: 'inline-flex',
   alignItems: 'center',
-  gap: 8,
+  gap: space.sp2,
   padding: 0,
   background: 'none',
   border: 0,
@@ -262,7 +262,7 @@ globalStyle(`${yearToggle}[aria-expanded="false"] svg`, { rotate: '-90deg' });
 export const orRule = style({
   display: 'flex',
   alignItems: 'center',
-  gap: 16,
+  gap: space.sp4,
   width: 'min(320px, 100%)',
   fontFamily: vars.font.display,
   fontStyle: 'italic',
@@ -278,7 +278,7 @@ export const orRule = style({
 // the example to download, on its own line under the CSV note. && outranks the Button's own size
 export const noteLink = style({
   display: 'flex',
-  margin: '8px auto 0',
+  margin: `${space.sp2} auto 0`,
   selectors: { '&&': { fontSize: fontSize.meta } },
 });
 
@@ -286,8 +286,8 @@ export const noteLink = style({
 export const importLine = style({
   display: 'flex',
   flexWrap: 'wrap',
-  gap: '0 24px',
-  margin: '0 0 16px',
+  gap: `0 ${space.sp5}`,
+  margin: `0 0 ${space.sp4}`,
 });
 
 const button = {
@@ -303,16 +303,16 @@ const button = {
 
 export const emptyNote = style({
   maxWidth: '60ch',
-  margin: '4px 0 16px',
+  margin: `${space.sp1} 0 ${space.sp4}`,
   color: vars.color.textSecondary,
 });
-globalStyle(`${emptyNote} p`, { margin: '0 0 8px' });
+globalStyle(`${emptyNote} p`, { margin: `0 0 ${space.sp2}` });
 
 export const moreBtn = style([
   buttonSize,
   {
     ...button,
-    marginTop: 16,
+    marginTop: space.sp4,
     border: `1px solid ${vars.color.border}`,
     background: vars.color.surface,
     color: vars.color.text,
@@ -329,9 +329,9 @@ globalStyle(`${moreBtn} svg`, { width: 16, height: 16 });
 export const nextForm = style({
   display: 'grid',
   gridTemplateColumns: '2fr 1.4fr 1.2fr',
-  gap: '12px 12px',
+  gap: `${space.sp3} ${space.sp3}`,
   alignItems: 'start',
-  padding: 16,
+  padding: space.sp4,
   borderRadius: 16,
   background: band,
   '@media': { [phone]: { gridTemplateColumns: 'minmax(0, 1fr)' } },
@@ -340,16 +340,16 @@ export const nextWide = style({ gridColumn: '1 / -1' });
 
 export const fieldLabel = style({
   display: 'block',
-  marginBottom: 8,
+  marginBottom: space.sp2,
   fontFamily: vars.font.sans,
-  fontSize: 15,
+  fontSize: fontSize.body,
   fontWeight: 500,
   color: vars.color.textSecondary,
 });
 export const optional = style({ fontWeight: 400, color: vars.color.textMuted });
 export const error = style({
   margin: 0,
-  fontSize: 15,
+  fontSize: fontSize.body,
   fontWeight: 500,
   color: vars.color.error,
 });
@@ -357,11 +357,11 @@ export const formRow = style({
   display: 'flex',
   flexWrap: 'wrap',
   alignItems: 'center',
-  gap: '12px 16px',
+  gap: `${space.sp3} ${space.sp4}`,
 });
 export const nextList = style({
   listStyle: 'none',
-  margin: '24px 0 0',
+  margin: `${space.sp5} 0 0`,
   padding: 0,
   borderTop: `1px solid ${vars.color.border}`,
 });
@@ -369,8 +369,8 @@ export const nextItem = style({
   display: 'grid',
   gridTemplateColumns: '88px minmax(0, 1fr) auto',
   alignItems: 'start',
-  gap: '8px 16px',
-  padding: '12px 0',
+  gap: `${space.sp2} ${space.sp4}`,
+  padding: `${space.sp3} 0`,
   borderBottom: `1px solid ${vars.color.border}`,
   '@media': { [phone]: { gridTemplateColumns: '72px minmax(0, 1fr)' } },
 });
@@ -404,42 +404,44 @@ export const nextBody = style({ minWidth: 0, overflowWrap: 'break-word' });
 export const nextTitle = style({
   display: 'block',
   fontFamily: vars.font.display,
-  fontSize: 18,
+  fontSize: fontSize.item,
   lineHeight: 1.2,
   color: vars.color.text,
 });
 export const nextAuthor = style({
   display: 'block',
-  fontSize: 15,
+  fontSize: fontSize.body,
   color: vars.color.textSecondary,
 });
 export const nextMeta = style({
   display: 'flex',
   flexWrap: 'wrap',
   alignItems: 'center',
-  gap: '4px 12px',
-  marginTop: 4,
-  fontSize: 13,
+  gap: `${space.sp1} ${space.sp3}`,
+  marginTop: space.sp1,
+  fontSize: fontSize.meta,
   color: vars.color.textSecondary,
 });
 
 globalStyle(`${nextMeta} > span`, {
   display: 'inline-flex',
   alignItems: 'center',
-  gap: 8,
+  gap: space.sp2,
 });
 
 export const fresh = style({ color: vars.color.accent, fontWeight: 500 });
 export const nextActs = style({
   display: 'flex',
-  gap: 16,
+  gap: space.sp4,
   '@media': { [phone]: { gridColumn: 2 } },
 });
 // nothing saved yet: a little more air under the form. && outranks EmptyState's own padding
-export const nextEmpty = style({ selectors: { '&&': { paddingTop: 40 } } });
+export const nextEmpty = style({
+  selectors: { '&&': { paddingTop: space.sp7 } },
+});
 // a goal this book would move along
 export const nextGoal = style({
-  padding: '0 8px',
+  padding: `0 ${space.sp2}`,
   borderRadius: 999,
   background: band,
   color: vars.color.textSecondary,

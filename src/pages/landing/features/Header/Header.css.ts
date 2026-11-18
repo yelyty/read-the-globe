@@ -1,6 +1,6 @@
 import { globalStyle, style, keyframes } from '@vanilla-extract/css';
 
-import { vars } from '../../../../styles/theme.css';
+import { fontSize, space, vars } from '../../../../styles/theme.css';
 import {
   buttonSize,
   coarse,
@@ -31,9 +31,9 @@ export const headerRow = style([
     display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'center',
-    gap: '12px 22px',
-    paddingBlock: 14,
-    '@media': { [phone]: { gap: 8, flexWrap: 'nowrap' } },
+    gap: `${space.sp3} ${space.sp5}`,
+    paddingBlock: space.sp4,
+    '@media': { [phone]: { gap: space.sp2, flexWrap: 'nowrap' } },
   },
 ]);
 
@@ -41,7 +41,7 @@ export const logoLink = style({
   display: 'flex',
   flex: 'none',
   alignItems: 'center',
-  gap: 8,
+  gap: space.sp2,
   marginRight: 'auto',
   textDecoration: 'none',
   color: vars.color.text,
@@ -57,7 +57,7 @@ export const logo = style({
 export const logoTitle = style({
   fontFamily: vars.font.display,
   color: vars.color.text,
-  fontSize: '1.35rem',
+  fontSize: fontSize.heading,
   fontWeight: 700,
   letterSpacing: '-0.01em',
   '@media': {
@@ -68,7 +68,7 @@ export const logoTitle = style({
 export const nav = style({
   display: 'flex',
   alignItems: 'center',
-  gap: 22,
+  gap: space.sp5,
   '@media': {
     'screen and (max-width: 759px)': { display: 'none' },
   },
@@ -78,10 +78,10 @@ const navText = {
   display: 'inline-flex',
   alignItems: 'center',
   minHeight: 40,
-  padding: '6px 4px',
-  margin: '-6px -4px',
+  padding: `${space.sp2} ${space.sp1}`,
+  margin: `calc(${space.sp2} * -1) calc(${space.sp1} * -1)`,
   fontFamily: vars.font.sans,
-  fontSize: 15.5,
+  fontSize: fontSize.action,
   fontWeight: 500,
   textDecoration: 'none',
   whiteSpace: 'nowrap',
@@ -104,21 +104,21 @@ export const loginBtn = style({
   ...navText,
   color: vars.color.text,
   '@media': {
-    [phone]: { fontSize: 14 },
+    [phone]: { fontSize: fontSize.body },
   },
 });
 
 export const pill = style({
   display: 'inline-flex',
   alignItems: 'center',
-  gap: 9,
+  gap: space.sp2,
   fontFamily: vars.font.sans,
   fontWeight: 500,
-  fontSize: 15,
+  fontSize: fontSize.body,
   color: vars.color.onAccent,
   background: vars.color.primary,
   borderRadius: 999,
-  padding: '11px 22px',
+  padding: `${space.sp3} ${space.sp5}`,
   minHeight: 40,
   textDecoration: 'none',
   border: 0,
@@ -132,7 +132,7 @@ export const pill = style({
         },
       },
     },
-    [phone]: { padding: '10px 14px', fontSize: 14 },
+    [phone]: { padding: `${space.sp3} ${space.sp4}`, fontSize: fontSize.body },
   },
 });
 globalStyle(`${pill} svg`, { width: 14, height: 14 });
@@ -156,9 +156,9 @@ export const topRow = style([
     position: 'relative',
     display: 'flex',
     alignItems: 'center',
-    gap: 24,
+    gap: space.sp5,
     minHeight: 72,
-    '@media': { [narrow]: { gap: 8 } },
+    '@media': { [narrow]: { gap: space.sp2 } },
   },
 ]);
 
@@ -166,7 +166,7 @@ export const brand = style({
   display: 'flex',
   flex: 'none',
   alignItems: 'center',
-  gap: 8,
+  gap: space.sp2,
   color: vars.color.text,
   textDecoration: 'none',
   whiteSpace: 'nowrap',
@@ -175,7 +175,7 @@ export const brand = style({
 // the globe mark alone carries the brand on a phone
 export const brandWord = style({
   fontFamily: vars.font.display,
-  fontSize: 23,
+  fontSize: fontSize.heading,
   fontWeight: 500,
   lineHeight: 1,
   '@media': { [tiny]: { display: 'none' } },
@@ -189,9 +189,9 @@ export const brandChip = style({
 // the sections sit in a track; the one on screen would be a page-white pill inside it
 export const track = style({
   display: 'flex',
-  gap: 4,
+  gap: space.sp1,
   marginInline: 'auto',
-  padding: 4,
+  padding: space.sp1,
   borderRadius: 999,
   background: fill,
   '@media': { [narrow]: { display: 'none' } },
@@ -201,10 +201,10 @@ export const trackLink = style({
   display: 'inline-flex',
   alignItems: 'center',
   minHeight: 40,
-  padding: '0 16px',
+  padding: `0 ${space.sp4}`,
   borderRadius: 999,
   fontFamily: vars.font.sans,
-  fontSize: 16,
+  fontSize: fontSize.action,
   fontWeight: 500,
   lineHeight: 1,
   color: vars.color.textSecondary,
@@ -234,7 +234,7 @@ export const trackLink = style({
 export const tools = style({
   display: 'flex',
   alignItems: 'center',
-  gap: 8,
+  gap: space.sp2,
   '@media': { [narrow]: { marginLeft: 'auto' } },
 });
 
@@ -246,7 +246,7 @@ export const login = style({
   background: 'none',
   border: 0,
   fontFamily: vars.font.sans,
-  fontSize: 16,
+  fontSize: fontSize.action,
   fontWeight: 500,
   lineHeight: 1,
   color: vars.color.text,
@@ -309,12 +309,12 @@ export const menu = style({
   display: 'grid',
   gap: 2,
   width: 'min(280px, 100% - 32px)',
-  padding: 4,
+  padding: space.sp1,
   border: `1px solid ${vars.color.border}`,
   borderRadius: 16,
   background: vars.color.surface,
   fontFamily: vars.font.sans,
-  fontSize: 17,
+  fontSize: fontSize.item,
   fontWeight: 500,
   lineHeight: 1.2,
   transformOrigin: 'top right',
@@ -331,7 +331,7 @@ export const menuItem = style({
   alignItems: 'center',
   width: '100%',
   minHeight: 44,
-  padding: '0 16px',
+  padding: `0 ${space.sp4}`,
   border: 0,
   borderRadius: 12,
   background: 'none',
@@ -358,7 +358,7 @@ export const menuItem = style({
 });
 
 export const menuLogin = style({
-  marginTop: 4,
+  marginTop: space.sp1,
   borderTop: `1px solid ${vars.color.border}`,
   borderRadius: '0 0 12px 12px',
 });

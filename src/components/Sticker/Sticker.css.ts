@@ -1,11 +1,15 @@
 import { style } from '@vanilla-extract/css';
 
-import { vars } from '../../styles/theme.css';
+import { space, vars } from '../../styles/theme.css';
 import { goldBand } from '../../styles/global.css';
 
 const deepRust = `color-mix(in srgb, ${vars.color.markerAuthor} 80%, black)`;
 
-export const sticker = style({ width: 120, height: 100, marginBottom: 24 });
+export const sticker = style({
+  width: 120,
+  height: 100,
+  marginBottom: space.sp5,
+});
 
 /* ---------- a shelf with a gap: no books yet ---------- */
 export const shelfPlank = style({
@@ -57,7 +61,8 @@ export const ribbonRibbon = style({
   stroke: deepRust,
   strokeWidth: 1.6,
 });
-export const ribbonRoad = style({
+// the dashed road both the ribbon's and the hilltop's drawings follow
+export const road = style({
   stroke: vars.color.textMuted,
   strokeWidth: 1.8,
   strokeDasharray: '3.5 4',
@@ -78,11 +83,6 @@ export const hillHill = style({
   fill: goldBand,
   stroke: vars.color.mark,
   strokeWidth: 2.2,
-});
-export const hillPath = style({
-  stroke: vars.color.textMuted,
-  strokeWidth: 1.8,
-  strokeDasharray: '3.5 4',
 });
 export const hillStart = style({ fill: vars.color.olive });
 export const hillPole = style({

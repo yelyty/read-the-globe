@@ -1,6 +1,6 @@
 import { keyframes, style } from '@vanilla-extract/css';
 
-import { vars } from '../../../../styles/theme.css';
+import { fontSize, space, vars } from '../../../../styles/theme.css';
 import { reducedMotion } from '../../../../styles/global.css';
 import { headline } from '../../LandingPage.css';
 
@@ -10,10 +10,10 @@ const narrow = 'screen and (max-width: 899px)';
 
 export const hero = style({
   position: 'relative',
-  padding: '64px 0 56px',
+  padding: `${space.sp8} 0 ${space.sp8}`,
   textAlign: 'center',
   overflow: 'hidden',
-  '@media': { [narrow]: { paddingTop: 96 } },
+  '@media': { [narrow]: { paddingTop: space.sp9 } },
 });
 
 /* the hero sets in once on load: the two headline lines, then the line under them, then the button */
@@ -35,7 +35,7 @@ export const heroInner = style({
   zIndex: 1,
   maxWidth: 760,
   margin: '0 auto',
-  paddingInline: 16,
+  paddingInline: space.sp4,
 });
 
 export const heroTitle = style({
@@ -47,7 +47,7 @@ export const line2 = style({ display: 'block', ...enter(0.12) });
 
 export const heroSub = style({
   maxWidth: '34em',
-  margin: '24px auto 0',
+  margin: `${space.sp5} auto 0`,
   fontSize: 'clamp(17px, 1.5vw, 19px)',
   color: vars.color.textSecondary,
   textWrap: 'pretty',
@@ -58,14 +58,14 @@ export const heroCta = style({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  gap: 16,
-  marginTop: 32,
+  gap: space.sp4,
+  marginTop: space.sp6,
   ...enter(0.4),
 });
 
 export const note = style({
   fontFamily: vars.font.sans,
-  fontSize: 15,
+  fontSize: fontSize.body,
   lineHeight: 1,
   color: vars.color.textMuted,
 });

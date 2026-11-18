@@ -80,7 +80,7 @@ export const kindStamp = style({
   gridRow: '1 / 3',
   width: 32,
   height: 40,
-  padding: 3,
+  padding: space.sp1,
   border: '2px dotted var(--mk)',
   borderRadius: 2,
   background: 'var(--mk) content-box',

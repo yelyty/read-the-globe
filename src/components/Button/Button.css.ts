@@ -1,6 +1,6 @@
 import { recipe, type RecipeVariants } from '@vanilla-extract/recipes';
 
-import { fontSize, vars } from '../../styles/theme.css';
+import { fontSize, space, vars } from '../../styles/theme.css';
 import {
   buttonSize,
   coarse,
@@ -77,7 +77,7 @@ export const button = recipe({
       // a button that reads as a link: grey text with an icon, no pill
       link: {
         minHeight: 0,
-        padding: '8px 2px',
+        padding: `${space.sp2} 2px`,
         borderRadius: 0,
         background: 'none',
         fontSize: fontSize.body,
@@ -150,7 +150,7 @@ export const button = recipe({
       text: {
         backgroundColor: 'transparent',
         color: vars.color.primary,
-        paddingInline: '0.5rem',
+        paddingInline: space.sp2,
       },
     },
     // an inline link in running text keeps its underline
@@ -159,19 +159,19 @@ export const button = recipe({
     },
     size: {
       sm: {
-        fontSize: '13px',
-        paddingBlock: '0.5rem',
-        paddingInline: '0.75rem',
+        fontSize: fontSize.meta,
+        paddingBlock: space.sp2,
+        paddingInline: space.sp3,
       },
       md: {
-        fontSize: '14px',
-        paddingBlock: '0.75rem',
-        paddingInline: '1rem',
+        fontSize: fontSize.body,
+        paddingBlock: space.sp3,
+        paddingInline: space.sp4,
       },
       lg: {
-        fontSize: '16px',
-        paddingBlock: '0.875rem',
-        paddingInline: '1.5rem',
+        fontSize: fontSize.action,
+        paddingBlock: space.sp4,
+        paddingInline: space.sp5,
       },
     },
   },

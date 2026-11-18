@@ -141,11 +141,11 @@ export const cartouche = style({
   '@media': {
     [phone]: {
       position: 'static',
-      margin: '8px 0 2px',
+      margin: `${space.sp2} 0 2px`,
       display: 'flex',
       flexWrap: 'wrap',
       alignItems: 'baseline',
-      gap: '2px 8px',
+      gap: `2px ${space.sp2}`,
     },
   },
 });
@@ -236,13 +236,13 @@ export const key = style({
   padding: 0,
   display: 'flex',
   flexWrap: 'wrap',
-  gap: '8px 16px',
+  gap: `${space.sp2} ${space.sp4}`,
 });
 
 globalStyle(`${key} li`, {
   display: 'inline-flex',
   alignItems: 'center',
-  gap: 8,
+  gap: space.sp2,
 });
 
 const swatch = {
@@ -273,7 +273,7 @@ export const capsLabel = style({
   letterSpacing: 1.4,
   textTransform: 'uppercase',
   color: vars.color.textMuted,
-  marginRight: 8,
+  marginRight: space.sp2,
 });
 // pills: a flat fill, no bolder weight when picked, so picking never shifts the neighbours
 export const showBtn = style({
@@ -316,7 +316,7 @@ export const subHead = style({
 export const h2 = style({
   display: 'inline-flex',
   alignItems: 'baseline',
-  gap: 8,
+  gap: space.sp2,
   margin: 0,
   fontFamily: vars.font.display,
   fontWeight: 500,
@@ -334,7 +334,7 @@ export const h2Icon = style({
 export const more = style({
   display: 'inline-flex',
   alignItems: 'center',
-  gap: 8,
+  gap: space.sp2,
   minHeight: 40,
   fontWeight: 500,
   color: vars.color.textSecondary,
@@ -372,7 +372,7 @@ export const ccSummary = style({
   alignItems: 'center',
   gap: space.sp3,
   minHeight: 72,
-  padding: '8px 0',
+  padding: `${space.sp2} 0`,
   cursor: 'pointer',
   listStyle: 'none',
   ':focus-visible': { ...focusRing, borderRadius: 8 },
@@ -381,7 +381,7 @@ export const ccSummary = style({
     flex: 'none',
     width: 8,
     height: 8,
-    margin: '0 4px',
+    margin: `0 ${space.sp1}`,
     borderRight: `1.5px solid ${vars.color.textSecondary}`,
     borderBottom: `1.5px solid ${vars.color.textSecondary}`,
     rotate: '-45deg',
@@ -396,7 +396,7 @@ globalStyle(`${ccSummary}::-webkit-details-marker`, { display: 'none' });
 export const ccTitle = style({
   display: 'flex',
   alignItems: 'baseline',
-  gap: 12,
+  gap: space.sp3,
   margin: 0,
   fontFamily: vars.font.serif,
   fontWeight: 500,
@@ -415,7 +415,7 @@ export const ccN = style({
 export const ccPeek = style({
   display: 'flex',
   alignItems: 'center',
-  gap: 8,
+  gap: space.sp2,
   marginLeft: 'auto',
 });
 globalStyle(`${ccRow}[open] ${ccPeek}`, { display: 'none' });
@@ -438,9 +438,12 @@ export const ccStamps = style({
   padding: `0 0 ${space.sp4}`,
   display: 'grid',
   gridTemplateColumns: 'repeat(auto-fill, minmax(184px, 1fr))',
-  gap: 16,
+  gap: space.sp4,
   '@media': {
-    [phone]: { gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 8 },
+    [phone]: {
+      gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+      gap: space.sp2,
+    },
   },
 });
 export const ccStamp = style({
@@ -449,7 +452,7 @@ export const ccStamp = style({
   alignItems: 'flex-start',
   width: '100%',
   height: '100%',
-  padding: 16,
+  padding: space.sp4,
   borderRadius: 16,
   background: band,
   color: vars.color.text,
@@ -466,7 +469,7 @@ export const ccStamp = style({
         },
       },
     },
-    [phone]: { padding: '16px 8px' },
+    [phone]: { padding: `${space.sp4} ${space.sp2}` },
   },
 });
 export const ccShape = style({
@@ -474,7 +477,7 @@ export const ccShape = style({
   placeItems: 'center',
   width: '100%',
   height: 80,
-  marginBottom: 16,
+  marginBottom: space.sp4,
   '@media': { [phone]: { height: 70 } },
 });
 
@@ -490,7 +493,7 @@ export const ccName = style({
   overflowWrap: 'break-word',
 });
 export const ccWhat = style({
-  marginTop: 4,
+  marginTop: space.sp1,
   fontSize: fontSize.meta,
   color: vars.color.textSecondary,
 });
@@ -505,7 +508,7 @@ export const tip = style({
   zIndex: 90,
   width: 'max-content',
   maxWidth: 300,
-  padding: '16px 16px 8px',
+  padding: `${space.sp4} ${space.sp4} ${space.sp2}`,
   background: vars.color.surface,
   color: vars.color.text,
   border: `1px solid ${vars.color.border}`,
@@ -518,7 +521,7 @@ export const tipHead = style({
   display: 'flex',
   alignItems: 'baseline',
   justifyContent: 'space-between',
-  gap: 16,
+  gap: space.sp4,
   margin: 0,
 });
 
@@ -535,22 +538,22 @@ globalStyle(`${tipHead} span`, {
 });
 
 export const tipHeadBooks = style({
-  paddingBottom: 8,
+  paddingBottom: space.sp2,
   borderBottom: `1px solid ${vars.color.border}`,
 });
 export const tipList = style({
   listStyle: 'none',
   margin: 0,
-  padding: '8px 0 0',
+  padding: `${space.sp2} 0 0`,
   display: 'flex',
   flexDirection: 'column',
-  gap: 8,
+  gap: space.sp2,
 });
 
 globalStyle(`${tipList} li`, {
   display: 'flex',
   alignItems: 'flex-start',
-  gap: 8,
+  gap: space.sp2,
 });
 
 export const tipBook = style({
@@ -568,20 +571,20 @@ export const tipTitle = style({
 export const tipWhy = style({
   display: 'inline-flex',
   alignItems: 'center',
-  gap: 8,
+  gap: space.sp2,
   marginTop: 2,
   fontSize: fontSize.label,
   color: vars.color.textMuted,
 });
 globalStyle(`${tipWhy} i`, { width: 8, height: 8 });
 export const tipFoot = style({
-  margin: '4px 0 0',
+  margin: `${space.sp1} 0 0`,
   fontSize: fontSize.label,
   color: vars.color.textMuted,
 });
 export const tipFootRule = style({
-  marginTop: 8,
-  paddingTop: 8,
+  marginTop: space.sp2,
+  paddingTop: space.sp2,
   borderTop: `1px solid ${vars.color.border}`,
 });
 
@@ -635,7 +638,7 @@ export const atlasStatus = style({
   zIndex: 3,
   maxWidth: 'min(60%, 520px)',
   margin: 0,
-  padding: '8px 16px',
+  padding: `${space.sp2} ${space.sp4}`,
   borderRadius: 8,
   background: vars.color.oliveWash,
   color: vars.color.oliveInk,
@@ -656,15 +659,15 @@ export const atlasStatus = style({
 
 /* ---------- Beyond the map: imagined worlds, under the map ---------- */
 export const beyond = style({
-  marginTop: 8,
-  padding: '16px 24px',
+  marginTop: space.sp2,
+  padding: `${space.sp4} ${space.sp5}`,
   borderRadius: 8,
   background: paperBand,
 });
 export const beyondLabel = style({
   display: 'flex',
   alignItems: 'center',
-  gap: 8,
+  gap: space.sp2,
   width: 'fit-content',
   minHeight: 40,
   fontSize: fontSize.label,
@@ -705,8 +708,8 @@ export const beyondSum = style({
 export const beyondBody = style({
   display: 'flex',
   flexDirection: 'column',
-  gap: 16,
-  marginTop: 16,
+  gap: space.sp4,
+  marginTop: space.sp4,
 });
 export const beyondList = style({
   margin: 0,
@@ -717,16 +720,16 @@ export const beyondList = style({
 export const worldRow = style({
   display: 'flex',
   alignItems: 'center',
-  gap: 8,
+  gap: space.sp2,
   borderBottom: `1px solid ${vars.color.border}`,
 });
 export const worldOpen = style({
   flex: 1,
   display: 'flex',
   alignItems: 'baseline',
-  gap: 8,
+  gap: space.sp2,
   minHeight: 44,
-  padding: '8px 4px',
+  padding: `${space.sp2} ${space.sp1}`,
   background: 'none',
   border: 0,
   font: 'inherit',
@@ -782,13 +785,13 @@ export const beyondAdd = style({
   display: 'flex',
   flexWrap: 'wrap',
   alignItems: 'center',
-  gap: 8,
+  gap: space.sp2,
 });
 
 globalStyle(`${beyondAdd} input`, {
   width: 184,
   minHeight: 40,
-  padding: '4px 16px',
+  padding: `${space.sp1} ${space.sp4}`,
   border: `1.5px solid ${vars.color.fieldLine}`,
   borderRadius: 999,
   background: vars.color.field,
@@ -837,8 +840,8 @@ export const worldBooks = style({
 globalStyle(`${worldBooks} li`, {
   display: 'flex',
   alignItems: 'center',
-  gap: 16,
-  padding: '16px 0',
+  gap: space.sp4,
+  padding: `${space.sp4} 0`,
   borderBottom: `1px solid ${vars.color.border}`,
 });
 
