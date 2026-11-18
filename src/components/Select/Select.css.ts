@@ -1,6 +1,6 @@
 import { keyframes, style, styleVariants } from '@vanilla-extract/css';
 
-import { vars } from '../../styles/theme.css';
+import { fontSize, space, vars } from '../../styles/theme.css';
 import {
   coarse,
   easeOut,
@@ -17,7 +17,11 @@ export const wrap = styleVariants({
   compact: {},
   field: {},
   pill: {},
-  footer: { fontSize: 15, fontWeight: 500, color: vars.color.onAccent },
+  footer: {
+    fontSize: fontSize.body,
+    fontWeight: 500,
+    color: vars.color.onAccent,
+  },
 });
 
 /* the button: the chosen option, then a caret with room to breathe on the right */
@@ -25,7 +29,7 @@ const triggerBase = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  gap: 8,
+  gap: space.sp2,
   fontFamily: vars.font.sans,
   textAlign: 'left',
   cursor: 'pointer',
@@ -39,26 +43,26 @@ export const trigger = styleVariants({
     triggerBase,
     {
       minHeight: 32,
-      padding: '0 10px',
+      padding: `0 ${space.sp3}`,
       border: `1px solid ${vars.color.border}`,
       borderRadius: 8,
       background: vars.color.background,
-      fontSize: 15,
+      fontSize: fontSize.body,
       color: vars.color.text,
     },
   ],
   // a form field, like the text inputs beside it
-  field: [input, triggerBase, { padding: '0 14px 0 16px' }],
+  field: [input, triggerBase, { padding: `0 ${space.sp4} 0 ${space.sp4}` }],
   // a filled pill, as in the Shelf's filters
   pill: [
     triggerBase,
     {
       minHeight: 40,
-      padding: '0 14px 0 16px',
+      padding: `0 ${space.sp4} 0 ${space.sp4}`,
       border: 0,
       borderRadius: 999,
       background: fill,
-      fontSize: 15,
+      fontSize: fontSize.body,
       color: vars.color.textSecondary,
       '@media': {
         [hover]: {
@@ -74,11 +78,11 @@ export const trigger = styleVariants({
     {
       height: 40,
       minWidth: 160,
-      padding: '0 14px 0 16px',
+      padding: `0 ${space.sp4} 0 ${space.sp4}`,
       border: `1.5px solid ${vars.color.onAccentMuted}`,
       borderRadius: 8,
       background: vars.color.primary,
-      fontSize: 15,
+      fontSize: fontSize.body,
       fontWeight: 500,
       color: vars.color.onAccent,
       ':focus-visible': {
@@ -120,7 +124,7 @@ export const list = style({
   margin: 0,
   maxHeight: 320,
   overflowY: 'auto',
-  padding: 4,
+  padding: space.sp1,
   listStyle: 'none',
   background: vars.color.surface,
   color: vars.color.text,
@@ -136,12 +140,12 @@ export const option = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  gap: 16,
+  gap: space.sp4,
   minHeight: 40,
-  padding: '0 12px',
+  padding: `0 ${space.sp3}`,
   borderRadius: 8,
   fontFamily: vars.font.sans,
-  fontSize: 15,
+  fontSize: fontSize.body,
   fontWeight: 500,
   whiteSpace: 'nowrap',
   color: vars.color.textSecondary,

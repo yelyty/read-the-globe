@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Outlet, useRouterState } from '@tanstack/react-router';
 
-import '../../App.css';
 import { LandingContext, type Landing } from '../../hooks/useLanding';
 import { m } from '../../paraglide/messages.js';
 import LogBook from '../../features/LogBook/LogBook';
@@ -45,7 +44,7 @@ const AppLayout = () => {
       <LandingContext value={landing}>
         <div className={styles.shell}>
           <AppHeader />
-          <main className={`wrapper ${styles.main}`}>
+          <main className={styles.main}>
             <Outlet />
           </main>
           <AppFooter />

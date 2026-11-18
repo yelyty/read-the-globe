@@ -1,6 +1,6 @@
 import { globalStyle, keyframes, style } from '@vanilla-extract/css';
 
-import { fontSize, vars } from '../../styles/theme.css';
+import { fontSize, space, vars } from '../../styles/theme.css';
 import {
   coarse,
   easeOut,
@@ -20,10 +20,10 @@ export const bar = style({
   translate: '-50% 0',
   display: 'flex',
   alignItems: 'center',
-  gap: 16,
+  gap: space.sp4,
   width: 'max-content',
   maxWidth: 'min(520px, calc(100vw - 32px))',
-  padding: '8px 16px',
+  padding: `${space.sp2} ${space.sp4}`,
   background: vars.color.oliveWash,
   color: vars.color.oliveInk,
   border: `1px solid ${vars.color.border}`,
@@ -42,10 +42,10 @@ export const bar = style({
 export const action = style({
   display: 'inline-flex',
   alignItems: 'center',
-  gap: 8,
+  gap: space.sp2,
   flex: 'none',
-  margin: '-8px 0 -8px auto',
-  padding: '8px 0',
+  margin: `calc(${space.sp2} * -1) 0 calc(${space.sp2} * -1) auto`,
+  padding: `${space.sp2} 0`,
   border: 0,
   borderRadius: 8,
   background: 'none',

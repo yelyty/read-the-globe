@@ -1,6 +1,6 @@
 import { globalStyle, style } from '@vanilla-extract/css';
 
-import { vars } from '../../styles/theme.css';
+import { fontSize, space, vars } from '../../styles/theme.css';
 import {
   caps,
   coarse,
@@ -13,6 +13,7 @@ import {
   reducedMotion,
 } from '../../styles/global.css';
 import { hint } from '../../components/Hint/Hint.css';
+import { formError as fieldFormError } from '../../components/Field/Field.css';
 
 export { srOnly } from '../../styles/global.css';
 
@@ -29,7 +30,7 @@ export const sheet = style({
 export const editing = style({
   margin: '2px 0 0',
   fontFamily: vars.font.display,
-  fontSize: 18,
+  fontSize: fontSize.item,
   lineHeight: 1.2,
   display: '-webkit-box',
   WebkitLineClamp: 2,
@@ -37,7 +38,7 @@ export const editing = style({
   overflow: 'hidden',
 });
 export const sub = style({
-  margin: '4px 0 0',
+  margin: `${space.sp1} 0 0`,
   color: vars.color.textSecondary,
 });
 
@@ -47,7 +48,7 @@ export const close = style({
   flex: 'none',
   width: 40,
   height: 40,
-  margin: '-8px -8px 0 0',
+  margin: `calc(${space.sp2} * -1) calc(${space.sp2} * -1) 0 0`,
   padding: 0,
   border: 0,
   borderRadius: '50%',
@@ -69,42 +70,42 @@ export const preview = style({
   display: 'flex',
   flexWrap: 'wrap',
   alignItems: 'center',
-  gap: '4px 16px',
-  margin: '-8px 0 16px',
-  fontSize: 14,
+  gap: `${space.sp1} ${space.sp4}`,
+  margin: `calc(${space.sp2} * -1) 0 ${space.sp4}`,
+  fontSize: fontSize.body,
   color: vars.color.textSecondary,
 });
 export const label = style({ ...caps, fontWeight: 500 });
 export const mark = style({
   display: 'inline-flex',
   alignItems: 'center',
-  gap: 8,
+  gap: space.sp2,
 });
 
 // a mark's dot before a field's label
-export const labelDot = style({ marginRight: 8 });
+export const labelDot = style({ marginRight: space.sp2 });
 export const markNote = style({ color: vars.color.textMuted });
 
 /* ---------- places ---------- */
 export const set = style({
   minWidth: 0,
-  margin: '0 0 16px',
+  margin: `0 0 ${space.sp4}`,
   padding: 0,
   border: 0,
 });
 globalStyle(`${set} > legend`, { padding: 0 });
-globalStyle(`${set} > legend + ${hint}`, { margin: '0 0 8px' });
+globalStyle(`${set} > legend + ${hint}`, { margin: `0 0 ${space.sp2}` });
 
 const placeGrid = {
   display: 'grid',
   gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr) 40px',
-  gap: 8,
+  gap: space.sp2,
   alignItems: 'start',
 } as const;
 
 export const placesHead = style({
   ...placeGrid,
-  marginBottom: 8,
+  marginBottom: space.sp2,
   ...caps,
   fontWeight: 500,
   '@media': { [phone]: { display: 'none' } },
@@ -115,14 +116,14 @@ export const places = style({
   padding: 0,
   display: 'flex',
   flexDirection: 'column',
-  gap: 8,
+  gap: space.sp2,
 });
 export const place = style({
   ...placeGrid,
   '@media': {
     [phone]: {
       gridTemplateColumns: 'minmax(0, 1fr) 40px',
-      paddingBottom: 8,
+      paddingBottom: space.sp2,
       borderBottom: `1px solid ${vars.color.border}`,
     },
   },
@@ -144,15 +145,15 @@ globalStyle(`${place}[data-imagined] > input`, {
 
 /* ---------- under a country: what an old or dependent name counts as, and the choice for a state that split ---------- */
 export const thenNote = style({
-  marginTop: 8,
-  fontSize: 14,
+  marginTop: space.sp2,
+  fontSize: fontSize.body,
   color: vars.color.textSecondary,
   selectors: { [`${place} > &`]: { gridColumn: '1 / -1', marginTop: 0 } },
 });
 globalStyle(`${thenNote} p`, { margin: 0 });
 globalStyle(`${thenNote} b`, { fontWeight: 500, color: vars.color.text });
 export const thenChange = style({
-  marginLeft: 4,
+  marginLeft: space.sp1,
   padding: 0,
   border: 0,
   background: 'none',
@@ -170,19 +171,19 @@ export const thenChange = style({
 export const thenPicks = style({
   display: 'flex',
   flexWrap: 'wrap',
-  gap: 8,
-  marginTop: 8,
+  gap: space.sp2,
+  marginTop: space.sp2,
 });
 
 // the same pills as the map's Show filter: a flat fill, no bolder weight when picked
 globalStyle(`${thenPicks} button`, {
   minHeight: 32,
-  padding: '4px 16px',
+  padding: `${space.sp1} ${space.sp4}`,
   border: '1px solid transparent',
   borderRadius: 999,
   background: fill,
   fontFamily: vars.font.sans,
-  fontSize: 14,
+  fontSize: fontSize.body,
   fontWeight: 500,
   color: vars.color.textSecondary,
   cursor: 'pointer',
@@ -211,19 +212,23 @@ export const imagined = style({
   gridColumn: '1 / -1',
   display: 'inline-flex',
   alignItems: 'center',
-  gap: 8,
+  gap: space.sp2,
   width: 'fit-content',
   minHeight: 32,
-  fontSize: 14,
+  fontSize: fontSize.body,
   color: vars.color.textSecondary,
   cursor: 'pointer',
 });
 
-export const month = style({ display: 'flex', gap: 8, maxWidth: 400 });
+export const month = style({ display: 'flex', gap: space.sp2, maxWidth: 400 });
 export const monthPick = style({ flex: '1.4 1 0', minWidth: 0 });
 export const yearPick = style({ flex: '1 1 0', minWidth: 0 });
 
-export const themes = style({ margin: '0 0 16px', padding: 0, border: 0 });
+export const themes = style({
+  margin: `0 0 ${space.sp4}`,
+  padding: 0,
+  border: 0,
+});
 
 globalStyle(`${themes} summary`, {
   cursor: 'pointer',
@@ -233,45 +238,39 @@ globalStyle(`${themes} summary`, {
 
 globalStyle(`${themes} ul`, {
   listStyle: 'none',
-  margin: '8px 0 0 16px',
+  margin: `${space.sp2} 0 0 ${space.sp4}`,
   padding: 0,
   display: 'flex',
   flexDirection: 'column',
-  gap: 4,
+  gap: space.sp1,
 });
 
 globalStyle(`${themes} label`, {
   display: 'flex',
   alignItems: 'center',
-  gap: 8,
+  gap: space.sp2,
   minHeight: 32,
   cursor: 'pointer',
 });
 
-export const formError = style({
-  margin: '16px 0 0',
-  padding: '8px 16px',
-  borderRadius: 8,
-  background: vars.color.rustWash,
-  color: vars.color.error,
-  fontSize: 15,
-  fontWeight: 500,
-  lineHeight: 1.4,
-});
+export const formError = style([
+  fieldFormError,
+  { margin: `${space.sp4} 0 0` },
+]);
 
 export const actions = style({
   display: 'flex',
   flexWrap: 'wrap',
   alignItems: 'center',
   justifyContent: 'flex-end',
-  gap: '16px 24px',
-  marginTop: 16,
+  gap: `${space.sp4} ${space.sp5}`,
+  marginTop: space.sp4,
   '@media': {
     [phone]: {
       position: 'sticky',
       bottom: 0,
-      margin: '16px -24px 0',
-      padding: '16px 24px',
+      margin: `${space.sp4} calc(${space.sp5} * -1) 0`,
+      padding: `${space.sp4} ${space.sp5}`,
       background: vars.color.surface,
       borderTop: `1px solid ${vars.color.border}`,
       flexWrap: 'nowrap',

@@ -1,6 +1,6 @@
 import { globalStyle, keyframes, style } from '@vanilla-extract/css';
 
-import { vars } from '../../../../styles/theme.css';
+import { fontSize, space, vars } from '../../../../styles/theme.css';
 import { band, easeOut, hatch } from '../../../../styles/global.css';
 
 const narrow = 'screen and (max-width: 799px)';
@@ -9,7 +9,7 @@ const narrow = 'screen and (max-width: 799px)';
 export const frame = style({
   width: 'min(1120px, 100% - 32px)',
   margin: '0 auto',
-  padding: 8,
+  padding: space.sp2,
   background: band,
   borderRadius: 24, // concentric: the 16px sheet + 8px padding
   scale: 'var(--z, 1)',
@@ -18,17 +18,17 @@ export const frame = style({
 });
 
 export const sheet = style({
-  padding: '24px 32px',
+  padding: `${space.sp5} ${space.sp6}`,
   borderRadius: 16,
   background: vars.color.background,
-  '@media': { [narrow]: { padding: 16 } },
+  '@media': { [narrow]: { padding: space.sp4 } },
 });
 
 export const head = style({
   display: 'flex',
   alignItems: 'baseline',
   justifyContent: 'space-between',
-  gap: 16,
+  gap: space.sp4,
 });
 export const title = style({
   fontFamily: vars.font.serif,
@@ -39,7 +39,7 @@ export const title = style({
 export const tag = style({
   fontFamily: vars.font.sans,
   fontWeight: 500,
-  fontSize: 14,
+  fontSize: fontSize.body,
   lineHeight: 1,
   color: vars.color.textMuted,
 });
@@ -48,7 +48,7 @@ export const map = style({
   display: 'block',
   width: '100%',
   height: 'auto',
-  marginTop: 16,
+  marginTop: space.sp4,
   overflow: 'visible',
 });
 
@@ -86,12 +86,16 @@ export const foot = style({
   display: 'grid',
   gridTemplateColumns: 'auto minmax(0, 1fr) auto',
   alignItems: 'end',
-  gap: '8px 24px',
-  marginTop: 16,
+  gap: `${space.sp2} ${space.sp5}`,
+  marginTop: space.sp4,
   '@media': { [narrow]: { gridTemplateColumns: 'auto 1fr' } },
 });
 
-export const count = style({ display: 'flex', alignItems: 'baseline', gap: 8 });
+export const count = style({
+  display: 'flex',
+  alignItems: 'baseline',
+  gap: space.sp2,
+});
 
 globalStyle(`${count} b`, {
   fontFamily: vars.font.serif,
@@ -103,7 +107,7 @@ globalStyle(`${count} b`, {
 });
 
 globalStyle(`${count} span`, {
-  fontSize: 20,
+  fontSize: fontSize.heading,
   lineHeight: 1,
   color: vars.color.textSecondary,
 });
@@ -112,7 +116,7 @@ globalStyle(`${count} em`, {
   fontFamily: vars.font.sans,
   fontStyle: 'normal',
   fontWeight: 500,
-  fontSize: 13,
+  fontSize: fontSize.meta,
   lineHeight: 1,
   letterSpacing: '.12em',
   textTransform: 'uppercase',
@@ -123,7 +127,7 @@ export const now = style({
   display: 'flex',
   alignItems: 'end',
   minHeight: '2.7em',
-  fontSize: 16,
+  fontSize: fontSize.action,
   lineHeight: 1.35,
   color: vars.color.textSecondary,
   textWrap: 'balance',
@@ -133,7 +137,7 @@ export const now = style({
 export const books = style({
   fontFamily: vars.font.sans,
   fontWeight: 500,
-  fontSize: 15,
+  fontSize: fontSize.body,
   lineHeight: 1,
   color: vars.color.textMuted,
   '@media': { [narrow]: { justifySelf: 'end' } },
@@ -143,17 +147,23 @@ globalStyle(`${books} b`, { fontWeight: 500, color: vars.color.text });
 export const key = style({
   display: 'flex',
   flexWrap: 'wrap',
-  gap: '8px 24px',
-  margin: '16px 0 0',
-  padding: '16px 0 0',
+  gap: `${space.sp2} ${space.sp5}`,
+  margin: `${space.sp4} 0 0`,
+  padding: `${space.sp4} 0 0`,
   borderTop: `1px solid ${vars.color.border}`,
   listStyle: 'none',
   fontFamily: vars.font.sans,
-  fontSize: 15,
+  fontSize: fontSize.body,
   lineHeight: 1,
   color: vars.color.textSecondary,
 });
-globalStyle(`${key} li`, { display: 'flex', alignItems: 'center', gap: 8 });
+
+globalStyle(`${key} li`, {
+  display: 'flex',
+  alignItems: 'center',
+  gap: space.sp2,
+});
+
 const swatch = { width: 12, height: 12, borderRadius: 2 };
 
 export const keySet = style({ ...swatch, background: vars.color.olive });

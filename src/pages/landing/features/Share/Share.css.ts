@@ -1,7 +1,7 @@
 import { globalStyle, style } from '@vanilla-extract/css';
 
 import { band, easeOut, hover } from '../../../../styles/global.css';
-import { vars } from '../../../../styles/theme.css';
+import { fontSize, space, vars } from '../../../../styles/theme.css';
 import { sectionTitle, wrap } from '../../LandingPage.css';
 
 const narrow = 'screen and (max-width: 899px)';
@@ -12,15 +12,17 @@ export const share = style([
     display: 'grid',
     gridTemplateColumns: 'minmax(0, .85fr) minmax(0, 1.15fr)',
     alignItems: 'center',
-    gap: 64,
+    gap: space.sp8,
     paddingTop: 112,
-    '@media': { [narrow]: { gridTemplateColumns: 'minmax(0, 1fr)', gap: 40 } },
+    '@media': {
+      [narrow]: { gridTemplateColumns: 'minmax(0, 1fr)', gap: space.sp7 },
+    },
   },
 ]);
 
 export const title = style(sectionTitle);
 export const sub = style({
-  marginTop: 16,
+  marginTop: space.sp4,
   maxWidth: '28em',
   color: vars.color.textSecondary,
   textWrap: 'pretty',
@@ -28,18 +30,18 @@ export const sub = style({
 
 export const variants = style({
   display: 'grid',
-  gap: 8,
+  gap: space.sp2,
   maxWidth: '28em',
-  marginTop: 24,
+  marginTop: space.sp5,
 });
 
 export const variant = style({
   position: 'relative',
   display: 'block',
-  marginLeft: -8,
-  padding: '8px 8px 8px 40px',
+  marginLeft: `calc(${space.sp2} * -1)`,
+  padding: `${space.sp2} ${space.sp2} ${space.sp2} ${space.sp7}`,
   borderRadius: 8,
-  fontSize: 18,
+  fontSize: fontSize.item,
   lineHeight: 1.4,
   color: vars.color.textSecondary,
   cursor: 'pointer',
@@ -71,17 +73,17 @@ globalStyle(`${variant} input:checked`, {
   background: `radial-gradient(circle, ${vars.color.olive} 0 4.5px, ${vars.color.background} 5px)`,
 });
 
-export const cta = style({ marginTop: 32 });
+export const cta = style({ marginTop: space.sp6 });
 
 // the white card sits on the grey sheet the product window uses
 export const stack = style({
   display: 'grid',
   alignItems: 'center',
   margin: 0,
-  padding: 40,
+  padding: space.sp7,
   background: band,
   borderRadius: 24,
-  '@media': { [narrow]: { padding: 24 } },
+  '@media': { [narrow]: { padding: space.sp5 } },
 });
 
 // the cards crossfade through a 2px blur
@@ -106,8 +108,8 @@ export const on = style({ opacity: 1, visibility: 'visible', filter: 'none' });
 
 export const caption = style({
   gridArea: '2 / 1',
-  marginTop: 24,
-  fontSize: 16,
+  marginTop: space.sp5,
+  fontSize: fontSize.action,
   color: vars.color.textSecondary,
   textWrap: 'pretty',
 });

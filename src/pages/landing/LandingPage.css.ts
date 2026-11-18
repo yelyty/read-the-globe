@@ -1,7 +1,7 @@
 import { style, globalStyle } from '@vanilla-extract/css';
 
-import { vars } from '../../styles/theme.css';
-import { band, reducedMotion } from '../../styles/global.css';
+import { fontSize, space, vars } from '../../styles/theme.css';
+import { band, gutter, reducedMotion } from '../../styles/global.css';
 
 // the mock's illustration colours (hero stickers, feature panels) that the app's theme has no token for
 const illustration = {
@@ -44,7 +44,7 @@ export const page = style({
   background: vars.color.background,
   color: vars.color.text,
   fontFamily: vars.font.serif,
-  fontSize: 18,
+  fontSize: fontSize.item,
   lineHeight: 1.55,
   overflowX: 'clip',
   caretColor: vars.color.primary,
@@ -114,7 +114,7 @@ export const sectionTitle = {
 export const wrap = style({
   maxWidth: 1240,
   marginInline: 'auto',
-  paddingInline: 'clamp(18px, 4vw, 40px)',
+  paddingInline: gutter,
 });
 
 export const skip = style({
@@ -122,12 +122,12 @@ export const skip = style({
   left: 16,
   top: -64,
   zIndex: 100,
-  padding: '12px 16px',
+  padding: `${space.sp3} ${space.sp4}`,
   borderRadius: 8,
   background: vars.color.primary,
   color: vars.color.onAccent,
   fontFamily: vars.font.sans,
-  fontSize: 16,
+  fontSize: fontSize.action,
   fontWeight: 500,
   lineHeight: 1,
   textDecoration: 'none',

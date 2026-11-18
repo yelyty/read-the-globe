@@ -1,53 +1,35 @@
 import { globalStyle, style, styleVariants } from '@vanilla-extract/css';
 
-import { vars } from '../../../../styles/theme.css';
+import { fontSize, space, vars } from '../../../../styles/theme.css';
 import { buttonSize, easeOut } from '../../../../styles/global.css';
+import {
+  formError as fieldFormError,
+  formNotice as fieldFormNotice,
+} from '../../../../components/Field/Field.css';
 
 export const dialogSub = style({
-  margin: '8px 0 0',
-  fontSize: 16,
+  margin: `${space.sp2} 0 0`,
+  fontSize: fontSize.action,
   color: vars.color.textSecondary,
   textWrap: 'pretty',
 });
 
-const note = {
-  display: 'flex',
-  gap: 8,
-  alignItems: 'flex-start',
-  margin: '0 0 16px',
-  padding: '12px 16px',
-  borderRadius: 12,
-  fontFamily: vars.font.sans,
-  fontSize: 15,
-  lineHeight: 1.4,
-} as const;
+// the form's banners are Field's; here they sit above the fields
+export const formError = style([
+  fieldFormError,
+  { margin: `0 0 ${space.sp4}` },
+]);
 
-export const formError = style({
-  ...note,
-  color: vars.color.error,
-  background: vars.color.rustWash,
-  border: `1px solid ${vars.color.markerAuthor}`,
-});
-
-globalStyle(`${formError} svg`, {
-  width: 17,
-  height: 17,
-  flex: 'none',
-  marginTop: 1,
-});
-
-export const formNotice = style({
-  ...note,
-  fontWeight: 500,
-  color: vars.color.oliveInk,
-  background: vars.color.oliveWash,
-});
+export const formNotice = style([
+  fieldFormNotice,
+  { margin: `0 0 ${space.sp4}` },
+]);
 
 export const strength = style({
   display: 'flex',
   alignItems: 'center',
-  gap: 8,
-  marginTop: 8,
+  gap: space.sp2,
+  marginTop: space.sp2,
   selectors: { '&[hidden]': { display: 'none' } },
 });
 
@@ -77,7 +59,7 @@ export const strengthFill = styleVariants({
 
 export const strengthLabel = style({
   fontFamily: vars.font.sans,
-  fontSize: 14,
+  fontSize: fontSize.body,
   color: vars.color.textMuted,
   whiteSpace: 'nowrap',
 });
@@ -111,23 +93,23 @@ export const btnPrimary = style([
   },
 ]);
 
-export const btnBlock = style({ width: '100%', marginTop: 8 });
+export const btnBlock = style({ width: '100%', marginTop: space.sp2 });
 
 export const altAction = style({
-  margin: '16px 0 0',
+  margin: `${space.sp4} 0 0`,
   fontFamily: vars.font.sans,
-  fontSize: 15,
+  fontSize: fontSize.body,
   lineHeight: 1.4,
   color: vars.color.textSecondary,
 });
 
 export const altLink = style({
-  padding: '12px 4px',
-  margin: '-12px -4px',
+  padding: `${space.sp3} ${space.sp1}`,
+  margin: `calc(${space.sp3} * -1) calc(${space.sp1} * -1)`,
   background: 'none',
   border: 0,
   fontFamily: vars.font.sans,
-  fontSize: 15,
+  fontSize: fontSize.body,
   fontWeight: 500,
   color: vars.color.text,
   textDecoration: 'underline',
@@ -139,8 +121,8 @@ export const links = style({
   display: 'flex',
   flexWrap: 'wrap',
   justifyContent: 'space-between',
-  gap: '8px 16px',
-  marginTop: 16,
+  gap: `${space.sp2} ${space.sp4}`,
+  marginTop: space.sp4,
 });
 globalStyle(`${links} ${altAction}`, { margin: 0 });
 
@@ -149,10 +131,10 @@ export const example = style({
   display: 'grid',
   gridTemplateColumns: 'auto 1fr',
   alignItems: 'center',
-  gap: '0 8px',
-  margin: '0 0 16px',
+  gap: `0 ${space.sp2}`,
+  margin: `0 0 ${space.sp4}`,
   fontFamily: vars.font.sans,
-  fontSize: 15,
+  fontSize: fontSize.body,
   fontWeight: 500,
   lineHeight: 1.4,
   color: vars.color.text,
@@ -162,6 +144,6 @@ export const example = style({
 export const exampleHint = style({
   gridColumn: 2,
   fontWeight: 400,
-  fontSize: 14,
+  fontSize: fontSize.body,
   color: vars.color.textMuted,
 });

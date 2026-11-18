@@ -1,6 +1,6 @@
 import { globalStyle, keyframes, style } from '@vanilla-extract/css';
 
-import { vars } from '../../styles/theme.css';
+import { fontSize, space, vars } from '../../styles/theme.css';
 import { hover, reducedMotion } from '../../styles/global.css';
 import { navLink, twoRows } from '../AppHeader/AppHeader.css';
 
@@ -12,7 +12,7 @@ export const menu = style({
 export const button = style([
   navLink,
   {
-    gap: 4,
+    gap: space.sp1,
     selectors: {
       '&[aria-expanded="true"]': { color: vars.color.text },
       '&[data-current]': {
@@ -41,7 +41,7 @@ export const list = style({
   zIndex: 80,
   minWidth: 176,
   margin: 0,
-  padding: 4,
+  padding: space.sp1,
   listStyle: 'none',
   background: vars.color.surface,
   border: `1px solid ${vars.color.border}`,
@@ -53,8 +53,8 @@ export const list = style({
 });
 
 globalStyle(`${list} li + li`, {
-  marginTop: 4,
-  paddingTop: 4,
+  marginTop: space.sp1,
+  paddingTop: space.sp1,
   borderTop: `1px solid ${vars.color.border}`,
 });
 
@@ -63,12 +63,12 @@ export const item = style({
   alignItems: 'center',
   width: '100%',
   minHeight: 40,
-  padding: '0 12px',
+  padding: `0 ${space.sp3}`,
   border: 0,
   borderRadius: 8,
   background: 'none',
   fontFamily: vars.font.sans,
-  fontSize: 15,
+  fontSize: fontSize.body,
   fontWeight: 500,
   color: vars.color.textSecondary,
   textDecoration: 'none',
