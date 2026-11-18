@@ -1,18 +1,18 @@
 import { useState, type SubmitEvent } from 'react';
 
-import type { BookEntry, Goal, NextRead } from '../../types';
-import { deleteBook, saveBook } from '../../api/books/books';
-import { removeNextRead } from '../../api/nextReads/nextReads';
-import type { Landing } from '../../hooks/useLanding';
-import { formatMonth } from '../../utils/formatDate';
-import { readDate } from '../../utils/readDate';
-import { m } from '../../paraglide/messages.js';
+import type { BookEntry, Goal, NextRead } from '../../../types';
+import { deleteBook, saveBook } from '../../../api/books/books';
+import { removeNextRead } from '../../../api/nextReads/nextReads';
+import type { Landing } from '../../../hooks/useLanding';
+import { formatMonth } from '../../../utils/formatDate';
+import { readDate } from '../../../utils/readDate';
+import { m } from '../../../paraglide/messages.js';
 import {
   duplicateOf,
   errorSummary,
   landingFor,
   type LogReading,
-} from './bookLog';
+} from '../utils/bookLog';
 import type { useLogErrors } from './useLogErrors';
 
 type SaveBook = {

@@ -1,7 +1,7 @@
 import type { ChangeEvent } from 'react';
 
-import type { Goal } from '../../types';
-import Checkbox from '../../components/Checkbox/Checkbox';
+import type { Goal } from '../../../types';
+import Checkbox from '../../../components/Checkbox/Checkbox';
 
 type ThemeTickProps = {
   theme: Goal;

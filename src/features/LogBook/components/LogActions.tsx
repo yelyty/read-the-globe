@@ -1,8 +1,8 @@
 import { PushPinIcon, TrashIcon } from '@phosphor-icons/react';
 
-import { m } from '../../paraglide/messages.js';
-import { Button } from '../../components/Button/Button';
-import * as styles from './LogBook.css';
+import { m } from '../../../paraglide/messages.js';
+import { Button } from '../../../components/Button/Button';
+import * as styles from '../LogBook.css';
 
 type LogActionsProps = {
   /** a book being edited: Remove and Cancel, rather than Close */
