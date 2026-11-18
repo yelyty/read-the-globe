@@ -11,6 +11,12 @@ import StatusLine from '../../../../components/StatusLine/StatusLine';
 import * as styles from '../../AccountPage.css';
 import { validate, type Errors } from './validate';
 
+/**
+ * Shows the Change password section.
+ * The reader types the new password two times. The form checks the two fields before it sends the change.
+ * After a change, the form clears the fields and shows a status line.
+ * @param email - The email address of the reader. A hidden field gives it to password managers as the user name.
+ */
 const ChangePassword = ({ email }: { email: string }) => {
   const [first, setFirst] = useState('');
   const [second, setSecond] = useState('');

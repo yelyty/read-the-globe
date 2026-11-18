@@ -11,7 +11,11 @@ import type { yearSum } from './yearSum';
 type YearSummary = ReturnType<typeof yearSum>;
 type Stats = ReturnType<typeof postcardStats>;
 
-// the card's heading: the reader's first name when there is one
+/**
+ * Gets the heading of the card.
+ * If the reader has a first name, the heading uses it, for example "Ada’s 2026". If not, the heading uses "My".
+ * @param year - The year of a year-end card, or null for an atlas card.
+ */
 export const cardTitle = (firstName: string, year: string | null) =>
   year
     ? firstName
@@ -23,14 +27,18 @@ export const cardTitle = (firstName: string, year: string | null) =>
 
 type CardWords = {
   goal: Goal | null;
-  /** the goal's progress, when the card is a goal's */
   progress: Progress | null;
   yearSummary: YearSummary | null;
   kind: Kind;
   stats: Stats;
 };
 
-// what the card shows, in words, for a screen reader
+/**
+ * Gets a text that tells what the card shows. Screen readers read this text.
+ * For a goal card, the text gives the progress. For a year-end card, it gives the summary of the year.
+ * For an atlas card, it gives the type of card and its numbers.
+ * If a goal has no progress, the text is for an atlas card.
+ */
 export function cardLabel({
   goal,
   progress,
@@ -62,6 +70,10 @@ export function cardLabel({
   });
 }
 
+/**
+ * Gets the file name for the saved card.
+ * A goal card uses the name of the goal. A year-end card uses the year. An atlas card uses the date of today.
+ */
 export const cardFileName = (goal: Goal | null, year: string | null) =>
   goal
     ? goalCardName(goal)
@@ -69,7 +81,10 @@ export const cardFileName = (goal: Goal | null, year: string | null) =>
       ? `read-the-globe-${year}-postcard.png`
       : `read-the-globe-postcard-${isoDay(new Date().toISOString())}.png`;
 
-// the title and line the share sheet sends along with the card
+/**
+ * Gets the title and the text that the share sheet sends with the card.
+ * The text tells about the goal, the year, or the number of countries on the atlas card.
+ */
 export const cardShare = ({
   goal,
   yearSummary,

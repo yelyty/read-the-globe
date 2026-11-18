@@ -17,6 +17,10 @@ const download = (text: string, name: string, type: string) => {
   setTimeout(() => URL.revokeObjectURL(link.href), 0);
 };
 
+/**
+ * Downloads the reading list as a CSV file. The file name contains the date of today.
+ * @param names - The country names, by country code.
+ */
 export function exportReadingList(
   books: BookEntry[],
   names: Record<string, string>
@@ -28,6 +32,9 @@ export function exportReadingList(
   );
 }
 
+/**
+ * Downloads the full backup of the atlas as a JSON file. The file name contains the date of today.
+ */
 export function exportBackup(backup: Backup) {
   download(
     JSON.stringify(backup, null, 2),
@@ -70,6 +77,10 @@ const EXAMPLE = [
   ],
 ];
 
+/**
+ * Downloads an example reading list as a CSV file.
+ * The example has five books. One book has no date, to show that the date is optional.
+ */
 export const exportExample = () =>
   download(
     toCsv(EXAMPLE),
@@ -77,10 +88,19 @@ export const exportExample = () =>
     'text/csv'
   );
 
+/**
+ * Gets the number of books as text, for example "1 book" or "3 books".
+ */
 export const bookCount = (count: number) => m.count_book({ count: count });
+/**
+ * Gets the number of goals as text, for example "1 goal" or "2 goals".
+ */
 export const goalCount = (count: number) => m.count_goal({ count: count });
 
-// what clearing or replacing the atlas takes away, without a "0 goals"
+/**
+ * Tells what a clear or a restore removes from the atlas, for example "3 books and 1 goal".
+ * The text does not include a part with a count of 0. If both counts are 0, the text is "nothing yet".
+ */
 export const atlasWords = (books: number, goals: number) =>
   books && goals
     ? m.account_and({ a: bookCount(books), b: goalCount(goals) })
@@ -90,7 +110,11 @@ export const atlasWords = (books: number, goals: number) =>
         ? goalCount(goals)
         : m.account_nothing_yet();
 
-// the result of a reading list import, a sentence for each part
+/**
+ * Makes the report of a reading list import. Each part of the report is one sentence.
+ * The report gives the number of books that the import added.
+ * If the import skipped duplicates or rows, the report also gives these numbers.
+ */
 export const importReport = (
   added: number,
   duplicates: number,

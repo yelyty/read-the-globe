@@ -27,7 +27,11 @@ type ClearAtlasProps = {
   names: Record<string, string>;
 };
 
-// Clear this atlas: books, goals, next reads and saved worlds go; the account stays. Undo puts them back.
+/**
+ * Shows the Clear this atlas action and its confirmation dialog.
+ * The action removes the books, goals, next reads, and saved worlds. It does not remove the account.
+ * The reader can use Undo to put them back.
+ */
 const ClearAtlas = ({ userId, books, goals, names }: ClearAtlasProps) => {
   const refresh = useRefresh();
   const navigate = useNavigate();

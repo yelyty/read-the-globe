@@ -66,6 +66,7 @@ export const vars = createThemeContract({
   },
 
   radius: {
+    xs: null,
     sm: null,
     md: null,
     lg: null,
@@ -135,6 +136,7 @@ export const light = {
   },
 
   radius: {
+    xs: '4px',
     sm: '8px',
     md: '10px',
     lg: '16px',
@@ -196,11 +198,7 @@ const dark = {
     gold: '0, 0, 0',
   },
 
-  radius: {
-    sm: '12px',
-    md: '15px',
-    lg: '24px',
-  },
+  radius: light.radius,
 };
 
 export const space = createGlobalTheme(':root', {

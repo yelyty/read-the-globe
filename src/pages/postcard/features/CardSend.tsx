@@ -4,7 +4,7 @@ import { DownloadSimpleIcon, ShareFatIcon } from '@phosphor-icons/react';
 import { m } from '../../../paraglide/messages.js';
 import { Button } from '../../../components/Button/Button';
 import StatusLine from '../../../components/StatusLine/StatusLine';
-import * as styles from '../PostCardPage.css';
+import * as styles from '../PostcardPage.css';
 
 type CardSendProps = {
   canvasRef: RefObject<HTMLCanvasElement | null>;
@@ -13,8 +13,11 @@ type CardSendProps = {
   share: { title: string; text: string };
 };
 
-// Save the card as a PNG, or Share it; what happened is said under the buttons.
-// The page remounts it (key) when the card changes, which clears that line.
+/**
+ * Shows the Save and Share buttons for the card.
+ * Save downloads the card as a PNG file. Share opens the share sheet of the device.
+ * A status line below the buttons shows the result.
+ */
 const CardSend = ({ canvasRef, fileName, share }: CardSendProps) => {
   const [status, setStatus] = useState('');
   const [busy, setBusy] = useState<'save' | 'share' | null>(null);

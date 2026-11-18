@@ -9,16 +9,20 @@ import PageTitle from '../../components/PageTitle/PageTitle';
 import Logo from '../../components/Logo/Logo';
 import ButtonLink from '../../components/Button/ButtonLink';
 import EmptyState from '../../components/EmptyState/EmptyState';
-import * as styles from './PostCardPage.css';
+import * as styles from './PostcardPage.css';
 import { cardFileName, cardShare } from './utils/cardText';
 import { GOAL_H, GOAL_W } from './utils/drawGoalCard';
 import { SIZE } from './utils/drawPostcard';
-import { useCardChoice } from './hooks/useCardChoice';
+import { useCardChoice } from './features/CardSetup/useCardChoice';
 import { useCardDrawing } from './hooks/useCardDrawing';
 import CardSend from './features/CardSend';
 import CardSetup from './features/CardSetup/CardSetup';
 
-// the Postcard: a card of the reader's atlas, a year, or a reached goal, to save or share
+/**
+ * Shows the Postcard page.
+ * The page shows the card on a canvas, and the controls for its set-up.
+ * The reader can save the card or share it.
+ */
 const PostcardPage = () => {
   const books = useBooks();
   const goals = useGoals();
@@ -84,7 +88,6 @@ const PostcardPage = () => {
   return (
     <>
       <PageTitle>{m.title_postcard()}</PageTitle>
-      {/* the logo the card draws in its header */}
       <div ref={logoRef} hidden>
         <Logo />
       </div>
@@ -117,7 +120,6 @@ const PostcardPage = () => {
             year={year}
             onChange={change}
           />
-          {/* a new set-up remounts it, which clears what it last said */}
           <CardSend
             key={JSON.stringify(options)}
             canvasRef={canvasRef}

@@ -22,12 +22,17 @@ const DEFAULTS: CardOptions = {
 const TOP_FEW = 3;
 const TOP_MORE = 6;
 
-// the reader's saved set-up, field by field: an unknown or older value falls back to the default
+// the reader's saved set-up, field by field
 const oneOf = <T>(values: readonly T[], value: unknown, fallback: T) =>
   values.find((item) => item === value) ?? fallback;
 
 const keys = <T extends object>(obj: T) => Object.keys(obj) as (keyof T)[];
 
+/**
+ * Reads the saved set-up of the card.
+ * Each field that has an unknown value or an old value gets the default value.
+ * @param saved - The set-up from the profile of the reader, or null.
+ */
 export const readOptions = (saved: SavedPostcard): CardOptions => ({
   kind: oneOf(keys(KINDS), saved?.kind, DEFAULTS.kind),
   count: oneOf(COUNTS, saved?.count, DEFAULTS.count),
@@ -42,6 +47,9 @@ export const readOptions = (saved: SavedPostcard): CardOptions => ({
   year: typeof saved?.year === 'string' ? saved.year : null,
 });
 
+/**
+ * Gets the label for the number of stamps: "Top 3", "Top 6", or "All" for 0.
+ */
 export const countLabel = (count: number) =>
   count ? m.postcard_top({ n: count }) : m.postcard_all();
 

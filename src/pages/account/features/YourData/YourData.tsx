@@ -30,6 +30,11 @@ type YourDataProps = {
   goals: Goal[];
 };
 
+/**
+ * Shows the Your data section.
+ * The reader can export the reading list as a CSV file, or a full backup as a JSON file.
+ * The reader can also import a reading list, or restore a backup that replaces the atlas.
+ */
 const YourData = ({ userId, books, names, goals }: YourDataProps) => {
   const [status, setStatus] = useState('');
   const [imported, setImported] = useState('');
