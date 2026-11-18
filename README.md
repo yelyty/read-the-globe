@@ -1,6 +1,7 @@
 # Read The Globe
 
 [![Test](https://github.com/yelyty/read-the-globe/actions/workflows/test.yml/badge.svg)](https://github.com/yelyty/read-the-globe/actions/workflows/test.yml)
+[![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/yelyty/read-the-globe/badges/coverage.json)](https://github.com/yelyty/read-the-globe/actions/workflows/test.yml)
 
 Read The Globe is a reading log with a world map.
 
