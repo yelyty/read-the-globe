@@ -21,8 +21,20 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # the tests never reach Supabase, but importing its client needs a URL and key to exist
-      - run: pnpm test
+      - run: pnpm lint
+
+      - run: pnpm typecheck
+
+      # the tests never reach Supabase, but importing its client needs a URL and key to exist;
+      # coverage fails the job when it drops under the thresholds in vite.config.ts
+      - run: pnpm test:coverage
         env:
           VITE_SUPABASE_URL: http://localhost:54321
           VITE_SUPABASE_PUBLISHABLE_KEY: ci-placeholder
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage
+          path: coverage/
+          if-no-files-found: ignore
