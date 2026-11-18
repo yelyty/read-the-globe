@@ -9,6 +9,9 @@ import BetaChip from '../../components/BetaChip/BetaChip';
 import AccountMenu from '../AccountMenu/AccountMenu';
 import * as styles from './AppHeader.css';
 
+/**
+ * Shows the header of the app: the logo, the navigation, and the account menu.
+ */
 const AppHeader = () => {
   return (
     <header className={headerStyles.header}>

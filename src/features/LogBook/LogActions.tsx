@@ -14,7 +14,11 @@ type LogActionsProps = {
   onClose: () => void;
 };
 
-// the form's foot: Remove (when editing), Cancel or Close, and Pin it
+/**
+ * Shows the buttons at the end of the log form: Remove (when editing), Cancel or Close, and Pin it.
+ * @param editing - If true, the form edits a book, so Remove shows.
+ * @param saving - If true, the book is being saved, so the buttons are disabled.
+ */
 const LogActions = ({
   editing,
   saving,

@@ -42,7 +42,10 @@ function hashOf(seed: string): number {
   return Math.abs(hash);
 }
 
-// each detail reads its own slice of the hash, so they vary independently of the colour
+/**
+ * Gets the look of a book cover from a seed, for example the title and the author: a color, a label, bands, and a spine.
+ * The same seed always gives the same cover. Each detail uses its own part of the hash, so they change independently.
+ */
 export function coverBinding(seed: string): CoverBinding {
   const hash = hashOf(seed);
   const rest = Math.floor(hash / COVER_COLORS.length);

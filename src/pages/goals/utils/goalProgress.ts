@@ -46,6 +46,9 @@ export function goalProgress(
   return { done: reached.length, total: all.length, all, reached };
 }
 
+/**
+ * Checks if a goal is reached: it has a target, and the progress is at the target or over it.
+ */
 export const isDone = (progress: Progress) =>
   progress.total > 0 && progress.done >= progress.total;
 

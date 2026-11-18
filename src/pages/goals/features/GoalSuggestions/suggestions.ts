@@ -11,9 +11,13 @@ const TOP_SUGGESTIONS = 4;
 
 type Offer = { c: CatalogueGoal; i: number; p: Progress; score: number };
 
-// the catalogue goals not taken yet: the ones the reader's books already go furthest into lead as
-// destinations (four, one row), topped up with one of each kind; the rest fold under More goals, by kind.
-// With no goals yet, the best one is picked out on its own.
+/**
+ * Gets the catalogue goals to suggest. Goals the reader already has are not suggested.
+ * Up to 4 goals that the books of the reader are already into come first, plus one goal of each kind.
+ * The other goals are grouped by kind under More goals. If the reader has no goals yet, the best one is picked out.
+ * @param progress - Gets how far the books of the reader go into a goal.
+ * @returns The pick, the top goals, the other goals, and the other goals grouped by kind.
+ */
 export function suggestGoals(
   goals: Goal[],
   progress: (goal: CatalogueGoal) => Progress

@@ -2,7 +2,9 @@ import type { ComponentProps } from 'react';
 
 import { joinClass, useFieldControl } from './fieldControl';
 
-// a textarea for Field's control: it takes the field's id, class and aria props
+/**
+ * Shows a textarea in a Field. It takes the id, the class, and the aria props of the field.
+ */
 const FieldTextarea = ({ className, ...props }: ComponentProps<'textarea'>) => {
   const field = useFieldControl();
 

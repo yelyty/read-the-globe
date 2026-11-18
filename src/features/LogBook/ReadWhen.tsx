@@ -29,7 +29,9 @@ type ReadWhenProps = {
   onYear: (year: string) => void;
 };
 
-// When: the month and year the book was read, both optional
+/**
+ * Shows the When field: the month and the year the book was read. Both are optional.
+ */
 const ReadWhen = ({ month, year, onMonth, onYear }: ReadWhenProps) => {
   // the month and year menus: "Month" / "Year" first, for a book read some time
   const monthOptions = [

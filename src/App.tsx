@@ -5,6 +5,10 @@ import { useAuth } from './auth/auth-context';
 import { queryClient } from './api/queryClient';
 import { router } from './router';
 
+/**
+ * Shows the app: the router, with the auth state of the reader.
+ * When the reader signs out, the app goes back to the landing page.
+ */
 export function App() {
   const auth = useAuth();
   const wasIn = useRef(false);

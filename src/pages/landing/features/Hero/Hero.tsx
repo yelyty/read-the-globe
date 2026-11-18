@@ -5,6 +5,9 @@ import { btnPrimary } from '../LoginDialog/LoginDialog.css';
 import * as styles from './Hero.css';
 import { sticker } from './sticker';
 
+/**
+ * Shows the first section of the landing: the heading, the button to start, which opens Sign up, and the stickers around them.
+ */
 const Hero = ({ onSignUp }: { onSignUp: () => void }) => {
   return (
     <section className={styles.hero} id="top" aria-labelledby="hero-h">

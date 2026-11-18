@@ -30,3 +30,6 @@ storybook-static
 
 # TypeScript incremental build cache
 *.tsbuildinfo
+
+# test coverage reports
+coverage

@@ -10,6 +10,10 @@ export interface AuthContextValue {
 
 export const AuthContext = createContext<AuthContextValue | null>(null);
 
+/**
+ * Gets the auth state: if a reader is signed in, the reader, and if the state is still loading.
+ * The function throws an error outside AuthProvider.
+ */
 export function useAuth() {
   const ctx = useContext(AuthContext);
 

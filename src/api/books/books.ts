@@ -13,6 +13,11 @@ export type BookDraft = {
   goalIds: number[];
 };
 
+/**
+ * Saves a book with its places and goals, in one call.
+ * @param id - The id of the book to edit. Without it, the function adds a new book.
+ * @returns The id of the saved book, or a message that the book could not be saved.
+ */
 export async function saveBook(
   draft: BookDraft,
   id?: number
@@ -34,6 +39,10 @@ export async function saveBook(
   return error ? failed(m.book_save_failed()) : made(saved.data as number);
 }
 
+/**
+ * Removes a book from the shelf.
+ * @returns Null if the book was removed. If not, a message that it could not be removed.
+ */
 export async function deleteBook(id: number): Promise<Problem> {
   const { error } = await supabase.from('books').delete().eq('id', id);
 

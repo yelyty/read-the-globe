@@ -2,6 +2,9 @@ type LogoProps = {
   className?: string;
 };
 
+/**
+ * Shows the logo of the app as an SVG.
+ */
 const Logo = ({ className }: LogoProps) => {
   return (
     <svg

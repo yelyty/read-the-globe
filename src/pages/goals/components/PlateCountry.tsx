@@ -15,7 +15,10 @@ type PlateCountryProps = {
   hatch: string;
 };
 
-// one country on a goal's plate: to do, or coloured by its marks
+/**
+ * Shows one country on the plate of a goal: as to do, or colored by its marks.
+ * @param hatch - The id of the stripes for a country with both marks.
+ */
 const PlateCountry = ({ d, mark, hatch }: PlateCountryProps) => {
   const which = mark && markOf(mark);
   const both = which === 'both';

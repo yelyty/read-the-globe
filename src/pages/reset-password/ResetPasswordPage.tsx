@@ -13,7 +13,9 @@ import * as styles from '../../layout/PublicLayout/PublicLayout.css';
 import PasswordStrength from '../landing/features/LoginDialog/PasswordStrength';
 import { btnPrimary } from '../landing/features/LoginDialog/LoginDialog.css';
 
-// Where the "Forgot your password?" email lands: Supabase signs the reader in from the link, then they pick a new one.
+/**
+ * Shows the page that the reset password email links to. Supabase signs the reader in from the link, and then the reader picks a new password.
+ */
 const ResetPasswordPage = () => {
   const { isAuthenticated } = useAuth();
   const [password, setPassword] = useState('');

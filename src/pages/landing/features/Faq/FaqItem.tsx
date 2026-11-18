@@ -4,7 +4,9 @@ import * as styles from './Faq.css';
 
 type FaqItemProps = { question: string; answer: string };
 
-// a question as a row that opens in place
+/**
+ * Shows a question as a row that opens in place to show its answer.
+ */
 const FaqItem = ({ question, answer }: FaqItemProps) => (
   <details className={styles.item}>
     <summary className={styles.summary}>

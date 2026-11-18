@@ -12,7 +12,11 @@ type ShareCardProps = {
   lazy: boolean;
 };
 
-// the app's day card for one kind of postcard
+/**
+ * Shows the day card of the app for one kind of postcard.
+ * @param shown - If true, the card is the one on top.
+ * @param lazy - If true, the image loads only when it is near the screen.
+ */
 const ShareCard = ({ variant, shown, lazy }: ShareCardProps) => (
   <img
     className={shown ? `${styles.card} ${styles.on}` : styles.card}

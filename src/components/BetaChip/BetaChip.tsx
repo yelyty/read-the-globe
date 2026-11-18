@@ -5,7 +5,9 @@ type BetaChipProps = {
   className?: string;
 };
 
-// "Beta" beside the logo, while the app is still being shaped
+/**
+ * Shows "Beta" beside the logo, while the app is still in beta.
+ */
 const BetaChip = ({ className }: BetaChipProps) => (
   <span className={className ? `${betaChip} ${className}` : betaChip}>
     {m.brand_beta()}

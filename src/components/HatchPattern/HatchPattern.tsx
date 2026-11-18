@@ -7,7 +7,10 @@ type HatchPatternProps = {
   size: number;
 };
 
-// a country with both marks: olive and rust stripes at 45°. Goes inside an SVG's <defs>
+/**
+ * Shows the stripes of a country with both marks: olive and rust stripes at 45°. Put it inside the defs of an SVG.
+ * @param size - The width of one pair of stripes.
+ */
 const HatchPattern = ({ id, size }: HatchPatternProps) => (
   <pattern
     id={id}

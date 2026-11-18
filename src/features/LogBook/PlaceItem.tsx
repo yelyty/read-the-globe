@@ -27,7 +27,11 @@ type PlaceItemProps = {
   onImaginedChange: (event: ChangeEvent<HTMLInputElement>) => void;
 };
 
-// one place in the log form: its name, its country (unless imagined), and the way to remove it
+/**
+ * Shows one place in the log form: its name, its country (if it is not imagined), and the button to remove it.
+ * @param empty - If true, the place is the only row and it is empty.
+ * @param worlds - The imagined worlds of the reader, offered when the place is imagined.
+ */
 const PlaceItem = ({
   placeRow,
   error,

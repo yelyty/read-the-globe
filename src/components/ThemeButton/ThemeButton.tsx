@@ -6,7 +6,10 @@ import * as styles from './ThemeButton.css';
 
 const THEME_KEY = 'rtg-theme';
 
-// index.html reads the saved choice back before paint; this only flips it and saves it
+/**
+ * Shows the button that changes between the light and the dark theme, and saves the choice.
+ * index.html reads the saved choice before the page shows.
+ */
 const ThemeButton = () => {
   const dark = useTheme() === 'dark';
 

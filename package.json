@@ -13,6 +13,7 @@
     "preview": "vite preview",
     "prepare": "husky && pnpm i18n",
     "test": "pnpm i18n && vitest run",
+    "test:coverage": "pnpm i18n && vitest run --coverage",
     "storybook": "pnpm i18n && storybook dev -p 6006",
     "build-storybook": "pnpm i18n && storybook build"
   },
@@ -48,6 +49,7 @@
     "@types/topojson-specification": "1.0.5",
     "@vanilla-extract/vite-plugin": "5.2.3",
     "@vitejs/plugin-react": "6.0.1",
+    "@vitest/coverage-v8": "5.0.5",
     "eslint": "10.13.0",
     "eslint-plugin-jsx-a11y": "6.10.2",
     "eslint-plugin-react-hooks": "7.1.1",

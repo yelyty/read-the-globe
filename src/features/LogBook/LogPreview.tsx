@@ -12,7 +12,10 @@ type LogPreviewProps = {
   names: Record<string, string>;
 };
 
-// Will mark: the countries the book adds to the atlas as it's typed, and any imagined worlds
+/**
+ * Shows Will mark: the countries the book adds to the atlas while the reader types, and its imagined worlds.
+ * If there is nothing to mark, it shows nothing.
+ */
 const LogPreview = ({ marks, imagined, names }: LogPreviewProps) => {
   const preview = Object.entries(marks);
 

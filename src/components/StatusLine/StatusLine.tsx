@@ -7,7 +7,10 @@ type StatusLineProps = {
   className?: string;
 };
 
-// the line beside a form's button that says what just happened; a live region, so screen readers hear it too
+/**
+ * Shows the line beside the button of a form that tells what just happened.
+ * It is a live region, so screen readers read it too.
+ */
 const StatusLine = ({ children, className }: StatusLineProps) => (
   <p
     className={className ? `${statusLine} ${className}` : statusLine}

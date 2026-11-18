@@ -20,9 +20,11 @@ import WorldDialog from './WorldDialog';
 
 const OPEN = 'rtg-beyond';
 
-/* Imagined worlds sit below the map: a margin of places no map has, each with how many books went there.
-   A world can be saved before any book goes there, and removed (with Undo) until one does. The fold is
-   remembered on this device. */
+/**
+ * Shows the imagined worlds under the map, each with how many books went there.
+ * A world can be saved before a book goes there, and removed (with Undo) until a book does.
+ * This device remembers if the section is folded.
+ */
 const BeyondMap = ({ worlds }: { worlds: WorldRow[] }) => {
   const refresh = useRefresh();
   const status = useStatus();

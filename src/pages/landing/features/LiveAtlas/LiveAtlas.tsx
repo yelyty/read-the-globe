@@ -41,9 +41,10 @@ const ANTARCTICA = '010';
 
 type Ping = { key: string; x: number; y: number };
 
-// Mira's 48 books pin themselves, oldest first, as the map rises through the screen; scrolling back unpins them,
-// down to the first few she starts with.
-// The map itself zooms in and lies flat as it rises. Reduced motion: the finished map, still.
+/**
+ * Shows the map of Mira on the landing. Her 48 books pin themselves, oldest first, while the map rises through the screen.
+ * Scrolling back removes the pins again, down to the first few. With reduced motion, the map shows finished and still.
+ */
 const LiveAtlas = () => {
   const figure = useRef<HTMLElement>(null);
   // the world's shapes are big: fetch them only once the map is a screen away

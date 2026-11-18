@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from 'vite';
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
@@ -20,4 +21,23 @@ export default defineConfig({
       process.env.VITEST ? { unstable_mode: 'transform' } : undefined
     ),
   ],
+  test: {
+    coverage: {
+      provider: 'v8',
+      // the plain-function modules the unit tests cover; hooks and components are checked in Storybook
+      include: ['src/**/*.ts'],
+      exclude: [
+        'src/**/*.test.ts',
+        'src/**/*.css.ts',
+        'src/**/use[A-Z]*.ts',
+        'src/hooks/**',
+        'src/paraglide/**',
+        'src/routeTree.gen.ts',
+        'src/testing/**',
+      ],
+      reporter: ['text-summary', 'html'],
+      // a little under where coverage stands, so CI fails when new code lands without tests
+      thresholds: { statements: 60, branches: 70, functions: 75, lines: 60 },
+    },
+  },
 });

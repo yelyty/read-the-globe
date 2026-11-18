@@ -11,7 +11,9 @@ type SuggestOptionProps = {
   children: ReactNode;
 };
 
-// one suggestion in the menu; the menu itself handles the click
+/**
+ * Shows one suggestion in the menu of Suggest. The menu handles the click.
+ */
 const SuggestOption = ({ id, index, active, children }: SuggestOptionProps) => (
   <li
     id={id}

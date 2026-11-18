@@ -9,6 +9,9 @@ import * as styles from '../HomePage.css';
 
 type RecentReadsProps = { books: BookEntry[]; names: Record<string, string> };
 
+/**
+ * Shows the recent reads on Home, with a link to the Shelf.
+ */
 const RecentReads = ({ books, names }: RecentReadsProps) => {
   return (
     <section className={styles.section} aria-labelledby="recent-title">

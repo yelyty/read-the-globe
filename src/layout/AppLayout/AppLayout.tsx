@@ -19,6 +19,10 @@ const TITLES: Record<string, () => string> = {
   '/app/postcard': m.title_postcard,
 };
 
+/**
+ * Shows the layout of the signed-in app: the header, the page, the footer, and Log a book.
+ * It sets the title of the browser tab for each page, and keeps the book that was just pinned, for the map of Home.
+ */
 const AppLayout = () => {
   const landing = useState<Landing | null>(null);
 

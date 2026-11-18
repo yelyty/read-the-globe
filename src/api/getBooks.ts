@@ -6,6 +6,10 @@ type BookRow = Omit<BookEntry, 'author'> & {
   authorCountry: Country | null;
 };
 
+/**
+ * Gets the books of a reader, with their author, places, and goals. The newest read come first.
+ * The function throws an error if the books cannot be read.
+ */
 async function getBooks(userId: string): Promise<BookEntry[]> {
   const { data: books, error } = await supabase
     .from('books')

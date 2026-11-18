@@ -18,7 +18,10 @@ export type Backup = {
   worlds?: World[];
 };
 
-// throws when any part can't be read, so nothing is cleared or replaced on a partial copy
+/**
+ * Gets a full copy of the atlas: the books, goals, next reads, and saved worlds.
+ * The function throws an error if it cannot read one of the parts, so a partial copy is never used.
+ */
 export async function getBackup(userId: string): Promise<Backup> {
   const [books, goals, next, worlds] = await Promise.all([
     getBooks(userId),
@@ -38,7 +41,11 @@ export async function getBackup(userId: string): Promise<Backup> {
   };
 }
 
-// a reading list in, all or nothing; books already on the shelf (same title and author) are skipped
+/**
+ * Adds the books of a reading list to the shelf. The import adds all the books or none of them.
+ * The import skips books that are already on the shelf, with the same title and author.
+ * @returns The number of books added and the number skipped, or a message that the import failed.
+ */
 export async function importBooks(
   books: ImportedBook[]
 ): Promise<Made<{ added: number; duplicates: number }>> {
@@ -52,6 +59,10 @@ export async function importBooks(
     : made(done.data as { added: number; duplicates: number });
 }
 
+/**
+ * Replaces the atlas with a backup.
+ * @returns Null if the backup was restored. If not, a message that it could not be restored.
+ */
 export async function restoreBackup(backup: Backup): Promise<Problem> {
   const { error } = await supabase.rpc('restore_backup', { p_backup: backup });
 
@@ -60,6 +71,10 @@ export async function restoreBackup(backup: Backup): Promise<Problem> {
   return error ? m.data_restore_failed() : null;
 }
 
+/**
+ * Removes the books, goals, next reads, and saved worlds. The account stays.
+ * @returns Null if the atlas was cleared. If not, a message that it could not be cleared.
+ */
 export async function clearAtlas(): Promise<Problem> {
   const { error } = await supabase.rpc('clear_atlas');
 
@@ -68,8 +83,12 @@ export async function clearAtlas(): Promise<Problem> {
   return error ? m.account_clear_failed() : null;
 }
 
-/** Undo for Clear this atlas: the atlas as it was comes back, and anything logged since the clear stays beside it
-    (a goal of the same name keeps the one from before). Returns what went wrong, or null. */
+/**
+ * Undoes Clear this atlas. The atlas comes back as it was, and anything logged since the clear stays.
+ * If a goal from before has the same name as a new goal, the function keeps the goal from before.
+ * @param was - The atlas before the clear.
+ * @returns Null if the atlas was restored. If not, a message that it could not be restored.
+ */
 export async function restoreCleared(
   was: Backup,
   userId: string

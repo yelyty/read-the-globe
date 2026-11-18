@@ -31,7 +31,10 @@ const KINDS = [
 
 export type Kind = (typeof KINDS)[number];
 
-// The kinds of postcard on the left; the app's card for the chosen kind on the right (always the day cards).
+/**
+ * Shows the Share section: the kinds of postcard on the left, and the card of the chosen kind on the right.
+ * Screen readers hear which card shows after the reader picks one.
+ */
 const Share = ({ onSignUp }: { onSignUp: () => void }) => {
   const [kind, setKind] = useState<string>(KINDS[0].id);
   // screen readers hear which card now shows; empty until the reader picks

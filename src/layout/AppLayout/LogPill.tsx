@@ -12,8 +12,10 @@ const END_SLACK = 8;
 // near the top the pill always stays
 const TOP_ZONE = 120;
 
-// phones: the floating Log a book pill steps aside while the reader scrolls down, so it never sits on the row
-// being read, and comes back on the way up or at the end of the page
+/**
+ * Shows the floating Log a book button on phones.
+ * It moves away while the reader scrolls down, and comes back when the reader scrolls up or reaches the end of the page.
+ */
 const LogPill = () => {
   const [away, setAway] = useState(false);
 

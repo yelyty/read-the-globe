@@ -19,6 +19,10 @@ const toRow = (goal: GoalInput) => ({
 const message = (error: { code?: string; message: string } | null) =>
   error?.code === '23505' ? m.goals_err_taken() : (error?.message ?? null);
 
+/**
+ * Gets the goals of a reader, oldest first.
+ * The function throws an error if the goals cannot be read.
+ */
 export async function getGoals(userId: string): Promise<Goal[]> {
   const { data, error } = await supabase
     .from('goals')
@@ -36,13 +40,20 @@ export async function getGoals(userId: string): Promise<Goal[]> {
   return data ?? [];
 }
 
+/**
+ * Adds a goal. The goal keeps only the field its kind uses: a continent, countries, or a number of books.
+ * @returns Null if the goal was added. If a goal with this name exists, a message that says so. If not, the error message.
+ */
 export async function addGoal(goal: GoalInput): Promise<Problem> {
   const { error } = await supabase.from('goals').insert(toRow(goal));
 
   return message(error);
 }
 
-// ponytail: the dialog locks the kind (REACT-TODO 14.10), so the same row shape works for edits
+/**
+ * Saves changes to a goal. The goal keeps only the field its kind uses.
+ * @returns Null if the goal was saved. If a goal with this name exists, a message that says so. If not, the error message.
+ */
 export async function updateGoal(
   id: number,
   goal: GoalInput
@@ -55,12 +66,21 @@ export async function updateGoal(
   return message(error);
 }
 
+/**
+ * Removes a goal.
+ * @returns Null if the goal was removed. If not, the error message.
+ */
 export async function deleteGoal(id: number): Promise<Problem> {
   const { error } = await supabase.from('goals').delete().eq('id', id);
 
   return error?.message ?? null;
 }
 
+/**
+ * Marks a goal as reached on a date, or as not reached.
+ * @param date - The day the goal was reached, YYYY-MM-DD, or null for not reached.
+ * @returns Null if the goal was saved. If not, the error message.
+ */
 export async function markReached(
   id: number,
   date: string | null
@@ -73,6 +93,10 @@ export async function markReached(
   return error?.message ?? null;
 }
 
+/**
+ * Sets the books that count for a goal. The list replaces the books the goal had before.
+ * @returns Null if the books were saved. If not, the error message.
+ */
 export async function setGoalBooks(
   goalId: number,
   bookIds: number[]
@@ -85,6 +109,10 @@ export async function setGoalBooks(
   return error?.message ?? null;
 }
 
+/**
+ * Brings back a removed goal, with the date it was reached and its books. Undo uses it.
+ * @returns Null if the goal came back. If not, the error message.
+ */
 export async function restoreGoal(
   goal: Goal,
   bookIds: number[]

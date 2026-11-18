@@ -3,6 +3,9 @@ import { Link } from '@tanstack/react-router';
 import * as styles from '../../../layout/PublicLayout/PublicLayout.css';
 import PublicLayout from '../../../layout/PublicLayout/PublicLayout';
 
+/**
+ * Shows the About page. The page is in English.
+ */
 const AboutPage = () => (
   <PublicLayout
     title="About"

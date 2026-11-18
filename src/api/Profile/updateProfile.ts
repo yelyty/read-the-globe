@@ -3,7 +3,11 @@ import { supabase } from '../../utils/supabase';
 import { m } from '../../paraglide/messages.js';
 import type { Problem } from '../outcome';
 
-// only the fields given are written, so the Postcard page can save its set-up without touching the name
+/**
+ * Saves changes to the profile of a reader.
+ * The function writes only the fields in `changes`, so the Postcard page can save its set-up without changing the name.
+ * @returns Null if the changes were saved. If the handle is already taken, a message that says so. If not, the error message.
+ */
 export async function updateProfile(
   userId: string,
   changes: Partial<Pick<Profile, 'displayName' | 'handle'>> & {

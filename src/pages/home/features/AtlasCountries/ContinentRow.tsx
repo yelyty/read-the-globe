@@ -19,7 +19,11 @@ type ContinentRowProps = {
   onFocusCountry?: (code: string, el: Element | null) => void;
 };
 
-// a continent under the map: a peek of its shapes while folded, its country stamps once opened
+/**
+ * Shows a continent under the map. When it is closed, it shows some of its shapes. When it is open, it shows its country stamps.
+ * @param codes - The countries, sorted by name.
+ * @param open - If true, the continent starts open.
+ */
 const ContinentRow = ({
   continent,
   codes,

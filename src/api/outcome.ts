@@ -12,6 +12,14 @@ export type Problem = string | null;
 export type Made<T> =
   { problem: null; data: T } | { problem: string; data?: undefined };
 
+/**
+ * Makes the result of a change that went through.
+ * @param data - What the change made, for example the id of a saved book.
+ */
 export const made = <T>(data: T): Made<T> => ({ problem: null, data });
 
+/**
+ * Makes the result of a change that did not go through.
+ * @param problem - What went wrong, in the reader's words.
+ */
 export const failed = (problem: string): Made<never> => ({ problem });

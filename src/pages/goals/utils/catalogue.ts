@@ -76,6 +76,9 @@ const CATALOGUE_NAME: Record<string, () => string> = {
   'Written before 1900': m.goals_cat_before_1900,
 };
 
+/**
+ * Gets the name of a goal. A catalogue goal shows in the language of the reader. A goal of the reader keeps its name.
+ */
 export const goalName = (name: string) => CATALOGUE_NAME[name]?.() ?? name;
 
 export const KIND_GROUP: Record<GoalKind, () => string> = {

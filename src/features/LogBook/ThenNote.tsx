@@ -17,7 +17,14 @@ type ThenNoteProps = {
   onChange: () => void;
 };
 
-// Under a country field: what an old or dependent name counts as, and for a state that split, a choice of today's countries
+/**
+ * Shows a note under a country field: what an old or dependent name counts as.
+ * For a state that split, the note has a choice of today's countries.
+ * @param typed - The name the reader typed.
+ * @param pick - The country picked for a state that split.
+ * @param open - If true, the choice shows again after Change.
+ * @param author - If true, the note is for the country of the author.
+ */
 const ThenNote = ({
   typed,
   pick,

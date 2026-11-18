@@ -27,7 +27,12 @@ type ToggleGroupProps<T> = {
   children?: ReactNode;
 };
 
-// a row of buttons where one is pressed: pick one of a few, each choice applies at once
+/**
+ * Shows a row of buttons where one is pressed. Each choice applies at once.
+ * @param value - The pressed choice.
+ * @param labelledBy - The id of the element that names the group.
+ * @param label - The name of the group, if no element names it.
+ */
 const ToggleGroup = <T extends string | number>({
   value,
   options,

@@ -26,6 +26,9 @@ type NextToReadProps = {
   goals: Goal[];
 };
 
+/**
+ * Shows the Next to read tab: the form to add a book, and the list of books to read next.
+ */
 const NextToRead = ({
   items,
   setItems,

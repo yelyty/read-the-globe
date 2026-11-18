@@ -14,7 +14,9 @@ type EmptyStateProps = {
   className?: string;
 };
 
-// what a page shows before it has anything in it: a drawing, a heading, a line, and the way to begin
+/**
+ * Shows what a page has before it has any content: a drawing, a heading, a line of text, and the actions to begin.
+ */
 const EmptyState = ({
   art,
   title,

@@ -14,6 +14,9 @@ import LanguagePicker from '../../components/LanguagePicker/LanguagePicker';
 import { menuRow } from '../../components/LanguagePicker/LanguagePicker.css';
 import * as styles from './AccountMenu.css';
 
+/**
+ * Shows the account menu in the header, with a link to the Account page and Sign out.
+ */
 const AccountMenu = () => {
   const [open, setOpen] = useState(false);
   const root = useRef<HTMLDivElement>(null);

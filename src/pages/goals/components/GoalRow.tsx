@@ -41,7 +41,10 @@ type GoalRowProps = {
   arriving?: boolean;
 };
 
-// One goal, as in the app mock: its plate (or shelf), name, kind, count, the road to the flag, and actions
+/**
+ * Shows one goal: its plate (or shelf), name, kind, count, the road to the flag, and its actions.
+ * @param arriving - If true, the goal has just been reached, so it plays the arrival once.
+ */
 const GoalRow = ({
   goal,
   progress: progress,

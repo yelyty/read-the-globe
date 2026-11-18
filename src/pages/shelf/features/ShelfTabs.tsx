@@ -12,7 +12,11 @@ type ShelfTabsProps = {
   nextCount: number;
 };
 
-// folder tabs: the open one is the page colour, so it joins the shelf below
+/**
+ * Shows the folder tabs of the Shelf. The open tab is the color of the page, so it joins the shelf below.
+ * @param readCount - The number of books read.
+ * @param nextCount - The number of books to read next.
+ */
 const ShelfTabs = ({ tab, readCount, nextCount }: ShelfTabsProps) => {
   const navigate = useNavigate();
 
