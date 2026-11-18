@@ -1,6 +1,9 @@
 # Read The Globe
 
 [![Test](https://github.com/yelyty/read-the-globe/actions/workflows/test.yml/badge.svg)](https://github.com/yelyty/read-the-globe/actions/workflows/test.yml)
+[![React](https://img.shields.io/github/package-json/dependency-version/yelyty/read-the-globe/react?logo=react&label=React&color=4A6A40)](https://react.dev)
+![Languages: English, Czech, Ukrainian](https://img.shields.io/badge/languages-EN%20%C2%B7%20CS%20%C2%B7%20UK-C7A536)
+[![License: source-available](https://img.shields.io/badge/license-source--available-8B3A33)](LICENSE)
 
 Read The Globe is a reading log with a world map.
 
