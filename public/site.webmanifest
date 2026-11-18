@@ -1,0 +1,19 @@
+{
+  "name": "Read The Globe",
+  "short_name": "Read The Globe",
+  "description": "A reading log with a world map.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFD",
+  "theme_color": "#FFFFFD",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
