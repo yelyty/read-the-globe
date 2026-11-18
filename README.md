@@ -128,3 +128,7 @@ messages/      Translations (en, cs, uk)
 ## Map data
 
 The country shapes are from Natural Earth, through world-atlas. These data are in the public domain.
+
+## License
+
+This repository is public, but it is not open source. You can read the source code. You cannot run, copy, change or use the code without written permission. Refer to [LICENSE](LICENSE) for the full terms.
