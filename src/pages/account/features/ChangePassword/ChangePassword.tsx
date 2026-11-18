@@ -4,10 +4,10 @@ import { LockKeyIcon } from '@phosphor-icons/react';
 import { changePassword } from '../../../../auth/session';
 import Field from '../../../../components/Field/Field';
 import Hint from '../../../../components/Hint/Hint';
-import { Button } from '../../../../components/Button/Button';
+import Button from '../../../../components/Button/Button';
 import { m } from '../../../../paraglide/messages.js';
-import AccountSection from '../../components/AccountSection';
 import StatusLine from '../../../../components/StatusLine/StatusLine';
+import AccountSection from '../../components/AccountSection';
 import * as styles from '../../AccountPage.css';
 import { validate, type Errors } from './validate';
 

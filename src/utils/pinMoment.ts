@@ -55,12 +55,12 @@ export type PinMoment = {
  * @param before - The marks of the atlas without the book.
  * @param after - The marks of the atlas with the book.
  */
-export function pinMoment(
+export const pinMoment = (
   book: BookEntry,
   before: Marks,
   after: Marks,
   names: Record<string, string>
-): PinMoment {
+): PinMoment => {
   const name = (code: string) => names[code] ?? code;
   const was = new Set(counted(before));
   const fresh = counted(after).filter((code) => !was.has(code));
@@ -147,4 +147,4 @@ export function pinMoment(
       : m.pin_pinned({ title: book.title, stop, where }),
     returning: !first && !moved.length,
   };
-}
+};

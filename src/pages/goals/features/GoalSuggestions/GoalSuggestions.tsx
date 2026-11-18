@@ -5,7 +5,7 @@ import type { Goal } from '../../../../types';
 import type { Marks } from '../../../../utils/atlasMarks';
 import { m } from '../../../../paraglide/messages.js';
 import { withBold } from '../../../../utils/text';
-import { Button } from '../../../../components/Button/Button';
+import Button from '../../../../components/Button/Button';
 import { goalName, type CatalogueGoal } from '../../utils/catalogue';
 import type { Progress } from '../../utils/goalProgress';
 import * as styles from '../../GoalsPage.css';

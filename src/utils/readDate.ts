@@ -30,19 +30,19 @@ export const byLogged = (left: BookEntry, right: BookEntry) =>
  * @param today - The day today, YYYY-MM-DD.
  * @returns Null if the month is empty or did not change. Today if the month is this month. If not, the 1st of the month.
  */
-export function readOnFor(
+export const readOnFor = (
   mon: string,
   year: string,
   startYm: string,
   today: string
-): string | null {
+): string | null => {
   if (!mon && !year) return null;
   const ym = `${year || isoYear(today)}-${mon || '01'}`;
 
   if (ym === startYm) return null;
 
   return ym === isoYearMonth(today) ? today : `${ym}-01`;
-}
+};
 
 /**
  * Gets today in the time zone of the reader, YYYY-MM-DD.

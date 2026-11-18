@@ -14,7 +14,7 @@ type AddFromLink = {
 };
 
 /** ?add=<slug>: a Journal article's "Add this goal" lands here and adds it once, or shows it if it's already there */
-export function useAddFromLink({ goals, add, focusGoal }: AddFromLink) {
+export const useAddFromLink = ({ goals, add, focusGoal }: AddFromLink) => {
   const { add: slug } = route.useSearch();
   const navigate = useNavigate();
   const handled = useRef<string | null>(null);
@@ -33,4 +33,4 @@ export function useAddFromLink({ goals, add, focusGoal }: AddFromLink) {
 
     add(entry);
   });
-}
+};

@@ -8,12 +8,12 @@ import {
 
 import type { BookEntry, Goal } from '../../../../types';
 import { getBackup } from '../../../../api/data/data';
-import { Button } from '../../../../components/Button/Button';
+import Button from '../../../../components/Button/Button';
 import { button } from '../../../../components/Button/Button.css';
 import { m } from '../../../../paraglide/messages.js';
+import StatusLine from '../../../../components/StatusLine/StatusLine';
 import * as styles from '../../AccountPage.css';
 import AccountSection from '../../components/AccountSection';
-import StatusLine from '../../../../components/StatusLine/StatusLine';
 import {
   bookCount,
   exportBackup,

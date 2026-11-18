@@ -230,11 +230,11 @@ export const splitStates = (typed: string) => {
  * @param names - The names of the map, by country code, in the language of the reader.
  * @param pick - The country the reader picked for a state that split.
  */
-export function countryFrom(
+export const countryFrom = (
   typed: string,
   names: Record<string, string>,
   pick?: string
-): CountryMatch | null {
+): CountryMatch | null => {
   const raw = tidy(typed);
   const key = raw.toLowerCase();
 
@@ -269,4 +269,4 @@ export function countryFrom(
         : null;
 
   return to ? { code: to, then: raw } : null;
-}
+};

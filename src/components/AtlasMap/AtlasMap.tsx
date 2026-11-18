@@ -26,7 +26,7 @@ import { m } from '../../paraglide/messages.js';
 import HatchPattern from '../HatchPattern/HatchPattern';
 import { HATCH_MAP } from '../HatchPattern/hatchSize';
 import * as styles from './AtlasMap.css';
-import { Drawn } from './Drawn';
+import Drawn from './Drawn';
 import MapCountry from './MapCountry';
 
 const projection = flatProjection();

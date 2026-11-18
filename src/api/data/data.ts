@@ -2,7 +2,7 @@ import type { BookEntry, Goal, NextRead, World } from '../../types';
 import type { ImportedBook } from '../../utils/readingListCsv';
 import { supabase } from '../../utils/supabase';
 import { m } from '../../paraglide/messages.js';
-import getBooks from '../getBooks';
+import { getBooks } from '../books/books';
 import { getGoals } from '../goals/goals';
 import { getNextReads } from '../nextReads/nextReads';
 import { getWorlds } from '../worlds/worlds';
@@ -22,7 +22,7 @@ export type Backup = {
  * Gets a full copy of the atlas: the books, goals, next reads, and saved worlds.
  * The function throws an error if it cannot read one of the parts, so a partial copy is never used.
  */
-export async function getBackup(userId: string): Promise<Backup> {
+export const getBackup = async (userId: string): Promise<Backup> => {
   const [books, goals, next, worlds] = await Promise.all([
     getBooks(userId),
     getGoals(userId),
@@ -39,16 +39,16 @@ export async function getBackup(userId: string): Promise<Backup> {
     nextReads: next.items,
     worlds,
   };
-}
+};
 
 /**
  * Adds the books of a reading list to the shelf. The import adds all the books or none of them.
  * The import skips books that are already on the shelf, with the same title and author.
  * @returns The number of books added and the number skipped, or a message that the import failed.
  */
-export async function importBooks(
+export const importBooks = async (
   books: ImportedBook[]
-): Promise<Made<{ added: number; duplicates: number }>> {
+): Promise<Made<{ added: number; duplicates: number }>> => {
   if (!books.length) return made({ added: 0, duplicates: 0 });
   const done = await supabase.rpc('import_books', { p_books: books });
 
@@ -57,31 +57,31 @@ export async function importBooks(
   return done.error
     ? failed(m.data_import_failed())
     : made(done.data as { added: number; duplicates: number });
-}
+};
 
 /**
  * Replaces the atlas with a backup.
  * @returns Null if the backup was restored. If not, a message that it could not be restored.
  */
-export async function restoreBackup(backup: Backup): Promise<Problem> {
+export const restoreBackup = async (backup: Backup): Promise<Problem> => {
   const { error } = await supabase.rpc('restore_backup', { p_backup: backup });
 
   if (error) console.error(error);
 
   return error ? m.data_restore_failed() : null;
-}
+};
 
 /**
  * Removes the books, goals, next reads, and saved worlds. The account stays.
  * @returns Null if the atlas was cleared. If not, a message that it could not be cleared.
  */
-export async function clearAtlas(): Promise<Problem> {
+export const clearAtlas = async (): Promise<Problem> => {
   const { error } = await supabase.rpc('clear_atlas');
 
   if (error) console.error(error);
 
   return error ? m.account_clear_failed() : null;
-}
+};
 
 /**
  * Undoes Clear this atlas. The atlas comes back as it was, and anything logged since the clear stays.
@@ -89,10 +89,10 @@ export async function clearAtlas(): Promise<Problem> {
  * @param was - The atlas before the clear.
  * @returns Null if the atlas was restored. If not, a message that it could not be restored.
  */
-export async function restoreCleared(
+export const restoreCleared = async (
   was: Backup,
   userId: string
-): Promise<Problem> {
+): Promise<Problem> => {
   const since = await getBackup(userId).catch(() => null);
 
   if (!since) return m.data_restore_failed();
@@ -108,4 +108,4 @@ export async function restoreCleared(
     nextReads: [...(since.nextReads ?? []), ...(was.nextReads ?? [])],
     worlds: [...(was.worlds ?? []), ...(since.worlds ?? [])],
   });
-}
+};

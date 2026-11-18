@@ -11,14 +11,14 @@ import {
 import { useRefresh } from '../../../../hooks/useReader';
 import { useStatus } from '../../../../hooks/useStatus';
 import { useUndo } from '../../../../hooks/useUndo';
-import { Button } from '../../../../components/Button/Button';
+import Button from '../../../../components/Button/Button';
 import Dialog from '../../../../components/Dialog/Dialog';
 import DialogActions from '../../../../components/Dialog/DialogActions';
 import DialogText from '../../../../components/Dialog/DialogText';
 import { m } from '../../../../paraglide/messages.js';
+import * as styles from '../../AccountPage.css';
 import { atlasWords } from '../YourData/readingList/readingList';
 import KeepCopy from '../DeleteAccount/KeepCopy';
-import * as styles from '../../AccountPage.css';
 
 type ClearAtlasProps = {
   userId: string;

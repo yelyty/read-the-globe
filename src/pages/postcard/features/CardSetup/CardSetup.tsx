@@ -6,7 +6,6 @@ import ToggleGroup, {
   type ToggleOption,
 } from '../../../../components/ToggleGroup/ToggleGroup';
 import { goalName } from '../../../goals/utils/catalogue';
-import * as styles from './CardSetup.css';
 import {
   KIND_KEYS,
   PAPER_KEYS,
@@ -19,6 +18,7 @@ import {
   type Kind,
   type Options,
 } from '../../utils/drawPostcard';
+import * as styles from './CardSetup.css';
 import CardStyle from './CardStyle';
 
 type CardSetupProps = {

@@ -6,7 +6,7 @@ import type { Tip } from '../components/MapTip';
  * Keeps the tip of the map: it shows over a country after a mouse move, a tap, or keyboard focus.
  * It closes on Escape, or on a press anywhere outside the map and the country list.
  */
-export function useMapTip() {
+export const useMapTip = () => {
   const [tip, setTip] = useState<Tip | null>(null);
 
   useEffect(() => {
@@ -48,4 +48,4 @@ export function useMapTip() {
   );
 
   return { tip, setTip, tipAt, focusCountry };
-}
+};

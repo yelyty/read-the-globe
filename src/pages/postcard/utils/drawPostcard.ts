@@ -200,7 +200,7 @@ export type Options = {
  * @param spec - The card type: the author countries, the story countries, or a year.
  * @returns The country codes in order, and the number of countries, continents, and books.
  */
-export function postcardStats(books: BookEntry[], marks: Marks, spec: Spec) {
+export const postcardStats = (books: BookEntry[], marks: Marks, spec: Spec) => {
   const known = (code: string | null | undefined): code is string =>
     !!code && !!marks[code] && spec.count(marks[code]) > 0;
 
@@ -217,7 +217,7 @@ export function postcardStats(books: BookEntry[], marks: Marks, spec: Spec) {
       .size,
     books: books.filter((book) => spec.codes(book).some(known)).length,
   };
-}
+};
 
 /* ---------- the card ---------- */
 /**
@@ -276,7 +276,7 @@ type Draw = {
  * The card shows the title, a stamp for each country, and the numbers below the stamps.
  * The function loads the fonts before it draws.
  */
-export async function drawPostcard({
+export const drawPostcard = async ({
   canvas,
   names,
   countries,
@@ -285,7 +285,7 @@ export async function drawPostcard({
   logo,
   year,
   ...all
-}: Draw) {
+}: Draw) => {
   await Promise.all(
     [`400 60px ${SERIF}`, `italic 400 60px ${SERIF}`, `500 20px ${SANS}`].map(
       (font) => document.fonts.load(font).catch(() => {})
@@ -691,4 +691,4 @@ export async function drawPostcard({
       align: 'right',
     }
   );
-}
+};

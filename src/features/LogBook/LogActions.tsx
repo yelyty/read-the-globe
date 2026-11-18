@@ -1,7 +1,7 @@
 import { PushPinIcon, TrashIcon } from '@phosphor-icons/react';
 
 import { m } from '../../paraglide/messages.js';
-import { Button } from '../../components/Button/Button';
+import Button from '../../components/Button/Button';
 import * as styles from './LogBook.css';
 
 type LogActionsProps = {

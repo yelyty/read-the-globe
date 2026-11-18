@@ -8,15 +8,17 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
  * @param variant - The look of the button, for example contained.
  * @param underline - If true, the text is underlined.
  */
-export function Button({
+const Button = ({
   variant = 'contained',
   underline,
   className,
   ...props
-}: ButtonProps) {
+}: ButtonProps) => {
   const classes = [button({ variant, underline }), className]
     .filter(Boolean)
     .join(' ');
 
   return <button className={classes} {...props} />;
-}
+};
+
+export default Button;

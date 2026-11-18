@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { DownloadSimpleIcon } from '@phosphor-icons/react';
 
 import type { BookEntry } from '../../../../types';
-import { Button } from '../../../../components/Button/Button';
+import Button from '../../../../components/Button/Button';
 import StatusLine from '../../../../components/StatusLine/StatusLine';
 import { m } from '../../../../paraglide/messages.js';
 import { exportReadingList } from '../YourData/readingList/readingList';

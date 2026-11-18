@@ -15,10 +15,10 @@ export const LandingContext = createContext<
  * Log a book sets the book, and Home flies its pins and then clears it.
  * The function throws an error outside AppLayout.
  */
-export function useLanding() {
+export const useLanding = () => {
   const landing = useContext(LandingContext);
 
   if (!landing) throw new Error('useLanding must be used within AppLayout');
 
   return landing;
-}
+};

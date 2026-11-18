@@ -14,10 +14,10 @@ export const StatusContext = createContext<((status: Status) => void) | null>(
  * Gets the function that shows a message in the status bar.
  * The function throws an error outside StatusBar.
  */
-export function useStatus() {
+export const useStatus = () => {
   const show = useContext(StatusContext);
 
   if (!show) throw new Error('useStatus must be used within StatusBar');
 
   return { show };
-}
+};

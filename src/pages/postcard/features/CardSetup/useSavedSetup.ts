@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-import { updateProfile } from '../../../../api/Profile/updateProfile';
+import { updateProfile } from '../../../../api/profile/profile';
 import type { CardOptions } from '../../utils/cardOptions';
 
 // the set-up is saved once the reader stops changing it for this long
@@ -12,7 +12,7 @@ const SAVE_DELAY_MS = 600;
  * @param options - The current set-up of the card.
  * @param userId - The ID of the reader. If there is no ID, the hook does not save.
  */
-export function useSavedSetup(options: CardOptions, userId?: string) {
+export const useSavedSetup = (options: CardOptions, userId?: string) => {
   const savedJson = useRef(JSON.stringify(options));
 
   useEffect(() => {
@@ -30,4 +30,4 @@ export function useSavedSetup(options: CardOptions, userId?: string) {
 
     return () => clearTimeout(timer);
   }, [options, userId]);
-}
+};

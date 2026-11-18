@@ -39,13 +39,13 @@ type CardWords = {
  * For an atlas card, it gives the type of card and its numbers.
  * If a goal has no progress, the text is for an atlas card.
  */
-export function cardLabel({
+export const cardLabel = ({
   goal,
   progress,
   yearSummary,
   kind,
   stats,
-}: CardWords) {
+}: CardWords) => {
   if (goal && progress) {
     const of =
       goal.kind === 'theme' ? m.postcard_of_books : m.postcard_of_countries;
@@ -68,7 +68,7 @@ export function cardLabel({
     books: m.count_book({ count: stats.books }),
     continents: m.count_continent({ count: stats.continents }),
   });
-}
+};
 
 /**
  * Gets the file name for the saved card.

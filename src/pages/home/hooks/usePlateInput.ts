@@ -25,14 +25,14 @@ const codeAt = (target: EventTarget) => {
 
 /** The map plate's mouse and touch shortcuts: tips under the pointer, a marked country's click to its shelf,
     an unmarked one's to Log a book, anywhere else to the full screen map. */
-export function usePlateInput({
+export const usePlateInput = ({
   marks,
   full,
   setFull,
   tip,
   setTip,
   tipAt,
-}: PlateInput) {
+}: PlateInput) => {
   const pointer = useRef<'mouse' | 'touch'>('mouse');
   const navigate = useNavigate();
 
@@ -112,4 +112,4 @@ export function usePlateInput({
     handlePlateClick,
     handleFullToggle,
   };
-}
+};

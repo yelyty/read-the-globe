@@ -5,7 +5,7 @@ import {
 } from '@phosphor-icons/react';
 
 import { m } from '../../../../paraglide/messages.js';
-import { Button } from '../../../../components/Button/Button';
+import Button from '../../../../components/Button/Button';
 import ButtonLink from '../../../../components/Button/ButtonLink';
 import { button } from '../../../../components/Button/Button.css';
 import EmptyState from '../../../../components/EmptyState/EmptyState';

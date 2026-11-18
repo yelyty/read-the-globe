@@ -14,17 +14,17 @@ import { getLocale } from '../../../paraglide/runtime.js';
 import { m } from '../../../paraglide/messages.js';
 import { romanDate } from '../../../utils/formatDate';
 import { withBold, byName } from '../../../utils/text';
-import { Button } from '../../../components/Button/Button';
+import Button from '../../../components/Button/Button';
 import ButtonLink from '../../../components/Button/ButtonLink';
 import { CATALOGUE, goalName } from '../utils/catalogue';
 import { isDone, type Progress } from '../utils/goalProgress';
 import { MAX_ROUTE_STOPS } from '../utils/plate';
 import * as styles from '../GoalsPage.css';
 import Compass from './Compass';
-import { GoalPlate } from './GoalPlate';
+import GoalPlate from './GoalPlate';
 import GoalShelf from './GoalShelf';
 import Postmark from './Postmark';
-import { GoalRoute } from './GoalsRoute';
+import GoalsRoute from './GoalsRoute';
 
 const PERCENT = 100;
 
@@ -151,7 +151,7 @@ const GoalRow = ({
             )}
           </div>
         </div>
-        <GoalRoute done={progress.done} total={progress.total} theme={theme} />
+        <GoalsRoute done={progress.done} total={progress.total} theme={theme} />
         <div className={styles.goalFoot}>
           {!theme && (
             <details className={styles.goalTodo}>

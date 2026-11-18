@@ -13,7 +13,7 @@ import {
 } from '../../../../utils/continents';
 import { m } from '../../../../paraglide/messages.js';
 import Select from '../../../../components/Select/Select';
-import { Button } from '../../../../components/Button/Button';
+import Button from '../../../../components/Button/Button';
 import { goalName } from '../../../goals/utils/catalogue';
 import * as styles from '../../ShelfPage.css';
 import type { Mark, Sort } from '../../utils/shelfQuery';

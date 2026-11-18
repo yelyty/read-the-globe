@@ -29,13 +29,13 @@ const LAND_PAUSE_MS = 260;
  * and the country takes its mark when the pin lands. The count, the line, and the goal news wait for the last pin.
  * With reduced motion, everything lands at once.
  */
-export function usePinFlight(
+export const usePinFlight = (
   plateRef: RefObject<HTMLDivElement | null>,
   /** the book just pinned, until its pins have landed */
   flying: Landing | null,
   /** the pins have landed: the moment is over */
   onDone: () => void
-) {
+) => {
   const [landed, setLanded] = useState<Set<string>>(() => new Set());
   const [said, setSaid] = useState('');
   // counts each landing, so the cartouche can animate its numbers
@@ -131,4 +131,4 @@ export function usePinFlight(
   }, [plateRef, flying, onDone, say, navigate]);
 
   return { landed, said, tick };
-}
+};

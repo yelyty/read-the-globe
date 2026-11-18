@@ -11,7 +11,7 @@ import type { BookEntry, Goal } from '../../../../types';
 import type { Marks } from '../../../../utils/atlasMarks';
 import { m } from '../../../../paraglide/messages.js';
 import { useStatus } from '../../../../hooks/useStatus';
-import { Button } from '../../../../components/Button/Button';
+import Button from '../../../../components/Button/Button';
 import ButtonLink from '../../../../components/Button/ButtonLink';
 import { button } from '../../../../components/Button/Button.css';
 import ImportCsv from '../../../account/features/YourData/ImportCsv/ImportCsv';

@@ -30,7 +30,7 @@ let stamped: Promise<Map<string, Country>> | null = null;
 /**
  * Loads the shapes of the map once. Each country also gets the frame of its biggest landmass.
  */
-export function loadCountries() {
+export const loadCountries = () => {
   stamped ??= worldShapes().then((shapes) => {
     const countries = new Map<string, Country>();
 
@@ -66,12 +66,12 @@ export function loadCountries() {
   });
 
   return stamped;
-}
+};
 
 // a ring's size and frame on the flat map. ponytail: planar on purpose; d3's spherical area and bounds read
 // a ring that wraps the date line (Russia's mainland) as nearly the whole globe. A ring that runs on past 180°
 // (into Chukotka) is unwrapped first, so its frame sits on the mainland and the far end is clipped by the stamp.
-function flatBox([outer]: Position[][]) {
+const flatBox = ([outer]: Position[][]) => {
   const lons = outer.map((point) => point[0]);
   const wraps = Math.max(...lons) - Math.min(...lons) > HALF_WORLD_DEG;
 
@@ -99,13 +99,16 @@ function flatBox([outer]: Position[][]) {
   ];
 
   return { area: Math.abs(area) / 2, box };
-}
+};
 
 /**
  * Gets the outline of a country as SVG, framed on its biggest landmass like a stamp. The Shelf shows it in the country header.
  * @returns The SVG path, its viewBox, and its width.
  */
-export function countryStamp({ shape, main: [[x0, y0], [x1, y1]] }: Country) {
+export const countryStamp = ({
+  shape,
+  main: [[x0, y0], [x1, y1]],
+}: Country) => {
   const pad = Math.max(x1 - x0, y1 - y0) * OUTLINE_PAD;
 
   const viewBox = [x0 - pad, y0 - pad, x1 - x0 + pad * 2, y1 - y0 + pad * 2]
@@ -117,4 +120,4 @@ export function countryStamp({ shape, main: [[x0, y0], [x1, y1]] }: Country) {
     viewBox,
     width: x1 - x0 + pad * 2,
   };
-}
+};

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 /** The log form's errors: one per field, a line for the whole form, and the duplicate the reader was warned about. */
-export function useLogErrors() {
+export const useLogErrors = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState('');
   // the id of the book this one looks like; a second Pin with it set saves anyway
@@ -34,4 +34,4 @@ export function useLogErrors() {
     fix,
     forgetDup,
   };
-}
+};

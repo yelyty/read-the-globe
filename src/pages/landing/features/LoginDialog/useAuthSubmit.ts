@@ -6,7 +6,7 @@ import type { AuthMode, Values } from './validate';
 
 /** Sends the form to the account service: a reset link, a log in, or a sign up, and says how it went. A session,
     if there is one afterwards, takes the reader to /app from the page. */
-export function useAuthSubmit() {
+export const useAuthSubmit = () => {
   const [pending, setPending] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -56,4 +56,4 @@ export function useAuthSubmit() {
   };
 
   return { pending, formError, notice, clearMessages, send };
-}
+};

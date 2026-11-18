@@ -21,11 +21,11 @@ export type GoalProblem = { text: string; at?: string } | null;
 const MIN_COUNTRIES = 2;
 
 /** checks the form against the reader's other goals; `goal` is the one being edited, null for a new one */
-export function validateGoal(
+export const validateGoal = (
   fields: GoalFields,
   goal: Goal | null,
   goals: Goal[]
-): GoalProblem {
+): GoalProblem => {
   const trimmed = fields.name.trim();
 
   if (!trimmed) return { text: m.goals_err_name(), at: 'g-name' };
@@ -47,10 +47,10 @@ export function validateGoal(
   if (!goal && goals.length >= MAX_GOALS) return { text: m.goals_full() };
 
   return null;
-}
+};
 
 /** the form as a goal to save; a catalogue goal's name left as shown keeps its stored English name */
-export function goalDraft(fields: GoalFields, goal: Goal | null): GoalDraft {
+export const goalDraft = (fields: GoalFields, goal: Goal | null): GoalDraft => {
   const trimmed = fields.name.trim();
   const { kind } = fields;
 
@@ -64,4 +64,4 @@ export function goalDraft(fields: GoalFields, goal: Goal | null): GoalDraft {
         ? Math.min(MAX_THEME_TARGET, Math.round(Number(fields.target)))
         : null,
   };
-}
+};

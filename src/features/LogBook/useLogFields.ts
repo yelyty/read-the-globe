@@ -25,7 +25,7 @@ type LogFieldsStart = {
 
 /** The log form's fields, started from the book being edited, a Next to read item, a click on the map or a
     world's box; and what's typed, read into countries (log): the preview, and on Pin the errors or the book. */
-export function useLogFields({
+export const useLogFields = ({
   book,
   nextItem,
   setIn,
@@ -35,7 +35,7 @@ export function useLogFields({
   goals,
   fix,
   forgetDup,
-}: LogFieldsStart) {
+}: LogFieldsStart) => {
   const name = (code?: string | null) => (code ? (names[code] ?? '') : '');
 
   const countries = useMemo(
@@ -164,4 +164,4 @@ export function useLogFields({
     handleAuthorPick,
     handleAuthorChoiceReopen,
   };
-}
+};

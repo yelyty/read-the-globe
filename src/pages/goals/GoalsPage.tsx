@@ -14,7 +14,7 @@ import { useGoalList } from './hooks/useGoalList';
 import { useReachedStamps } from './hooks/useReachedStamps';
 import GoalRow from './components/GoalRow';
 import GoalSuggestions from './features/GoalSuggestions/GoalSuggestions';
-import GoalDialog from './features/GoalsDialog/GoalsDialog';
+import GoalsDialog from './features/GoalsDialog/GoalsDialog';
 import BooksDialog from './features/BooksDialog/BooksDialog';
 import * as styles from './GoalsPage.css';
 
@@ -122,7 +122,7 @@ const GoalsPage = () => {
       )}
 
       {editing && (
-        <GoalDialog
+        <GoalsDialog
           goal={editing === 'new' ? null : editing}
           goals={goals}
           names={names}

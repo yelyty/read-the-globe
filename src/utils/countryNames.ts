@@ -16,7 +16,7 @@ export const englishName = (code: string) => english?.[code];
  * The function loads the names once, and then gives them from its cache.
  * @returns The names, by country code.
  */
-export async function getCountryNames(): Promise<Record<string, string>> {
+export const getCountryNames = async (): Promise<Record<string, string>> => {
   if (cache) return cache;
 
   // the map's own names, so every country it draws has one
@@ -43,4 +43,4 @@ export async function getCountryNames(): Promise<Record<string, string>> {
   );
 
   return cache;
-}
+};

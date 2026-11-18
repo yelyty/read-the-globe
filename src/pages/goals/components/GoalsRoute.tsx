@@ -3,13 +3,13 @@ import type { CSSProperties } from 'react';
 import { MAX_ROUTE_STOPS } from '../utils/plate';
 import * as styles from '../GoalsPage.css';
 
-type GoalRouteProps = { done: number; total: number; theme?: boolean };
+type GoalsRouteProps = { done: number; total: number; theme?: boolean };
 
 /**
  * Shows the road of a goal to its flag. It has one stop for each book, up to MAX_ROUTE_STOPS. It is decorative.
  * @param theme - If true, the goal is a theme goal.
  */
-export const GoalRoute = ({ done, total, theme }: GoalRouteProps) => {
+const GoalsRoute = ({ done, total, theme }: GoalsRouteProps) => {
   const progress = Math.min(1, total ? done / total : 0);
 
   return (
@@ -50,3 +50,5 @@ export const GoalRoute = ({ done, total, theme }: GoalRouteProps) => {
     </div>
   );
 };
+
+export default GoalsRoute;

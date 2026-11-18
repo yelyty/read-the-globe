@@ -23,11 +23,11 @@ export type Progress = {
 
 /** How far the reader's books go into a goal. A theme counts the books ticked toward it; a region counts the countries
     on the map in that continent, a list goal its own countries, and either is reached when every one is marked. */
-export function goalProgress(
+export const goalProgress = (
   goal: GoalDraft & { id?: number },
   marks: Marks,
   books: BookEntry[]
-): Progress {
+): Progress => {
   if (goal.kind === 'theme') {
     const done = books.filter((book) =>
       book.goals?.some((link) => link.goalId === goal.id)
@@ -44,7 +44,7 @@ export function goalProgress(
   const reached = all.filter((code) => marks[code]);
 
   return { done: reached.length, total: all.length, all, reached };
-}
+};
 
 /**
  * Checks if a goal is reached: it has a target, and the progress is at the target or over it.

@@ -25,7 +25,7 @@ export const markOf = (mark: Mark): MarkWhich =>
  * Gets the marks of the atlas: for each country, the books set there and the books by authors from there.
  * A territory also marks the country it belongs to.
  */
-export function atlasMarks(books: BookEntry[]): Marks {
+export const atlasMarks = (books: BookEntry[]): Marks => {
   const marks: Marks = {};
   const at = (code: string) => (marks[code] ??= { set: [], author: [] });
 
@@ -44,7 +44,7 @@ export function atlasMarks(books: BookEntry[]): Marks {
   }
 
   return marks;
-}
+};
 
 /**
  * Gets the countries that count. A territory has its own shape on the map, but its country is counted instead.
@@ -55,7 +55,7 @@ export const counted = (marks: Marks) =>
 /**
  * Gets the numbers of the atlas: books, countries, countries with a story, countries with an author, and continents.
  */
-export function atlasStats(books: BookEntry[], marks: Marks) {
+export const atlasStats = (books: BookEntry[], marks: Marks) => {
   const codes = counted(marks);
 
   return {
@@ -66,4 +66,4 @@ export function atlasStats(books: BookEntry[], marks: Marks) {
     continents: new Set(codes.map((code) => CONTINENT_OF[code]).filter(Boolean))
       .size,
   };
-}
+};

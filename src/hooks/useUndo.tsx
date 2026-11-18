@@ -43,7 +43,7 @@ export const offerUndo = (
   });
 
 /** offerUndo, wired to the status line and the reader's data */
-export function useUndo() {
+export const useUndo = () => {
   const { show } = useStatus();
   const refresh = useRefresh();
 
@@ -51,4 +51,4 @@ export function useUndo() {
     (change: UndoableChange) => offerUndo(change, { show, refresh }),
     [show, refresh]
   );
-}
+};

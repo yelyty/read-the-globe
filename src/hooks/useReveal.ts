@@ -10,7 +10,7 @@ const canAnimate = () => {
  * Reveals an element once a quater of it is in view.
  * If reduced motion or without IntersectionObserver the element starts revealed.
  */
-export function useReveal<T extends Element>() {
+export const useReveal = <T extends Element>() => {
   const ref = useRef<T>(null);
   const [revealed, setRevealed] = useState(() => !canAnimate());
 
@@ -37,4 +37,4 @@ export function useReveal<T extends Element>() {
   }, [revealed]);
 
   return [ref, revealed] as const;
-}
+};

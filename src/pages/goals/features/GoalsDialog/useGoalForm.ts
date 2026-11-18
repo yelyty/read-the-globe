@@ -28,13 +28,13 @@ type GoalForm = {
 
 /** The goal dialog's form: its fields, the countries picked by name, checking and saving. Any change clears
     the error shown; the error shows next to its field, which takes focus. */
-export function useGoalForm({
+export const useGoalForm = ({
   goal,
   goals,
   names,
   onClose,
   onSaved,
-}: GoalForm) {
+}: GoalForm) => {
   const [kind, setKind] = useState<GoalKind>(goal?.kind ?? 'region');
   // a catalogue goal shows its name in the reader's language; left as it is, it keeps its stored English name
   const [name, setName] = useState(goal ? goalName(goal.name) : '');
@@ -156,4 +156,4 @@ export function useGoalForm({
     handleCountryRemove,
     handleTargetChange,
   };
-}
+};

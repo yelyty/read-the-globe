@@ -30,7 +30,7 @@ type SaveBook = {
 };
 
 /** Pinning the book (or saving the edit), and removing it: the form's submit, its Remove, and the button's words. */
-export function useSaveBook({
+export const useSaveBook = ({
   book,
   nextItem,
   books,
@@ -41,7 +41,7 @@ export function useSaveBook({
   errors: { setErrors, setFormError, dupOk, setDupOk },
   onDone,
   onRemoved,
-}: SaveBook) {
+}: SaveBook) => {
   const [saving, setSaving] = useState(false);
 
   const submit = async (event: SubmitEvent<HTMLFormElement>) => {
@@ -120,4 +120,4 @@ export function useSaveBook({
         : m.log_pin_it();
 
   return { saving, submit, remove, label };
-}
+};

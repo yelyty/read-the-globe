@@ -3,9 +3,9 @@ import { TrashIcon } from '@phosphor-icons/react';
 
 import Field from '../../../../components/Field/Field';
 import { getLocale } from '../../../../paraglide/runtime.js';
-import { deleteAccount } from '../../../../api/Profile/deleteAccount';
+import { deleteAccount } from '../../../../api/profile/profile';
 import type { BookEntry } from '../../../../types';
-import { Button } from '../../../../components/Button/Button';
+import Button from '../../../../components/Button/Button';
 import Dialog from '../../../../components/Dialog/Dialog';
 import DialogActions from '../../../../components/Dialog/DialogActions';
 import DialogText from '../../../../components/Dialog/DialogText';

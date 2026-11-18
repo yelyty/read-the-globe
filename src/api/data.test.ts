@@ -6,8 +6,7 @@ import { m } from '../paraglide/messages.js';
 
 vi.mock('../utils/supabase', () => import('../testing/supabaseStub'));
 
-const { default: getBooks } = await import('./getBooks');
-const { deleteBook, saveBook } = await import('./books/books');
+const { deleteBook, getBooks, saveBook } = await import('./books/books');
 const { sendContactMessage } = await import('./contact/contact');
 const { addWorld, getWorlds, removeWorld } = await import('./worlds/worlds');
 const { getNextReads } = await import('./nextReads/nextReads');

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { Button } from '../Button/Button';
+import Button from '../Button/Button';
 import HilltopSticker from '../Sticker/HilltopSticker';
 import ShelfSticker from '../Sticker/ShelfSticker';
 import EmptyState from './EmptyState';

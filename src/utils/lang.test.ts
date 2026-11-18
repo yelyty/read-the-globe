@@ -10,7 +10,7 @@ const account = vi.hoisted(() => ({
 
 const page = vi.hoisted(() => ({ locale: 'en', set: vi.fn() }));
 
-vi.mock('../api/Profile/accountLang', () => ({
+vi.mock('../api/profile/profile', () => ({
   getAccountLang: account.get,
   saveAccountLang: account.save,
 }));

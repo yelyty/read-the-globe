@@ -11,12 +11,12 @@ import { m } from '../../../paraglide/messages.js';
  * While the pins of a book just pinned are in flight, Home shows the atlas as it was without that book,
  * and each country takes its mark when its pin lands.
  */
-export function useAtlasView(
+export const useAtlasView = (
   books: BookEntry[],
   savedWorlds: World[],
   flying: Landing | null,
   landed: Set<string>
-) {
+) => {
   const marks = useMemo(() => atlasMarks(books), [books]);
 
   const shown = useMemo(
@@ -48,7 +48,10 @@ export function useAtlasView(
     () =>
       shown
         .flatMap((book) => book.places ?? [])
-        .filter((place) => place.lon != null && place.lat != null),
+        .filter(
+          (place) =>
+            typeof place.lon === 'number' && typeof place.lat === 'number'
+        ),
     [shown]
   );
 
@@ -82,4 +85,4 @@ export function useAtlasView(
     caption,
     blank: !shown.length,
   };
-}
+};

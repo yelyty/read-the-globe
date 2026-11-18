@@ -8,7 +8,7 @@ import { useCountries } from '../../../../hooks/useCountries';
 import Select from '../../../../components/Select/Select';
 import Suggest from '../../../../components/Suggest/Suggest';
 import Field from '../../../../components/Field/Field';
-import { Button } from '../../../../components/Button/Button';
+import Button from '../../../../components/Button/Button';
 import EmptyState from '../../../../components/EmptyState/EmptyState';
 import RibbonSticker from '../../../../components/Sticker/RibbonSticker';
 import StatusLine from '../../../../components/StatusLine/StatusLine';

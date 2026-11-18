@@ -7,7 +7,7 @@ import type { Goal, GoalKind } from '../../../../types';
 import type { Continent } from '../../../../utils/continents';
 import { m } from '../../../../paraglide/messages.js';
 import Hint from '../../../../components/Hint/Hint';
-import { Button } from '../../../../components/Button/Button';
+import Button from '../../../../components/Button/Button';
 import Dialog from '../../../../components/Dialog/Dialog';
 import DialogActions from '../../../../components/Dialog/DialogActions';
 import { MAX_THEME_TARGET } from '../../utils/catalogue';
@@ -21,7 +21,7 @@ const NAME_HINT: Record<GoalKind, () => string> = {
   theme: m.goals_cat_translation,
 };
 
-type GoalDialogProps = {
+type GoalsDialogProps = {
   goal: Goal | null;
   goals: Goal[];
   names: Record<string, string>;
@@ -34,13 +34,13 @@ type GoalDialogProps = {
  * @param goal - The goal to edit, or null for a new goal.
  * @param onSaved - Called with the name of the goal after it is saved.
  */
-const GoalDialog = ({
+const GoalsDialog = ({
   goal,
   goals,
   names,
   onClose,
   onSaved,
-}: GoalDialogProps) => {
+}: GoalsDialogProps) => {
   const {
     kind,
     name,
@@ -209,4 +209,4 @@ const GoalDialog = ({
   );
 };
 
-export default GoalDialog;
+export default GoalsDialog;
