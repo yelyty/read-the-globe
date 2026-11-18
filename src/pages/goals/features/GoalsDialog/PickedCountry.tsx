@@ -8,7 +8,9 @@ type PickedCountryProps = {
   onRemove: (code: string) => void;
 };
 
-// a country chosen for the goal, with the way to take it off again
+/**
+ * Shows a country picked for a goal, with a button to remove it.
+ */
 const PickedCountry = ({ code, name, onRemove }: PickedCountryProps) => {
   const handleClick = () => onRemove(code);
 

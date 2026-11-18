@@ -4,7 +4,9 @@ import * as styles from './Sticker.css';
 
 type StickerProps = { children: ReactNode };
 
-// the frame every empty-state drawing shares: 120×100, outlines with round ends, decorative
+/**
+ * Shows the frame of an empty-state drawing: 120 × 100, with round line ends. The drawing is decorative.
+ */
 const Sticker = ({ children }: StickerProps) => (
   <svg
     className={styles.sticker}

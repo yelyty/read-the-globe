@@ -9,10 +9,16 @@ export const CSV_HEAD = ['title', 'author', 'author_country', 'places', 'date'];
 const cell = (value: string) =>
   /[",\n\r]/.test(value) ? `"${value.replace(/"/g, '""')}"` : value;
 
+/**
+ * Makes CSV text from rows. Cells with commas, quotes, or line breaks are quoted.
+ */
 export const toCsv = (rows: string[][]) =>
   rows.map((csvRow) => csvRow.map(cell).join(',')).join('\n') + '\n';
 
-// quoted cells may hold commas, line breaks and "" for a quote; blank lines are dropped
+/**
+ * Reads CSV text into rows. A quoted cell can have commas, line breaks, and "" for a quote.
+ * Blank lines and the byte order mark of Excel are removed.
+ */
 export function parseCsv(text: string): string[][] {
   const rows: string[][] = [];
   let row: string[] = [];
@@ -50,7 +56,10 @@ export function parseCsv(text: string): string[][] {
   return rows.filter((csvRow) => csvRow.some((field) => field.trim()));
 }
 
-// the shelf as rows; an imagined place is written "Middle-earth (imagined)"
+/**
+ * Makes the rows of the reading list, with a header row. An imagined place is written as "Middle-earth (imagined)".
+ * @param names - The country names, by country code.
+ */
 export function readingListRows(
   books: BookEntry[],
   names: Record<string, string>
@@ -91,9 +100,12 @@ export type ImportedBook = {
   places: { name: string; country: string | null; imagined?: boolean }[];
 };
 
-/* The books in a reading list, and how many rows can't be one: each needs a title, an author and a country the map
-   knows. ponytail: a place is a country, "City, Country" or an imagined world; a bare city is dropped, as there is
-   no gazetteer yet */
+/**
+ * Gets the books in a reading list, and the number of rows that cannot be a book.
+ * Each book needs a title, an author, and a country that the map knows.
+ * A place is a country, "City, Country", or an imagined world. A city without a country is dropped.
+ * @param names - The country names, by country code.
+ */
 export function booksFromCsv(
   text: string,
   names: Record<string, string>

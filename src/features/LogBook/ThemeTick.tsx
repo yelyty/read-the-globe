@@ -9,7 +9,9 @@ type ThemeTickProps = {
   onTick: (themeId: number, checked: boolean) => void;
 };
 
-// one theme goal the book can count toward
+/**
+ * Shows one theme goal that the book can count for, with a checkbox.
+ */
 const ThemeTick = ({ theme, checked, onTick }: ThemeTickProps) => {
   const handleChange = (event: ChangeEvent<HTMLInputElement>) =>
     onTick(theme.id, event.target.checked);

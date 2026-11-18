@@ -3,6 +3,11 @@ import { button, type ButtonVariants } from './Button.css';
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
   ButtonVariants;
 
+/**
+ * Shows a button in the style of the app.
+ * @param variant - The look of the button, for example contained.
+ * @param underline - If true, the text is underlined.
+ */
 export function Button({
   variant = 'contained',
   underline,

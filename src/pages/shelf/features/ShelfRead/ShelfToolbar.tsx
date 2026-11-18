@@ -33,7 +33,9 @@ type ShelfToolbarProps = {
   country?: string;
 };
 
-// search, the filters (behind one button on a phone), the sort, and Clear
+/**
+ * Shows the search, the filters (behind one button on a phone), the sort, and Clear.
+ */
 const ShelfToolbar = ({
   filters,
   searchRef,

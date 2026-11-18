@@ -14,6 +14,9 @@ import Share from './features/Share/Share';
 import Faq from './features/Faq/Faq';
 import Closing from './features/Closing/Closing';
 
+/**
+ * Shows the landing page, with the sign-in dialog. A reader who is signed in goes to the app.
+ */
 const LandingPage = () => {
   const [auth, setAuth] = useState<AuthMode | null>(null);
   const openLogIn = useCallback(() => setAuth('login'), []);

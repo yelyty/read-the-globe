@@ -12,8 +12,10 @@ import * as styles from './StatusBar.css';
 const SHORT = 4500;
 const LONG = 10000; // a line with Undo or See it stays long enough to press it
 
-// One status line for the whole app, with an optional action. It floats so it is seen wherever the reader is
-// on the page, and waits while the pointer or keyboard focus is on it.
+/**
+ * Shows one status line for the whole app, with an optional action, for example Undo.
+ * It floats, so the reader sees it anywhere on the page. It stays while the pointer or the keyboard focus is on it.
+ */
 const StatusBar = ({ children }: { children: ReactNode }) => {
   const [status, setStatus] = useState<Status | null>(null);
   const timer = useRef(0);

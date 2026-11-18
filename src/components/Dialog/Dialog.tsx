@@ -33,8 +33,14 @@ type DialogProps = Omit<
   variant?: keyof typeof styles.dialog;
 };
 
-// one modal for the whole app: the native <dialog>, opened with showModal() so focus is trapped,
-// the page goes inert and Esc works without any listener of ours
+/**
+ * Shows a modal dialog. The app uses this one dialog for all its modals.
+ * It uses the native dialog element, so focus stays inside, the page behind is inert, and Esc closes it.
+ * @param open - If true, the dialog is open. The parent controls it.
+ * @param onClose - Called when the reader closes the dialog with ×, Esc, or a click on the backdrop.
+ * @param dirty - If true, Esc and the backdrop ask before the dialog closes. × still closes it at once.
+ * @param backdropClose - If false, a click on the backdrop does not close the dialog.
+ */
 const Dialog = ({
   open,
   onClose,

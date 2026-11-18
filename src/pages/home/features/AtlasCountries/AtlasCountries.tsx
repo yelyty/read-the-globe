@@ -18,6 +18,11 @@ type AtlasCountriesProps = {
   onFocusCountry?: (code: string, el: Element | null) => void;
 };
 
+/**
+ * Shows the countries of the atlas under the map, grouped by continent.
+ * A territory is not listed, because it counts under its country.
+ * @param onFocusCountry - Called when a country gets keyboard focus, to show the tip of the map. It gets null when the focus goes.
+ */
 const AtlasCountries = ({
   marks,
   names,

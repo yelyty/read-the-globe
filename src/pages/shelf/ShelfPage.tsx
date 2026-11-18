@@ -12,7 +12,9 @@ import ShelfTabs from './features/ShelfTabs';
 
 const shelfRoute = getRouteApi('/app/shelf');
 
-// the Shelf: what's been read, and what's to read next, in two folder tabs
+/**
+ * Shows the Shelf page: the books read and the books to read next, in two folder tabs.
+ */
 const ShelfPage = () => {
   const books = useBooks();
   const goals = useGoals();

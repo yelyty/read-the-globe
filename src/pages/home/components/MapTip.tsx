@@ -24,8 +24,11 @@ const SHOWN = 4;
 
 type MapTipProps = { tip: Tip; marks: Marks; names: Record<string, string> };
 
-/* Hovering (or tapping, or focusing) a country shows a small card: a marked one's books with cover, title,
-   author and why each marks it; an unmarked one's name and what a click does. */
+/**
+ * Shows a small card over a country after a hover, a tap, or keyboard focus.
+ * For a marked country, the card shows its books, with why each book marks it.
+ * For an unmarked country, it shows the name and what a click does.
+ */
 const MapTip = ({ tip, marks, names }: MapTipProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const mark = marks[tip.code];

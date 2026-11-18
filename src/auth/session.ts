@@ -12,6 +12,9 @@ export interface Reader {
   createdAt: string;
 }
 
+/**
+ * Gets the reader from a Supabase user: the id, the email, the name given at sign-up, and the date the account was made.
+ */
 export const toReader = (user: User): Reader => ({
   id: user.id,
   email: user.email ?? null,
@@ -29,6 +32,10 @@ let seeding: Promise<void> | undefined;
 
 export type AuthProblem = 'wrong-credentials' | 'email-taken' | 'failed';
 
+/**
+ * Signs a reader in with an email and a password, and then uses the language saved on the account.
+ * @returns Null if the reader is signed in. If not, 'wrong-credentials' or 'failed'.
+ */
 export async function signIn(
   email: string,
   password: string
@@ -54,6 +61,11 @@ export async function signIn(
   }
 }
 
+/**
+ * Makes a new account. The confirmation email links back to the app.
+ * @param details - The email, the password, the name, and if the new atlas gets example books.
+ * @returns The problem, if any, and if the reader must confirm the email before signing in.
+ */
 export async function signUp(details: {
   email: string;
   password: string;
@@ -88,6 +100,10 @@ export async function signUp(details: {
   }
 }
 
+/**
+ * Adds the example books to the atlas, if the reader asked for them at sign-up. Then the wish is removed.
+ * If the function is called again while it runs, it does not add the books again.
+ */
 export function seedIfWished(user: User): Promise<void> {
   if (user.user_metadata?.[SEED_FLAG] !== true) return Promise.resolve();
 
@@ -101,7 +117,11 @@ export function seedIfWished(user: User): Promise<void> {
   return seeding;
 }
 
-// Always the same neutral answer, so the form never tells whether an email has an account.
+/**
+ * Sends an email with a link to reset the password.
+ * The answer is the same if the email has no account, so the form never tells who has an account.
+ * @returns Null, or a message to try again.
+ */
 export async function sendPasswordReset(email: string): Promise<Problem> {
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${window.location.origin}/reset-password`,
@@ -114,10 +134,17 @@ export async function sendPasswordReset(email: string): Promise<Problem> {
     : m.common_try_again();
 }
 
+/**
+ * Signs the reader out.
+ */
 export async function signOut(): Promise<void> {
   await supabase.auth.signOut();
 }
 
+/**
+ * Saves the name of the reader.
+ * @returns Null if the name was saved. If not, a message that it could not be saved.
+ */
 export async function updateDisplayName(name: string): Promise<Problem> {
   const { error } = await supabase.auth.updateUser({
     data: { display_name: name },
@@ -126,6 +153,10 @@ export async function updateDisplayName(name: string): Promise<Problem> {
   return error ? m.auth_name_save_failed() : null;
 }
 
+/**
+ * Changes the password of the reader.
+ * @returns Null if the password was changed. If not, a message that tells why, in the reader's words.
+ */
 export async function changePassword(password: string): Promise<Problem> {
   const { error } = await supabase.auth.updateUser({ password });
 

@@ -18,7 +18,9 @@ type CountryShapeProps = {
   height: number;
 };
 
-// One country's outline, filled with its mark from the map: olive, rust, or the hatch for both.
+/**
+ * Shows the outline of a country, filled with its mark from the map: olive, rust, or the stripes for both.
+ */
 const CountryShape = ({ code, mark, width, height }: CountryShapeProps) => {
   const shape = useWorldShapes()?.[code];
   const hatch = useSvgId('hatch');

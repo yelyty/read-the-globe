@@ -23,7 +23,10 @@ type BooksDialogProps = {
   onSaved: (count: number) => void;
 };
 
-// A theme goal's books: search, tick, Save. Ticks are held until Save, so Cancel leaves the goal as it was.
+/**
+ * Shows the books of a theme goal in a dialog: search, tick, and Save.
+ * The ticks are kept until Save, so Cancel leaves the goal as it was.
+ */
 const BooksDialog = ({ goal, books, onClose, onSaved }: BooksDialogProps) => {
   const title = goalName(goal.name);
 

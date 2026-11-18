@@ -34,6 +34,11 @@ type LoginDialogProps = {
   onClose: () => void;
 };
 
+/**
+ * Shows the dialog to sign up, log in, or reset the password.
+ * @param mode - Which form shows, or null when the dialog is closed.
+ * @param onMode - Called to change to another form, for example from Log in to Sign up.
+ */
 const LoginDialog = ({ mode, onMode, onClose }: LoginDialogProps) => {
   const {
     view,

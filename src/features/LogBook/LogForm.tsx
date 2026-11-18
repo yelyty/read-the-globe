@@ -31,6 +31,15 @@ type LogFormProps = {
   onRemoved: (book: BookEntry) => void;
 };
 
+/**
+ * Shows the form of Log a book: the title, the author, the places, when it was read, and the goals.
+ * @param book - The book to edit. Without it, the form adds a new book.
+ * @param nextItem - The next read to log, if the form was opened from the Shelf.
+ * @param setIn - A country to start with as a place.
+ * @param world - An imagined world to start with as a place.
+ * @param onDone - Called after the book is saved, with the message to show and the pins to fly to the map.
+ * @param onRemoved - Called after the book is removed.
+ */
 const LogForm = ({
   book,
   nextItem,

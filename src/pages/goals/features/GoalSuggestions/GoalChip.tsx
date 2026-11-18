@@ -13,7 +13,9 @@ type GoalChipProps = {
   onAdd: (goal: CatalogueGoal) => void;
 };
 
-// a goal under More goals: its name, and how far the reader's books already go into a place goal
+/**
+ * Shows a goal under More goals: its name, and for a place goal, how far the books of the reader already go into it.
+ */
 const GoalChip = ({ goal, progress, disabled, onAdd }: GoalChipProps) => {
   const handleClick = () => onAdd(goal);
 

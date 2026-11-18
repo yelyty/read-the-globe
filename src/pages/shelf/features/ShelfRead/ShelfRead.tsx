@@ -33,7 +33,9 @@ type ShelfReadProps = {
   marks: Marks;
 };
 
-// the Read tab: search and filters, a country's page when ?country= is set, and the books by year
+/**
+ * Shows the Read tab: the search and the filters, the page of a country when ?country= is set, and the books by year.
+ */
 const ShelfRead = ({ books, goals, names, marks }: ShelfReadProps) => {
   const { country, q: linkedQuery } = shelfRoute.useSearch();
   const searchRef = useRef<HTMLInputElement>(null);

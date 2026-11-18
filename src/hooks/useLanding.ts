@@ -10,6 +10,11 @@ export const LandingContext = createContext<
   [Landing | null, (landing: Landing | null) => void] | null
 >(null);
 
+/**
+ * Gets the book that was just pinned on its way to the map of Home, and the function that sets it.
+ * Log a book sets the book, and Home flies its pins and then clears it.
+ * The function throws an error outside AppLayout.
+ */
 export function useLanding() {
   const landing = useContext(LandingContext);
 

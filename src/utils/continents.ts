@@ -23,6 +23,9 @@ const LABEL: Record<Continent, () => string> = {
   AN: m.continent_an,
 };
 
+/**
+ * Gets the name of a continent in the language of the reader.
+ */
 export const continentName = (continent: Continent) => LABEL[continent]();
 
 // prettier-ignore

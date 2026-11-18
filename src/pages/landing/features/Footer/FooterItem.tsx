@@ -6,7 +6,11 @@ type FooterItemProps = { label: string } & (
   { to: LinkProps['to']; href?: never } | { href: string; to?: never }
 );
 
-// a footer link: to another page, or (href) to a section of the landing
+/**
+ * Shows a link of the footer.
+ * @param to - A page of the app.
+ * @param href - A section of the landing. If it is set, it is used in place of `to`.
+ */
 const FooterItem = ({ label, to, href }: FooterItemProps) => (
   <li>
     {href ? (

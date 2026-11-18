@@ -19,6 +19,11 @@ type PublicLayoutProps = {
   children: ReactNode;
 };
 
+/**
+ * Shows the layout of a public page: the header, the page, and the footer. It sets the title and the description of the page.
+ * The header can open the sign-in dialog. After the reader signs in, the app opens.
+ * @param translated - If true, the body is in the language of the reader. If not, it is in English.
+ */
 const PublicLayout = ({
   title,
   description,

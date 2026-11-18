@@ -11,7 +11,11 @@ type TipBookProps = {
   author: boolean;
 };
 
-// a book in a country's tip: its cover, title and author, and why it's there
+/**
+ * Shows a book in the tip of a country: its cover, title, and author, and why it is there.
+ * @param set - If true, the story is set in the country.
+ * @param author - If true, the author is from the country.
+ */
 const TipBook = ({ book, set, author }: TipBookProps) => {
   const swatch =
     set && author

@@ -26,7 +26,10 @@ import LogForm from './LogForm';
 
 const app = getRouteApi('/app');
 
-// ?country=<code> or ?world=<name> starts it with a place there (a click on the map, a world's Log a book set here).
+/**
+ * Shows the Log a book dialog, to add a book or to edit one.
+ * ?country=<code> or ?world=<name> starts the form with a place there, for example after a click on the map.
+ */
 const LogBook = () => {
   const offerUndo = useUndo();
   const { log, edit, next, country, world } = app.useSearch();

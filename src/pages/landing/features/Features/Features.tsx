@@ -27,7 +27,9 @@ const PANELS = [
   },
 ] as const;
 
-// Three colour panels that pile up as you scroll, each with the app's own screen (phone-sized on phones).
+/**
+ * Shows the Features section: three color panels that stack while the reader scrolls, each with a screenshot of the app.
+ */
 const Features = () => {
   const night = useTheme() === 'dark' ? '-night' : '';
 

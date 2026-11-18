@@ -14,7 +14,10 @@ type CountryStampProps = {
   onFocusCountry?: (code: string, el: Element | null) => void;
 };
 
-// one country of the atlas as a stamp: its shape, name and marks, linking to its books on the Shelf
+/**
+ * Shows one country of the atlas as a stamp: its shape, name, and marks. It links to its books on the Shelf.
+ * Only keyboard focus shows the tip of the map.
+ */
 const CountryStamp = ({
   code,
   name,

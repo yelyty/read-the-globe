@@ -5,8 +5,10 @@ export type WorldRow = { name: string; books: BookEntry[]; saved?: World };
 
 const key = (name: string) => name.trim().toLowerCase();
 
-/* Imagined worlds: the books' imagined places grouped by name (any case), then the worlds the reader saved by hand
-   that no book has gone to yet. Most books first, then by name. */
+/**
+ * Gets the imagined worlds: the imagined places of the books, grouped by name, and the worlds the reader saved.
+ * Names match in any case. The worlds with the most books come first, then they are sorted by name.
+ */
 export function worldsOf(books: BookEntry[], saved: World[]): WorldRow[] {
   const by = new Map<string, WorldRow>();
 
@@ -37,5 +39,8 @@ export function worldsOf(books: BookEntry[], saved: World[]): WorldRow[] {
   );
 }
 
+/**
+ * Checks if two names are the same world. Case and spaces at the start and the end do not matter.
+ */
 export const sameWorld = (first: string, second: string) =>
   key(first) === key(second);

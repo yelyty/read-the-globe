@@ -4,6 +4,10 @@ import { supabase } from '../../utils/supabase';
 /** the Postcard page's saved set-up, as stored; the page checks each field before using it */
 export type SavedPostcard = Record<string, unknown> | null;
 
+/**
+ * Gets the profile of a reader: the display name, the handle, the date the account was made, and the saved Postcard set-up.
+ * @returns The profile, or null if the reader has no profile or the profile cannot be read.
+ */
 export async function getProfile(
   userId: string
 ): Promise<(Profile & { postcard: SavedPostcard }) | null> {

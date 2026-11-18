@@ -2,10 +2,15 @@ import { createElement, type ReactNode } from 'react';
 
 import { getLocale } from '../paraglide/runtime.js';
 
-// "hoeg" finds Høeg: accents don't block a match
+/**
+ * Removes accents and makes a text lower case, so a search for "capek" finds Čapek.
+ */
 export const fold = (text: string) =>
   text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
+/**
+ * Makes a text lower case, with the rules of the language of the reader.
+ */
 export const lower = (text: string) => text.toLocaleLowerCase(getLocale());
 
 /** a message's **bold** parts as <b> */

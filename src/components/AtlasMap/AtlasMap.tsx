@@ -78,6 +78,14 @@ const store = {
   },
 };
 
+/**
+ * Shows the world map of the atlas, with each country colored by its marks.
+ * On a phone, the map scrolls sideways. It opens on the part with the most marks, and a hint says that it slides.
+ * @param marks - The marks of each country.
+ * @param dots - The pins that are not on a country, for the places of imagined worlds.
+ * @param show - Which marks to show: all, only stories set there, or only authors from there.
+ * @param caption - What the map shows, for screen readers.
+ */
 const AtlasMap = memo(
   ({
     marks,

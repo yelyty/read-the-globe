@@ -1,23 +1,35 @@
 import type { BookEntry } from '../types';
 import { isoDay, isoYear, isoYearMonth } from './isoDate';
 
-// when a book was read (read_on); a book without one falls back to the day it was logged
+/**
+ * Gets the day a book was read. If the book has no date, the function gives the day it was logged.
+ */
 export const readDate = (book: BookEntry) =>
   book.readOn ?? isoDay(book.createdAt ?? '');
 
-// the year it was read, YYYY
+/**
+ * Gets the year a book was read, YYYY.
+ */
 export const readYear = (book: BookEntry) => isoYear(readDate(book));
 
-// newest read first; ties keep the order they came in
+/**
+ * Sorts books by the date they were read, newest first. Books with the same date keep their order.
+ */
 export const byReadDate = (left: BookEntry, right: BookEntry) =>
   readDate(right).localeCompare(readDate(left));
 
-// most recently logged first, whenever the books were read
+/**
+ * Sorts books by the date they were logged, newest first.
+ */
 export const byLogged = (left: BookEntry, right: BookEntry) =>
   (right.createdAt ?? '').localeCompare(left.createdAt ?? '');
 
-// the log form's month and year as a read_on date: null when untouched or unchanged (save_book keeps the date,
-// today for a new book), today when it is this month, otherwise the 1st of that month
+/**
+ * Gets the read date to save from the month and the year of the log form.
+ * @param startYm - The month the form started with, YYYY-MM.
+ * @param today - The day today, YYYY-MM-DD.
+ * @returns Null if the month is empty or did not change. Today if the month is this month. If not, the 1st of the month.
+ */
 export function readOnFor(
   mon: string,
   year: string,
@@ -32,6 +44,8 @@ export function readOnFor(
   return ym === isoYearMonth(today) ? today : `${ym}-01`;
 }
 
-// the reader's own today, YYYY-MM-DD
+/**
+ * Gets today in the time zone of the reader, YYYY-MM-DD.
+ */
 export const localToday = (date = new Date()) =>
   `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;

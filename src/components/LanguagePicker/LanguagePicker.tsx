@@ -14,7 +14,10 @@ type LanguagePickerProps = {
   labelClassName?: string;
 };
 
-// each language in its own name; picking one reloads the page in it
+/**
+ * Shows a list of the languages of the app, each in its own name. A new language reloads the page in it.
+ * @param label - The label of the list. Without it, the list has no visible label.
+ */
 const LanguagePicker = ({
   label,
   variant = 'compact',

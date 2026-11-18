@@ -13,7 +13,11 @@ type MapCountryProps = {
   landed: boolean;
 };
 
-// one country on the atlas, coloured by its marks
+/**
+ * Shows one country on the map, colored by its marks.
+ * @param open - If true, an unmarked country lifts under the pointer, to invite a book set there.
+ * @param landed - If true, a pin has just landed on the country.
+ */
 const MapCountry = ({ geo, mark, open, landed }: MapCountryProps) => {
   const classes = [
     styles.land,

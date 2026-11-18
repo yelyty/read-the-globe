@@ -13,6 +13,10 @@ import BookPlace from './BookPlace';
 
 type BookRowProps = { book: BookEntry; names: Record<string, string> };
 
+/**
+ * Shows one book in a list: its cover, title, author, places, and imagined worlds.
+ * @param names - The country names, by country code.
+ */
 const BookRow = ({ book, names }: BookRowProps) => {
   const places = (book.places ?? []).filter(
     (place) => !place.imagined && (place.name || place.countryCode)

@@ -1,5 +1,8 @@
 import { m } from '../paraglide/messages.js';
 
+/**
+ * Checks if a value looks like an email address. Spaces at the start and the end are ignored.
+ */
 export const isEmail = (value: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 
@@ -20,6 +23,11 @@ export const MAX_STRENGTH = STRENGTH_LABELS.length - 1;
 /** an index into STRENGTH_LABELS */
 export type Strength = 0 | 1 | 2 | 3 | 4;
 
+/**
+ * Gets the strength of a password, from 0 to 4.
+ * A password under the minimum length is 0. A longer password is 1, plus 1 each for mixed case, a digit, and a symbol.
+ * @returns An index into STRENGTH_LABELS.
+ */
 export const passwordStrength = (password: string): Strength => {
   if (password.length < MIN_PASSWORD_LENGTH) return 0;
   let score = 1;

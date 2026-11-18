@@ -10,6 +10,10 @@ export const StatusContext = createContext<((status: Status) => void) | null>(
   null
 );
 
+/**
+ * Gets the function that shows a message in the status bar.
+ * The function throws an error outside StatusBar.
+ */
 export function useStatus() {
   const show = useContext(StatusContext);
 

@@ -5,6 +5,10 @@ import { supabase } from '../utils/supabase';
 import { AuthContext } from './auth-context';
 import { seedIfWished, toReader, type Reader } from './session';
 
+/**
+ * Gives the auth state to the app, and keeps it up to date when the reader signs in or out.
+ * If a new reader asked for example books, the reader is let in after the books are added, so the atlas never opens empty.
+ */
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<Reader | null>(null);
   const [loading, setLoading] = useState(true);

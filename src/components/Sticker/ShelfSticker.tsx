@@ -1,7 +1,9 @@
 import Sticker from './Sticker';
 import * as styles from './Sticker.css';
 
-// a little shelf waiting for its first books, one gap kept for the next
+/**
+ * Shows a small shelf that waits for its first books, with a gap for the next book.
+ */
 const ShelfSticker = () => (
   <Sticker>
     <path className={styles.shelfPlank} d="M10 82 H 110" />

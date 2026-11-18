@@ -11,7 +11,11 @@ type BookCoverProps = {
   className?: string;
 };
 
-// a book's cloth-bound cover: decorative, the title beside it says which book it is
+/**
+ * Shows the cloth-bound cover of a book. The title and the author always give the same cover.
+ * The cover is decorative. The title beside it tells which book it is.
+ * @param size - The size of the cover, for example in a row of the shelf.
+ */
 const BookCover = ({
   title,
   author = '',

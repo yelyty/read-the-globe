@@ -27,7 +27,9 @@ type NextItemProps = {
   onRemove: (item: NextRead) => void;
 };
 
-// a book to read next: the country it would mark (still pale), what it would count for, Log it and Remove
+/**
+ * Shows a book to read next: the country it would mark (still pale), what it would count for, Log it, and Remove.
+ */
 const NextItem = ({
   item,
   countries,

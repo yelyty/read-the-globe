@@ -20,33 +20,46 @@ const app = getRouteApi('/app');
 export const useReaderId = () =>
   app.useRouteContext({ select: (context) => context.readerId });
 
-// /app's loader has these in the cache before any of its pages show
+/**
+ * Gets the books of the signed-in reader. The loader of /app puts them in the cache before a page shows.
+ */
 export function useBooks() {
   const readerId = useReaderId();
 
   return useSuspenseQuery(booksQuery(readerId)).data;
 }
 
+/**
+ * Gets the goals of the signed-in reader. The loader of /app puts them in the cache before a page shows.
+ */
 export function useGoals() {
   const readerId = useReaderId();
 
   return useSuspenseQuery(goalsQuery(readerId)).data;
 }
 
+/**
+ * Gets the saved worlds of the signed-in reader. The loader of /app puts them in the cache before a page shows.
+ */
 export function useWorlds() {
   const readerId = useReaderId();
 
   return useSuspenseQuery(worldsQuery(readerId)).data;
 }
 
-// the Postcard's loader has this one in the cache
+/**
+ * Gets the profile of the signed-in reader. The loader of the Postcard page puts it in the cache.
+ */
 export function useProfile() {
   const readerId = useReaderId();
 
   return useSuspenseQuery(profileQuery(readerId)).data;
 }
 
-// the Shelf's loader has this one in the cache; setItems changes the cached list in place, without asking again
+/**
+ * Gets the next reads of the signed-in reader. The loader of the Shelf page puts them in the cache.
+ * @returns The list, if it failed to load, and `setItems`, which changes the list in the cache without loading it again.
+ */
 export function useNextReads() {
   const readerId = useReaderId();
   const queryClient = useQueryClient();

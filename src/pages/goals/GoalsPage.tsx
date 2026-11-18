@@ -18,6 +18,9 @@ import GoalDialog from './features/GoalsDialog/GoalsDialog';
 import BooksDialog from './features/BooksDialog/BooksDialog';
 import * as styles from './GoalsPage.css';
 
+/**
+ * Shows the Goals page: the goals of the reader with their progress, and suggestions for new goals.
+ */
 const GoalsPage = () => {
   const books = useBooks();
   const goals = useGoals();

@@ -8,7 +8,10 @@ type SectionLinkProps = {
   onClick?: () => void;
 };
 
-// a link to one of the landing's sections
+/**
+ * Shows a link to one section of the landing.
+ * @param current - If true, the section is on screen now.
+ */
 const SectionLink = ({
   section,
   className,

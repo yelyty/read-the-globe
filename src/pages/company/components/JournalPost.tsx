@@ -7,7 +7,9 @@ export type Post = {
   text: string;
 };
 
-// a post's teaser: its date, title and first lines
+/**
+ * Shows the teaser of a Journal post: its date, title, and first lines.
+ */
 const JournalPost = ({ post }: { post: Post }) => (
   <li className={styles.post}>
     <time dateTime={post.date}>{post.shown}</time>

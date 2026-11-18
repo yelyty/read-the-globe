@@ -18,6 +18,10 @@ type HeaderProps = {
   onSignUp: () => void;
 };
 
+/**
+ * Shows the header of the landing: the logo, the links to the sections, and Log in and Sign up.
+ * On a phone, the links are in a menu. Escape closes the menu.
+ */
 const Header = ({ onLogIn, onSignUp }: HeaderProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLElement>(null);

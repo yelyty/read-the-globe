@@ -37,7 +37,11 @@ type ClosingStampProps = {
   shape?: Feature;
 };
 
-// one stamp scattered round the promise: the country on its disc, its name on hover
+/**
+ * Shows one stamp around the promise: the country on its disc, with its name on hover.
+ * The name shows where it stays inside the section. On a phone, some stamps are hidden.
+ * @param index - The place of the stamp in the list. It sets the delay and how the stamp shows on a phone.
+ */
 const ClosingStamp = ({ stamp, index, label, shape }: ClosingStampProps) => {
   // the ones high up show their name below them, the rest above, so it stays inside the section
   const tipSide = parseFloat(stamp.place.top) < MIDDLE ? 'below' : 'above';

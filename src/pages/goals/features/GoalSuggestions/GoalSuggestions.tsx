@@ -24,7 +24,10 @@ type GoalSuggestionsProps = {
   onNewGoal: () => void;
 };
 
-// Aim for…: the goal to pick first, the destinations the reader is already into, More goals by kind, and Make your own
+/**
+ * Shows Aim for: the goal to pick first, the goals the reader is already into, More goals by kind, and Make your own.
+ * @param full - If true, the reader has the most goals there can be, so nothing more can be added.
+ */
 const GoalSuggestions = ({
   goals,
   marks,

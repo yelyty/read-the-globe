@@ -30,6 +30,10 @@ import { usePlateInput } from './hooks/usePlateInput';
 
 const RECENT = 3;
 
+/**
+ * Shows the Home page: the atlas map, its key and numbers, the countries by continent, the imagined worlds, and the recent reads.
+ * After a book is pinned, the map shows the atlas as it was, and each country takes its mark when its pin lands.
+ */
 const HomePage = () => {
   const [show, setShow] = useState<Show>('all');
   const [full, setFull] = useFullScreen();

@@ -50,8 +50,11 @@ export type PinMoment = {
   returning: boolean;
 };
 
-/* The one authored moment after Pin it: which countries the book adds, and the line that says where you went.
-   before and after are the atlas's marks without and with the book. */
+/**
+ * Gets the moment after Pin it: which countries the book adds, and the line that tells where the reader went.
+ * @param before - The marks of the atlas without the book.
+ * @param after - The marks of the atlas with the book.
+ */
 export function pinMoment(
   book: BookEntry,
   before: Marks,

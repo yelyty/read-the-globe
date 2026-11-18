@@ -14,7 +14,10 @@ type SelectItemProps = {
   onPointerMove: () => void;
 };
 
-// one option in a Select's list; the listbox owns the keys, via aria-activedescendant
+/**
+ * Shows one option in the list of a Select. The list handles the keys, with aria-activedescendant.
+ * @param active - If true, the option has the keyboard focus of the list.
+ */
 const SelectItem = ({
   id,
   label,

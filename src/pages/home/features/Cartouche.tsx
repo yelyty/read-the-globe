@@ -22,6 +22,11 @@ type CartoucheProps = {
   tick: number;
 };
 
+/**
+ * Shows the numbers of the atlas over the map: the countries for the filter, and the imagined worlds.
+ * @param worlds - The number of imagined worlds with books.
+ * @param tick - Goes up when a pinned book lands, so the count ticks.
+ */
 const Cartouche = ({ stats, show, worlds, tick }: CartoucheProps) => {
   const tooltipId = useId();
 

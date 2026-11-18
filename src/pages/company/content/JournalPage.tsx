@@ -23,7 +23,9 @@ const POSTS: Post[] = [
   },
 ];
 
-// ponytail: three teasers, no post pages yet; add a /journal/$post route when there's a post to read
+/**
+ * Shows the Journal page, with the teasers of the posts. The posts have no pages of their own yet.
+ */
 const JournalPage = () => {
   return (
     <PublicLayout

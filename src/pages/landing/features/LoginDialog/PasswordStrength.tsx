@@ -14,7 +14,11 @@ type PasswordStrengthProps = {
   password: string;
 };
 
-// A bar and a word under a new password. The word is always in the DOM, so aria-describedby never points at nothing.
+/**
+ * Shows a bar and a word under a new password, for its strength.
+ * The word is always on the page, so aria-describedby always points to it.
+ * @param id - The id of the word, for the aria-describedby of the password field.
+ */
 const PasswordStrength = ({ id, password }: PasswordStrengthProps) => {
   const strength = passwordStrength(password);
 

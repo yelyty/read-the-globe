@@ -251,7 +251,9 @@ const NUMERIC: Record<string, string> = {
   ZW: '716',
 };
 
-// "pt" or "PT" → "620";
+/**
+ * Gets the numeric code of a country from its two-letter code, for example "pt" or "PT" gives "620". An unknown code gives null.
+ */
 export const toNumeric = (alpha2: string | null | undefined) =>
   (alpha2 && NUMERIC[alpha2.toUpperCase()]) || null;
 
@@ -259,5 +261,7 @@ const ALPHA2 = Object.fromEntries(
   Object.entries(NUMERIC).map(([a2, numeric]) => [numeric, a2])
 );
 
-// "620" → "PT"
+/**
+ * Gets the two-letter code of a country from its numeric code, for example "620" gives "PT". An unknown code gives null.
+ */
 export const toAlpha2 = (numeric: string) => ALPHA2[numeric] ?? null;

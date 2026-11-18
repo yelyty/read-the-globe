@@ -19,7 +19,11 @@ type ShelfEntryProps = {
   onYearToggle: (year: string) => void;
 };
 
-// a book on the shelf, under its year's heading when it's the year's first; hidden while its year is folded
+/**
+ * Shows a book on the shelf. The first book of a year comes under the heading of the year.
+ * The book is hidden while its year is folded.
+ * @param previous - The book before it in the list, to know if it is the first of its year.
+ */
 const ShelfEntry = ({
   book,
   previous,

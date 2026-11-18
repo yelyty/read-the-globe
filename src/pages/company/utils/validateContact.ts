@@ -4,6 +4,10 @@ import { m } from '../../../paraglide/messages.js';
 
 export type Errors = Partial<Record<keyof ContactMessage, string>>;
 
+/**
+ * Checks the fields of the Contact form: a name, an email address, and a message.
+ * @returns An empty object if all fields are correct. If not, the error message for each incorrect field.
+ */
 export const validate = (values: ContactMessage): Errors => {
   const errors: Errors = {};
 

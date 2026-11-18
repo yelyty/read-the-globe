@@ -2,8 +2,10 @@ import { useCallback, useEffect, useState } from 'react';
 
 import type { Tip } from '../components/MapTip';
 
-// the map's tip: shown over a country by the mouse, a tap or the keyboard; it goes on Escape,
-// or a press anywhere but the map and the country list
+/**
+ * Keeps the tip of the map: it shows over a country after a mouse move, a tap, or keyboard focus.
+ * It closes on Escape, or on a press anywhere outside the map and the country list.
+ */
 export function useMapTip() {
   const [tip, setTip] = useState<Tip | null>(null);
 

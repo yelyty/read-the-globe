@@ -21,7 +21,12 @@ type AuthorCountryFieldProps = {
   onPickReopen: () => void;
 };
 
-// Author from: the author's country, with what an old or split name counts as under it
+/**
+ * Shows the Author from field: the country of the author.
+ * Under the field, a note tells what an old or split name counts as, and for a split state, the reader picks today's country.
+ * @param pick - The country picked for a state that split.
+ * @param pickOpen - If true, the choice of countries shows again after Change.
+ */
 const AuthorCountryField = ({
   value,
   error,

@@ -18,6 +18,9 @@ import { validate } from '../utils/validateContact';
 
 const FIELD_ORDER: (keyof ContactMessage)[] = ['name', 'email', 'message'];
 
+/**
+ * Shows the Contact page, with a form to send a message. The form checks the fields when it is sent.
+ */
 const ContactPage = () => {
   const [values, setValues] = useState<ContactMessage>({
     name: '',
