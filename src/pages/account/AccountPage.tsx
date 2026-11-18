@@ -13,6 +13,12 @@ import ClearAtlas from './features/ClearAtlas/ClearAtlas';
 import AccountSection from './components/AccountSection';
 import * as styles from './AccountPage.css';
 
+/**
+ * Shows the Account page.
+ * The page has a section for the details, the language, and the password of the reader.
+ * It also has a section for the data of the atlas, and a section to start again.
+ * If no reader is signed in, the page shows nothing.
+ */
 const AccountPage = () => {
   const { user } = useAuth();
   const books = useBooks();

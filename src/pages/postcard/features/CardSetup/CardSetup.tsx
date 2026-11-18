@@ -6,7 +6,7 @@ import ToggleGroup, {
   type ToggleOption,
 } from '../../../../components/ToggleGroup/ToggleGroup';
 import { goalName } from '../../../goals/utils/catalogue';
-import * as styles from '../../PostCardPage.css';
+import * as styles from './CardSetup.css';
 import {
   KIND_KEYS,
   PAPER_KEYS,
@@ -36,7 +36,12 @@ type CardSetupProps = {
   onChange: (change: Partial<CardOptions>) => void;
 };
 
-// the card's set-up: which card, which countries, the paper, and the folded style
+/**
+ * Shows the set-up controls of the card.
+ * The reader selects the card and the paper.
+ * For an atlas card, the reader also selects the type of countries.
+ * For all cards except a goal card, the Style controls are also available.
+ */
 const CardSetup = ({
   options,
   color,
@@ -47,7 +52,6 @@ const CardSetup = ({
   year,
   onChange,
 }: CardSetupProps) => {
-  // the card picker's value is 'atlas', 'year:<year>' or 'goal:<id>'
   const which = goal ? `goal:${goal.id}` : year ? `year:${year}` : 'atlas';
 
   const handleCardChange = (next: string) => {
@@ -62,8 +66,6 @@ const CardSetup = ({
   const handleKind = (kind: Kind) => onChange({ kind });
   const handlePaper = (paper: Options['paper']) => onChange({ paper });
 
-  /* ---------- lists ---------- */
-  // the card picker: the reading atlas, then each year with books, then each goal reached
   const cardChoices = [
     { value: 'atlas', label: m.postcard_your_reading_atlas() },
     ...years.map((yearOption) => ({

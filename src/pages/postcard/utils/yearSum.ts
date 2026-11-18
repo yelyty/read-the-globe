@@ -6,14 +6,23 @@ import { bookCountries } from '../../../utils/book';
 import { readDate, readYear } from '../../../utils/readDate';
 import { goalName } from '../../goals/utils/catalogue';
 
-// the years that have books, newest first: one year-end card each
+/**
+ * Gets the years that have books, with the newest year first.
+ * Each of these years gets one year-end card. Books without a year are not included.
+ */
 export const bookYears = (books: BookEntry[]) =>
   [...new Set(books.map(readYear).filter((year) => /^\d{4}$/.test(year)))]
     .sort()
     .reverse();
 
-/* The year-end card's one sentence: "2026: 14 countries, 3 continents, 1 Arctic story." The detail is the theme goal the
-   year fed most (on a tie a "Stories set in…" theme, then the goal added first), else how many countries were new. */
+/**
+ * Makes the one-sentence summary of a year-end card, for example "2026: 14 countries, 3 continents, 1 Arctic story."
+ * The detail at the end is the theme goal that got the most books in that year.
+ * If two goals have the same number of books, a "Stories set in…" goal wins. Then the goal that was added first wins.
+ * If no theme goal got books, the detail is the number of countries that are new to the atlas.
+ * This detail shows only if some of the countries are not new.
+ * @returns The books of the year, their country codes, the number of continents, and the sentence.
+ */
 export function yearSum(year: string, books: BookEntry[], goals: Goal[]) {
   const yb = books.filter((book) => readDate(book).startsWith(year));
   const codes = [...new Set(yb.flatMap(bookCountries))];

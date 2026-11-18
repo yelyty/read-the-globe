@@ -115,9 +115,11 @@ describe('downloads', () => {
     exportReadingList([], names);
 
     expect(downloads).toHaveLength(1);
+
     expect(downloads[0].name).toBe(
       'read-the-globe-reading-list-2026-11-17.csv'
     );
+
     expect(downloads[0].type).toBe('text/csv');
     expect(await downloads[0].text).toBe(toCsv(readingListRows([], names)));
   });

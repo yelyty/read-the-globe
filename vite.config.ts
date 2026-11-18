@@ -15,6 +15,9 @@ export default defineConfig({
     }),
     react(),
     paraglideVitePlugin(paraglide),
-    vanillaExtractPlugin(),
+    // tests need the class names, not the stylesheet; the default mode can lose a file's CSS under Vitest
+    vanillaExtractPlugin(
+      process.env.VITEST ? { unstable_mode: 'transform' } : undefined
+    ),
   ],
 });
