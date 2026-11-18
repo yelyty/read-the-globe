@@ -1,9 +1,9 @@
-import { m } from '../../paraglide/messages.js';
-import Field from '../../components/Field/Field';
-import Hint from '../../components/Hint/Hint';
-import MarkDot from '../../components/MarkDot/MarkDot';
-import Suggest from '../../components/Suggest/Suggest';
-import * as styles from './LogBook.css';
+import { m } from '../../../paraglide/messages.js';
+import Field from '../../../components/Field/Field';
+import Hint from '../../../components/Hint/Hint';
+import MarkDot from '../../../components/MarkDot/MarkDot';
+import Suggest from '../../../components/Suggest/Suggest';
+import * as styles from '../LogBook.css';
 import ThenNote from './ThenNote';
 
 type AuthorCountryFieldProps = {

@@ -1,7 +1,7 @@
-import { markWhich } from '../../utils/atlasMarks';
-import { m } from '../../paraglide/messages.js';
-import MarkDot from '../../components/MarkDot/MarkDot';
-import * as styles from './LogBook.css';
+import { markWhich } from '../../../utils/atlasMarks';
+import { m } from '../../../paraglide/messages.js';
+import MarkDot from '../../../components/MarkDot/MarkDot';
+import * as styles from '../LogBook.css';
 
 type MarkPreviewProps = {
   name: string;

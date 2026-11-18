@@ -20,9 +20,9 @@ import { saveBook } from '../../api/books/books';
 import { countryNamesQuery, nextReadsQuery } from '../../api/queries';
 import { worldsOf } from '../../utils/worlds';
 import { m } from '../../paraglide/messages.js';
-import { draftOf } from './bookLog';
+import { draftOf } from './utils/bookLog';
 import * as styles from './LogBook.css';
-import LogForm from './LogForm';
+import LogForm from './components/LogForm';
 
 const app = getRouteApi('/app');
 

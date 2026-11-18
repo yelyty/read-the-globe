@@ -1,16 +1,16 @@
 import type { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import { PlusIcon } from '@phosphor-icons/react';
 
-import { splitStates } from '../../utils/countryFrom';
-import { m } from '../../paraglide/messages.js';
-import * as fieldStyles from '../../components/Field/Field.css';
-import { Button } from '../../components/Button/Button';
-import Hint from '../../components/Hint/Hint';
-import MarkDot from '../../components/MarkDot/MarkDot';
-import * as styles from './LogBook.css';
+import { splitStates } from '../../../utils/countryFrom';
+import { m } from '../../../paraglide/messages.js';
+import * as fieldStyles from '../../../components/Field/Field.css';
+import { Button } from '../../../components/Button/Button';
+import Hint from '../../../components/Hint/Hint';
+import MarkDot from '../../../components/MarkDot/MarkDot';
+import * as styles from '../LogBook.css';
+import { PLACE_KEY, splitPlace } from '../utils/bookLog';
+import { row, type Row } from '../utils/placeRow';
 import PlaceItem from './PlaceItem';
-import { PLACE_KEY, splitPlace } from './bookLog';
-import { row, type Row } from './placeRow';
 
 const MAX_PLACES = 20;
 
