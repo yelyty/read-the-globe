@@ -1,6 +1,6 @@
 import { style } from '@vanilla-extract/css';
 
-import { vars } from '../../styles/theme.css';
+import { fontSize, space, vars } from '../../styles/theme.css';
 import { coarse, hover, phone } from '../../styles/global.css';
 import { wrap } from '../../pages/landing/LandingPage.css';
 
@@ -10,7 +10,7 @@ export const footer = style({
   marginTop: 'auto',
   borderTop: `1px solid ${vars.color.stroke}`,
   fontFamily: vars.font.sans,
-  fontSize: 13.5,
+  fontSize: fontSize.meta,
   color: vars.color.textMuted,
 });
 
@@ -20,10 +20,10 @@ export const row = style([
     display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'baseline',
-    gap: '6px 26px',
-    paddingBlock: '18px 22px',
+    gap: `${space.sp2} ${space.sp5}`,
+    paddingBlock: `${space.sp4} ${space.sp5}`,
     '@media': {
-      [pillFloats]: { paddingBottom: 88 },
+      [pillFloats]: { paddingBottom: space.sp9 },
     },
   },
 ]);
@@ -31,7 +31,7 @@ export const row = style([
 export const links = style({
   display: 'flex',
   flexWrap: 'wrap',
-  gap: '4px 18px',
+  gap: `${space.sp1} ${space.sp4}`,
 });
 
 export const link = style({

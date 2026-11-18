@@ -7,7 +7,6 @@ import { AuthProvider } from './auth/auth.tsx';
 import { queryClient } from './api/queryClient';
 import { App } from './App.tsx';
 import './styles/global.css.ts';
-import './styles/index.css';
 import './styles/theme.css.ts';
 
 createRoot(document.getElementById('root')!).render(

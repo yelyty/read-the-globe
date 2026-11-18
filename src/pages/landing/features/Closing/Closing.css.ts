@@ -5,7 +5,7 @@ import {
   styleVariants,
 } from '@vanilla-extract/css';
 
-import { vars } from '../../../../styles/theme.css';
+import { fontSize, space, vars } from '../../../../styles/theme.css';
 import { easeOut, hover } from '../../../../styles/global.css';
 import { sectionTitle } from '../../LandingPage.css';
 
@@ -35,7 +35,7 @@ export const title = style({
   margin: '0 auto',
   lineHeight: 1.04,
 });
-export const cta = style({ marginTop: 32 });
+export const cta = style({ marginTop: space.sp6 });
 
 // a stamp coming down, no bounce
 const press = keyframes({
@@ -86,13 +86,13 @@ const tipBase = style({
   zIndex: 2,
   width: 'max-content',
   maxWidth: 240,
-  padding: '8px 12px',
+  padding: `${space.sp2} ${space.sp3}`,
   background: vars.color.surface,
   color: vars.color.text,
   border: `1px solid ${vars.color.border}`,
   borderRadius: 8,
   fontFamily: vars.font.sans,
-  fontSize: 15,
+  fontSize: fontSize.body,
   fontWeight: 500,
   lineHeight: 1.3,
   textAlign: 'center',

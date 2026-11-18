@@ -11,6 +11,7 @@ import {
   phone,
   reducedMotion,
 } from '../../styles/global.css';
+import { formError as fieldFormError } from '../../components/Field/Field.css';
 
 const press = {
   selectors: { '&:not(:disabled):active': { transform: 'scale(.97)' } },
@@ -102,10 +103,10 @@ export const full = style({
 
 export const dests = style({
   listStyle: 'none',
-  margin: '16px 0 24px',
+  margin: `${space.sp4} 0 ${space.sp5}`,
   padding: 0,
   display: 'grid',
-  gap: 16,
+  gap: space.sp4,
   gridTemplateColumns: 'repeat(auto-fit, minmax(208px, 1fr))',
 });
 export const dest = style({
@@ -115,7 +116,7 @@ export const dest = style({
   alignItems: 'flex-start',
   width: '100%',
   height: '100%',
-  padding: 16,
+  padding: space.sp4,
   border: 0,
   borderRadius: 16,
   background: goldBand,
@@ -129,7 +130,7 @@ export const dest = style({
 export const destMap = style({
   display: 'block',
   width: '100%',
-  marginBottom: 16,
+  marginBottom: space.sp4,
 });
 export const destName = style({
   fontFamily: vars.font.serif,
@@ -139,7 +140,7 @@ export const destName = style({
   textWrap: 'balance',
 });
 export const destNote = style({
-  marginTop: 4,
+  marginTop: space.sp1,
   fontSize: fontSize.meta,
   color: vars.color.textSecondary,
   fontVariantNumeric: 'tabular-nums',
@@ -147,9 +148,9 @@ export const destNote = style({
 export const destAdd = style({
   display: 'inline-flex',
   alignItems: 'center',
-  gap: 8,
+  gap: space.sp2,
   marginTop: 'auto',
-  paddingTop: 16,
+  paddingTop: space.sp4,
   fontSize: fontSize.body,
   fontWeight: 500,
   color: vars.color.accent,
@@ -161,7 +162,7 @@ export const more = style({ marginTop: 0 });
 globalStyle(`${more} > summary`, {
   display: 'inline-flex',
   alignItems: 'center',
-  gap: 8,
+  gap: space.sp2,
   minHeight: 40,
   cursor: 'pointer',
   listStyle: 'none',
@@ -174,7 +175,7 @@ globalStyle(`${more} > summary::-webkit-details-marker`, { display: 'none' });
 globalStyle(`${more} > summary::before`, caret(7));
 globalStyle(`${more}[open] > summary::before`, { rotate: '45deg' });
 export const moreN = style({ fontWeight: 400 });
-export const group = style({ marginTop: 16 });
+export const group = style({ marginTop: space.sp4 });
 
 globalStyle(`${group} h3`, {
   margin: `0 0 ${space.sp2}`,
@@ -198,9 +199,9 @@ export const chip = style({
   ...press,
   display: 'inline-flex',
   alignItems: 'center',
-  gap: 8,
+  gap: space.sp2,
   minHeight: 40,
-  padding: '8px 16px 8px 8px',
+  padding: `${space.sp2} ${space.sp4} ${space.sp2} ${space.sp2}`,
   borderRadius: 999,
   background: vars.color.background,
   border: `1px solid ${vars.color.border}`,
@@ -224,7 +225,7 @@ globalStyle(`${chip} svg`, {
 });
 
 export const chipNote = style({
-  marginLeft: 4,
+  marginLeft: space.sp1,
   fontSize: fontSize.meta,
   color: vars.color.textMuted,
 });
@@ -336,7 +337,7 @@ export const goalHead = style({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'baseline',
-  gap: 16,
+  gap: space.sp4,
   minWidth: 0,
 });
 export const goalName = style({
@@ -354,7 +355,7 @@ export const goalName = style({
   overflowWrap: 'break-word',
 });
 export const goalMeta = style({
-  margin: '4px 0 0',
+  margin: `${space.sp1} 0 0`,
   fontSize: fontSize.body,
   color: vars.color.textSecondary,
 });
@@ -380,8 +381,8 @@ export const goalReached = style({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'flex-end',
-  gap: 4,
-  marginTop: 4,
+  gap: space.sp1,
+  marginTop: space.sp1,
   fontSize: fontSize.label,
   letterSpacing: 1.2,
   textTransform: 'uppercase',
@@ -410,7 +411,7 @@ export const goalTodo = style({
 globalStyle(`${goalTodo} summary`, {
   display: 'inline-flex',
   alignItems: 'center',
-  gap: 8,
+  gap: space.sp2,
   minHeight: 40,
   cursor: 'pointer',
   listStyle: 'none',
@@ -422,7 +423,7 @@ globalStyle(`${goalTodo} summary::before`, caret(7));
 globalStyle(`${goalTodo}[open] summary::before`, { rotate: '45deg' });
 
 globalStyle(`${goalTodo} p`, {
-  margin: '4px 0 0',
+  margin: `${space.sp1} 0 0`,
   lineHeight: 1.5,
   maxWidth: '62ch',
 });
@@ -431,7 +432,7 @@ globalStyle(`${goalTodo} b`, { fontWeight: 500, color: vars.color.text });
 export const goalActions = style({
   display: 'flex',
   flexWrap: 'wrap',
-  columnGap: 16,
+  columnGap: space.sp4,
   marginLeft: 'auto',
 });
 // Choose books on the left; Edit and Remove goal together on the right
@@ -442,7 +443,7 @@ globalStyle(`${goalActions}:has(${chooseBtn})`, { flex: 1, marginLeft: 0 });
 export const route = style({
   position: 'relative',
   height: 24,
-  marginTop: 16,
+  marginTop: space.sp4,
   '@media': { [phone]: { gridColumn: '1 / -1' } },
 });
 export const routeTheme = style({});
@@ -461,7 +462,7 @@ export const routeFill = style({
   ...road,
   zIndex: 1,
   height: 7,
-  marginTop: -3,
+  marginTop: `calc(${space.sp1} * -1)`,
   borderRadius: 99,
   background: vars.color.primary,
   transform: 'scaleX(var(--p))',
@@ -540,12 +541,12 @@ export const flagCloth = style({
 });
 
 /* ---------- dialog fields ---------- */
-export const field = style({ marginBottom: 16 });
+export const field = style({ marginBottom: space.sp4 });
 export const label = style({
   display: 'block',
-  marginBottom: 8,
+  marginBottom: space.sp2,
   fontFamily: vars.font.sans,
-  fontSize: 15,
+  fontSize: fontSize.body,
   fontWeight: 500,
   lineHeight: 1.2,
   color: vars.color.textSecondary,
@@ -553,12 +554,12 @@ export const label = style({
 export const input = style({
   width: '100%',
   height: 48,
-  padding: '0 16px',
+  padding: `0 ${space.sp4}`,
   borderRadius: 12,
   background: vars.color.background,
   border: `1.5px solid ${vars.color.fieldLine}`,
   fontFamily: vars.font.sans,
-  fontSize: 17,
+  fontSize: fontSize.item,
   color: vars.color.text,
   ':focus': {
     borderColor: vars.color.primary,
@@ -571,18 +572,18 @@ export const input = style({
 
 export const picked = style({
   listStyle: 'none',
-  margin: '8px 0 0',
+  margin: `${space.sp2} 0 0`,
   padding: 0,
   display: 'flex',
   flexWrap: 'wrap',
-  gap: 8,
+  gap: space.sp2,
 });
 
 globalStyle(`${picked} li`, {
   display: 'inline-flex',
   alignItems: 'center',
-  gap: 4,
-  padding: '4px 4px 4px 16px',
+  gap: space.sp1,
+  padding: `${space.sp1} ${space.sp1} ${space.sp1} ${space.sp4}`,
   borderRadius: 999,
   background: vars.color.oliveWash,
   fontSize: fontSize.body,
@@ -603,15 +604,10 @@ globalStyle(`${picked} button`, {
 });
 
 globalStyle(`${picked} svg`, { width: 14, height: 14 });
-export const formError = style({
-  margin: '0 0 16px',
-  padding: '8px 16px',
-  borderRadius: 8,
-  background: vars.color.rustWash,
-  color: vars.color.error,
-  fontSize: 15,
-  fontWeight: 500,
-});
+export const formError = style([
+  fieldFormError,
+  { margin: `0 0 ${space.sp4}` },
+]);
 
 export const search = style({ position: 'relative' });
 
@@ -625,9 +621,9 @@ globalStyle(`${search} svg`, {
   pointerEvents: 'none',
 });
 
-globalStyle(`${search} input`, { paddingLeft: 40 });
+globalStyle(`${search} input`, { paddingLeft: space.sp7 });
 export const picker = style({
-  margin: '16px 0 0',
+  margin: `${space.sp4} 0 0`,
   padding: 0,
   border: 0,
   minWidth: 0,
@@ -636,7 +632,7 @@ export const picker = style({
 globalStyle(`${picker} ul`, {
   listStyle: 'none',
   margin: 0,
-  padding: '4px 0',
+  padding: `${space.sp1} 0`,
   maxHeight: 280,
   overflowY: 'auto',
   overscrollBehavior: 'contain',
@@ -646,9 +642,9 @@ globalStyle(`${picker} ul`, {
 globalStyle(`${picker} label`, {
   display: 'grid',
   gridTemplateColumns: '20px minmax(0, 1fr)',
-  columnGap: 16,
+  columnGap: space.sp4,
   alignItems: 'baseline',
-  padding: '8px 2px',
+  padding: `${space.sp2} 2px`,
   cursor: 'pointer',
 });
 

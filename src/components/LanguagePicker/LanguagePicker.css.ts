@@ -1,17 +1,17 @@
 import { style } from '@vanilla-extract/css';
 
-import { vars } from '../../styles/theme.css';
+import { fontSize, space, vars } from '../../styles/theme.css';
 
 // a row in the account menu: the label, then the picker; its label lines up with the menu items' text (12px in)
 export const menuRow = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  gap: 8,
+  gap: space.sp2,
   minHeight: 40,
-  padding: '0 4px 0 12px',
+  padding: `0 ${space.sp1} 0 ${space.sp3}`,
   fontFamily: vars.font.sans,
-  fontSize: 15,
+  fontSize: fontSize.body,
   fontWeight: 500,
   color: vars.color.textSecondary,
 });

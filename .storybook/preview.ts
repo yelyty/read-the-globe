@@ -2,7 +2,6 @@ import type { Preview } from '@storybook/react-vite';
 
 import { locales } from '../src/paraglide/runtime.js';
 import '../src/styles/global.css.ts';
-import '../src/styles/index.css';
 import '../src/styles/theme.css.ts';
 import { withAppShell } from './withAppShell';
 

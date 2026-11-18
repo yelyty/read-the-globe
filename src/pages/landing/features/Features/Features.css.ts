@@ -6,7 +6,7 @@ import {
 } from '@vanilla-extract/css';
 
 import { band as bandFill } from '../../../../styles/global.css';
-import { vars } from '../../../../styles/theme.css';
+import { space, vars } from '../../../../styles/theme.css';
 import { sectionTitle } from '../../LandingPage.css';
 
 const narrow = 'screen and (max-width: 799px)';
@@ -14,7 +14,7 @@ const narrow = 'screen and (max-width: 799px)';
 const stacking = 'screen and (min-width: 800px) and (min-height: 640px)';
 
 /* the band: a wave down into the grey, then three colour panels */
-export const band = style({ marginTop: 96, scrollMarginTop: 80 });
+export const band = style({ marginTop: space.sp9, scrollMarginTop: 80 });
 
 export const wave = style({
   display: 'block',
@@ -38,7 +38,7 @@ export const title = style({
 });
 export const sub = style({
   maxWidth: '32em',
-  margin: '16px auto 0',
+  margin: `${space.sp4} auto 0`,
   textAlign: 'center',
   color: vars.color.textSecondary,
   textWrap: 'pretty',
@@ -46,9 +46,9 @@ export const sub = style({
 
 export const panels = style({
   display: 'grid',
-  gap: 32,
-  marginTop: 56,
-  '@media': { [stacking]: { gap: 64, paddingBottom: 64 } },
+  gap: space.sp6,
+  marginTop: space.sp8,
+  '@media': { [stacking]: { gap: space.sp8, paddingBottom: space.sp8 } },
 });
 
 // room after the last panel, so it pins under the header like the others before the pile scrolls away
@@ -65,7 +65,7 @@ const panelBase = style({
   display: 'flex',
   flexDirection: 'column',
   height: 760,
-  padding: '56px 64px 0',
+  padding: `${space.sp8} ${space.sp8} 0`,
   borderRadius: 32,
   overflow: 'hidden',
   background: 'var(--pb)',
@@ -77,7 +77,11 @@ const panelBase = style({
       // every pinned panel ends at the same line, so the pile leaves as one (2 = the last panel's --i)
       marginBottom: 'calc((2 - var(--i)) * 24px)',
     },
-    [narrow]: { height: 'auto', minHeight: 760, padding: '40px 24px 0' },
+    [narrow]: {
+      height: 'auto',
+      minHeight: 760,
+      padding: `${space.sp7} ${space.sp5} 0`,
+    },
   },
 });
 
@@ -146,10 +150,13 @@ export const panelText = style({
   display: 'grid',
   gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
   alignItems: 'end',
-  gap: '16px 48px',
-  paddingBottom: 40,
+  gap: `${space.sp4} ${space.sp7}`,
+  paddingBottom: space.sp7,
   '@media': {
-    [narrow]: { gridTemplateColumns: 'minmax(0, 1fr)', paddingBottom: 32 },
+    [narrow]: {
+      gridTemplateColumns: 'minmax(0, 1fr)',
+      paddingBottom: space.sp6,
+    },
   },
 });
 
@@ -173,7 +180,7 @@ export const shot = style({
   position: 'relative',
   flex: '1 1 0',
   minHeight: 0,
-  padding: '8px 8px 0',
+  padding: `${space.sp2} ${space.sp2} 0`,
   overflow: 'hidden',
   background: '#1E1A12',
   borderRadius: '16px 16px 0 0',

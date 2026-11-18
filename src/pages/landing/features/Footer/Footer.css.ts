@@ -1,15 +1,12 @@
 import { style } from '@vanilla-extract/css';
 
-import { vars } from '../../../../styles/theme.css';
+import { fontSize, space, vars } from '../../../../styles/theme.css';
 import { phone } from '../../LandingPage.css';
 
 const tablet = 'screen and (max-width: 999px)';
 
-export const wrap = style({
-  maxWidth: 1240,
-  marginInline: 'auto',
-  paddingInline: 'clamp(18px, 4vw, 40px)',
-});
+// the landing's own width
+export { wrap } from '../../LandingPage.css';
 
 export const footer = style({
   background: vars.color.primaryHover,
@@ -20,8 +17,8 @@ export const footer = style({
 export const footerGrid = style({
   display: 'grid',
   gridTemplateColumns: '1.5fr 1fr 1fr 1fr',
-  gap: 32,
-  padding: '54px 0 30px',
+  gap: space.sp6,
+  padding: `${space.sp7} 0 ${space.sp6}`,
   '@media': {
     [tablet]: { gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' },
     [phone]: { gridTemplateColumns: 'repeat(2, minmax(0, 1fr))' },
@@ -31,7 +28,7 @@ export const footerGrid = style({
 export const logoLink = style({
   display: 'inline-flex',
   alignItems: 'center',
-  gap: 10,
+  gap: space.sp3,
   textDecoration: 'none',
 });
 export const logo = style({
@@ -42,13 +39,13 @@ export const logo = style({
 });
 export const logoTitle = style({
   fontFamily: vars.font.wordmark,
-  fontSize: 21,
+  fontSize: fontSize.heading,
   color: vars.color.onAccent,
 });
 
 export const footerTag = style({
-  margin: '16px 0 0',
-  fontSize: 16,
+  margin: `${space.sp4} 0 0`,
+  fontSize: fontSize.action,
   fontWeight: 500,
   color: vars.color.onAccentBody,
   maxWidth: 270,
@@ -56,12 +53,12 @@ export const footerTag = style({
 
 export const footerHead = style({
   fontFamily: vars.font.sans,
-  fontSize: 12,
+  fontSize: fontSize.label,
   fontWeight: 400,
   letterSpacing: '1.8px',
   textTransform: 'uppercase',
   color: vars.color.onAccentMuted,
-  marginBottom: 10,
+  marginBottom: space.sp3,
 });
 
 export const footerList = style({
@@ -75,9 +72,9 @@ export const footerList = style({
 
 export const footerLink = style({
   display: 'inline-block',
-  padding: '4px 0',
+  padding: `${space.sp1} 0`,
   fontFamily: vars.font.sans,
-  fontSize: 15.5,
+  fontSize: fontSize.action,
   fontWeight: 500,
   color: vars.color.onAccent,
   textDecoration: 'none',
@@ -86,14 +83,14 @@ export const footerLink = style({
 
 export const footerTail = style({
   borderTop: `1px solid ${vars.color.primaryLine}`,
-  padding: '20px 0 34px',
+  padding: `${space.sp5} 0 ${space.sp6}`,
   paddingBottom: 'max(34px, env(safe-area-inset-bottom))',
   display: 'flex',
   flexWrap: 'wrap',
   alignItems: 'center',
   justifyContent: 'space-between',
-  gap: '8px 18px',
+  gap: `${space.sp2} ${space.sp4}`,
   fontFamily: vars.font.sans,
-  fontSize: 12,
+  fontSize: fontSize.label,
   color: vars.color.onAccentMuted,
 });

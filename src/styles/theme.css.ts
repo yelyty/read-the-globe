@@ -209,6 +209,9 @@ export const space = createGlobalTheme(':root', {
   sp5: '1.5rem',
   sp6: '2rem',
   sp7: '3rem',
+  // the gaps between landing sections
+  sp8: '4rem',
+  sp9: '6rem',
 });
 
 export const fontSize = createGlobalTheme(':root', {

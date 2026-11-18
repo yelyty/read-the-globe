@@ -1,6 +1,6 @@
 import { globalStyle, style } from '@vanilla-extract/css';
 
-import { vars } from '../../styles/theme.css';
+import { fontSize, space, vars } from '../../styles/theme.css';
 import {
   fill,
   fillHover,
@@ -25,20 +25,24 @@ export const row = style([
     display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'center',
-    gap: '0 24px',
+    gap: `0 ${space.sp5}`,
     minHeight: 72,
     '@media': {
-      [twoRows]: { minHeight: 0, gap: '12px 24px', paddingTop: 16 },
-      [phone]: { gap: 8 },
+      [twoRows]: {
+        minHeight: 0,
+        gap: `${space.sp3} ${space.sp5}`,
+        paddingTop: space.sp4,
+      },
+      [phone]: { gap: space.sp2 },
     },
   },
 ]);
 
 export const nav = style({
   display: 'flex',
-  gap: 4,
+  gap: space.sp1,
   marginLeft: 'auto',
-  padding: 4,
+  padding: space.sp1,
   borderRadius: 999,
   background: fill,
   '@media': {
@@ -48,7 +52,7 @@ export const nav = style({
       translate: '-50% 0',
       marginLeft: 0,
     },
-    [twoRows]: { order: 10, flexBasis: '100%', margin: '0 0 8px' },
+    [twoRows]: { order: 10, flexBasis: '100%', margin: `0 0 ${space.sp2}` },
     [phone]: { gap: 2 },
     [tiny]: { gap: 0 },
   },
@@ -59,12 +63,12 @@ export const navLink = style({
   alignItems: 'center',
   justifyContent: 'center',
   minHeight: 40,
-  padding: '0 16px',
+  padding: `0 ${space.sp4}`,
   border: 0,
   borderRadius: 999,
   background: 'none',
   fontFamily: vars.font.sans,
-  fontSize: 16,
+  fontSize: fontSize.action,
   fontWeight: 500,
   lineHeight: 1,
   color: vars.color.textSecondary,
@@ -93,17 +97,17 @@ export const navLink = style({
     [twoRows]: { flex: '1 1 auto' },
     [phone]: {
       minHeight: 44,
-      padding: '0 8px',
-      fontSize: 15,
+      padding: `0 ${space.sp2}`,
+      fontSize: fontSize.body,
     },
-    [tiny]: { padding: '0 6px', fontSize: 14 },
+    [tiny]: { padding: `0 ${space.sp2}`, fontSize: fontSize.body },
   },
 });
 
 export const tools = style({
   display: 'flex',
   alignItems: 'center',
-  gap: 8,
+  gap: space.sp2,
   marginLeft: 'auto',
 });
 globalStyle(`${tools} > a`, { textDecoration: 'none' });

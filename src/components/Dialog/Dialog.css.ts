@@ -5,7 +5,7 @@ import {
   styleVariants,
 } from '@vanilla-extract/css';
 
-import { vars } from '../../styles/theme.css';
+import { fontSize, space, vars } from '../../styles/theme.css';
 import {
   band,
   easeOut,
@@ -32,7 +32,7 @@ const fade = keyframes({ from: { opacity: 0 } });
 const base = style({
   maxHeight: 'calc(100dvh - 48px)',
   margin: 'auto',
-  padding: 24,
+  padding: space.sp5,
   overflow: 'auto',
   overscrollBehavior: 'contain',
   background: vars.color.surface,
@@ -64,7 +64,7 @@ export const dialog = styleVariants({
           maxWidth: '100%',
           maxHeight: '92dvh',
           margin: 'auto 0 0',
-          padding: '24px 24px 0',
+          padding: `${space.sp5} ${space.sp5} 0`,
           borderRadius: '16px 16px 0 0',
           borderBottom: 0,
           selectors: {
@@ -79,7 +79,7 @@ export const dialog = styleVariants({
     {
       width: 'min(560px, 100% - 32px)',
       maxHeight: 'calc(100dvh - 32px)',
-      padding: 40,
+      padding: space.sp7,
       background: vars.color.background,
       border: 0,
       borderRadius: 24,
@@ -88,7 +88,7 @@ export const dialog = styleVariants({
         '&::backdrop': { background: 'rgba(28, 24, 17, 0.48)' },
       },
       '@media': {
-        [small]: { padding: 24 },
+        [small]: { padding: space.sp5 },
         [reducedMotion]: { selectors: { '&[open]': { animation: 'none' } } },
       },
     },
@@ -99,13 +99,13 @@ const headBase = style({
   display: 'flex',
   alignItems: 'flex-start',
   justifyContent: 'space-between',
-  gap: 16,
+  gap: space.sp4,
 });
 
 export const head = styleVariants({
-  default: [headBase, { marginBottom: 12 }],
-  sheet: [headBase, { marginBottom: 16 }],
-  hero: [headBase, { marginBottom: 24 }],
+  default: [headBase, { marginBottom: space.sp3 }],
+  sheet: [headBase, { marginBottom: space.sp4 }],
+  hero: [headBase, { marginBottom: space.sp5 }],
 });
 
 const titleBase = style({ margin: 0, lineHeight: 1.15 });
@@ -113,22 +113,30 @@ const titleBase = style({ margin: 0, lineHeight: 1.15 });
 export const title = styleVariants({
   default: [
     titleBase,
-    { fontFamily: vars.font.display, fontSize: 22, fontWeight: 500 },
+    {
+      fontFamily: vars.font.display,
+      fontSize: fontSize.heading,
+      fontWeight: 500,
+    },
   ],
   sheet: [
     titleBase,
-    { fontFamily: vars.font.display, fontSize: 26, fontWeight: 500 },
+    {
+      fontFamily: vars.font.display,
+      fontSize: fontSize.numerals,
+      fontWeight: 500,
+    },
   ],
   hero: [
     titleBase,
     {
       fontFamily: vars.font.sans,
       fontWeight: 800,
-      fontSize: 32,
+      fontSize: fontSize.title,
       lineHeight: 1.05,
       letterSpacing: '-.025em',
       textWrap: 'balance',
-      '@media': { [small]: { fontSize: 28 } },
+      '@media': { [small]: { fontSize: fontSize.title } },
     },
   ],
 });
@@ -139,7 +147,7 @@ const closeBase = style({
   flex: 'none',
   width: 40,
   height: 40,
-  margin: '-8px -8px 0 0',
+  margin: `calc(${space.sp2} * -1) calc(${space.sp2} * -1) 0 0`,
   padding: 0,
   border: 0,
   borderRadius: '50%',
@@ -186,7 +194,7 @@ export const close = styleVariants({
 });
 
 export const text = style({
-  margin: '0 0 16px',
+  margin: `0 0 ${space.sp4}`,
   maxWidth: '52ch',
   color: vars.color.textSecondary,
 });
@@ -196,6 +204,6 @@ export const actions = style({
   flexWrap: 'wrap',
   alignItems: 'center',
   justifyContent: 'flex-end',
-  gap: '12px 24px',
-  marginTop: 24,
+  gap: `${space.sp3} ${space.sp5}`,
+  marginTop: space.sp5,
 });
