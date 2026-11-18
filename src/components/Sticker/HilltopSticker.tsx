@@ -1,7 +1,9 @@
 import Sticker from './Sticker';
 import * as styles from './Sticker.css';
 
-// a pennant planted on a hilltop at the end of a dashed path: a goal still to set
+/**
+ * Shows a flag on a hilltop at the end of a dashed path, for a goal that is not set yet.
+ */
 const HilltopSticker = () => (
   <Sticker>
     <path

@@ -7,7 +7,9 @@ type ShareChoiceProps = {
   onChoose: (variant: Kind) => void;
 };
 
-// one kind of postcard to show
+/**
+ * Shows one kind of postcard as a radio button.
+ */
 const ShareChoice = ({ variant, checked, onChoose }: ShareChoiceProps) => {
   const handleChange = () => onChoose(variant);
 

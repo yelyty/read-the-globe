@@ -7,7 +7,9 @@ type ToggleButtonProps<T> = {
   onChoose: (value: T) => void;
 };
 
-// one choice of a ToggleGroup
+/**
+ * Shows one choice of a ToggleGroup.
+ */
 const ToggleButton = <T extends string | number>({
   option,
   pressed,

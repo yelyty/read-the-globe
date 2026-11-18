@@ -8,6 +8,9 @@ type HintProp = {
   role?: string;
 };
 
+/**
+ * Shows a short hint under a field.
+ */
 const Hint = ({ id, role, children }: HintProp) => {
   return (
     <p className={styles.hint} id={id} role={role}>

@@ -15,7 +15,10 @@ type FeaturePanelProps = {
   night: string;
 };
 
-// one colour panel: what the app does, beside its own screen (phone-sized on phones)
+/**
+ * Shows one color panel: what the app does, beside a screenshot of the app. On a phone, the screenshot is of the phone.
+ * @param night - '-night' for the dark theme screenshots, or an empty string.
+ */
 const FeaturePanel = ({ panel, night }: FeaturePanelProps) => (
   <article className={styles.panel[panel.tone]}>
     <div className={styles.panelText}>

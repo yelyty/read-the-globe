@@ -24,9 +24,11 @@ const TINY_COUNTRY = 24;
 // a beat after the last pin lands before what comes next
 const LAND_PAUSE_MS = 260;
 
-/* The one authored moment: an ink pin with a gold head leaves Log a book, arcs to each country the book adds,
-   and the country takes its mark as the pin lands. The count, the line and the goal news wait for the last
-   pin. Reduced motion lands everything at once. */
+/**
+ * Flies the pins of a book just pinned: each pin leaves Log a book and arcs to a country the book adds,
+ * and the country takes its mark when the pin lands. The count, the line, and the goal news wait for the last pin.
+ * With reduced motion, everything lands at once.
+ */
 export function usePinFlight(
   plateRef: RefObject<HTMLDivElement | null>,
   /** the book just pinned, until its pins have landed */

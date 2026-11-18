@@ -16,8 +16,10 @@ type ShelfFiltersArgs = {
   searchRef: RefObject<HTMLInputElement | null>;
 };
 
-// the Read tab's search, filters, sort and how far down the list is shown.
-// A new search, filter or sort starts the list from the top.
+/**
+ * Keeps the search, the filters, the sort, and how much of the list the Read tab shows.
+ * A new search, filter, or sort shows the list from the top again.
+ */
 export function useShelfFilters({
   country,
   linkedQuery,

@@ -27,7 +27,9 @@ type Box = [[number, number], [number, number]];
 
 let stamped: Promise<Map<string, Country>> | null = null;
 
-// the map's shapes (from the one world loader), each with the frame of its main landmass
+/**
+ * Loads the shapes of the map once. Each country also gets the frame of its biggest landmass.
+ */
 export function loadCountries() {
   stamped ??= worldShapes().then((shapes) => {
     const countries = new Map<string, Country>();
@@ -99,7 +101,10 @@ function flatBox([outer]: Position[][]) {
   return { area: Math.abs(area) / 2, box };
 }
 
-// a country's outline as SVG, framed on its main landmass like a stamp (the Shelf's country header)
+/**
+ * Gets the outline of a country as SVG, framed on its biggest landmass like a stamp. The Shelf shows it in the country header.
+ * @returns The SVG path, its viewBox, and its width.
+ */
 export function countryStamp({ shape, main: [[x0, y0], [x1, y1]] }: Country) {
   const pad = Math.max(x1 - x0, y1 - y0) * OUTLINE_PAD;
 

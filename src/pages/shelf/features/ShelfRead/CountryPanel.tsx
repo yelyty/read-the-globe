@@ -17,7 +17,9 @@ type CountryPanelProps = {
   mark: Mark;
 };
 
-// the shelf of one country (?country=): its outline in its marks, why it's on the atlas, and the way on
+/**
+ * Shows the shelf of one country (?country=): its outline in its marks, why it is on the atlas, and the links to go on.
+ */
 const CountryPanel = ({ code, name, mark }: CountryPanelProps) => {
   const stamp = useCountryStamp(code);
   const continent = CONTINENT_OF[code];

@@ -274,7 +274,10 @@ const fieldOf = (key: string): [id: string, label: string] =>
     country: ['f-country', m.log_f_country()] as [string, string],
   })[key] ?? [`pr-country-${key.slice(PLACE_KEY.length)}`, m.log_f_place()];
 
-// what the form says over its errors: the one error, or which fields need a look; and the field to focus
+/**
+ * Gets the text over the errors of the log form, and the field to focus.
+ * @returns The one error, or which fields need a look if there are more, and the id of the first field with an error.
+ */
 export function errorSummary(errors: Record<string, string>) {
   const bad = Object.keys(errors);
 

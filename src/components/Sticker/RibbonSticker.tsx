@@ -1,7 +1,9 @@
 import Sticker from './Sticker';
 import * as styles from './Sticker.css';
 
-// a closed book with a ribbon marking where you'll start, its dotted road running to a pin not yet placed
+/**
+ * Shows a closed book with a ribbon, and a dotted road to a pin that is not placed yet.
+ */
 const RibbonSticker = () => (
   <Sticker>
     <path

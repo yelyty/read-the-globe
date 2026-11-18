@@ -11,7 +11,9 @@ import { m } from '../../../../paraglide/messages.js';
 import * as styles from '../../HomePage.css';
 import WorldBook from './WorldBook';
 
-// a world's box opens its books in a dialog, with the way to log another one set there
+/**
+ * Shows the books of an imagined world in a dialog, with a button to log another book set there.
+ */
 const WorldDialog = ({
   world,
   onClose,

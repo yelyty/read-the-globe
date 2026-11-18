@@ -10,9 +10,13 @@ export type FieldInputProps = {
 
 export const FieldControlContext = createContext<FieldInputProps | null>(null);
 
-// the props of the Field this control sits in, or null outside one
+/**
+ * Gets the props of the Field that a custom control is in, or null outside a Field.
+ */
 export const useFieldControl = () => useContext(FieldControlContext);
 
-// a control's own class after the field's
+/**
+ * Joins class names with spaces, and skips the empty ones. If all are empty, the result is undefined.
+ */
 export const joinClass = (...names: (string | false | null | undefined)[]) =>
   names.filter(Boolean).join(' ') || undefined;

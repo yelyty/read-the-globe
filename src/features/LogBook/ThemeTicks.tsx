@@ -13,7 +13,12 @@ type ThemeTicksProps = {
   open: boolean;
 };
 
-// Counts toward…: a theme goal can't be read off the map, so the reader ticks it
+/**
+ * Shows Counts toward: the theme goals the book can count for.
+ * The map cannot tell if a book counts for a theme goal, so the reader ticks it.
+ * @param ticks - The ids of the ticked goals.
+ * @param open - If true, the list is open.
+ */
 const ThemeTicks = ({ themes, ticks, onChange, open }: ThemeTicksProps) => {
   const handleTick = (themeId: number, checked: boolean) =>
     onChange(

@@ -27,6 +27,14 @@ type FieldProps = Omit<
   below?: ReactNode;
 };
 
+/**
+ * Shows a form field: a label, an input, and an error under the input.
+ * @param error - The error to show under the input.
+ * @param password - If true, the field has a Show/Hide button for the password.
+ * @param compact - If true, the field is smaller, for an inline form.
+ * @param control - A different control in place of the input, for example Suggest or FieldTextarea.
+ * @param below - Content under the error, for example a Hint.
+ */
 const Field = ({
   id,
   label,

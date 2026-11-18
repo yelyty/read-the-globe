@@ -11,6 +11,10 @@ export type Row = {
 
 let rowKey = 0;
 
+/**
+ * Makes a place row of the log form. Each row gets its own key.
+ * @param imagined - If true, the place is an imagined world and has no country.
+ */
 export const row = (name = '', country = '', imagined = false): Row => ({
   key: ++rowKey,
   name,
@@ -20,7 +24,12 @@ export const row = (name = '', country = '', imagined = false): Row => ({
   open: false,
 });
 
-// the rows a form starts with: an edited book's places, or one row from where Log a book was opened
+/**
+ * Gets the rows a log form starts with: the places of an edited book, or one row from where Log a book was opened.
+ * A place saved as only its country shows as an empty name beside that country.
+ * @param start - The country or the imagined world where Log a book was opened.
+ * @param name - Gets the name of a country from its code.
+ */
 export const startRows = (
   places: { name: string; countryCode?: string | null; imagined?: boolean }[],
   start: { world?: string; country: string },

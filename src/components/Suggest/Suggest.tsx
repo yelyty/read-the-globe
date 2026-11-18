@@ -38,9 +38,11 @@ type SuggestProps = Omit<
   onPick?: (value: string) => void;
 };
 
-/* A text field with the app's own suggestion menu in place of the browser's datalist: the ARIA combobox
-   pattern, arrow keys to move, Enter to pick, Esc to close (the menu, not the dialog under it).
-   ponytail: the menu is a popover in the top layer, so it sits over the log dialog; it's placed by hand. */
+/**
+ * Shows a text field with a menu of suggestions, in place of the datalist of the browser (the ARIA combobox pattern).
+ * The arrow keys move in the menu, Enter picks, and Esc closes the menu (not the dialog under it).
+ * The menu is a popover in the top layer, so it shows over the log dialog. The component places it.
+ */
 const Suggest = ({
   value,
   options,

@@ -1,6 +1,9 @@
 import * as styles from '../../../layout/PublicLayout/PublicLayout.css';
 import PublicLayout from '../../../layout/PublicLayout/PublicLayout';
 
+/**
+ * Shows the Terms of use page. The page is in English.
+ */
 const TermsPage = () => (
   <PublicLayout
     title="Terms of use"

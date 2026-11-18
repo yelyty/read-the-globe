@@ -26,6 +26,9 @@ const COLUMNS = [
   },
 ] as const;
 
+/**
+ * Shows the footer of the landing and the public pages: the logo, which links to the top, the columns of links, and the copyright.
+ */
 const Footer = () => {
   return (
     <footer className={styles.footer}>

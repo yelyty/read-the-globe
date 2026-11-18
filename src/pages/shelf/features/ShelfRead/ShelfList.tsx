@@ -21,7 +21,10 @@ type ShelfListProps = {
   names: Record<string, string>;
 };
 
-// the books, newest first under their year's heading; a folded year hides its books
+/**
+ * Shows the books, newest first, under the headings of their years. A folded year hides its books.
+ * The earlier years start folded. This year and the newest year with a book start open.
+ */
 const ShelfList = ({
   books,
   list,

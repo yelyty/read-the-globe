@@ -2,7 +2,10 @@ import { useEffect, useState } from 'react';
 
 import { SECTIONS } from '../../utils/sections';
 
-// the section on screen: the one crossing a thin line just under the middle of the viewport
+/**
+ * Gets the section of the landing that is on screen: the one that crosses a thin line just under the middle of the screen.
+ * @returns The hash of the section, or null.
+ */
 export const useCurrentSection = () => {
   const [current, setCurrent] = useState<string | null>(null);
 

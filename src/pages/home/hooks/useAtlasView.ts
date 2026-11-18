@@ -6,8 +6,11 @@ import { atlasMarks, atlasStats } from '../../../utils/atlasMarks';
 import { worldsOf } from '../../../utils/worlds';
 import { m } from '../../../paraglide/messages.js';
 
-/* What Home's atlas shows. While a just-pinned book's pins are in flight (flying), Home draws the atlas as it was
-   without that book (shown, held), and each country takes its mark as its pin lands (painted). */
+/**
+ * Gets what the atlas of Home shows.
+ * While the pins of a book just pinned are in flight, Home shows the atlas as it was without that book,
+ * and each country takes its mark when its pin lands.
+ */
 export function useAtlasView(
   books: BookEntry[],
   savedWorlds: World[],

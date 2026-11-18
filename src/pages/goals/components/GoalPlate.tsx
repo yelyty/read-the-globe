@@ -38,6 +38,11 @@ type GoalPlateProps = {
   continent?: Continent | null;
 };
 
+/**
+ * Shows the plate of a place goal: the countries of the goal, colored by their marks.
+ * @param codes - The countries of the goal.
+ * @param continent - The continent of a region goal, to frame the plate on it.
+ */
 export const GoalPlate = ({
   codes,
   marks,

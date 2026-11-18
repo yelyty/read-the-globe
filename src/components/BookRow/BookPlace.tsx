@@ -8,7 +8,10 @@ type BookPlaceProps = {
   first: boolean;
 };
 
-// a place is its name with its country after it, or the country alone
+/**
+ * Shows one place of a book: its name with its country after it, or only the country.
+ * @param first - If false, a comma comes before the place.
+ */
 const BookPlace = ({ place, names, first }: BookPlaceProps) => {
   const country = place.countryCode ? names[place.countryCode] : undefined;
 

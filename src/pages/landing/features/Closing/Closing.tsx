@@ -76,7 +76,10 @@ const LABEL: Record<Mark, (inputs: { country: string }) => string> = {
   both: m.landing_stamp_both,
 };
 
-// The promise, with the stamps it will collect scattered round it: they press in, one after another, once it's in view.
+/**
+ * Shows the closing section of the landing: the promise, with country stamps around it.
+ * The stamps press in one after another when the section comes into view. The map loads only then.
+ */
 const Closing = ({ onSignUp }: { onSignUp: () => void }) => {
   const [ref, revealed] = useReveal<HTMLElement>();
   // the countries in the reader's language, from the browser

@@ -28,7 +28,10 @@ type PlacesFieldProps = {
   names: Record<string, string>;
 };
 
-// Set in: the places the story visits, a row each, up to twenty
+/**
+ * Shows the Set in field: the places the story visits, one row for each place, up to 20.
+ * @param onFix - Called with the key of a row, to clear its error when it changes.
+ */
 const PlacesField = ({
   rows,
   setRows,

@@ -203,6 +203,9 @@ export const PARENT: Record<string, string> = Object.fromEntries(
   Object.values(TERR)
 );
 
+/**
+ * Removes spaces at the start and the end of a text, and changes each run of spaces into one space.
+ */
 export const tidy = (text: string) => text.trim().replace(/\s+/g, ' ');
 
 export type CountryMatch = {
@@ -222,8 +225,11 @@ export const splitStates = (typed: string) => {
   return successors && successors.length > 1 ? successors : null;
 };
 
-/* What a typed country counts as. names is the map's own list (code → name), in the reader's language; the English name matches too; pick is the reader's choice for a
-   state that split. ponytail: a linear scan of ~240 names per call, cheap next to a render */
+/**
+ * Gets what a typed country counts as. The English name of a country also matches.
+ * @param names - The names of the map, by country code, in the language of the reader.
+ * @param pick - The country the reader picked for a state that split.
+ */
 export function countryFrom(
   typed: string,
   names: Record<string, string>,

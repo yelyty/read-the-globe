@@ -5,7 +5,9 @@ import { button, type ButtonVariants } from './Button.css';
 type ButtonAnchorProps = AnchorHTMLAttributes<HTMLAnchorElement> &
   ButtonVariants & { ref?: Ref<HTMLAnchorElement> };
 
-// an <a> dressed as a Button; ButtonLink wraps it in the router's Link
+/**
+ * Shows a link that looks like a Button. ButtonLink uses it inside the Link of the router.
+ */
 const ButtonAnchor = ({
   variant = 'primary',
   underline,

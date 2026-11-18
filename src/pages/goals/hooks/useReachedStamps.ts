@@ -8,8 +8,10 @@ import { prefersReducedMotion } from '../../../utils/motion';
 import { localToday } from '../../../utils/readDate';
 import { goalProgress, isDone } from '../utils/goalProgress';
 
-// A goal is stamped reached the first time it is seen full, and loses the stamp if a book is removed.
-// Returns the goals that crossed their flag while the reader looked: each gets the arrival once.
+/**
+ * Marks a goal as reached the first time it is seen full, and removes the mark if a book is removed.
+ * @returns The ids of the goals that were reached while the reader looked. Each one plays the arrival once.
+ */
 export function useReachedStamps(goals: Goal[], books: BookEntry[]) {
   const refresh = useRefresh();
   const [arriving, setArriving] = useState<number[]>([]);

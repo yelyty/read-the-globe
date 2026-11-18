@@ -7,7 +7,9 @@ import { mainPiece } from '../../../../utils/world';
 const STAMP_SIZE = 100;
 const OUTLINE_MARGIN = 12;
 
-// a country on its disc, fitted into the middle of a 100×100 stamp
+/**
+ * Gets the outline of a country as an SVG path, fitted inside a 100 × 100 stamp.
+ */
 export const outline = (shape: Feature) =>
   geoPath(
     geoEquirectangular().fitExtent(

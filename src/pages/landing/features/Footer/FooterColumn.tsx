@@ -12,7 +12,9 @@ export type Column = {
   links: readonly FooterLink[];
 };
 
-// a column of the footer: its heading and its links
+/**
+ * Shows a column of the footer: its heading and its links.
+ */
 const FooterColumn = ({ column }: { column: Column }) => {
   return (
     <nav aria-labelledby={column.id}>

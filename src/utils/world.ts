@@ -74,7 +74,9 @@ export const worldShapes = () => loadWorld().then(({ shapes }) => shapes);
 /** every country's English name on the map, by numeric code: the same countries as worldShapes(), always */
 export const worldNames = () => loadWorld().then(({ names }) => names);
 
-// a country's biggest landmass, so islands far away don't shrink the frame
+/**
+ * Gets the biggest landmass of a country, so islands far away do not make the frame smaller.
+ */
 export const mainPiece = (shape: Feature): Feature => {
   if (shape.geometry.type !== 'MultiPolygon') return shape;
 

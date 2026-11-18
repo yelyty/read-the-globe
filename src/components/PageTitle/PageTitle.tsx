@@ -4,6 +4,9 @@ type PageTitleProps = {
   children: string;
 };
 
+/**
+ * Shows the title of a page as its main heading.
+ */
 const PageTitle = ({ children }: PageTitleProps) => {
   return (
     <header className={styles.header}>

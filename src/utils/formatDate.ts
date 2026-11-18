@@ -1,5 +1,8 @@
 import { getLocale } from '../paraglide/runtime.js';
 
+/**
+ * Gets a day as its month and year in the language of the reader, for example "Mar 2026". An empty day gives an empty text.
+ */
 export const formatMonth = (day: string) =>
   day
     ? new Date(`${day}T12:00:00`).toLocaleDateString(getLocale(), {
@@ -8,6 +11,9 @@ export const formatMonth = (day: string) =>
       })
     : '';
 
+/**
+ * Gets a day in the language of the reader, for example "Mar 9, 2026".
+ */
 export const formatDay = (day: string) =>
   new Date(`${day}T12:00:00`).toLocaleDateString(getLocale(), {
     day: 'numeric',
@@ -34,6 +40,9 @@ const ROMAN_MONTHS = [
   'XII',
 ];
 
+/**
+ * Gets the postmark date of a reached goal: the day, the month in Roman numerals, and the year in 2 digits, for example "4 X 26".
+ */
 export const romanDate = (iso: string) => {
   const date = new Date(`${iso}T12:00:00`);
 

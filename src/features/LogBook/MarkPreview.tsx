@@ -11,7 +11,11 @@ type MarkPreviewProps = {
   author?: boolean;
 };
 
-// one country Pin it will mark, with its swatch and, for screen readers, which mark
+/**
+ * Shows one country that Pin it will mark, with its dot, and for screen readers, which mark it is.
+ * @param set - If true, the story is set there.
+ * @param author - If true, the author is from there.
+ */
 const MarkPreview = ({ name, set, author }: MarkPreviewProps) => {
   const which =
     set && author

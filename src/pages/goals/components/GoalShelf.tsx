@@ -15,6 +15,10 @@ const MIN_SPINE_HEIGHT = 44;
 const SPINE_HEIGHT_STEP = 37;
 const SPINE_HEIGHT_SPREAD = 23;
 
+/**
+ * Shows the shelf of a theme goal: one spine for each book, filled for the books read.
+ * A shelf has at most 20 spines. A longer goal fills them by share.
+ */
 const GoalShelf = ({ done, total }: { done: number; total: number }) => {
   const count = Math.min(total, MAX_SPINES);
 

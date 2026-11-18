@@ -8,7 +8,9 @@ type BookPickProps = {
   onToggle: (id: number) => void;
 };
 
-// a book to tick toward a goal
+/**
+ * Shows a book with a checkbox, to count it for a goal.
+ */
 const BookPick = ({ book, checked, onToggle }: BookPickProps) => {
   const handleChange = () => onToggle(book.id);
 

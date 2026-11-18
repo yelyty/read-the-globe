@@ -19,7 +19,9 @@ type GoalDestinationProps = {
   onAdd: (goal: CatalogueGoal) => void;
 };
 
-// a suggested goal the reader's books already go into: its plate (or shelf), name, how far, and Add
+/**
+ * Shows a suggested goal that the books of the reader already go into: its plate (or shelf), name, progress, and Add.
+ */
 const GoalDestination = ({
   goal,
   progress,

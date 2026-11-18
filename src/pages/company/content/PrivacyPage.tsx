@@ -1,6 +1,9 @@
 import * as styles from '../../../layout/PublicLayout/PublicLayout.css';
 import PublicLayout from '../../../layout/PublicLayout/PublicLayout';
 
+/**
+ * Shows the Privacy page. The page is in English.
+ */
 const PrivacyPage = () => (
   <PublicLayout
     title="Privacy"

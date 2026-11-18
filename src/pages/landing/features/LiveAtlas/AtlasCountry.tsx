@@ -10,7 +10,9 @@ type AtlasCountryProps = {
   author: boolean;
 };
 
-// one country on Mira's map, coloured by the marks her books have given it so far
+/**
+ * Shows one country on the map of Mira, colored by the marks her books have given it so far.
+ */
 const AtlasCountry = ({ d, set, author }: AtlasCountryProps) => {
   const className =
     set || author ? styles[markWhich(set, author)] : styles.land;

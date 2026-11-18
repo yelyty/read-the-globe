@@ -4,8 +4,11 @@ import * as styles from '../GoalsPage.css';
 // the ink's noise pattern differs from one postmark to the next
 const SEED_STEP = 7;
 
-/* The reached stamp, inked like a real postmark: wavy cancellation lines trailing over the plate, a double ring with
-   "GOAL REACHED" running round it, a little pennant over the date, and a rough edge from an SVG turbulence filter. */
+/**
+ * Shows the stamp of a reached goal, like a real postmark: wavy lines over the plate, a double ring with
+ * "GOAL REACHED" around it, a small flag over the date, and a rough edge.
+ * @param date - The day the goal was reached, YYYY-MM-DD.
+ */
 const Postmark = ({ id, date }: { id: number; date: string }) => (
   <svg className={styles.stamp} viewBox="0 0 120 80" aria-hidden="true">
     <defs>

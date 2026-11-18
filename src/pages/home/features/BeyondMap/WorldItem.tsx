@@ -12,7 +12,10 @@ type WorldItemProps = {
   onRemove: (world: World) => void;
 };
 
-// an imagined world under the map: it opens its books; a saved world with none yet can be removed
+/**
+ * Shows an imagined world under the map. It opens the books of the world.
+ * A saved world with no books yet can be removed.
+ */
 const WorldItem = ({ world, onOpen, onRemove }: WorldItemProps) => {
   const handleOpen = () => onOpen(world);
   const handleRemove = () => world.saved && onRemove(world.saved);

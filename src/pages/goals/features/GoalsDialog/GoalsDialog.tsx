@@ -29,6 +29,11 @@ type GoalDialogProps = {
   onSaved: (name: string) => void;
 };
 
+/**
+ * Shows the dialog to add a goal or to edit one.
+ * @param goal - The goal to edit, or null for a new goal.
+ * @param onSaved - Called with the name of the goal after it is saved.
+ */
 const GoalDialog = ({
   goal,
   goals,

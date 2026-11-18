@@ -15,7 +15,9 @@ export const stub = {
   session: null as { user: { id: string } } | null,
 };
 
-/** back to answering every call with no data and no error, with nothing written down */
+/**
+ * Resets the stub: every call answers with no data and no error, and no calls are written down.
+ */
 export const resetStub = () => {
   stub.answer = { data: null, error: null };
   stub.answers = {};
@@ -23,6 +25,10 @@ export const resetStub = () => {
   stub.session = null;
 };
 
+/**
+ * Makes calls answer with data.
+ * @param target - A table, an rpc, or an auth method, for example 'auth.signUp'. Without it, every call answers.
+ */
 export const succeed = (data: unknown, target?: string) => {
   const answer = { data, error: null };
 
@@ -30,6 +36,11 @@ export const succeed = (data: unknown, target?: string) => {
   else stub.answer = answer;
 };
 
+/**
+ * Makes calls answer with an error.
+ * @param code - The error code, for example '23505'.
+ * @param target - A table, an rpc, or an auth method. Without it, every call answers.
+ */
 export const fail = (code?: string, target?: string, message = 'down') => {
   const answer = { data: null, error: { message, code } };
 
@@ -37,7 +48,9 @@ export const fail = (code?: string, target?: string, message = 'down') => {
   else stub.answer = answer;
 };
 
-/** the calls of one step: every .eq(), say, as its arguments */
+/**
+ * Gets the arguments of each call of one step, for example every .eq().
+ */
 export const callsOf = (step: string) =>
   stub.calls.filter(([name]) => name === step).map(([, ...args]) => args);
 

@@ -5,10 +5,17 @@ import { worldNames } from './world';
 let english: Record<string, string> | null = null;
 let cache: Record<string, string> | null = null;
 
-/** the map's own English name for a code, once getCountryNames() has run; typed names match it in any language */
+/**
+ * Gets the English name of a country, as the map has it. It is known only after getCountryNames() has run.
+ */
 export const englishName = (code: string) => english?.[code];
 
-// code → name in the reader's language: the browser's own Intl.DisplayNames, the map's English name where it has none
+/**
+ * Gets the names of all countries on the map, in the language of the reader.
+ * The names come from the browser. If the browser has no name for a country, the English name of the map is used.
+ * The function loads the names once, and then gives them from its cache.
+ * @returns The names, by country code.
+ */
 export async function getCountryNames(): Promise<Record<string, string>> {
   if (cache) return cache;
 

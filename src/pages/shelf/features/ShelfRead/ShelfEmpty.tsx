@@ -19,7 +19,10 @@ type ShelfEmptyProps = {
   onImported: (text: string) => void;
 };
 
-// no books yet: Log a book, or bring a reading list in as a CSV
+/**
+ * Shows the Shelf with no books yet: Log a book, or import a reading list as a CSV file.
+ * @param onImported - Called with the report of the import.
+ */
 const ShelfEmpty = ({ onImported }: ShelfEmptyProps) => (
   <EmptyState
     art={<ShelfSticker />}

@@ -1,5 +1,8 @@
 import * as styles from '../GoalsPage.css';
 
+/**
+ * Shows a small compass. It is decorative.
+ */
 const Compass = () => (
   <svg
     className={styles.compass}

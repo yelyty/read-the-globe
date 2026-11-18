@@ -2,7 +2,10 @@ import { useCallback, useState } from 'react';
 
 import { signOut } from '../auth/session';
 
-// App takes the reader back to '/' once the sign-out has reached the router (see App.tsx)
+/**
+ * Signs the reader out. App takes the reader back to the landing page after the sign-out reaches the router.
+ * @returns The sign-out handler, and if a sign-out is in progress.
+ */
 export function useSignOut() {
   const [signingOut, setSigningOut] = useState(false);
 

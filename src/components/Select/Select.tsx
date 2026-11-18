@@ -45,8 +45,10 @@ type SelectProps<T extends string> = {
 const GAP = 6; // between the button and its list
 const EDGE = 8; // the closest the list comes to the window's edge
 
-/* A select of our own: a button showing the choice, opening a list of the options (the listbox pattern).
-   The list is a popover, in the top layer, so dialogs and scroll boxes never clip it. */
+/**
+ * Shows a select of the app: a button with the choice, which opens a list of the options (the listbox pattern).
+ * The list is a popover in the top layer, so dialogs and scroll boxes never cut it off.
+ */
 const Select = <T extends string>({
   value,
   options,

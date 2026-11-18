@@ -14,7 +14,9 @@ type WorldBookProps = {
   onEdit: () => void;
 };
 
-// a book set in an imagined world: its cover, title, author, when it was read, and Edit
+/**
+ * Shows a book set in an imagined world: its cover, title, author, when it was read, and Edit.
+ */
 const WorldBook = ({ book, onEdit }: WorldBookProps) => {
   const day = readDate(book);
 

@@ -15,7 +15,10 @@ type MapKeyProps = {
   canFilter: boolean;
 };
 
-// What the colours mean, and a filter once there is more than one book to filter.
+/**
+ * Shows what the colors of the map mean. If there is more than one book, it also shows a filter.
+ * @param canFilter - If true, the filter shows.
+ */
 const MapKey = ({ show, onShow, canFilter }: MapKeyProps) => {
   const showOption = ([value, label, long]: (typeof SHOW)[number]) => ({
     value,

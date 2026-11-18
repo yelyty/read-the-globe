@@ -10,7 +10,9 @@ export const MAP_HEIGHT = Math.round(
   (MAP_WIDTH * (NORTH + SOUTH)) / DEGREES_ACROSS
 );
 
-/** a fresh projection onto the MAP_WIDTH × MAP_HEIGHT grid */
+/**
+ * Makes a new projection onto the flat MAP_WIDTH × MAP_HEIGHT map.
+ */
 export const flatProjection = () =>
   geoEquirectangular()
     .scale(MAP_WIDTH / (2 * Math.PI))

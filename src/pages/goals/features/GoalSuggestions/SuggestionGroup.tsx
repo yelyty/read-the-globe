@@ -15,7 +15,9 @@ type SuggestionGroupProps = {
   onAdd: (goal: CatalogueGoal) => void;
 };
 
-// one kind of goal under More goals: its heading and its chips
+/**
+ * Shows one kind of goal under More goals: its heading and its goals.
+ */
 const SuggestionGroup = ({
   kind,
   items,

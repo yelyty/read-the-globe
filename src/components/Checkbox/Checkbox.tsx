@@ -5,8 +5,10 @@ import * as styles from './Checkbox.css';
 
 type CheckboxProps = Omit<ComponentProps<'input'>, 'type'>;
 
-// the app's checkbox: a rounded box like the fields', filled green with a tick when checked.
-// It goes inside the <label> that names it.
+/**
+ * Shows the checkbox of the app: a rounded box that is green with a tick when it is checked.
+ * Put it inside the label that names it.
+ */
 const Checkbox = ({ className, ...props }: CheckboxProps) => (
   <span
     className={className ? `${styles.checkbox} ${className}` : styles.checkbox}

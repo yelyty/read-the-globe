@@ -12,7 +12,10 @@ type YearHeadProps = {
   onToggle: () => void;
 };
 
-// the heading over a year's books on the Shelf; on the whole shelf it folds the year away
+/**
+ * Shows the heading over the books of a year on the Shelf.
+ * @param foldable - If true, the heading is a button that folds the year away.
+ */
 const YearHead = ({
   year,
   foldable,

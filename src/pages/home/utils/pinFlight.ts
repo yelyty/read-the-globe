@@ -16,7 +16,9 @@ const SCROLL_SETTLE_MS = 650;
 // frames to wait for the map's shapes: about two seconds
 const MAX_DRAW_FRAMES = 120;
 
-// a country too small to see fill gets a gold ring where the pin landed
+/**
+ * Shows a gold ring where a pin landed, for a country too small to see it fill.
+ */
 export const ringAt = (rect: DOMRect) => {
   const ring = document.createElement('div');
 
@@ -35,7 +37,10 @@ export const ringAt = (rect: DOMRect) => {
   ).onfinish = () => ring.remove();
 };
 
-// Home, with the plate in view: scroll only if it isn't already, and let the scroll settle before anything flies
+/**
+ * Scrolls Home to the map, if it is not already in view, and waits for the scroll to end.
+ * @returns A promise that resolves when the map is in view.
+ */
 export const plateInView = (plate: Element) =>
   new Promise<void>((done) => {
     const top = plate.getBoundingClientRect().top;
@@ -56,7 +61,9 @@ export const plateInView = (plate: Element) =>
     scrollTo({ top: to, behavior: 'smooth' });
   });
 
-// the map's countries are drawn once its shapes arrive: wait for them (two seconds at most)
+/**
+ * Waits until the countries of the map are drawn, for up to about 2 seconds.
+ */
 export const drawn = (plate: Element) =>
   new Promise<void>((done) => {
     let tries = 0;
@@ -81,7 +88,9 @@ const PIN_STAGGER_MS = 110;
 const PIN =
   '<svg viewBox="0 0 24 24"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"/><circle cx="12" cy="9" r="2.8"/></svg>';
 
-// phones: bring a country on the sideways-scrolling map into view before anything lands on it
+/**
+ * On a phone, scrolls the sideways map so a country is in view, before a pin lands on it.
+ */
 export const scrollToCountry = async (path: SVGPathElement) => {
   const scroller = path.ownerSVGElement?.parentElement;
 
@@ -97,7 +106,9 @@ export const scrollToCountry = async (path: SVGPathElement) => {
   await new Promise(requestAnimationFrame);
 };
 
-// where the pins leave from: the visible Log a book button, else the header
+/**
+ * Gets the point the pins fly from: the visible Log a book button, or else the header.
+ */
 export const launchPoint = () => {
   const launch =
     [...document.querySelectorAll('[data-log-toggle]')].find(
@@ -111,7 +122,12 @@ export const launchPoint = () => {
   return { x: from.left + from.width / 2, y: from.top + from.height / 2 };
 };
 
-// an ink pin with a gold head arcs from the launch point to a country; it removes itself on landing
+/**
+ * Flies a pin in an arc from the launch point to a country. The pin removes itself when it lands.
+ * @param index - The place of the pin in the flight. Each pin leaves a little after the one before.
+ * @param onLanded - Called when the pin lands.
+ * @returns The pin element.
+ */
 export const flyPin = (
   from: { x: number; y: number },
   to: DOMRect,

@@ -11,7 +11,9 @@ const QUESTIONS = [
   { q: m.landing_faq_q6, a: m.landing_faq_a6 },
 ];
 
-// A big heading on the left, the questions as rows on the grey band, each opening in place.
+/**
+ * Shows the FAQ section: a big heading, and the questions as rows that open in place.
+ */
 const Faq = () => {
   return (
     <section className={styles.faq} id="faq" aria-labelledby="faq-h">

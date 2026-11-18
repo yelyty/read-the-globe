@@ -11,6 +11,9 @@ const LINKS = [
   { label: m.footer_terms, to: '/terms' },
 ] as const;
 
+/**
+ * Shows the footer of the app: the copyright, the links to the company pages, and the credit for the map data.
+ */
 const AppFooter = () => {
   return (
     <footer className={styles.footer}>
