@@ -38,3 +38,38 @@ jobs:
           name: coverage
           path: coverage/
           if-no-files-found: ignore
+
+  # writes the coverage badge to the badges branch; README reads it through shields.io
+  # a separate job so only this one can push, and only after master's tests pass
+  badge:
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: coverage
+          path: coverage
+
+      - name: Push the coverage badge
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir badges
+          node -e '
+            const { total } = require("./coverage/coverage-summary.json");
+            const pct = total.lines.pct;
+            const color = pct >= 90 ? "brightgreen" : pct >= 75 ? "green" : pct >= 60 ? "yellow" : "red";
+            const badge = { schemaVersion: 1, label: "coverage", message: `${pct}%`, color };
+            require("fs").writeFileSync("badges/coverage.json", JSON.stringify(badge));
+          '
+          cd badges
+          git init -q -b badges
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add coverage.json
+          git commit -q -m "Update coverage badge"
+          # the branch only ever holds this one file, so each run replaces it
+          git push -q --force "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" badges

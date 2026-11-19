@@ -1,8 +1,8 @@
-import { m } from '../../paraglide/messages.js';
-import * as styles from './LogBook.css';
+import { m } from '../../../paraglide/messages.js';
+import * as styles from '../LogBook.css';
+import type { LogReading, ReadPlace } from '../utils/bookLog';
 import ImaginedMark from './ImaginedMark';
 import MarkPreview from './MarkPreview';
-import type { LogReading, ReadPlace } from './bookLog';
 
 type LogPreviewProps = {
   /** each country it will mark, by code, and which marks */

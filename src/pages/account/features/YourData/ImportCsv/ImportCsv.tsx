@@ -3,9 +3,9 @@ import { useRef, useState, type ChangeEvent, type ReactNode } from 'react';
 import { useRefresh } from '../../../../../hooks/useReader';
 import { importBooks } from '../../../../../api/data/data';
 import { getCountryNames } from '../../../../../utils/countryNames';
-import { booksFromCsv } from '../../../../../utils/readingListCsv';
 import { m } from '../../../../../paraglide/messages.js';
 import { importReport } from '../readingList/readingList';
+import { booksFromCsv } from '../readingList/readingListCsv';
 
 type ImportCsvProps = {
   className: string;

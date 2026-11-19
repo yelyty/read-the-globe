@@ -1,6 +1,6 @@
-import type { Goal } from '../../types';
-import { m } from '../../paraglide/messages.js';
-import * as styles from './LogBook.css';
+import type { Goal } from '../../../types';
+import { m } from '../../../paraglide/messages.js';
+import * as styles from '../LogBook.css';
 import ThemeTick from './ThemeTick';
 
 type ThemeTicksProps = {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import type { BookDraft } from '../../api/books/books';
-import type { BookEntry, Goal } from '../../types';
+import type { BookDraft } from '../../../api/books/books';
+import type { BookEntry, Goal } from '../../../types';
 import {
   draftOf,
   duplicateOf,

@@ -46,6 +46,16 @@ export type Place = {
   imagined?: boolean;
 };
 
+/** a book read from an imported reading list, before it is saved */
+export type ImportedBook = {
+  title: string;
+  author: string;
+  authorCountry: string;
+  /** YYYY-MM-DD; null is today */
+  readOn: string | null;
+  places: { name: string; country: string | null; imagined?: boolean }[];
+};
+
 export type World = {
   id: string;
   name: string;

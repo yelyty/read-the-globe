@@ -1,5 +1,10 @@
-import type { BookEntry, Goal, NextRead, World } from '../../types';
-import type { ImportedBook } from '../../utils/readingListCsv';
+import type {
+  BookEntry,
+  Goal,
+  ImportedBook,
+  NextRead,
+  World,
+} from '../../types';
 import { supabase } from '../../utils/supabase';
 import { m } from '../../paraglide/messages.js';
 import { getBooks } from '../books/books';
