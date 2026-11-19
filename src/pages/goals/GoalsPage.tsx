@@ -5,7 +5,7 @@ import { useWorldShapes } from '../../hooks/useWorldShapes';
 import { m } from '../../paraglide/messages.js';
 import PageTitle from '../../components/PageTitle/PageTitle';
 import EmptyState from '../../components/EmptyState/EmptyState';
-import HilltopSticker from '../../components/Sticker/HilltopSticker';
+import GoalsSticker from '../../components/Sticker/GoalsSticker';
 import { useAddFromLink } from './hooks/useAddFromLink';
 import { useGoalActions } from './hooks/useGoalActions';
 import { useGoalDialogs } from './hooks/useGoalDialogs';
@@ -110,7 +110,7 @@ const GoalsPage = () => {
         <>
           <EmptyState
             className={styles.empty}
-            art={<HilltopSticker />}
+            art={<GoalsSticker />}
             title={m.goals_empty_title()}
             text={`${m.goals_empty_text()} ${
               books.length

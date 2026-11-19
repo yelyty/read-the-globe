@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import Button from '../Button/Button';
-import HilltopSticker from '../Sticker/HilltopSticker';
+import GoalsSticker from '../Sticker/GoalsSticker';
 import ShelfSticker from '../Sticker/ShelfSticker';
 import EmptyState from './EmptyState';
 
@@ -24,7 +24,7 @@ export const Default: Story = {};
 
 export const WithNote: Story = {
   args: {
-    art: <HilltopSticker />,
+    art: <GoalsSticker />,
     title: 'No goals yet',
     text: 'Pick a part of the world to read your way across.',
     actions: <Button variant="primary">Set a goal</Button>,

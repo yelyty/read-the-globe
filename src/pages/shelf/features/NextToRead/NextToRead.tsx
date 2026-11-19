@@ -10,7 +10,7 @@ import Suggest from '../../../../components/Suggest/Suggest';
 import Field from '../../../../components/Field/Field';
 import Button from '../../../../components/Button/Button';
 import EmptyState from '../../../../components/EmptyState/EmptyState';
-import RibbonSticker from '../../../../components/Sticker/RibbonSticker';
+import NextReadSticker from '../../../../components/Sticker/NextReadSticker';
 import StatusLine from '../../../../components/StatusLine/StatusLine';
 import * as styles from '../../ShelfPage.css';
 import NextItem from './NextItem';
@@ -170,7 +170,7 @@ const NextToRead = ({
         !failed && (
           <EmptyState
             className={styles.nextEmpty}
-            art={<RibbonSticker />}
+            art={<NextReadSticker />}
             text={m.next_empty()}
           />
         )

@@ -26,6 +26,8 @@ export const vars = createThemeContract({
 
     background: null,
     backgroundDeep: null,
+    // the pale fill of the empty-state drawings: a book, a pot; a dark gold in dark mode
+    stickerGold: null,
     surface: null,
     field: null,
     fieldLine: null,
@@ -96,6 +98,7 @@ export const light = {
 
     background: '#FFFFFD',
     backgroundDeep: '#F3D89A',
+    stickerGold: '#F3D89A',
     surface: '#FFFFFF',
     field: '#FFFFFF',
     fieldLine: '#8D8676',
@@ -159,6 +162,7 @@ const dark = {
 
     background: '#1C1811',
     backgroundDeep: '#2A2418',
+    stickerGold: '#9C7A2E',
     surface: '#241F15',
     field: '#1C1811',
     fieldLine: '#988F7A',

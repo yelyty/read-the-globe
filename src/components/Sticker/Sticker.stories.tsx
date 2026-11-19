@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import HilltopSticker from './HilltopSticker';
-import RibbonSticker from './RibbonSticker';
+import GoalsSticker from './GoalsSticker';
+import NextReadSticker from './NextReadSticker';
 import ShelfSticker from './ShelfSticker';
 import Sticker from './Sticker';
 
@@ -17,8 +17,8 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Hilltop: Story = { render: () => <HilltopSticker /> };
+export const Goals: Story = { render: () => <GoalsSticker /> };
 
-export const Ribbon: Story = { render: () => <RibbonSticker /> };
+export const NextRead: Story = { render: () => <NextReadSticker /> };
 
 export const Shelf: Story = { render: () => <ShelfSticker /> };

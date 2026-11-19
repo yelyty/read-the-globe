@@ -22,6 +22,10 @@ const illustration = {
     '--o-rust': '#6E2C26',
     '--o-gold': '#9A7F35',
     '--o-olive': '#4F5828',
+    // the hero's desk globe: its ball, its outline and land, its stand
+    '--globe': '#D6A77B',
+    '--o-globe': '#794F0F',
+    '--stand': '#5A4A2E',
   },
   dark: {
     '--green': '#2E4527',
@@ -35,6 +39,9 @@ const illustration = {
     '--o-rust': '#E39A8F',
     '--o-gold': '#E2C66B',
     '--o-olive': '#BAC584',
+    '--globe': '#8C6A4A',
+    '--o-globe': '#E0B88A',
+    '--stand': '#A8955F',
   },
 };
 

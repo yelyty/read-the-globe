@@ -19,6 +19,16 @@ The GitHub Terms of Service let GitHub users view and fork public
 repositories on GitHub. This notice does not limit those rights. A fork
 does not give you any of the permissions that this notice does not give.
 
+The illustrations in this repository are original artwork by Líza
+Tymošenko and are protected by copyright. This includes the empty-state
+drawings in src/components/Sticker (ShelfSticker.tsx,
+NextReadSticker.tsx and GoalsSticker.tsx) and the landing page's hero
+drawings in src/pages/landing/features/Hero (HeroBookStack.tsx,
+HeroBookRow.tsx and HeroGlobe.tsx), whether they are kept as SVG files
+or as code. The terms above apply to them in full: you may look at
+them, but you may not copy, trace, redraw, change or use them, in this
+project or any other, without written permission.
+
 Third-party code and data in this repository, for example the map data
 from Natural Earth, keep their own licenses.
 
