@@ -14,8 +14,8 @@ vi.mock('../utils/supabase', () => import('../testing/supabaseStub'));
 
 const { deleteBook, getBooks, saveBook } = await import('./books/books');
 const { sendContactMessage } = await import('./contact/contact');
-const worlds = await import('./worlds/worlds');
-const { addWorld, getWorlds, readWorlds, removeWorld } = worlds;
+const worldsApi = await import('./worlds/worlds');
+const { addWorld, getWorlds, readWorlds, removeWorld } = worldsApi;
 const { getNextReads } = await import('./nextReads/nextReads');
 const goals = await import('./goals/goals');
 const data = await import('./data/data');
