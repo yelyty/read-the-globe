@@ -13,22 +13,14 @@ export const COVER_COLORS = [
   '#9C8F72', // linen
 ];
 
-export type CoverLabel = 'high' | 'middle';
-
 export type CoverBinding = {
   color: string;
-  /** where the paper label sits */
-  label: CoverLabel;
-  /** gilt bands near the foot: none, one or two */
-  bands: 0 | 1 | 2;
   /** a darker leather strip down the spine, or just the crease */
   spine: boolean;
 };
 
 // the string hash Java uses: hash * 31 + char, written as a shift
 const HASH_SHIFT = 5;
-const LABELS: CoverLabel[] = ['high', 'middle'];
-const BANDS: CoverBinding['bands'][] = [2, 1, 2, 0];
 const SPINE_EVERY = 3;
 
 const hashOf = (seed: string): number => {
@@ -43,7 +35,7 @@ const hashOf = (seed: string): number => {
 };
 
 /**
- * Gets the look of a book cover from a seed, for example the title and the author: a color, a label, bands, and a spine.
+ * Gets the look of a book cover from a seed, for example the title and the author: a color and a spine.
  * The same seed always gives the same cover. Each detail uses its own part of the hash, so they change independently.
  */
 export const coverBinding = (seed: string): CoverBinding => {
@@ -52,9 +44,6 @@ export const coverBinding = (seed: string): CoverBinding => {
 
   return {
     color: COVER_COLORS[hash % COVER_COLORS.length],
-    label: LABELS[rest % LABELS.length],
-    bands: BANDS[Math.floor(rest / LABELS.length) % BANDS.length],
-    spine:
-      Math.floor(rest / (LABELS.length * BANDS.length)) % SPINE_EVERY === 0,
+    spine: rest % SPINE_EVERY === 0,
   };
 };
