@@ -40,8 +40,6 @@ describe('coverBinding', () => {
       coverBinding(`Book ${i}`)
     );
 
-    expect(new Set(shelf.map((book) => book.label)).size).toBe(2);
-    expect(new Set(shelf.map((book) => book.bands)).size).toBe(3);
     expect(new Set(shelf.map((book) => book.spine)).size).toBe(2);
     expect(new Set(shelf.map((book) => book.color)).size).toBeGreaterThan(5);
   });

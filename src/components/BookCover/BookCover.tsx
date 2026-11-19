@@ -31,13 +31,9 @@ const BookCover = ({
         className ? `${styles.cover[size]} ${className}` : styles.cover[size]
       }
       style={cloth}
-      data-label={binding.label}
-      data-bands={binding.bands}
       data-spine={binding.spine || undefined}
       aria-hidden="true"
-    >
-      <span className={styles.label[size]} />
-    </span>
+    />
   );
 };
 
