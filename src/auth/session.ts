@@ -5,12 +5,12 @@ import { adoptAccountLang } from '../utils/lang';
 import { m } from '../paraglide/messages.js';
 import type { Problem } from '../api/outcome';
 
-export interface Reader {
+export type Reader = {
   id: string;
   email: string | null;
   signUpName: string | null;
   createdAt: string;
-}
+};
 
 /**
  * Gets the reader from a Supabase user: the id, the email, the name given at sign-up, and the date the account was made.
@@ -36,10 +36,10 @@ export type AuthProblem = 'wrong-credentials' | 'email-taken' | 'failed';
  * Signs a reader in with an email and a password, and then uses the language saved on the account.
  * @returns Null if the reader is signed in. If not, 'wrong-credentials' or 'failed'.
  */
-export async function signIn(
+export const signIn = async (
   email: string,
   password: string
-): Promise<AuthProblem | null> {
+): Promise<AuthProblem | null> => {
   try {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -59,20 +59,20 @@ export async function signIn(
   } catch {
     return 'failed';
   }
-}
+};
 
 /**
  * Makes a new account. The confirmation email links back to the app.
  * @param details - The email, the password, the name, and if the new atlas gets example books.
  * @returns The problem, if any, and if the reader must confirm the email before signing in.
  */
-export async function signUp(details: {
+export const signUp = async (details: {
   email: string;
   password: string;
   name: string;
   /** fill the new atlas with example books, now or on the first sign-in after confirming the email */
   example: boolean;
-}): Promise<{ problem: AuthProblem | null; confirmEmail: boolean }> {
+}): Promise<{ problem: AuthProblem | null; confirmEmail: boolean }> => {
   try {
     const { data, error } = await supabase.auth.signUp({
       email: details.email,
@@ -98,13 +98,13 @@ export async function signUp(details: {
   } catch {
     return { problem: 'failed', confirmEmail: false };
   }
-}
+};
 
 /**
  * Adds the example books to the atlas, if the reader asked for them at sign-up. Then the wish is removed.
  * If the function is called again while it runs, it does not add the books again.
  */
-export function seedIfWished(user: User): Promise<void> {
+export const seedIfWished = (user: User): Promise<void> => {
   if (user.user_metadata?.[SEED_FLAG] !== true) return Promise.resolve();
 
   seeding ??= (async () => {
@@ -115,14 +115,14 @@ export function seedIfWished(user: User): Promise<void> {
   })().finally(() => (seeding = undefined));
 
   return seeding;
-}
+};
 
 /**
  * Sends an email with a link to reset the password.
  * The answer is the same if the email has no account, so the form never tells who has an account.
  * @returns Null, or a message to try again.
  */
-export async function sendPasswordReset(email: string): Promise<Problem> {
+export const sendPasswordReset = async (email: string): Promise<Problem> => {
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${window.location.origin}/reset-password`,
   });
@@ -132,32 +132,32 @@ export async function sendPasswordReset(email: string): Promise<Problem> {
   return !error || error.code === 'user_not_found'
     ? null
     : m.common_try_again();
-}
+};
 
 /**
  * Signs the reader out.
  */
-export async function signOut(): Promise<void> {
+export const signOut = async (): Promise<void> => {
   await supabase.auth.signOut();
-}
+};
 
 /**
  * Saves the name of the reader.
  * @returns Null if the name was saved. If not, a message that it could not be saved.
  */
-export async function updateDisplayName(name: string): Promise<Problem> {
+export const updateDisplayName = async (name: string): Promise<Problem> => {
   const { error } = await supabase.auth.updateUser({
     data: { display_name: name },
   });
 
   return error ? m.auth_name_save_failed() : null;
-}
+};
 
 /**
  * Changes the password of the reader.
  * @returns Null if the password was changed. If not, a message that tells why, in the reader's words.
  */
-export async function changePassword(password: string): Promise<Problem> {
+export const changePassword = async (password: string): Promise<Problem> => {
   const { error } = await supabase.auth.updateUser({ password });
 
   if (!error) return null;
@@ -166,4 +166,4 @@ export async function changePassword(password: string): Promise<Problem> {
   if (error.code === 'reauthentication_needed') return m.auth_reauth_needed();
 
   return m.auth_change_failed();
-}
+};

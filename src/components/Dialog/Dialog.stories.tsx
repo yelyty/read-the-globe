@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useArgs } from 'storybook/preview-api';
 import { fn } from 'storybook/test';
 
-import { Button } from '../Button/Button';
+import Button from '../Button/Button';
 import Dialog from './Dialog';
 import DialogActions from './DialogActions';
 import DialogText from './DialogText';

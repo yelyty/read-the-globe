@@ -13,7 +13,7 @@ type AuthForm = {
 };
 
 /** The sign up / log in / reset form: its fields, checked once it's been submitted, and moving between the three. */
-export function useAuthForm({ mode, onMode, onClose }: AuthForm) {
+export const useAuthForm = ({ mode, onMode, onClose }: AuthForm) => {
   const [values, setValues] = useState<Values>({
     name: '',
     email: '',
@@ -95,4 +95,4 @@ export function useAuthForm({ mode, onMode, onClose }: AuthForm) {
     handleSwitchAccount,
     handleSwitchReset,
   };
-}
+};

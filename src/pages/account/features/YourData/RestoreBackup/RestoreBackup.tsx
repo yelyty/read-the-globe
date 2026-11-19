@@ -10,7 +10,7 @@ import {
 import { useRefresh } from '../../../../../hooks/useReader';
 import { useStatus } from '../../../../../hooks/useStatus';
 import { useUndo } from '../../../../../hooks/useUndo';
-import { Button } from '../../../../../components/Button/Button';
+import Button from '../../../../../components/Button/Button';
 import { button } from '../../../../../components/Button/Button.css';
 import Dialog from '../../../../../components/Dialog/Dialog';
 import DialogActions from '../../../../../components/Dialog/DialogActions';

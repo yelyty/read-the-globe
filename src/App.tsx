@@ -9,7 +9,7 @@ import { router } from './router';
  * Shows the app: the router, with the auth state of the reader.
  * When the reader signs out, the app goes back to the landing page.
  */
-export function App() {
+export const App = () => {
   const auth = useAuth();
   const wasIn = useRef(false);
 
@@ -35,4 +35,4 @@ export function App() {
   if (auth.loading) return null;
 
   return <RouterProvider router={router} context={{ auth, queryClient }} />;
-}
+};

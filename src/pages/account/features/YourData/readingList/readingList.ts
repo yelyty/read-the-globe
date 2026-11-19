@@ -17,27 +17,27 @@ const download = (text: string, name: string, type: string) => {
  * Downloads the reading list as a CSV file. The file name contains the date of today.
  * @param names - The country names, by country code.
  */
-export function exportReadingList(
+export const exportReadingList = (
   books: BookEntry[],
   names: Record<string, string>
-) {
+) => {
   download(
     toCsv(readingListRows(books, names)),
     `read-the-globe-reading-list-${today()}.csv`,
     'text/csv'
   );
-}
+};
 
 /**
  * Downloads the full backup of the atlas as a JSON file. The file name contains the date of today.
  */
-export function exportBackup(backup: Backup) {
+export const exportBackup = (backup: Backup) => {
   download(
     JSON.stringify(backup, null, 2),
     `read-the-globe-backup-${today()}.json`,
     'application/json'
   );
-}
+};
 
 // a reading list to fill in: five well-known books, one date left blank to show it's optional
 const EXAMPLE = [

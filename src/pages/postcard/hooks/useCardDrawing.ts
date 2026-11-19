@@ -28,7 +28,7 @@ type CardDrawing = {
  * The hook waits until the country shapes are loaded. Then it draws the card again after each change.
  * For a reached goal, the hook draws a goal card. For all other cards, it draws a postcard.
  */
-export function useCardDrawing({
+export const useCardDrawing = ({
   canvasRef,
   logoRef,
   books,
@@ -39,7 +39,7 @@ export function useCardDrawing({
   firstName,
   goal,
   yearSummary,
-}: CardDrawing) {
+}: CardDrawing) => {
   const countries = useCountries();
 
   useEffect(() => {
@@ -94,4 +94,4 @@ export function useCardDrawing({
     yearSummary,
     firstName,
   ]);
-}
+};

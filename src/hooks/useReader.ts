@@ -23,44 +23,44 @@ export const useReaderId = () =>
 /**
  * Gets the books of the signed-in reader. The loader of /app puts them in the cache before a page shows.
  */
-export function useBooks() {
+export const useBooks = () => {
   const readerId = useReaderId();
 
   return useSuspenseQuery(booksQuery(readerId)).data;
-}
+};
 
 /**
  * Gets the goals of the signed-in reader. The loader of /app puts them in the cache before a page shows.
  */
-export function useGoals() {
+export const useGoals = () => {
   const readerId = useReaderId();
 
   return useSuspenseQuery(goalsQuery(readerId)).data;
-}
+};
 
 /**
  * Gets the saved worlds of the signed-in reader. The loader of /app puts them in the cache before a page shows.
  */
-export function useWorlds() {
+export const useWorlds = () => {
   const readerId = useReaderId();
 
   return useSuspenseQuery(worldsQuery(readerId)).data;
-}
+};
 
 /**
  * Gets the profile of the signed-in reader. The loader of the Postcard page puts it in the cache.
  */
-export function useProfile() {
+export const useProfile = () => {
   const readerId = useReaderId();
 
   return useSuspenseQuery(profileQuery(readerId)).data;
-}
+};
 
 /**
  * Gets the next reads of the signed-in reader. The loader of the Shelf page puts them in the cache.
  * @returns The list, if it failed to load, and `setItems`, which changes the list in the cache without loading it again.
  */
-export function useNextReads() {
+export const useNextReads = () => {
   const readerId = useReaderId();
   const queryClient = useQueryClient();
   const { items, failed } = useSuspenseQuery(nextReadsQuery(readerId)).data;
@@ -75,10 +75,10 @@ export function useNextReads() {
   );
 
   return { items, failed, setItems };
-}
+};
 
 /** Reloads the parts of the reader's data a change touched; with none named, all of it. Resolves once they're in. */
-export function useRefresh() {
+export const useRefresh = () => {
   const readerId = useReaderId();
   const queryClient = useQueryClient();
 
@@ -94,4 +94,4 @@ export function useRefresh() {
     },
     [queryClient, readerId]
   );
-}
+};

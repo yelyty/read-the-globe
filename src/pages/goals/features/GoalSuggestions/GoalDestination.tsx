@@ -3,7 +3,7 @@ import type { Feature } from 'geojson';
 
 import type { Marks } from '../../../../utils/atlasMarks';
 import { m } from '../../../../paraglide/messages.js';
-import { GoalPlate } from '../../components/GoalPlate';
+import GoalPlate from '../../components/GoalPlate';
 import GoalShelf from '../../components/GoalShelf';
 import { goalName, type CatalogueGoal } from '../../utils/catalogue';
 import { type Progress } from '../../utils/goalProgress';

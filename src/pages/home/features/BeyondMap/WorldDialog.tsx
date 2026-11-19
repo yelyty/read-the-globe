@@ -3,7 +3,7 @@ import { PushPinIcon } from '@phosphor-icons/react';
 
 import { byReadDate } from '../../../../utils/readDate';
 import { type WorldRow } from '../../../../utils/worlds';
-import { Button } from '../../../../components/Button/Button';
+import Button from '../../../../components/Button/Button';
 import Dialog from '../../../../components/Dialog/Dialog';
 import DialogActions from '../../../../components/Dialog/DialogActions';
 import DialogText from '../../../../components/Dialog/DialogText';

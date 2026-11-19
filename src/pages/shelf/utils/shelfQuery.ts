@@ -59,11 +59,11 @@ const inGoal = (book: BookEntry, goal: Goal, mark: Mark) =>
     : hits(book, mark, (code) => goalHas(goal, code));
 
 /** The books the Shelf shows for these filters, in their sort, and what to offer when none match. */
-export function shelfQuery(
+export const shelfQuery = (
   books: BookEntry[],
   filters: ShelfFilters,
   { names, marks }: Context
-): ShelfView {
+): ShelfView => {
   const { country, continent, mark, year, goal, sort } = filters;
   const name = (code?: string) => (code ? (names[code] ?? '') : '');
   const term = filters.query.trim().toLowerCase();
@@ -120,14 +120,14 @@ export function shelfQuery(
     unfiltered: list.length === books.length,
     invite: namedCountry && !marks[namedCountry] ? namedCountry : null,
   };
-}
+};
 
 /** the years the shelf has books in, newest first */
 export const shelfYears = (books: BookEntry[]) =>
   [...new Set(books.map(readYear).filter(Boolean))].sort().reverse();
 
 /** each year's line: how many books, and how many countries they reached */
-export function yearNotes(books: BookEntry[]): Record<string, string> {
+export const yearNotes = (books: BookEntry[]): Record<string, string> => {
   const by: Record<string, { books: number; codes: Set<string> }> = {};
 
   for (const book of books) {
@@ -144,4 +144,4 @@ export function yearNotes(books: BookEntry[]): Record<string, string> {
       `${m.count_book({ count: note.books })} · ${m.count_country({ count: note.codes.size })}`,
     ])
   );
-}
+};

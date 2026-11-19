@@ -11,9 +11,9 @@ const FIELDS =
  * If the list cannot be read, the function gives an empty list, so the rest of the Shelf page still shows.
  * @returns The list, and `failed: true` if it could not be read.
  */
-export async function getNextReads(
+export const getNextReads = async (
   userId: string
-): Promise<{ items: NextRead[]; failed: boolean }> {
+): Promise<{ items: NextRead[]; failed: boolean }> => {
   const { data, error } = await supabase
     .from('next_reads')
     .select(FIELDS)
@@ -24,15 +24,15 @@ export async function getNextReads(
   if (error) console.error(error);
 
   return { items: data ?? [], failed: !!error };
-}
+};
 
 /**
  * Adds a book to the next reads.
  * @returns The new next read, or a message that it could not be saved.
  */
-export async function addNextRead(
+export const addNextRead = async (
   item: Pick<NextRead, 'title' | 'author' | 'countryCode' | 'mark'>
-): Promise<Made<NextRead>> {
+): Promise<Made<NextRead>> => {
   const { data, error } = await supabase
     .from('next_reads')
     .insert({
@@ -47,15 +47,15 @@ export async function addNextRead(
   if (error) console.error(error);
 
   return data ? made(data) : failed(m.next_save_failed());
-}
+};
 
 /**
  * Removes a book from the next reads.
  * @returns Null if it was removed. If not, a message with the title of the book.
  */
-export async function removeNextRead(
+export const removeNextRead = async (
   item: Pick<NextRead, 'id' | 'title'>
-): Promise<Problem> {
+): Promise<Problem> => {
   const { error } = await supabase
     .from('next_reads')
     .delete()
@@ -64,4 +64,4 @@ export async function removeNextRead(
   if (error) console.error(error);
 
   return error ? m.next_remove_failed({ title: item.title }) : null;
-}
+};

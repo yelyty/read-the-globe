@@ -3,6 +3,9 @@ import { PushPinIcon } from '@phosphor-icons/react';
 import { m } from '../../../../paraglide/messages.js';
 import { btnPrimary } from '../LoginDialog/LoginDialog.css';
 import * as styles from './Hero.css';
+import HeroBookRow from './HeroBookRow';
+import HeroBookStack from './HeroBookStack';
+import HeroGlobe from './HeroGlobe';
 import { sticker } from './sticker';
 
 /**
@@ -25,49 +28,7 @@ const Hero = ({ onSignUp }: { onSignUp: () => void }) => {
           '--n': '0',
         })}
       >
-        <g
-          fill="none"
-          strokeWidth="2.6"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <rect
-            x="12"
-            y="64"
-            width="68"
-            height="15"
-            rx="3"
-            fill="var(--green)"
-            stroke="var(--o-green)"
-          />
-          <path d="M21 64v15" stroke="#F5E6B8" strokeWidth="1.8" />
-          <rect
-            x="18"
-            y="49"
-            width="62"
-            height="15"
-            rx="3"
-            fill="var(--rust)"
-            stroke="var(--o-rust)"
-          />
-          <path d="M71 49v15" stroke="#F0DCD6" strokeWidth="1.8" />
-          <rect
-            x="24"
-            y="34"
-            width="54"
-            height="15"
-            rx="3"
-            fill="var(--gold)"
-            stroke="var(--o-gold)"
-          />
-          <path d="M33 34v15" stroke="#7A6420" strokeWidth="1.8" />
-          <path
-            d="M60 34v-10l5 4 5-4v10"
-            fill="var(--rust)"
-            stroke="var(--o-rust)"
-            strokeWidth="2"
-          />
-        </g>
+        <HeroBookRow />
       </svg>
       <svg
         className={`${styles.sticker} ${styles.k2}`}
@@ -137,34 +98,27 @@ const Hero = ({ onSignUp }: { onSignUp: () => void }) => {
       >
         <g
           fill="none"
+          strokeWidth="2.6"
           strokeLinecap="round"
           strokeLinejoin="round"
-          strokeWidth="4"
         >
-          <circle
-            cx="30"
-            cy="56"
-            r="17"
-            fill="var(--bg2)"
-            fillOpacity=".55"
-            stroke="var(--ink)"
+          <path
+            d="M50 10c17 0 26 13 26 26 0 18-26 46-26 46S24 54 24 36c0-13 9-26 26-26Z"
+            fill="var(--rust)"
+            stroke="var(--o-rust)"
           />
           <circle
-            cx="70"
-            cy="56"
-            r="17"
-            fill="var(--bg2)"
-            fillOpacity=".55"
-            stroke="var(--ink)"
+            cx="50"
+            cy="36"
+            r="10"
+            fill="var(--card)"
+            stroke="var(--o-rust)"
           />
           <path
-            d="M47 53q3-5 6 0M13.5 51 5 40M86.5 51 95 40"
-            stroke="var(--ink)"
-          />
-          <path
-            d="M21 50q4-6 10-6M61 50q4-6 10-6"
-            stroke="var(--card)"
-            strokeWidth="2.6"
+            d="M30 91q20 7 40 0"
+            stroke="var(--ink3)"
+            strokeWidth="1.8"
+            strokeDasharray="3 5"
           />
         </g>
       </svg>
@@ -178,6 +132,20 @@ const Hero = ({ onSignUp }: { onSignUp: () => void }) => {
           '--s': 'clamp(64px,7.2vw,104px)',
           '--r': '8deg',
           '--n': '3',
+        })}
+      >
+        <HeroGlobe />
+      </svg>
+      <svg
+        className={`${styles.sticker} ${styles.k5}`}
+        viewBox="0 0 100 100"
+        aria-hidden="true"
+        style={sticker({
+          '--x': '82%',
+          '--y': '62%',
+          '--s': 'clamp(56px,6.1vw,88px)',
+          '--r': '-10deg',
+          '--n': '4',
         })}
       >
         <g
@@ -213,59 +181,6 @@ const Hero = ({ onSignUp }: { onSignUp: () => void }) => {
         </g>
       </svg>
       <svg
-        className={`${styles.sticker} ${styles.k5}`}
-        viewBox="0 0 100 100"
-        aria-hidden="true"
-        style={sticker({
-          '--x': '82%',
-          '--y': '62%',
-          '--s': 'clamp(56px,6.1vw,88px)',
-          '--r': '-10deg',
-          '--n': '4',
-        })}
-      >
-        <g strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
-          <path
-            d="M28 24h50v52H28Z"
-            fill="var(--land)"
-            stroke="var(--o-gold)"
-          />
-          <path
-            d="M38 38q8 6 16-2t18 4M36 60q10-6 18 2t20-4"
-            fill="none"
-            stroke="var(--o-olive)"
-            strokeWidth="2"
-          />
-          <circle cx="60" cy="49" r="3.6" fill="var(--rust)" stroke="none" />
-          <rect
-            x="76"
-            y="22"
-            width="13"
-            height="56"
-            rx="6.5"
-            fill="var(--bg2)"
-            stroke="var(--o-gold)"
-          />
-          <rect
-            x="12"
-            y="16"
-            width="18"
-            height="68"
-            rx="9"
-            fill="var(--bg2)"
-            stroke="var(--o-gold)"
-          />
-          <ellipse
-            cx="21"
-            cy="17"
-            rx="9"
-            ry="4"
-            fill="var(--card)"
-            stroke="var(--o-gold)"
-          />
-        </g>
-      </svg>
-      <svg
         className={`${styles.sticker} ${styles.k6}`}
         viewBox="0 0 100 100"
         aria-hidden="true"
@@ -277,31 +192,7 @@ const Hero = ({ onSignUp }: { onSignUp: () => void }) => {
           '--n': '5',
         })}
       >
-        <g
-          fill="none"
-          strokeWidth="2.6"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path
-            d="M50 10c17 0 26 13 26 26 0 18-26 46-26 46S24 54 24 36c0-13 9-26 26-26Z"
-            fill="var(--rust)"
-            stroke="var(--o-rust)"
-          />
-          <circle
-            cx="50"
-            cy="36"
-            r="10"
-            fill="var(--card)"
-            stroke="var(--o-rust)"
-          />
-          <path
-            d="M30 91q20 7 40 0"
-            stroke="var(--ink3)"
-            strokeWidth="1.8"
-            strokeDasharray="3 5"
-          />
-        </g>
+        <HeroBookStack />
       </svg>
       <div className={styles.heroInner}>
         <h1 className={styles.heroTitle} id="hero-h">

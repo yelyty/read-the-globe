@@ -9,7 +9,7 @@ const key = (name: string) => name.trim().toLowerCase();
  * Gets the imagined worlds: the imagined places of the books, grouped by name, and the worlds the reader saved.
  * Names match in any case. The worlds with the most books come first, then they are sorted by name.
  */
-export function worldsOf(books: BookEntry[], saved: World[]): WorldRow[] {
+export const worldsOf = (books: BookEntry[], saved: World[]): WorldRow[] => {
   const by = new Map<string, WorldRow>();
 
   for (const book of books)
@@ -37,7 +37,7 @@ export function worldsOf(books: BookEntry[], saved: World[]): WorldRow[] {
       second.books.length - first.books.length ||
       first.name.localeCompare(second.name, getLocale())
   );
-}
+};
 
 /**
  * Checks if two names are the same world. Case and spaces at the start and the end do not matter.

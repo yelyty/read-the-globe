@@ -17,12 +17,12 @@ type GoalActions = {
 };
 
 /** Adding, saving and removing goals: each says what happened on the status line and reloads the goals. */
-export function useGoalActions({
+export const useGoalActions = ({
   books,
   sorted,
   full,
   focusGoal,
-}: GoalActions) {
+}: GoalActions) => {
   const status = useStatus();
   const offerUndo = useUndo();
   const refresh = useRefresh();
@@ -82,4 +82,4 @@ export function useGoalActions({
   };
 
   return { saved, add, remove };
-}
+};

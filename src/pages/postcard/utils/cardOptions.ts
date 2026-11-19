@@ -1,4 +1,4 @@
-import type { SavedPostcard } from '../../../api/Profile/getProfile';
+import type { SavedPostcard } from '../../../api/profile/profile';
 import { m } from '../../../paraglide/messages.js';
 import { COLORS, KINDS, PAPERS, type Options } from './drawPostcard';
 

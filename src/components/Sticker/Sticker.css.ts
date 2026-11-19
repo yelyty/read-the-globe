@@ -1,7 +1,6 @@
 import { style } from '@vanilla-extract/css';
 
 import { space, vars } from '../../styles/theme.css';
-import { goldBand } from '../../styles/global.css';
 
 const deepRust = `color-mix(in srgb, ${vars.color.markerAuthor} 80%, black)`;
 
@@ -11,86 +10,71 @@ export const sticker = style({
   marginBottom: space.sp5,
 });
 
-/* ---------- a shelf with a gap: no books yet ---------- */
-export const shelfPlank = style({
-  stroke: vars.color.textMuted,
-  strokeWidth: 2.6,
-});
-const book = { strokeWidth: 2 } as const;
+/* ---------- a shelf of three books and a plant: no books yet ---------- */
+const shelfLine = { strokeWidth: 1 } as const;
 
-export const shelfBookA = style({
-  ...book,
-  fill: vars.color.primary,
-  stroke: vars.color.oliveInk,
-});
-export const shelfBookB = style({
-  ...book,
-  fill: vars.color.backgroundDeep,
-  stroke: vars.color.mark,
-});
-export const shelfBookC = style({
-  ...book,
+export const shelfPlank = style({ fill: vars.color.textSecondary });
+export const shelfBookRust = style({
+  ...shelfLine,
   fill: vars.color.markerAuthor,
   stroke: deepRust,
 });
-// a light band on the dark book, a deep one on the pale book, as on the landing's stack
-export const shelfBandA = style({
-  stroke: vars.color.onAccent,
-  strokeWidth: 1.6,
-});
-export const shelfBandB = style({ stroke: vars.color.mark, strokeWidth: 1.6 });
-// a space kept for the next book
-export const shelfGap = style({
-  stroke: vars.color.textMuted,
-  strokeWidth: 1.6,
-  strokeDasharray: '3 3.5',
-});
-
-/* ---------- a book with a ribbon: nothing saved to read next ---------- */
-export const ribbonBook = style({
-  fill: vars.color.backgroundDeep,
-  stroke: vars.color.mark,
-  strokeWidth: 2.2,
-});
-export const ribbonSpine = style({
-  stroke: vars.color.mark,
-  strokeWidth: 1.6,
-});
-export const ribbonRibbon = style({
-  fill: vars.color.markerAuthor,
-  stroke: deepRust,
-  strokeWidth: 1.6,
-});
-// the dashed road both the ribbon's and the hilltop's drawings follow
-export const road = style({
-  stroke: vars.color.textMuted,
-  strokeWidth: 1.8,
-  strokeDasharray: '3.5 4',
-});
-// the pin still to be placed
-export const ribbonPin = style({
-  stroke: vars.color.textMuted,
-  strokeWidth: 1.8,
-  strokeDasharray: '3 3.5',
-});
-export const ribbonPinEye = style({
-  stroke: vars.color.textMuted,
-  strokeWidth: 1.6,
-});
-
-/* ---------- a pennant on a hilltop: no goals yet ---------- */
-export const hillHill = style({
-  fill: goldBand,
-  stroke: vars.color.mark,
-  strokeWidth: 2.2,
-});
-export const hillStart = style({ fill: vars.color.olive });
-export const hillPole = style({
-  stroke: vars.color.textMuted,
-  strokeWidth: 2.6,
-});
-export const hillCloth = style({
+export const shelfBookOlive = style({
+  ...shelfLine,
   fill: vars.color.primary,
   stroke: vars.color.oliveInk,
-  strokeWidth: 2,
+});
+export const shelfBookPale = style({
+  ...shelfLine,
+  fill: vars.color.stickerGold,
+  stroke: vars.color.mark,
+});
+// the pale bands across each spine
+export const shelfBand = style({
+  ...shelfLine,
+  fill: vars.color.stickerGold,
+  stroke: deepRust,
+});
+export const shelfLeaf = style({
+  ...shelfLine,
+  fill: vars.color.primary,
+  stroke: vars.color.oliveInk,
+});
+export const shelfPot = style({
+  ...shelfLine,
+  fill: vars.color.stickerGold,
+  stroke: vars.color.textSecondary,
+});
+
+/* ---------- a shelf of empty book outlines and a plant: nothing to read next ---------- */
+// the books still to be picked, drawn as outlines only
+export const nextBookRust = style({ ...shelfLine, stroke: deepRust });
+export const nextBookOlive = style({
+  ...shelfLine,
+  stroke: vars.color.oliveInk,
+});
+export const nextBookPale = style({
+  ...shelfLine,
+  stroke: vars.color.secondary,
+});
+export const nextPot = style({
+  ...shelfLine,
+  fill: `color-mix(in srgb, ${vars.color.fieldLine} 80%, ${vars.color.background})`,
+  stroke: vars.color.textSecondary,
+});
+
+/* ---------- a stack of books with a pennant on top: no goals yet ---------- */
+// a faded rust for the top book
+const softRust = `color-mix(in srgb, ${vars.color.markerAuthor} 88%, ${vars.color.background})`;
+
+export const goalBookSoftRust = style({
+  ...shelfLine,
+  fill: softRust,
+  stroke: deepRust,
+});
+// the pole and its pennant
+export const goalFlag = style({
+  ...shelfLine,
+  fill: vars.color.primary,
+  stroke: vars.color.oliveInk,
 });

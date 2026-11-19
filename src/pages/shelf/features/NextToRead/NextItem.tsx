@@ -8,7 +8,7 @@ import type { Goal, NextRead } from '../../../../types';
 import type { Marks } from '../../../../utils/atlasMarks';
 import { countryStamp, type Country } from '../../../../utils/countryStamps';
 import { m } from '../../../../paraglide/messages.js';
-import { Button } from '../../../../components/Button/Button';
+import Button from '../../../../components/Button/Button';
 import ButtonLink from '../../../../components/Button/ButtonLink';
 import MarkDot from '../../../../components/MarkDot/MarkDot';
 import { goalName } from '../../../goals/utils/catalogue';

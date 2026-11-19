@@ -23,7 +23,7 @@ export const bookYears = (books: BookEntry[]) =>
  * This detail shows only if some of the countries are not new.
  * @returns The books of the year, their country codes, the number of continents, and the sentence.
  */
-export function yearSum(year: string, books: BookEntry[], goals: Goal[]) {
+export const yearSum = (year: string, books: BookEntry[], goals: Goal[]) => {
   const yb = books.filter((book) => readDate(book).startsWith(year));
   const codes = [...new Set(yb.flatMap(bookCountries))];
 
@@ -75,4 +75,4 @@ export function yearSum(year: string, books: BookEntry[], goals: Goal[]) {
   const line = `${year}: ${m.count_country({ count: codes.length })}, ${m.count_continent({ count: continents })}${extra ? `, ${extra}` : ''}.`;
 
   return { books: yb, codes, continents, line };
-}
+};

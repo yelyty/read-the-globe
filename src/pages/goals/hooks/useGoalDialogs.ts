@@ -7,7 +7,7 @@ import { goalName } from '../utils/catalogue';
 type Saved = (message: string, focus?: string) => Promise<void>;
 
 /** The page's two dialogs: a goal being made or edited, and a goal whose books are being chosen. */
-export function useGoalDialogs(saved: Saved) {
+export const useGoalDialogs = (saved: Saved) => {
   const [editing, setEditing] = useState<Goal | 'new' | null>(null);
   const [choosing, setChoosing] = useState<Goal | null>(null);
 
@@ -41,4 +41,4 @@ export function useGoalDialogs(saved: Saved) {
     handleGoalSaved,
     handleBooksSaved,
   };
-}
+};

@@ -165,7 +165,7 @@ type Draw = {
  * The right side is the back. It shows a stamp from the last country reached, with the goal-reached postmark on it.
  * The back also shows a message from the reader and three address lines.
  */
-export async function drawGoalCard({
+export const drawGoalCard = async ({
   canvas,
   goal: goal,
   progress: progress,
@@ -176,7 +176,7 @@ export async function drawGoalCard({
   paper: pp,
   first,
   logo,
-}: Draw) {
+}: Draw) => {
   await Promise.all(
     [`400 60px ${SERIF}`, `italic 400 60px ${SERIF}`, `500 20px ${SANS}`].map(
       (font) => document.fonts.load(font).catch(() => {})
@@ -625,7 +625,7 @@ export async function drawGoalCard({
       PALETTE.textSecondary
     );
   });
-}
+};
 
 /**
  * Makes the file name for a goal card, for example `read-the-globe-the-silk-road-postcard.png`.

@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 import * as styles from './Hint.css';
 
-type HintProp = {
+type HintProps = {
   children: string | ReactNode;
   id?: string;
   role?: string;
@@ -11,7 +11,7 @@ type HintProp = {
 /**
  * Shows a short hint under a field.
  */
-const Hint = ({ id, role, children }: HintProp) => {
+const Hint = ({ id, role, children }: HintProps) => {
   return (
     <p className={styles.hint} id={id} role={role}>
       {children}

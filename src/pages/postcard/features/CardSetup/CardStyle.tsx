@@ -3,7 +3,6 @@ import { lower } from '../../../../utils/text';
 import ToggleGroup, {
   type ToggleOption,
 } from '../../../../components/ToggleGroup/ToggleGroup';
-import * as styles from './CardStyle.css';
 import {
   COLOR_KEYS,
   COUNTS,
@@ -14,6 +13,7 @@ import {
   type ColorKey,
 } from '../../utils/cardOptions';
 import { COLORS, type Options } from '../../utils/drawPostcard';
+import * as styles from './CardStyle.css';
 
 type CardStyleProps = {
   options: CardOptions;

@@ -43,12 +43,7 @@ type GoalPlateProps = {
  * @param codes - The countries of the goal.
  * @param continent - The continent of a region goal, to frame the plate on it.
  */
-export const GoalPlate = ({
-  codes,
-  marks,
-  shapes,
-  continent,
-}: GoalPlateProps) => {
+const GoalPlate = ({ codes, marks, shapes, continent }: GoalPlateProps) => {
   const hatch = useSvgId('goal-hatch');
 
   const features = codes
@@ -96,3 +91,5 @@ export const GoalPlate = ({
     </svg>
   );
 };
+
+export default GoalPlate;

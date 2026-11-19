@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { TrashIcon } from '@phosphor-icons/react';
 
 import type { BookEntry } from '../../../../types';
-import { Button } from '../../../../components/Button/Button';
+import Button from '../../../../components/Button/Button';
 import { m } from '../../../../paraglide/messages.js';
 import * as styles from '../../AccountPage.css';
 import ConfirmationDialog from './ConfirmationDialog';

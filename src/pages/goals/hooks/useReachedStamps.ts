@@ -12,7 +12,7 @@ import { goalProgress, isDone } from '../utils/goalProgress';
  * Marks a goal as reached the first time it is seen full, and removes the mark if a book is removed.
  * @returns The ids of the goals that were reached while the reader looked. Each one plays the arrival once.
  */
-export function useReachedStamps(goals: Goal[], books: BookEntry[]) {
+export const useReachedStamps = (goals: Goal[], books: BookEntry[]) => {
   const refresh = useRefresh();
   const [arriving, setArriving] = useState<number[]>([]);
 
@@ -44,4 +44,4 @@ export function useReachedStamps(goals: Goal[], books: BookEntry[]) {
   }, [goals, books, refresh]);
 
   return arriving;
-}
+};

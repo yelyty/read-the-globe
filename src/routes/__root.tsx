@@ -16,10 +16,10 @@ import type { AuthContextValue } from '../auth/auth-context';
 import PublicLayout from '../layout/PublicLayout/PublicLayout';
 import { wantedLocale } from '../utils/lang';
 
-export interface RouterContext {
+export type RouterContext = {
   auth: AuthContextValue;
   queryClient: QueryClient;
-}
+};
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   beforeLoad: () => {

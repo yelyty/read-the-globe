@@ -15,7 +15,6 @@ type PlateInput = {
 };
 
 // the countries a tip and a click are for: every marked one, and every unmarked one but Antarctica.
-// ponytail: the mock offers only the 195; here Taiwan or Kosovo invite a book too, as the form already lists them
 const codeAt = (target: EventTarget) => {
   const el = (target as Element).closest<SVGElement>('[data-code]');
   const code = el?.dataset.code;
@@ -25,14 +24,14 @@ const codeAt = (target: EventTarget) => {
 
 /** The map plate's mouse and touch shortcuts: tips under the pointer, a marked country's click to its shelf,
     an unmarked one's to Log a book, anywhere else to the full screen map. */
-export function usePlateInput({
+export const usePlateInput = ({
   marks,
   full,
   setFull,
   tip,
   setTip,
   tipAt,
-}: PlateInput) {
+}: PlateInput) => {
   const pointer = useRef<'mouse' | 'touch'>('mouse');
   const navigate = useNavigate();
 
@@ -112,4 +111,4 @@ export function usePlateInput({
     handlePlateClick,
     handleFullToggle,
   };
-}
+};

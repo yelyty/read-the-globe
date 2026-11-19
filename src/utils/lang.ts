@@ -6,7 +6,7 @@ import {
   toLocale,
   type Locale,
 } from '../paraglide/runtime.js';
-import { getAccountLang, saveAccountLang } from '../api/Profile/accountLang';
+import { getAccountLang, saveAccountLang } from '../api/profile/profile';
 
 // each language in its own name, so a reader stuck in the wrong one can still find theirs
 export const LANG_NAMES: Record<Locale, string> = {
@@ -20,10 +20,10 @@ export const LANG_NAMES: Record<Locale, string> = {
  * so another device opens in it too. Then the page reloads in the language.
  * If the save on the account fails, the language still changes on this device.
  */
-export async function pickLang(lang: Locale) {
+export const pickLang = async (lang: Locale) => {
   await saveAccountLang(lang);
   void setLocale(lang);
-}
+};
 
 /**
  * After a sign-in, uses the language of the account on this device too.
@@ -31,7 +31,7 @@ export async function pickLang(lang: Locale) {
  * The function throws an error if the language of the account cannot be read, so it never overwrites it.
  * @returns True if the page reloads in another language.
  */
-export async function adoptAccountLang(userId: string): Promise<boolean> {
+export const adoptAccountLang = async (userId: string): Promise<boolean> => {
   const saved = toLocale(await getAccountLang(userId));
 
   if (!saved) {
@@ -44,7 +44,7 @@ export async function adoptAccountLang(userId: string): Promise<boolean> {
   void setLocale(saved);
 
   return true;
-}
+};
 
 /**
  * Gets the language the reader wants: the one saved on this device, or else the one the browser prefers.

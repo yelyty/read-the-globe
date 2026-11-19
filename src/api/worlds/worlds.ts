@@ -5,9 +5,9 @@ import type { Problem } from '../outcome';
 
 /**
  * Gets the imagined worlds that a reader saved from Beyond the map.
- * If the worlds cannot be read, the function gives an empty list.
+ * The function throws an error if the worlds cannot be read. A backup uses it, so it never leaves the worlds out.
  */
-export async function getWorlds(userId: string): Promise<World[]> {
+export const readWorlds = async (userId: string): Promise<World[]> => {
   const { data, error } = await supabase
     .from('worlds')
     .select('id, name')
@@ -15,32 +15,42 @@ export async function getWorlds(userId: string): Promise<World[]> {
     .order('created_at')
     .returns<World[]>();
 
-  // ponytail: a missing worlds table (app-2-atlas.sql not run yet) just means no saved worlds
-  if (error) console.error(error);
+  if (error) throw new Error("Couldn't load your saved worlds");
 
   return data ?? [];
-}
+};
+
+/**
+ * Gets the imagined worlds that a reader saved from Beyond the map.
+ * If the worlds cannot be read, the function gives an empty list, so the pages still show.
+ */
+export const getWorlds = (userId: string): Promise<World[]> =>
+  readWorlds(userId).catch((error: unknown) => {
+    console.error(error);
+
+    return [];
+  });
 
 /**
  * Saves an imagined world.
  * @returns Null if the world was saved. If not, a message that it could not be saved.
  */
-export async function addWorld(name: string): Promise<Problem> {
+export const addWorld = async (name: string): Promise<Problem> => {
   const { error } = await supabase.from('worlds').insert({ name });
 
   if (error) console.error(error);
 
   return error ? m.world_save_failed() : null;
-}
+};
 
 /**
  * Removes a saved imagined world.
  * @returns Null if the world was removed. If not, a message that it could not be removed.
  */
-export async function removeWorld(id: string): Promise<Problem> {
+export const removeWorld = async (id: string): Promise<Problem> => {
   const { error } = await supabase.from('worlds').delete().eq('id', id);
 
   if (error) console.error(error);
 
   return error ? m.world_remove_failed() : null;
-}
+};

@@ -96,11 +96,11 @@ const countryError = (typed: string, place: boolean) =>
         : m.log_add_author_country();
 
 /** Reads the log form: every render, for the preview, and on Pin it, for the errors and the book to save. */
-export function readLog(
+export const readLog = (
   fields: LogFields,
   names: Record<string, string>,
   today = localToday()
-): LogReading {
+): LogReading => {
   const name = (code: string) => names[code] ?? '';
 
   const places = fields.rows
@@ -148,7 +148,6 @@ export function readLog(
             fields.startMonth,
             today
           ),
-          // ponytail: an old name or a territory isn't kept beside the country; it only names an unnamed place
           places: places.map((place) =>
             place.imagined
               ? { name: place.name, country: null, imagined: true }
@@ -165,7 +164,7 @@ export function readLog(
         };
 
   return { places, authorCode, marks, errors, draft };
-}
+};
 
 /** The same title and author already on the atlas: usually a slip, so the form says so once. */
 export const duplicateOf = (draft: BookDraft, books: BookEntry[]) => {
@@ -225,11 +224,11 @@ type Shelf = {
 };
 
 /** Where a new book lands on Home: the pin line, and the goal it carried over its flag, if any. */
-export function landingFor(
+export const landingFor = (
   id: number,
   draft: BookDraft,
   { books, goals, names }: Shelf
-): Landing {
+): Landing => {
   const added = entryOf(id, draft, names);
   const all = [...books, added];
   const before = atlasMarks(books);
@@ -264,7 +263,7 @@ export function landingFor(
           .join(' ')
       : null,
   };
-}
+};
 
 // an error's field: its input's id, and its name in the summary
 const fieldOf = (key: string): [id: string, label: string] =>
@@ -278,7 +277,7 @@ const fieldOf = (key: string): [id: string, label: string] =>
  * Gets the text over the errors of the log form, and the field to focus.
  * @returns The one error, or which fields need a look if there are more, and the id of the first field with an error.
  */
-export function errorSummary(errors: Record<string, string>) {
+export const errorSummary = (errors: Record<string, string>) => {
   const bad = Object.keys(errors);
 
   const text =
@@ -290,4 +289,4 @@ export function errorSummary(errors: Record<string, string>) {
         });
 
   return { text, focusId: bad.length ? fieldOf(bad[0])[0] : null };
-}
+};

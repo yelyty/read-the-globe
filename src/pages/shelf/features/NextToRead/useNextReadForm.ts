@@ -20,12 +20,12 @@ type NextReadForm = {
 
 /** The Next to read form: title, author, a country typed by name and which mark it would leave; checked,
     saved, and cleared for the next one. Leaving the page with something typed asks first. */
-export function useNextReadForm({
+export const useNextReadForm = ({
   items,
   names,
   titleRef,
   actions,
-}: NextReadForm) {
+}: NextReadForm) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [country, setCountry] = useState('');
@@ -139,4 +139,4 @@ export function useNextReadForm({
     handleAuthorChange,
     handleCountryValue,
   };
-}
+};

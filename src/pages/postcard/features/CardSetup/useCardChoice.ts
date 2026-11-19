@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 
 import type { BookEntry, Goal, Profile } from '../../../../types';
-import type { SavedPostcard } from '../../../../api/Profile/getProfile';
+import type { SavedPostcard } from '../../../../api/profile/profile';
 import { atlasMarks } from '../../../../utils/atlasMarks';
 import { firstName } from '../../../../utils/firstName';
 import { goalProgress } from '../../../goals/utils/goalProgress';
@@ -29,7 +29,7 @@ type CardChoice = {
  * @returns The set-up and a function to change it, the years and reached goals that have a card,
  *   and the title, numbers, color, and screen-reader label of the card.
  */
-export function useCardChoice({ books, goals, profile, user }: CardChoice) {
+export const useCardChoice = ({ books, goals, profile, user }: CardChoice) => {
   const search = route.useSearch();
   const navigate = useNavigate();
 
@@ -99,4 +99,4 @@ export function useCardChoice({ books, goals, profile, user }: CardChoice) {
     color,
     label,
   };
-}
+};

@@ -86,7 +86,7 @@ const LogBook = () => {
   };
 
   // Undo puts the book back through the same save as the form: a new row with the same title, author, places,
-  // read date and goal ticks. ponytail: it counts as logged again, so it returns to the top of Recent reads
+  // read date and goal ticks
   const removed = async (gone: BookEntry) => {
     await close();
     await refresh('books');

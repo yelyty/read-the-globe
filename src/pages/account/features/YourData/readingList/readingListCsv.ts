@@ -19,7 +19,7 @@ export const toCsv = (rows: string[][]) =>
  * Reads CSV text into rows. A quoted cell can have commas, line breaks, and "" for a quote.
  * Blank lines and the byte order mark of Excel are removed.
  */
-export function parseCsv(text: string): string[][] {
+export const parseCsv = (text: string): string[][] => {
   const rows: string[][] = [];
   let row: string[] = [];
   let value = '';
@@ -54,16 +54,16 @@ export function parseCsv(text: string): string[][] {
   }
 
   return rows.filter((csvRow) => csvRow.some((field) => field.trim()));
-}
+};
 
 /**
  * Makes the rows of the reading list, with a header row. An imagined place is written as "Middle-earth (imagined)".
  * @param names - The country names, by country code.
  */
-export function readingListRows(
+export const readingListRows = (
   books: BookEntry[],
   names: Record<string, string>
-): string[][] {
+): string[][] => {
   const place = (bookPlace: BookEntry['places'][number]) => {
     if (bookPlace.imagined) return `${bookPlace.name} (imagined)`;
 
@@ -89,7 +89,7 @@ export function readingListRows(
       readDate(book),
     ]),
   ];
-}
+};
 
 /**
  * Gets the books in a reading list, and the number of rows that cannot be a book.
@@ -97,10 +97,10 @@ export function readingListRows(
  * A place is a country, "City, Country", or an imagined world. A city without a country is dropped.
  * @param names - The country names, by country code.
  */
-export function booksFromCsv(
+export const booksFromCsv = (
   text: string,
   names: Record<string, string>
-): { books: ImportedBook[]; problems: number } {
+): { books: ImportedBook[]; problems: number } => {
   const rows = parseCsv(text);
 
   if (rows.length && /title/i.test(rows[0][0] ?? '')) rows.shift();
@@ -160,4 +160,4 @@ export function booksFromCsv(
   }
 
   return { books, problems };
-}
+};

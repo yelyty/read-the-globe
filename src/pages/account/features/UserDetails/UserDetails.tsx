@@ -4,11 +4,11 @@ import { CheckIcon } from '@phosphor-icons/react';
 import Field from '../../../../components/Field/Field';
 import { updateDisplayName, type Reader } from '../../../../auth/session';
 import Hint from '../../../../components/Hint/Hint';
-import { Button } from '../../../../components/Button/Button';
+import Button from '../../../../components/Button/Button';
 import { m } from '../../../../paraglide/messages.js';
+import StatusLine from '../../../../components/StatusLine/StatusLine';
 import * as styles from '../../AccountPage.css';
 import AccountSection from '../../components/AccountSection';
-import StatusLine from '../../../../components/StatusLine/StatusLine';
 
 type UserDetailsProps = {
   user: Reader;

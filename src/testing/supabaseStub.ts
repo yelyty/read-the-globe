@@ -11,6 +11,8 @@ export const stub = {
   answer: { data: null, error: null } as Answer,
   answers: {} as Record<string, Answer>,
   calls: [] as unknown[][],
+  /** answers given one per request, in order, before `answers` and `answer`: a paged read's pages */
+  pages: {} as Record<string, Answer[]>,
   /** what auth.getSession() finds: the signed-in reader's session, or null */
   session: null as { user: { id: string } } | null,
 };
@@ -22,6 +24,7 @@ export const resetStub = () => {
   stub.answer = { data: null, error: null };
   stub.answers = {};
   stub.calls = [];
+  stub.pages = {};
   stub.session = null;
 };
 
@@ -34,6 +37,14 @@ export const succeed = (data: unknown, target?: string) => {
 
   if (target) stub.answers[target] = answer;
   else stub.answer = answer;
+};
+
+/**
+ * Makes the next requests to a target answer with these pages of data, one page per request.
+ * @param target - A table, for example 'books'.
+ */
+export const succeedPages = (pages: unknown[][], target: string) => {
+  stub.pages[target] = pages.map((data) => ({ data, error: null }));
 };
 
 /**
@@ -55,7 +66,9 @@ export const callsOf = (step: string) =>
   stub.calls.filter(([name]) => name === step).map(([, ...args]) => args);
 
 const answerFor = (target: string) =>
-  Promise.resolve(stub.answers[target] ?? stub.answer);
+  Promise.resolve(
+    stub.pages[target]?.shift() ?? stub.answers[target] ?? stub.answer
+  );
 
 const STEPS = [
   'select',
@@ -64,6 +77,7 @@ const STEPS = [
   'delete',
   'eq',
   'order',
+  'range',
   'returns',
 ];
 

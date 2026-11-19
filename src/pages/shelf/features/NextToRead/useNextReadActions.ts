@@ -19,11 +19,11 @@ type NextReadActions = {
 
 /** Saving, removing and pointing out next reads. The list is this card's own: each change updates it in place,
     without reloading the Shelf. */
-export function useNextReadActions({
+export const useNextReadActions = ({
   items,
   setItems,
   titleRef,
-}: NextReadActions) {
+}: NextReadActions) => {
   const status = useStatus();
   const offerUndo = useUndo();
 
@@ -87,4 +87,4 @@ export function useNextReadActions({
   };
 
   return { add, remove, showDuplicate };
-}
+};

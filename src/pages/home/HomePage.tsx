@@ -47,8 +47,7 @@ const HomePage = () => {
   const [landing, setLanding] = useLanding();
 
   /* A book just pinned: until its pins land, Home draws the atlas as it was (map, count, rows), and each country
-     takes its mark as its pin arrives. ponytail: leaving Home mid-flight keeps the landing, so it flies again
-     on the next visit; clear it on unmount if that ever matters. */
+     takes its mark as its pin arrives. */
   const flying =
     landing && books.some((book) => book.id === landing.bookId)
       ? landing

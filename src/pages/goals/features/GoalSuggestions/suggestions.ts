@@ -18,10 +18,10 @@ type Offer = { c: CatalogueGoal; i: number; p: Progress; score: number };
  * @param progress - Gets how far the books of the reader go into a goal.
  * @returns The pick, the top goals, the other goals, and the other goals grouped by kind.
  */
-export function suggestGoals(
+export const suggestGoals = (
   goals: Goal[],
   progress: (goal: CatalogueGoal) => Progress
-) {
+) => {
   const have = new Set(goals.map((goal) => goal.name.toLowerCase()));
 
   const left: Offer[] = CATALOGUE.filter(
@@ -73,4 +73,4 @@ export function suggestGoals(
     .filter((group) => group.items.length);
 
   return { pick, top, rest, groups };
-}
+};

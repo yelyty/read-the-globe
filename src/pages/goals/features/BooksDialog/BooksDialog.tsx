@@ -4,7 +4,7 @@ import { CheckIcon, MagnifyingGlassIcon } from '@phosphor-icons/react';
 import type { BookEntry, Goal } from '../../../../types';
 import { setGoalBooks } from '../../../../api/goals/goals';
 import Hint from '../../../../components/Hint/Hint';
-import { Button } from '../../../../components/Button/Button';
+import Button from '../../../../components/Button/Button';
 import { useDirty } from '../../../../hooks/useUnsaved';
 import Dialog from '../../../../components/Dialog/Dialog';
 import DialogActions from '../../../../components/Dialog/DialogActions';

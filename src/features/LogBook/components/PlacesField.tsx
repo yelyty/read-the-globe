@@ -4,7 +4,7 @@ import { PlusIcon } from '@phosphor-icons/react';
 import { splitStates } from '../../../utils/countryFrom';
 import { m } from '../../../paraglide/messages.js';
 import * as fieldStyles from '../../../components/Field/Field.css';
-import { Button } from '../../../components/Button/Button';
+import Button from '../../../components/Button/Button';
 import Hint from '../../../components/Hint/Hint';
 import MarkDot from '../../../components/MarkDot/MarkDot';
 import * as styles from '../LogBook.css';

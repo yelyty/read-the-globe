@@ -11,10 +11,13 @@ import { m } from '../../paraglide/messages.js';
 
 vi.mock('../../utils/supabase', () => import('../../testing/supabaseStub'));
 
-const { getAccountLang, saveAccountLang } = await import('./accountLang');
-const { deleteAccount } = await import('./deleteAccount');
-const { getProfile } = await import('./getProfile');
-const { updateProfile } = await import('./updateProfile');
+const {
+  deleteAccount,
+  getAccountLang,
+  getProfile,
+  saveAccountLang,
+  updateProfile,
+} = await import('./profile');
 
 beforeEach(() => {
   resetStub();

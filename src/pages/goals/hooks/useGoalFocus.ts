@@ -5,7 +5,7 @@ import { prefersReducedMotion } from '../../../utils/motion';
 
 /** Focuses a goal by name once its row shows up: one just added, or one back from Undo.
     `ready` is false while the page still waits to draw its rows. */
-export function useGoalFocus(goals: Goal[], ready: boolean) {
+export const useGoalFocus = (goals: Goal[], ready: boolean) => {
   const focusName = useRef<string | null>(null);
 
   useEffect(() => {
@@ -31,4 +31,4 @@ export function useGoalFocus(goals: Goal[], ready: boolean) {
   return useCallback((name: string) => {
     focusName.current = name.trim().toLowerCase();
   }, []);
-}
+};

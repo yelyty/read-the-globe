@@ -56,7 +56,7 @@ const PlaceItem = ({
       autoComplete="off"
       maxLength={80}
       placeholder={placeRow.imagined ? m.log_world_ph() : m.log_city()}
-      // an imagined place offers the reader's worlds; ponytail: no gazetteer of real places yet
+      // an imagined place offers the reader's worlds
       options={placeRow.imagined ? worlds : []}
       value={placeRow.name}
       onValue={onNameValue}

@@ -6,7 +6,7 @@ import { MAX_GOALS } from '../utils/catalogue';
 import { goalProgress, isDone, type GoalDraft } from '../utils/goalProgress';
 
 /** the reader's goals as the page lists them: open ones first, reached ones after, with how far each has come */
-export function useGoalList(goals: Goal[], books: BookEntry[]) {
+export const useGoalList = (goals: Goal[], books: BookEntry[]) => {
   return useMemo(() => {
     const marks = atlasMarks(books);
 
@@ -24,4 +24,4 @@ export function useGoalList(goals: Goal[], books: BookEntry[]) {
       full: goals.length >= MAX_GOALS,
     };
   }, [goals, books]);
-}
+};

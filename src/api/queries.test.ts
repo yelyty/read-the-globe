@@ -1,7 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
 // the loaders, as stand-ins that name what they were asked for
-vi.mock('./getBooks', () => ({ default: (id: string) => `books of ${id}` }));
+vi.mock('./books/books', () => ({
+  getBooks: (id: string) => `books of ${id}`,
+}));
 
 vi.mock('./goals/goals', () => ({
   getGoals: (id: string) => `goals of ${id}`,
@@ -15,7 +17,7 @@ vi.mock('./nextReads/nextReads', () => ({
   getNextReads: (id: string) => `next reads of ${id}`,
 }));
 
-vi.mock('./Profile/getProfile', () => ({
+vi.mock('./profile/profile', () => ({
   getProfile: (id: string) => `profile of ${id}`,
 }));
 

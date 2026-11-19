@@ -3,7 +3,6 @@ import { useBlocker } from '@tanstack/react-router';
 
 import { m } from '../paraglide/messages.js';
 
-// ponytail: the browser's own confirm; swap in a styled dialog if it ever jars
 const keepChanges = () => !confirm(m.common_discard());
 
 /** true once `state` differs from what it was on the first render */

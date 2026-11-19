@@ -1,16 +1,16 @@
 import type { Continent } from './utils/continents';
 
-export interface Country {
+export type Country = {
   name: string;
   code: string;
-}
+};
 
-export interface Author {
+export type Author = {
   name: string;
   country: Country | null;
-}
+};
 
-export interface BookEntry {
+export type BookEntry = {
   /** the database's numeric id (bigint) */
   id: number;
   title: string;
@@ -23,19 +23,19 @@ export interface BookEntry {
   goals: {
     goalId: number;
   }[];
-}
+};
 
-export interface CountryGroup {
+export type CountryGroup = {
   code: string;
   name: string;
   books: BookEntry[];
-}
+};
 
-export interface CountryData {
+export type CountryData = {
   [countryCode: string]: CountryGroup;
-}
+};
 
-export interface Place {
+export type Place = {
   id: number;
   name: string;
   lon: number;
@@ -44,7 +44,7 @@ export interface Place {
   bookId: number;
   /** not on any map: name is the imagined world, and there is no country */
   imagined?: boolean;
-}
+};
 
 /** a book read from an imported reading list, before it is saved */
 export type ImportedBook = {
@@ -56,14 +56,14 @@ export type ImportedBook = {
   places: { name: string; country: string | null; imagined?: boolean }[];
 };
 
-export interface World {
+export type World = {
   id: string;
   name: string;
-}
+};
 
 export type GoalKind = 'region' | 'countries' | 'theme';
 
-export interface Goal {
+export type Goal = {
   id: number;
   kind: GoalKind;
   name: string;
@@ -71,21 +71,21 @@ export interface Goal {
   countryCodes: string[] | null;
   target: number | null;
   reachedOn: string | null;
-}
+};
 
-export interface Profile {
+export type Profile = {
   displayName: string;
   handle: string | null;
   createdAt: string;
-}
+};
 
-export interface NextRead {
+export type NextRead = {
   id: number;
   title: string;
   author: string | null;
   countryCode: string | null;
   mark: 'set' | 'author' | null;
   createdAt: string;
-}
+};
 
 export type Geo = { id: string; rsmKey: string };

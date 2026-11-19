@@ -135,4 +135,4 @@ The country shapes are from Natural Earth, through world-atlas. These data are i
 
 ## License
 
-This repository is public, but it is not open source. You can read the source code. You cannot run, copy, change or use the code without written permission. Refer to [LICENSE](LICENSE) for the full terms.
+This repository is public, but it is not open source. You can read the source code. You cannot run, copy, change or use the code without written permission. The illustrations, such as the empty-state drawings, are original, copyrighted artwork, and the same terms apply to them. Refer to [LICENSE](LICENSE) for the full terms.

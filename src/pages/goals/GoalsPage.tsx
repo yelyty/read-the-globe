@@ -5,7 +5,7 @@ import { useWorldShapes } from '../../hooks/useWorldShapes';
 import { m } from '../../paraglide/messages.js';
 import PageTitle from '../../components/PageTitle/PageTitle';
 import EmptyState from '../../components/EmptyState/EmptyState';
-import HilltopSticker from '../../components/Sticker/HilltopSticker';
+import GoalsSticker from '../../components/Sticker/GoalsSticker';
 import { useAddFromLink } from './hooks/useAddFromLink';
 import { useGoalActions } from './hooks/useGoalActions';
 import { useGoalDialogs } from './hooks/useGoalDialogs';
@@ -14,7 +14,7 @@ import { useGoalList } from './hooks/useGoalList';
 import { useReachedStamps } from './hooks/useReachedStamps';
 import GoalRow from './components/GoalRow';
 import GoalSuggestions from './features/GoalSuggestions/GoalSuggestions';
-import GoalDialog from './features/GoalsDialog/GoalsDialog';
+import GoalsDialog from './features/GoalsDialog/GoalsDialog';
 import BooksDialog from './features/BooksDialog/BooksDialog';
 import * as styles from './GoalsPage.css';
 
@@ -110,7 +110,7 @@ const GoalsPage = () => {
         <>
           <EmptyState
             className={styles.empty}
-            art={<HilltopSticker />}
+            art={<GoalsSticker />}
             title={m.goals_empty_title()}
             text={`${m.goals_empty_text()} ${
               books.length
@@ -122,7 +122,7 @@ const GoalsPage = () => {
       )}
 
       {editing && (
-        <GoalDialog
+        <GoalsDialog
           goal={editing === 'new' ? null : editing}
           goals={goals}
           names={names}

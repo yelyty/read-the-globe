@@ -47,7 +47,7 @@ const decode = (topo: Topology): World => {
   // A few areas have no code (Somaliland, Kosovo, N. Cyprus…): they're drawn by the map but can't be marked
   if (all.type === 'FeatureCollection')
     for (const shape of all.features) {
-      if (shape.id == null) continue;
+      if (shape.id === null || shape.id === undefined) continue;
 
       const code = String(shape.id);
       const kept = shapes[code];

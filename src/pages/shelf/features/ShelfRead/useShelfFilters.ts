@@ -20,11 +20,11 @@ type ShelfFiltersArgs = {
  * Keeps the search, the filters, the sort, and how much of the list the Read tab shows.
  * A new search, filter, or sort shows the list from the top again.
  */
-export function useShelfFilters({
+export const useShelfFilters = ({
   country,
   linkedQuery,
   searchRef,
-}: ShelfFiltersArgs) {
+}: ShelfFiltersArgs) => {
   const navigate = useNavigate();
   const [query, setQuery] = useState(linkedQuery ?? '');
   const [continent, setContinent] = useState<Continent | ''>('');
@@ -107,6 +107,6 @@ export function useShelfFilters({
     changeSort,
     showMore,
   };
-}
+};
 
 export type ShelfFilterState = ReturnType<typeof useShelfFilters>;
