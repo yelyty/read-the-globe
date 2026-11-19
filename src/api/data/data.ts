@@ -5,7 +5,7 @@ import { m } from '../../paraglide/messages.js';
 import { getBooks } from '../books/books';
 import { getGoals } from '../goals/goals';
 import { getNextReads } from '../nextReads/nextReads';
-import { getWorlds } from '../worlds/worlds';
+import { readWorlds } from '../worlds/worlds';
 import { failed, made, type Made, type Problem } from '../outcome';
 
 // The whole atlas as the Full backup (JSON) writes it, and as restore_backup reads it back
@@ -27,7 +27,7 @@ export const getBackup = async (userId: string): Promise<Backup> => {
     getBooks(userId),
     getGoals(userId),
     getNextReads(userId),
-    getWorlds(userId),
+    readWorlds(userId),
   ]);
 
   if (next.failed) throw new Error("Couldn't load your next reads");

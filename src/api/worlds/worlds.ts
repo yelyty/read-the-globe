@@ -5,9 +5,9 @@ import type { Problem } from '../outcome';
 
 /**
  * Gets the imagined worlds that a reader saved from Beyond the map.
- * If the worlds cannot be read, the function gives an empty list.
+ * The function throws an error if the worlds cannot be read. A backup uses it, so it never leaves the worlds out.
  */
-export const getWorlds = async (userId: string): Promise<World[]> => {
+export const readWorlds = async (userId: string): Promise<World[]> => {
   const { data, error } = await supabase
     .from('worlds')
     .select('id, name')
@@ -15,10 +15,21 @@ export const getWorlds = async (userId: string): Promise<World[]> => {
     .order('created_at')
     .returns<World[]>();
 
-  if (error) console.error(error);
+  if (error) throw new Error("Couldn't load your saved worlds");
 
   return data ?? [];
 };
+
+/**
+ * Gets the imagined worlds that a reader saved from Beyond the map.
+ * If the worlds cannot be read, the function gives an empty list, so the pages still show.
+ */
+export const getWorlds = (userId: string): Promise<World[]> =>
+  readWorlds(userId).catch((error: unknown) => {
+    console.error(error);
+
+    return [];
+  });
 
 /**
  * Saves an imagined world.

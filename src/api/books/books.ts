@@ -19,39 +19,53 @@ type BookRow = Omit<BookEntry, 'author'> & {
   authorCountry: Country | null;
 };
 
+// Supabase answers at most this many rows per request (the project's "Max rows", 1000 by default)
+const PAGE_SIZE = 1000;
+
 /**
  * Gets the books of a reader, with their author, places, and goals. The newest read come first.
+ * The books are read a page at a time, so an atlas bigger than one page comes back whole.
  * The function throws an error if the books cannot be read.
  */
 export const getBooks = async (userId: string): Promise<BookEntry[]> => {
-  const { data: books, error } = await supabase
-    .from('books')
-    .select(
-      `
-      id,
-      title,
-      createdAt: created_at,
-      readOn: read_on,
-      author: authors( name ),
-      authorCountry:countries!books_author_country_code_fkey (
-        name,
-        code
-      ),
-      places!places_book_id_fkey ( id, name, lon, lat, countryCode:country_code, bookId:book_id, imagined ),
-      goals:book_goals ( goalId:goal_id )
-    `
-    )
-    .eq('user_id', userId)
-    .order('read_on', { ascending: false, nullsFirst: false })
-    .order('created_at', { ascending: false })
-    .returns<BookRow[]>();
+  const books: BookRow[] = [];
 
-  if (error) {
-    throw new Error("Couldn't load your books");
+  for (let from = 0; ; from += PAGE_SIZE) {
+    const { data: page, error } = await supabase
+      .from('books')
+      .select(
+        `
+        id,
+        title,
+        createdAt: created_at,
+        readOn: read_on,
+        author: authors( name ),
+        authorCountry:countries!books_author_country_code_fkey (
+          name,
+          code
+        ),
+        places!places_book_id_fkey ( id, name, lon, lat, countryCode:country_code, bookId:book_id, imagined ),
+        goals:book_goals ( goalId:goal_id )
+      `
+      )
+      .eq('user_id', userId)
+      .order('read_on', { ascending: false, nullsFirst: false })
+      .order('created_at', { ascending: false })
+      // books logged at the same moment keep one order, so no book falls between two pages
+      .order('id')
+      .range(from, from + PAGE_SIZE - 1)
+      .returns<BookRow[]>();
+
+    if (error) {
+      throw new Error("Couldn't load your books");
+    }
+
+    books.push(...(page ?? []));
+    if (!page || page.length < PAGE_SIZE) break;
   }
 
   // TODO: Refactor
-  return (books ?? []).map(({ authorCountry, ...book }) => ({
+  return books.map(({ authorCountry, ...book }) => ({
     ...book,
     author: book.author && { ...book.author, country: authorCountry },
   }));

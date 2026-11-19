@@ -1,14 +1,21 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { BookEntry, Goal } from '../types';
-import { callsOf, fail, resetStub, succeed } from '../testing/supabaseStub';
+import {
+  callsOf,
+  fail,
+  resetStub,
+  succeed,
+  succeedPages,
+} from '../testing/supabaseStub';
 import { m } from '../paraglide/messages.js';
 
 vi.mock('../utils/supabase', () => import('../testing/supabaseStub'));
 
 const { deleteBook, getBooks, saveBook } = await import('./books/books');
 const { sendContactMessage } = await import('./contact/contact');
-const { addWorld, getWorlds, removeWorld } = await import('./worlds/worlds');
+const worlds = await import('./worlds/worlds');
+const { addWorld, getWorlds, readWorlds, removeWorld } = worlds;
 const { getNextReads } = await import('./nextReads/nextReads');
 const goals = await import('./goals/goals');
 const data = await import('./data/data');
@@ -40,7 +47,42 @@ describe('getBooks', () => {
     expect(callsOf('order')).toEqual([
       ['read_on', { ascending: false, nullsFirst: false }],
       ['created_at', { ascending: false }],
+      ['id'],
     ]);
+  });
+
+  it('reads an atlas bigger than one page whole', async () => {
+    const shelf = (from: number, count: number) =>
+      Array.from({ length: count }, (_unused, i) => ({
+        id: from + i,
+        title: `Book ${from + i}`,
+        author: null,
+        authorCountry: null,
+      }));
+
+    succeedPages([shelf(0, 1000), shelf(1000, 400)], 'books');
+
+    const books = await getBooks('u1');
+
+    expect(books).toHaveLength(1400);
+    expect(books.at(-1)?.id).toBe(1399);
+
+    expect(callsOf('range')).toEqual([
+      [0, 999],
+      [1000, 1999],
+    ]);
+  });
+
+  it('stops after a full last page with an empty one', async () => {
+    const full = Array.from({ length: 1000 }, (_unused, i) => ({
+      id: i,
+      author: null,
+    }));
+
+    succeedPages([full, []], 'books');
+
+    expect(await getBooks('u1')).toHaveLength(1000);
+    expect(callsOf('range')).toHaveLength(2);
   });
 
   it('puts the author’s country onto the author', async () => {
@@ -155,6 +197,14 @@ describe('worlds', () => {
     fail();
 
     expect(await getWorlds('u1')).toEqual([]);
+  });
+
+  it('says so when a backup needs them and can’t read them', async () => {
+    fail();
+
+    await expect(readWorlds('u1')).rejects.toThrow(
+      "Couldn't load your saved worlds"
+    );
   });
 
   it('adds and removes a world', async () => {
@@ -354,6 +404,15 @@ describe('data', () => {
 
       await expect(data.getBackup('u1')).rejects.toThrow(
         "Couldn't load your next reads"
+      );
+    });
+
+    it('throws rather than leave out the saved worlds', async () => {
+      reading({});
+      fail(undefined, 'worlds');
+
+      await expect(data.getBackup('u1')).rejects.toThrow(
+        "Couldn't load your saved worlds"
       );
     });
   });
