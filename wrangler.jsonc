@@ -8,5 +8,8 @@
     // the app routes in the browser: any path that isn't a real file (/cs/app after a language switch,
     // a reload on /app/shelf) gets index.html instead of a 404
     "not_found_handling": "single-page-application"
-  }
+  },
+  // lets `wrangler preview` (Cloudflare's deploy command for non-production branches) make a preview per branch;
+  // empty, so previews use the settings above
+  "previews": {}
 }
