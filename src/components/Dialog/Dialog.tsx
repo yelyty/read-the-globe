@@ -115,7 +115,7 @@ const Dialog = ({
         </div>
         <button
           type="button"
-          className={styles.close[variant]}
+          className={styles.close}
           aria-label={m.common_close()}
           onClick={onClose}
         >
