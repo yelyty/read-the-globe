@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { atlasAfter, BOOKS } from './miraAtlas';
+import { atlasAfter, BOOKS } from './exampleAtlas';
 
 describe('atlasAfter', () => {
   it('starts empty', () => {
@@ -8,11 +8,11 @@ describe('atlasAfter', () => {
   });
 
   it('counts a country marked twice once', () => {
-    // The Master and Margarita: by a Russian author, set in Russia
+    // Satantango: by a Hungarian author, set in Hungary
     const first = atlasAfter(1);
 
-    expect(first.set).toEqual(new Set(['643']));
-    expect(first.author).toEqual(new Set(['643']));
+    expect(first.set).toEqual(new Set(['348']));
+    expect(first.author).toEqual(new Set(['348']));
     expect(first.countries).toBe(1);
   });
 

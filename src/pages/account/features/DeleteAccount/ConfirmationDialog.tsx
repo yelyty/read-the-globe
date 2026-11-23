@@ -90,6 +90,7 @@ const ConfirmationDialog = ({
         <KeepCopy key={round} books={books} names={names} />
         <Field
           id="ac-delete-word"
+          required
           label={m.account_delete_word_label()}
           autoComplete="off"
           spellCheck={false}

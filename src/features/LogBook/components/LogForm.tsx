@@ -114,7 +114,6 @@ const LogForm = ({
       onClose={onClose}
       variant="sheet"
       className={styles.sheet}
-      data-editing={Boolean(book)}
       title={book ? m.log_editing() : m.log_a_book()}
       sub={
         <>
@@ -131,6 +130,7 @@ const LogForm = ({
       <form onSubmit={submit} noValidate>
         <Field
           id="f-title"
+          required
           label={m.log_title()}
           autoComplete="off"
           maxLength={200}
@@ -142,6 +142,7 @@ const LogForm = ({
 
         <Field
           id="f-author"
+          required
           label={m.log_author()}
           autoComplete="off"
           maxLength={120}

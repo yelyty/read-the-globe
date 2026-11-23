@@ -1,15 +1,15 @@
 import { toNumeric } from '../../../../utils/toIsoNumeric';
 
-// Mira, the example reader of every screenshot and postcard on the landing: her 48 books, oldest first.
+// the example user of every screenshot and postcard on the landing: their 48 books, oldest first.
 // [title, author, author's country, countries the story is set in], as ISO alpha-2 codes.
-type MiraBook = [
+type ExampleBook = [
   title: string,
   author: string,
   authorFrom: string,
   setIn: string[],
 ];
-export const BOOKS: MiraBook[] = [
-  ['The Master and Margarita', 'Mikhail Bulgakov', 'ru', ['ru']],
+export const BOOKS: ExampleBook[] = [
+  ['Satantango', 'László Krasznahorkai', 'hu', ['hu']],
   ['Americanah', 'Chimamanda Ngozi Adichie', 'ng', ['ng', 'us']],
   ['The God of Small Things', 'Arundhati Roy', 'in', ['in']],
   ['Midnight’s Children', 'Salman Rushdie', 'gb', ['in', 'pk']],
@@ -59,7 +59,7 @@ export const BOOKS: MiraBook[] = [
   ['A Fine Balance', 'Rohinton Mistry', 'ca', ['in']],
 ];
 
-/** Mira's atlas after her first `count` books, as numeric country codes like the map's. */
+/** the example user's atlas after their first `count` books, as numeric country codes like the map's. */
 export const atlasAfter = (count: number) => {
   const set = new Set<string>();
   const author = new Set<string>();

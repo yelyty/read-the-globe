@@ -17,13 +17,10 @@ import { formError as fieldFormError } from '../../components/Field/Field.css';
 
 export { srOnly } from '../../styles/global.css';
 
-/* the shared Dialog's sheet variant; an edit wears a gold edge so it isn't mistaken for a new book */
+/* the shared Dialog's sheet variant, without its border; the element selector outranks the variant's class */
 export const sheet = style({
   selectors: {
-    '&[data-editing="true"]': {
-      borderColor: vars.color.secondary,
-      boxShadow: '0 0 0 3px rgba(199, 165, 54, .22)',
-    },
+    'dialog&': { border: 0 },
   },
 });
 

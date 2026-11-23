@@ -7,9 +7,7 @@ import {
 
 import { fontSize, space, vars } from '../../styles/theme.css';
 import {
-  band,
   easeOut,
-  fill,
   focusRing,
   hover,
   phone,
@@ -141,7 +139,8 @@ export const title = styleVariants({
   ],
 });
 
-const closeBase = style({
+// the same round button as the theme toggle; the tint mixes with transparent so it reads the same on any card
+export const close = style({
   display: 'grid',
   placeItems: 'center',
   flex: 'none',
@@ -151,47 +150,24 @@ const closeBase = style({
   padding: 0,
   border: 0,
   borderRadius: '50%',
-  background: 'none',
+  background: `color-mix(in srgb, ${vars.color.text} 6%, transparent)`,
   color: vars.color.textSecondary,
   cursor: 'pointer',
+  transition: `background-color .15s ${easeOut}, color .15s ${easeOut}`,
   ':focus-visible': focusRing,
-});
-
-globalStyle(`${closeBase} svg`, { width: 18, height: 18 });
-
-export const close = styleVariants({
-  default: [
-    closeBase,
-    {
-      '@media': {
-        [hover]: {
-          selectors: {
-            '&:hover': { background: band, color: vars.color.text },
-          },
+  '@media': {
+    [hover]: {
+      selectors: {
+        '&:hover': {
+          background: `color-mix(in srgb, ${vars.color.text} 10%, transparent)`,
+          color: vars.color.text,
         },
       },
     },
-  ],
-  sheet: [
-    closeBase,
-    {
-      '@media': {
-        [hover]: {
-          selectors: {
-            '&:hover': { background: fill, color: vars.color.text },
-          },
-        },
-      },
-    },
-  ],
-  hero: [
-    closeBase,
-    {
-      background: vars.color.backgroundDeep,
-      ':hover': { color: vars.color.text },
-    },
-  ],
+  },
 });
+
+globalStyle(`${close} svg`, { width: 18, height: 18 });
 
 export const text = style({
   margin: `0 0 ${space.sp4}`,

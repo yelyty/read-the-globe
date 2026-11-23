@@ -4,14 +4,14 @@ import * as styles from './LiveAtlas.css';
 type AtlasCountryProps = {
   /** its outline on the map */
   d: string;
-  /** a story of Mira's is set there */
+  /** a story of the example user's is set there */
   set: boolean;
   /** an author of hers is from there */
   author: boolean;
 };
 
 /**
- * Shows one country on the map of Mira, colored by the marks her books have given it so far.
+ * Shows one country on the example user's map, colored by the marks their books have given it so far.
  */
 const AtlasCountry = ({ d, set, author }: AtlasCountryProps) => {
   const className =

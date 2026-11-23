@@ -4,7 +4,7 @@ import { firstName } from './firstName';
 
 describe('firstName', () => {
   it('takes the first word', () => {
-    expect(firstName('  Mira  van Dijk ')).toBe('Mira');
+    expect(firstName('  Anna  van Dijk ')).toBe('Anna');
   });
 
   it('is empty without a name', () => {

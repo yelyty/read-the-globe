@@ -77,6 +77,7 @@ const ChangePassword = ({ email }: { email: string }) => {
         />
         <Field
           id="ac-pass1"
+          required
           label={m.account_password_new()}
           password
           autoComplete="new-password"
@@ -90,6 +91,7 @@ const ChangePassword = ({ email }: { email: string }) => {
         </Field>
         <Field
           id="ac-pass2"
+          required
           label={m.account_password_repeat()}
           password
           autoComplete="new-password"

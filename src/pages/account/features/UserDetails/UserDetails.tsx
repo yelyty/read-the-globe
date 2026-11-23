@@ -56,6 +56,7 @@ const UserDetails = ({ user }: UserDetailsProps) => {
       <form className={styles.form} onSubmit={submit} noValidate>
         <Field
           id="ac-name"
+          required
           label={m.account_name_label()}
           autoComplete="name"
           maxLength={80}

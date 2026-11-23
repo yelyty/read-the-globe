@@ -18,6 +18,10 @@ import { validate } from '../utils/validateContact';
 
 const FIELD_ORDER: (keyof ContactMessage)[] = ['name', 'email', 'message'];
 
+const GITHUB_ISSUES = 'https://github.com/yelyty/read-the-globe/issues';
+const BUG_REPORT_URL = `${GITHUB_ISSUES}/new?labels=bug`;
+const FEATURE_REQUEST_URL = `${GITHUB_ISSUES}/new?labels=enhancement`;
+
 /**
  * Shows the Contact page, with a form to send a message. The form checks the fields when it is sent.
  */
@@ -119,6 +123,7 @@ const ContactPage = () => {
           )}
           <Field
             id="c-name"
+            required
             label={m.contact_name()}
             autoComplete="name"
             maxLength={80}
@@ -128,6 +133,7 @@ const ContactPage = () => {
           />
           <Field
             id="c-email"
+            required
             label={m.auth_email_label()}
             type="email"
             inputMode="email"
@@ -138,6 +144,7 @@ const ContactPage = () => {
           />
           <Field
             id="c-message"
+            required
             label={m.contact_message()}
             error={errors.message}
             control={messageControl}
@@ -151,6 +158,25 @@ const ContactPage = () => {
           </button>
         </form>
       )}
+      <h2>Bugs and ideas on GitHub</h2>
+      <p>
+        Read The Globe is built in the open. If you have a GitHub account, you
+        can open an issue there and follow along as it gets fixed or built.
+      </p>
+      <ul>
+        <li>
+          <a href={BUG_REPORT_URL}>Report a bug</a>: what you did, what you
+          expected, and what happened instead.
+        </li>
+        <li>
+          <a href={FEATURE_REQUEST_URL}>Suggest a feature</a>: what you’d like
+          to do and why it would help.
+        </li>
+        <li>
+          <a href={GITHUB_ISSUES}>Browse open issues</a> to see what’s already
+          reported or planned.
+        </li>
+      </ul>
     </PublicLayout>
   );
 };

@@ -14,7 +14,7 @@ import { prefersReducedMotion } from '../../../../utils/motion';
 import { m } from '../../../../paraglide/messages.js';
 import HatchPattern from '../../../../components/HatchPattern/HatchPattern';
 import { HATCH_STAMP } from '../../../../components/HatchPattern/hatchSize';
-import { atlasAfter, BOOKS } from './miraAtlas';
+import { atlasAfter, BOOKS } from './exampleAtlas';
 import AtlasCountry from './AtlasCountry';
 import AtlasPing from './AtlasPing';
 import * as styles from './LiveAtlas.css';
@@ -26,7 +26,7 @@ const START_ZOOM = 0.8;
 const START_TILT_DEG = 18;
 // all the books are pinned once the window's top is this share of the screen from the top
 const PINNED_AT = 0.12;
-// the map opens with Mira's first books already pinned (8 countries on 4 continents), so it never greets a
+// the map opens with the example user's first books already pinned (8 countries on 4 continents), so it never greets a
 // visitor blank; scrolling pins the rest
 const START_PINNED = 6;
 // digits the CSS variables are written with
@@ -42,7 +42,7 @@ const ANTARCTICA = '010';
 type Ping = { key: string; x: number; y: number };
 
 /**
- * Shows the map of Mira on the landing. Her 48 books pin themselves, oldest first, while the map rises through the screen.
+ * Shows the example user's map on the landing. Their 48 books pin themselves, oldest first, while the map rises through the screen.
  * Scrolling back removes the pins again, down to the first few. With reduced motion, the map shows finished and still.
  */
 const LiveAtlas = () => {

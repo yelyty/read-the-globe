@@ -12,7 +12,8 @@ export const themeBtn = style({
   background: `color-mix(in srgb, ${vars.color.text} 6%, ${vars.color.background})`,
   border: 0,
   borderRadius: 999,
-  color: vars.color.text,
+  // the same as the nav links beside it
+  color: vars.color.textSecondary,
   padding: 0,
   cursor: 'pointer',
   '@media': {
