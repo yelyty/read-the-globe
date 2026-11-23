@@ -78,6 +78,7 @@ const ResetPasswordPage = () => {
           )}
           <Field
             id="rp-password"
+            required
             label={m.reset_new_password()}
             password
             name="new-password"

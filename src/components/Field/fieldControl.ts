@@ -5,6 +5,7 @@ export type FieldInputProps = {
   id: string;
   className: string;
   'aria-invalid': true | undefined;
+  'aria-required': true | undefined;
   'aria-describedby': string | undefined;
 };
 

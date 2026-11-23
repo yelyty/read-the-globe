@@ -107,6 +107,7 @@ const GoalsDialog = ({
 
         <Field
           id="g-name"
+          required
           label={m.goals_name()}
           maxLength={80}
           placeholder={NAME_HINT[kind]()}
@@ -138,6 +139,7 @@ const GoalsDialog = ({
         {kind === 'countries' && (
           <Field
             id="g-country"
+            required
             label={m.goals_countries()}
             error={errorAt('g-country')}
             aria-describedby="g-country-hint"
@@ -164,6 +166,7 @@ const GoalsDialog = ({
         {kind === 'theme' && (
           <Field
             id="g-target"
+            required
             label={m.goals_target()}
             type="number"
             min={1}

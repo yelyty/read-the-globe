@@ -112,6 +112,14 @@ export const fieldError = style({
   margin: `${space.sp2} 0 0`,
 });
 
+export const fieldRequired = style({
+  fontFamily: vars.font.sans,
+  fontSize: fontSize.body,
+  lineHeight: 1.3,
+  color: vars.color.textSecondary,
+  margin: `${space.sp2} 0 0`,
+});
+
 export const strength = style({
   display: 'flex',
   alignItems: 'center',

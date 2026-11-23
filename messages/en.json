@@ -342,6 +342,7 @@
   "contact_failed": "Your message couldn’t be sent. Try again, or email us.",
   "contact_sent": "Thanks, your message is on its way. We usually reply within a few days.",
   "field_show": "Show",
+  "field_required": "Required",
   "field_hide": "Hide",
   "pin_gained_set": "{country} now has a story set there.",
   "pin_gained_author": "{country} now has an author from there.",

@@ -360,6 +360,7 @@
   "contact_failed": "Zprávu se nepodařilo odeslat. Zkuste to znovu, nebo nám napište e-mail.",
   "contact_sent": "Díky, zpráva je na cestě. Obvykle odpovídáme do několika dnů.",
   "field_show": "Zobrazit",
+  "field_required": "Povinné",
   "field_hide": "Skrýt",
   "pin_gained_set": "{country} teď má i příběh, který se tam odehrává.",
   "pin_gained_author": "{country} teď má i autora odtud.",

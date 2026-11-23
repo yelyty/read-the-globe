@@ -25,6 +25,8 @@ type FieldProps = Omit<
   children?: ReactNode;
   /** rendered last, under the error, e.g. a Hint or the picks so far */
   below?: ReactNode;
+  /** says "Required" under the input until an error takes its place */
+  required?: boolean;
 };
 
 /**
@@ -34,6 +36,7 @@ type FieldProps = Omit<
  * @param compact - If true, the field is smaller, for an inline form.
  * @param control - A different control in place of the input, for example Suggest or FieldTextarea.
  * @param below - Content under the error, for example a Hint.
+ * @param required - If true, "Required" shows under the input while there is no error.
  */
 const Field = ({
   id,
@@ -45,6 +48,7 @@ const Field = ({
   control,
   children,
   below,
+  required = false,
   ...inputProps
 }: FieldProps) => {
   const [visible, setVisible] = useState(false);
@@ -67,6 +71,7 @@ const Field = ({
     id,
     className: inputClass,
     'aria-invalid': error ? true : undefined,
+    'aria-required': required || undefined,
     'aria-describedby': describedBy,
   };
 
@@ -107,6 +112,12 @@ const Field = ({
         input
       )}
       {children}
+      {required && !error && (
+        // aria-required already says it to screen readers
+        <div className={styles.fieldRequired} aria-hidden="true">
+          {m.field_required()}
+        </div>
+      )}
       {error && (
         <div id={errorId} className={styles.fieldError}>
           {error}

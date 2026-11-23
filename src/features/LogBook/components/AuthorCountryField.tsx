@@ -52,6 +52,7 @@ const AuthorCountryField = ({
   return (
     <Field
       id="f-country"
+      required
       label={
         <>
           <MarkDot kind="author" className={styles.labelDot} />

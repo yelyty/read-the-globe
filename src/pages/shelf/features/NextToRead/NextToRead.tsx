@@ -76,6 +76,7 @@ const NextToRead = ({
         <Field
           ref={titleRef}
           id="n-title"
+          required
           compact
           label={m.next_label_title()}
           maxLength={200}
