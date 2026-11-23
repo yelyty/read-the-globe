@@ -1,0 +1,12 @@
+// Cloudflare Workers: serves the Vite build as static assets.
+{
+  // must match the Worker's name in the Cloudflare dashboard
+  "name": "read-the-globe",
+  "compatibility_date": "2026-11-23",
+  "assets": {
+    "directory": "./dist",
+    // the app routes in the browser: any path that isn't a real file (/cs/app after a language switch,
+    // a reload on /app/shelf) gets index.html instead of a 404
+    "not_found_handling": "single-page-application"
+  }
+}
