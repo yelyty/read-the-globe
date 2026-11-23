@@ -95,7 +95,9 @@ export const sticker = style({
   },
 });
 
-// narrow screens keep two stickers, tucked above the headline (!important beats the inline placement)
+// narrow screens keep two stickers, tucked above the headline (!important beats the inline placement).
+// Centered 48px down, a 64px sticker spans 16–80px: inside the hero, which clips its edges, even while it
+// turns in and drifts, and clear of the headline under the hero's 96px top padding
 const hide = { '@media': { [narrow]: { display: 'none' } } };
 
 const corner = (left: string) => ({
@@ -103,7 +105,7 @@ const corner = (left: string) => ({
     [narrow]: {
       vars: {
         '--x': `${left} !important`,
-        '--y': '24px !important',
+        '--y': '48px !important',
         '--s': '64px !important',
       },
     },
