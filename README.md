@@ -8,9 +8,9 @@
 
 Read The Globe is a reading log with a world map.
 
-When you log a novel, the map shows two countries:
+When you log a novel, the map shows two types of country:
 
-- The country where the story occurs. The map shows this country in olive.
+- Each country where the story occurs. The map shows these countries in olive.
 - The country of the author. The map shows this country in rust.
 
 If a country is both, the map shows it with stripes.
