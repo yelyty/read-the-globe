@@ -4,8 +4,8 @@ import { vars } from '../../styles/theme.css';
 
 export const divider = recipe({
   base: {
-    border: 'none',
     marginInline: 'auto',
+    border: 'none',
   },
   variants: {
     orientation: {
@@ -16,8 +16,8 @@ export const divider = recipe({
       },
       vertical: {
         alignSelf: 'stretch',
-        borderLeft: `1px solid ${vars.color.stroke}`,
         marginBlock: 'auto',
+        borderLeft: `1px solid ${vars.color.stroke}`,
       },
     },
   },

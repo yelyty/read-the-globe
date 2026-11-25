@@ -1,8 +1,7 @@
 import { globalStyle, style } from '@vanilla-extract/css';
 
 import { fontSize, space, vars } from '../../styles/theme.css';
-import { band } from '../../styles/global.css';
-import { phone } from '../landing/LandingPage.css';
+import { band, phone } from '../../styles/global.css';
 
 export const item = style({
   marginTop: space.sp4,
@@ -21,18 +20,17 @@ export const dangerItem = style([
 ]);
 
 export const itemTitle = style({
-  margin: 0,
+  color: vars.color.text,
   fontFamily: vars.font.display,
   fontSize: fontSize.item,
   fontWeight: 500,
   lineHeight: 1.2,
-  color: vars.color.text,
   selectors: { [`${dangerItem} &`]: { color: vars.color.markerAuthor } },
 });
 
 export const itemText = style({
-  margin: `${space.sp2} 0 ${space.sp4}`,
   maxWidth: '52ch',
+  margin: `${space.sp2} 0 ${space.sp4}`,
   color: vars.color.textSecondary,
 });
 
@@ -44,18 +42,18 @@ export const wrapper = style({
 export const form = style({ maxWidth: 520 });
 
 globalStyle(`${form} input[readonly]`, {
-  background: vars.color.background,
   borderColor: vars.color.border,
+  boxShadow: 'none',
+  background: vars.color.background,
   color: vars.color.textSecondary,
   cursor: 'default',
-  boxShadow: 'none',
 });
 
 export const row = style({
   display: 'flex',
   flexWrap: 'wrap',
-  alignItems: 'center',
   gap: `${space.sp3} ${space.sp4}`,
+  alignItems: 'center',
   marginTop: space.sp2,
 });
 

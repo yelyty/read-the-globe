@@ -3,6 +3,7 @@ import { globalStyle, style } from '@vanilla-extract/css';
 import { fontSize, space, vars } from '../../styles/theme.css';
 import {
   band,
+  bareButton,
   buttonSize,
   coarse,
   fill,
@@ -21,58 +22,61 @@ export const tabs = style({
 
 export const tab = style({
   display: 'inline-flex',
-  alignItems: 'baseline',
   gap: space.sp2,
+  alignItems: 'baseline',
   padding: `${space.sp2} ${space.sp5}`,
-  background: fill,
   border: '1px solid transparent',
   borderBottom: 0,
-  borderRadius: '16px 16px 0 0',
+  borderRadius: `${vars.radius.lg} ${vars.radius.lg} 0 0`,
+  background: fill,
+  color: vars.color.textSecondary,
   fontFamily: vars.font.sans,
   fontSize: fontSize.action,
   fontWeight: 500,
-  color: vars.color.textSecondary,
   cursor: 'pointer',
+  ':focus-visible': {
+    ...focusRing,
+    borderRadius: `${vars.radius.lg} ${vars.radius.lg} 0 0`,
+  },
   selectors: {
     // it reaches 1px over the rule, so the open folder has no bottom edge
     '&[aria-selected="true"]': {
       marginBottom: -1,
       paddingBottom: space.sp2,
-      color: vars.color.text,
-      background: vars.color.background,
       borderColor: vars.color.border,
+      background: vars.color.background,
+      color: vars.color.text,
     },
   },
-  ':focus-visible': { ...focusRing, borderRadius: '16px 16px 0 0' },
   '@media': {
     [hover]: { selectors: { '&:hover': { color: vars.color.text } } },
     [coarse]: { minHeight: 44 },
   },
 });
 export const tabN = style({
+  color: vars.color.textSecondary,
   fontSize: fontSize.meta,
   fontWeight: 400,
-  color: vars.color.textSecondary,
   fontVariantNumeric: 'lining-nums tabular-nums',
 });
 
 export const toolbar = style({
   display: 'flex',
   flexWrap: 'wrap',
-  alignItems: 'center',
   gap: space.sp3,
+  alignItems: 'center',
   marginBottom: space.sp4,
 });
 export const search = style({ position: 'relative', flex: '1 1 260px' });
 
 globalStyle(`${search} svg`, {
   position: 'absolute',
-  left: 16,
   top: '50%',
+  left: 16,
   width: 16,
   height: 16,
-  transform: 'translateY(-50%)',
   color: vars.color.textMuted,
+  transform: 'translateY(-50%)',
   pointerEvents: 'none',
 });
 
@@ -80,12 +84,12 @@ globalStyle(`${search} input`, {
   width: '100%',
   minHeight: 40,
   padding: `${space.sp2} ${space.sp4} ${space.sp2} ${space.sp7}`,
-  borderRadius: 999,
-  background: vars.color.field,
   border: `1.5px solid ${vars.color.fieldLine}`,
+  borderRadius: vars.radius.pill,
+  background: vars.color.field,
+  color: vars.color.text,
   fontFamily: vars.font.sans,
   fontSize: fontSize.body,
-  color: vars.color.text,
 });
 
 globalStyle(`${search} input:focus`, {
@@ -94,8 +98,8 @@ globalStyle(`${search} input:focus`, {
 });
 
 globalStyle(`${search} input::-webkit-search-cancel-button`, {
-  WebkitAppearance: 'none',
   appearance: 'none',
+  WebkitAppearance: 'none',
 });
 
 export const filters = style({
@@ -121,16 +125,16 @@ export const filterBtn = style([
     display: 'none',
     alignItems: 'center',
     border: `1px solid ${vars.color.border}`,
-    borderRadius: 999,
+    borderRadius: vars.radius.pill,
     background: vars.color.surface,
+    color: vars.color.text,
     fontFamily: vars.font.sans,
     fontWeight: 500,
-    color: vars.color.text,
     cursor: 'pointer',
+    ':focus-visible': focusRing,
     selectors: {
       '&[aria-expanded="true"]': { background: vars.color.backgroundDeep },
     },
-    ':focus-visible': focusRing,
     '@media': { [phone]: { display: 'inline-flex' } },
   },
 ]);
@@ -149,7 +153,7 @@ export const countryMap = style({
   width: 184,
   height: 112,
   padding: space.sp4,
-  borderRadius: 16,
+  borderRadius: vars.radius.lg,
   background: band,
 });
 
@@ -169,31 +173,30 @@ export const shape = style({
 });
 
 export const countryName = style({
-  margin: 0,
+  color: vars.color.text,
   fontFamily: vars.font.display,
   fontSize: fontSize.heading,
   fontWeight: 500,
   lineHeight: 1.15,
-  color: vars.color.text,
 });
 export const countryMeta = style({
   margin: `${space.sp1} 0 0`,
-  fontSize: fontSize.meta,
   color: vars.color.textMuted,
+  fontSize: fontSize.meta,
 });
 export const countryWhy = style({
   display: 'flex',
   flexWrap: 'wrap',
   gap: `${space.sp1} ${space.sp4}`,
   margin: `${space.sp2} 0 0`,
-  fontSize: fontSize.body,
   color: vars.color.textSecondary,
+  fontSize: fontSize.body,
 });
 
 globalStyle(`${countryWhy} span`, {
   display: 'inline-flex',
-  alignItems: 'center',
   gap: space.sp2,
+  alignItems: 'center',
 });
 
 export const countryActions = style({
@@ -207,42 +210,40 @@ export const countryActions = style({
 export const shelfList = style({ borderTop: `1px solid ${vars.color.border}` });
 
 export const yearHead = style({
-  listStyle: 'none',
   display: 'flex',
   flexWrap: 'wrap',
-  alignItems: 'baseline',
   gap: `2px ${space.sp4}`,
+  alignItems: 'baseline',
   padding: `${space.sp4} 0 ${space.sp2}`,
   borderBottom: `1px solid ${vars.color.border}`,
+  listStyle: 'none',
 });
 
 // the year's count sits right, opposite the year
 globalStyle(`${yearHead} p`, {
   margin: '0 0 0 auto',
-  fontSize: fontSize.meta,
   color: vars.color.textMuted,
+  fontSize: fontSize.meta,
 });
 
 export const yearTitle = style({
-  margin: 0,
+  color: vars.color.text,
   fontFamily: vars.font.display,
   fontSize: fontSize.heading,
   fontWeight: 500,
-  color: vars.color.text,
   fontVariantNumeric: 'lining-nums',
 });
 
 export const yearToggle = style({
+  ...bareButton,
   display: 'inline-flex',
-  alignItems: 'center',
   gap: space.sp2,
-  padding: 0,
-  background: 'none',
-  border: 0,
-  font: 'inherit',
-  color: 'inherit',
-  cursor: 'pointer',
-  ':focus-visible': { ...focusRing, outlineOffset: 4, borderRadius: 8 },
+  alignItems: 'center',
+  ':focus-visible': {
+    ...focusRing,
+    borderRadius: vars.radius.sm,
+    outlineOffset: 4,
+  },
   '@media': { [coarse]: { minHeight: 44 } },
 });
 
@@ -261,12 +262,12 @@ globalStyle(`${yearToggle}[aria-expanded="false"] svg`, { rotate: '-90deg' });
 // an "or" between two lines, under Log a book
 export const orRule = style({
   display: 'flex',
-  alignItems: 'center',
   gap: space.sp4,
+  alignItems: 'center',
   width: 'min(320px, 100%)',
+  color: vars.color.textMuted,
   fontFamily: vars.font.display,
   fontStyle: 'italic',
-  color: vars.color.textMuted,
   selectors: {
     '&::before, &::after': {
       content: '""',
@@ -293,7 +294,7 @@ export const importLine = style({
 const button = {
   display: 'inline-flex',
   alignItems: 'center',
-  borderRadius: 999,
+  borderRadius: vars.radius.pill,
   fontFamily: vars.font.sans,
   fontWeight: 500,
   textDecoration: 'none',
@@ -332,7 +333,7 @@ export const nextForm = style({
   gap: `${space.sp3} ${space.sp3}`,
   alignItems: 'start',
   padding: space.sp4,
-  borderRadius: 16,
+  borderRadius: vars.radius.lg,
   background: band,
   '@media': { [phone]: { gridTemplateColumns: 'minmax(0, 1fr)' } },
 });
@@ -341,35 +342,33 @@ export const nextWide = style({ gridColumn: '1 / -1' });
 export const fieldLabel = style({
   display: 'block',
   marginBottom: space.sp2,
+  color: vars.color.textSecondary,
   fontFamily: vars.font.sans,
   fontSize: fontSize.body,
   fontWeight: 500,
-  color: vars.color.textSecondary,
 });
-export const optional = style({ fontWeight: 400, color: vars.color.textMuted });
+export const optional = style({ color: vars.color.textMuted, fontWeight: 400 });
 export const error = style({
-  margin: 0,
+  color: vars.color.error,
   fontSize: fontSize.body,
   fontWeight: 500,
-  color: vars.color.error,
 });
 export const formRow = style({
   display: 'flex',
   flexWrap: 'wrap',
-  alignItems: 'center',
   gap: `${space.sp3} ${space.sp4}`,
+  alignItems: 'center',
 });
 export const nextList = style({
-  listStyle: 'none',
   margin: `${space.sp5} 0 0`,
-  padding: 0,
   borderTop: `1px solid ${vars.color.border}`,
+  listStyle: 'none',
 });
 export const nextItem = style({
   display: 'grid',
   gridTemplateColumns: '88px minmax(0, 1fr) auto',
-  alignItems: 'start',
   gap: `${space.sp2} ${space.sp4}`,
+  alignItems: 'start',
   padding: `${space.sp3} 0`,
   borderBottom: `1px solid ${vars.color.border}`,
   '@media': { [phone]: { gridTemplateColumns: '72px minmax(0, 1fr)' } },
@@ -379,7 +378,7 @@ export const nextStamp = style({
   placeItems: 'center',
   width: 88,
   height: 56,
-  borderRadius: 8,
+  borderRadius: vars.radius.sm,
   background: band,
   '@media': { [phone]: { width: 72, height: 48 } },
 });
@@ -392,8 +391,8 @@ globalStyle(`${nextStamp} svg`, {
 
 // half strength: not on the atlas until it's read
 export const nextShape = style({
-  fillOpacity: 0.5,
   fill: vars.color.markerAuthor,
+  fillOpacity: 0.5,
   selectors: { '&[data-mark="set"]': { fill: vars.color.markerSetting } },
 });
 // no country yet: a bookmark in its place
@@ -403,30 +402,30 @@ globalStyle(`${nextStamp} svg${nextMark}`, { width: 20, height: 20 });
 export const nextBody = style({ minWidth: 0, overflowWrap: 'break-word' });
 export const nextTitle = style({
   display: 'block',
+  color: vars.color.text,
   fontFamily: vars.font.display,
   fontSize: fontSize.item,
   lineHeight: 1.2,
-  color: vars.color.text,
 });
 export const nextAuthor = style({
   display: 'block',
-  fontSize: fontSize.body,
   color: vars.color.textSecondary,
+  fontSize: fontSize.body,
 });
 export const nextMeta = style({
   display: 'flex',
   flexWrap: 'wrap',
-  alignItems: 'center',
   gap: `${space.sp1} ${space.sp3}`,
+  alignItems: 'center',
   marginTop: space.sp1,
-  fontSize: fontSize.meta,
   color: vars.color.textSecondary,
+  fontSize: fontSize.meta,
 });
 
 globalStyle(`${nextMeta} > span`, {
   display: 'inline-flex',
-  alignItems: 'center',
   gap: space.sp2,
+  alignItems: 'center',
 });
 
 export const fresh = style({ color: vars.color.accent, fontWeight: 500 });
@@ -442,7 +441,7 @@ export const nextEmpty = style({
 // a goal this book would move along
 export const nextGoal = style({
   padding: `0 ${space.sp2}`,
-  borderRadius: 999,
+  borderRadius: vars.radius.pill,
   background: band,
   color: vars.color.textSecondary,
 });

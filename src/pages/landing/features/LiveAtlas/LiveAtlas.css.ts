@@ -1,55 +1,59 @@
 import { globalStyle, keyframes, style } from '@vanilla-extract/css';
 
 import { fontSize, space, vars } from '../../../../styles/theme.css';
-import { band, easeOut, hatch } from '../../../../styles/global.css';
-
-const narrow = 'screen and (max-width: 799px)';
+import {
+  band,
+  easeOut,
+  hatch,
+  motionOk,
+  narrow,
+} from '../../../../styles/global.css';
 
 /* the product, straight under the hero: --z and --tilt come from the scroll (LiveAtlas.tsx) */
 export const frame = style({
   width: 'min(1120px, 100% - 32px)',
   margin: '0 auto',
   padding: space.sp2,
-  background: band,
   borderRadius: 24, // concentric: the 16px sheet + 8px padding
-  scale: 'var(--z, 1)',
-  transformOrigin: '50% 0',
+  background: band,
   transform: 'perspective(1600px) rotateX(var(--tilt, 0deg))',
+  transformOrigin: '50% 0',
+  scale: 'var(--z, 1)',
 });
 
 export const sheet = style({
   padding: `${space.sp5} ${space.sp6}`,
-  borderRadius: 16,
+  borderRadius: vars.radius.lg,
   background: vars.color.background,
   '@media': { [narrow]: { padding: space.sp4 } },
 });
 
 export const head = style({
   display: 'flex',
+  gap: space.sp4,
   alignItems: 'baseline',
   justifyContent: 'space-between',
-  gap: space.sp4,
 });
 export const title = style({
   fontFamily: vars.font.serif,
-  fontWeight: 500,
   fontSize: 'clamp(24px, 2.6vw, 34px)',
+  fontWeight: 500,
   lineHeight: 1.1,
 });
 export const tag = style({
-  fontFamily: vars.font.sans,
-  fontWeight: 500,
-  fontSize: fontSize.body,
-  lineHeight: 1,
   color: vars.color.textMuted,
+  fontFamily: vars.font.sans,
+  fontSize: fontSize.body,
+  fontWeight: 500,
+  lineHeight: 1,
 });
 
 export const map = style({
   display: 'block',
   width: '100%',
   height: 'auto',
-  marginTop: space.sp4,
   overflow: 'visible',
+  marginTop: space.sp4,
 });
 
 // no outlines on the countries: the marks are fills, and both is the olive/rust hatch
@@ -73,10 +77,10 @@ export const ping = style({
   strokeWidth: 1.6,
   vectorEffect: 'non-scaling-stroke',
   opacity: 0,
-  transformBox: 'fill-box',
   transformOrigin: 'center',
+  transformBox: 'fill-box',
   '@media': {
-    '(prefers-reduced-motion: no-preference)': {
+    [motionOk]: {
       animation: `${pingOut} .6s ${easeOut}`,
     },
   },
@@ -85,64 +89,64 @@ export const ping = style({
 export const foot = style({
   display: 'grid',
   gridTemplateColumns: 'auto minmax(0, 1fr) auto',
-  alignItems: 'end',
   gap: `${space.sp2} ${space.sp5}`,
+  alignItems: 'end',
   marginTop: space.sp4,
   '@media': { [narrow]: { gridTemplateColumns: 'auto 1fr' } },
 });
 
 export const count = style({
   display: 'flex',
-  alignItems: 'baseline',
   gap: space.sp2,
+  alignItems: 'baseline',
 });
 
 globalStyle(`${count} b`, {
-  fontFamily: vars.font.serif,
-  fontWeight: 400,
-  fontSize: 'clamp(40px, 4.4vw, 56px)',
-  lineHeight: 1,
-  fontVariantNumeric: 'lining-nums tabular-nums',
   minWidth: '2ch',
+  fontFamily: vars.font.serif,
+  fontSize: 'clamp(40px, 4.4vw, 56px)',
+  fontWeight: 400,
+  fontVariantNumeric: 'lining-nums tabular-nums',
+  lineHeight: 1,
 });
 
 globalStyle(`${count} span`, {
+  color: vars.color.textSecondary,
   fontSize: fontSize.heading,
   lineHeight: 1,
-  color: vars.color.textSecondary,
 });
 
 globalStyle(`${count} em`, {
+  color: vars.color.textMuted,
   fontFamily: vars.font.sans,
-  fontStyle: 'normal',
-  fontWeight: 500,
   fontSize: fontSize.meta,
+  fontWeight: 500,
+  fontStyle: 'normal',
   lineHeight: 1,
   letterSpacing: '.12em',
   textTransform: 'uppercase',
-  color: vars.color.textMuted,
 });
 
 export const now = style({
   display: 'flex',
   alignItems: 'end',
   minHeight: '2.7em',
+  color: vars.color.textSecondary,
   fontSize: fontSize.action,
   lineHeight: 1.35,
-  color: vars.color.textSecondary,
   textWrap: 'balance',
   '@media': { [narrow]: { gridColumn: '1 / -1', gridRow: 2, minHeight: 0 } },
 });
 
 export const books = style({
-  fontFamily: vars.font.sans,
-  fontWeight: 500,
-  fontSize: fontSize.body,
-  lineHeight: 1,
   color: vars.color.textMuted,
+  fontFamily: vars.font.sans,
+  fontSize: fontSize.body,
+  fontWeight: 500,
+  lineHeight: 1,
   '@media': { [narrow]: { justifySelf: 'end' } },
 });
-globalStyle(`${books} b`, { fontWeight: 500, color: vars.color.text });
+globalStyle(`${books} b`, { color: vars.color.text, fontWeight: 500 });
 
 export const key = style({
   display: 'flex',
@@ -151,17 +155,17 @@ export const key = style({
   margin: `${space.sp4} 0 0`,
   padding: `${space.sp4} 0 0`,
   borderTop: `1px solid ${vars.color.border}`,
-  listStyle: 'none',
+  color: vars.color.textSecondary,
   fontFamily: vars.font.sans,
   fontSize: fontSize.body,
   lineHeight: 1,
-  color: vars.color.textSecondary,
+  listStyle: 'none',
 });
 
 globalStyle(`${key} li`, {
   display: 'flex',
-  alignItems: 'center',
   gap: space.sp2,
+  alignItems: 'center',
 });
 
 const swatch = { width: 12, height: 12, borderRadius: 2 };

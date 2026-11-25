@@ -1,29 +1,35 @@
 import { globalStyle, style } from '@vanilla-extract/css';
 
-import { band, easeOut, hover } from '../../../../styles/global.css';
+import {
+  band,
+  compact,
+  easeOut,
+  forcedColors,
+  hover,
+  motionOk,
+  wrap,
+} from '../../../../styles/global.css';
 import { fontSize, space, vars } from '../../../../styles/theme.css';
-import { sectionTitle, wrap } from '../../LandingPage.css';
-
-const narrow = 'screen and (max-width: 899px)';
+import { sectionTitle } from '../../LandingPage.css';
 
 export const share = style([
   wrap,
   {
     display: 'grid',
     gridTemplateColumns: 'minmax(0, .85fr) minmax(0, 1.15fr)',
-    alignItems: 'center',
     gap: space.sp8,
+    alignItems: 'center',
     paddingTop: 112,
     '@media': {
-      [narrow]: { gridTemplateColumns: 'minmax(0, 1fr)', gap: space.sp7 },
+      [compact]: { gridTemplateColumns: 'minmax(0, 1fr)', gap: space.sp7 },
     },
   },
 ]);
 
 export const title = style(sectionTitle);
 export const sub = style({
-  marginTop: space.sp4,
   maxWidth: '28em',
+  marginTop: space.sp4,
   color: vars.color.textSecondary,
   textWrap: 'pretty',
 });
@@ -40,25 +46,24 @@ export const variant = style({
   display: 'block',
   marginLeft: `calc(${space.sp2} * -1)`,
   padding: `${space.sp2} ${space.sp2} ${space.sp2} ${space.sp7}`,
-  borderRadius: 8,
+  borderRadius: vars.radius.sm,
+  color: vars.color.textSecondary,
   fontSize: fontSize.item,
   lineHeight: 1.4,
-  color: vars.color.textSecondary,
   cursor: 'pointer',
   '@media': { [hover]: { selectors: { '&:hover': { background: band } } } },
 });
 
 globalStyle(`${variant} b`, {
   display: 'block',
-  fontWeight: 500,
   color: vars.color.text,
+  fontWeight: 500,
 });
 
 globalStyle(`${variant} input`, {
-  appearance: 'none',
   position: 'absolute',
-  left: 8,
   top: 12,
+  left: 8,
   width: 18,
   height: 18,
   margin: 0,
@@ -66,7 +71,8 @@ globalStyle(`${variant} input`, {
   borderRadius: '50%',
   background: vars.color.background,
   cursor: 'pointer',
-  '@media': { '(forced-colors: active)': { appearance: 'auto' } },
+  appearance: 'none',
+  '@media': { [forcedColors]: { appearance: 'auto' } },
 });
 
 globalStyle(`${variant} input:checked`, {
@@ -79,37 +85,36 @@ export const cta = style({ marginTop: space.sp6 });
 export const stack = style({
   display: 'grid',
   alignItems: 'center',
-  margin: 0,
   padding: space.sp7,
-  background: band,
   borderRadius: 24,
-  '@media': { [narrow]: { padding: space.sp5 } },
+  background: band,
+  '@media': { [compact]: { padding: space.sp5 } },
 });
 
 // the cards crossfade through a 2px blur
 export const card = style({
-  gridArea: '1 / 1',
   display: 'block',
+  visibility: 'hidden',
+  gridArea: '1 / 1',
   width: '100%',
   height: 'auto',
-  borderRadius: 8,
+  borderRadius: vars.radius.sm,
   outline: '1px solid rgba(0, 0, 0, .08)',
   outlineOffset: -1,
   opacity: 0,
-  visibility: 'hidden',
   filter: 'blur(2px)',
   '@media': {
-    '(prefers-reduced-motion: no-preference)': {
+    [motionOk]: {
       transition: `opacity .2s ${easeOut}, filter .2s ${easeOut}, visibility .2s`,
     },
   },
 });
-export const on = style({ opacity: 1, visibility: 'visible', filter: 'none' });
+export const on = style({ visibility: 'visible', opacity: 1, filter: 'none' });
 
 export const caption = style({
   gridArea: '2 / 1',
   marginTop: space.sp5,
-  fontSize: fontSize.action,
   color: vars.color.textSecondary,
+  fontSize: fontSize.action,
   textWrap: 'pretty',
 });

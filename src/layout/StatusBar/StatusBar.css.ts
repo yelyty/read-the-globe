@@ -6,31 +6,33 @@ import {
   easeOut,
   focusRing,
   hover,
+  icon,
   phone,
+  pressed,
   reducedMotion,
 } from '../../styles/global.css';
 
-const barIn = keyframes({ from: { opacity: 0, scale: '.97' } });
+const barIn = keyframes({ from: { opacity: 0, ...pressed } });
 
 export const bar = style({
   position: 'fixed',
-  zIndex: 60,
-  left: '50%',
   bottom: 'max(24px, env(safe-area-inset-bottom))',
-  translate: '-50% 0',
+  left: '50%',
+  zIndex: 60,
   display: 'flex',
-  alignItems: 'center',
   gap: space.sp4,
+  alignItems: 'center',
   width: 'max-content',
   maxWidth: 'min(520px, calc(100vw - 32px))',
   padding: `${space.sp2} ${space.sp4}`,
+  border: `1px solid ${vars.color.border}`,
+  borderRadius: vars.radius.sm,
   background: vars.color.oliveWash,
   color: vars.color.oliveInk,
-  border: `1px solid ${vars.color.border}`,
-  borderRadius: 8,
   fontSize: fontSize.body,
   fontWeight: 500,
   transformOrigin: 'bottom center',
+  translate: '-50% 0',
   animation: `${barIn} .2s ${easeOut}`,
   '@media': {
     // clear of the floating Log a book pill
@@ -41,24 +43,24 @@ export const bar = style({
 
 export const action = style({
   display: 'inline-flex',
-  alignItems: 'center',
-  gap: space.sp2,
   flex: 'none',
+  gap: space.sp2,
+  alignItems: 'center',
   margin: `calc(${space.sp2} * -1) 0 calc(${space.sp2} * -1) auto`,
   padding: `${space.sp2} 0`,
   border: 0,
-  borderRadius: 8,
+  borderRadius: vars.radius.sm,
   background: 'none',
+  color: vars.color.oliveInk,
   fontFamily: vars.font.sans,
   fontSize: fontSize.body,
   fontWeight: 500,
-  color: vars.color.oliveInk,
-  cursor: 'pointer',
   textUnderlineOffset: 3,
+  cursor: 'pointer',
   ':focus-visible': focusRing,
   '@media': {
     [hover]: { selectors: { '&:hover': { textDecoration: 'underline' } } },
     [coarse]: { minHeight: 44, marginBlock: 0 },
   },
 });
-globalStyle(`${action} svg`, { width: 16, height: 16, flex: 'none' });
+globalStyle(`${action} svg`, icon);

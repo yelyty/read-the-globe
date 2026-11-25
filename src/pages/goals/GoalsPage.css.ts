@@ -2,27 +2,30 @@ import { globalStyle, keyframes, style } from '@vanilla-extract/css';
 
 import { fontSize, space, vars } from '../../styles/theme.css';
 import {
+  caps,
   easeOut,
   easeSoft,
+  fieldFocus,
   focusRing,
   forcedColors,
   goldBand,
   hover,
   phone,
+  pressed,
   reducedMotion,
 } from '../../styles/global.css';
 import { formError as fieldFormError } from '../../components/Field/Field.css';
 
 const press = {
-  selectors: { '&:not(:disabled):active': { transform: 'scale(.97)' } },
-  transition: `transform 160ms ${easeOut}, background-color 160ms ${easeOut}`,
+  transition: `scale 160ms ${easeOut}, background-color 160ms ${easeOut}`,
+  selectors: { '&:not(:disabled):active': pressed },
 };
 
 const caret = (size: number) => ({
   content: '""',
+  flex: 'none',
   width: size,
   height: size,
-  flex: 'none',
   borderRight: `${size > 8 ? 2 : 1.5}px solid ${vars.color.textMuted}`,
   borderBottom: `${size > 8 ? 2 : 1.5}px solid ${vars.color.textMuted}`,
   rotate: '-45deg',
@@ -30,29 +33,28 @@ const caret = (size: number) => ({
 });
 
 export const h2 = style({
-  margin: 0,
-  fontFamily: vars.font.display,
-  fontWeight: 500,
-  fontSize: fontSize.heading,
-  lineHeight: 1.2,
   color: vars.color.text,
+  fontFamily: vars.font.display,
+  fontSize: fontSize.heading,
+  fontWeight: 500,
+  lineHeight: 1.2,
 });
 
 const foldSummary = {
   display: 'flex',
-  alignItems: 'center',
   gap: space.sp4,
+  alignItems: 'center',
   minHeight: 40,
-  cursor: 'pointer',
   listStyle: 'none',
+  cursor: 'pointer',
 } as const;
 
 export const yours = style({ marginTop: space.sp7 });
 
 globalStyle(`${yours} > summary`, {
   ...foldSummary,
-  paddingBottom: space.sp2,
   marginBottom: space.sp5,
+  paddingBottom: space.sp2,
   borderBottom: `1px solid ${vars.color.border}`,
 });
 
@@ -84,8 +86,8 @@ export const pick = style({
   maxWidth: 520,
   marginTop: space.sp4,
   padding: `${space.sp3} ${space.sp4} ${space.sp4}`,
+  borderRadius: vars.radius.sm,
   background: goldBand,
-  borderRadius: 8,
 });
 
 globalStyle(`${pick} p`, {
@@ -96,18 +98,17 @@ globalStyle(`${pick} p`, {
 globalStyle(`${pick} b`, { fontWeight: 500 });
 
 export const full = style({
+  color: vars.color.textSecondary,
   fontSize: fontSize.body,
   fontWeight: 500,
-  color: vars.color.textSecondary,
 });
 
 export const dests = style({
-  listStyle: 'none',
-  margin: `${space.sp4} 0 ${space.sp5}`,
-  padding: 0,
   display: 'grid',
-  gap: space.sp4,
   gridTemplateColumns: 'repeat(auto-fit, minmax(208px, 1fr))',
+  gap: space.sp4,
+  margin: `${space.sp4} 0 ${space.sp5}`,
+  listStyle: 'none',
 });
 export const dest = style({
   ...press,
@@ -118,14 +119,14 @@ export const dest = style({
   height: '100%',
   padding: space.sp4,
   border: 0,
-  borderRadius: 16,
+  borderRadius: vars.radius.lg,
   background: goldBand,
   color: vars.color.text,
-  textAlign: 'left',
   fontFamily: vars.font.sans,
+  textAlign: 'left',
   cursor: 'pointer',
   ':focus-visible': focusRing,
-  ':disabled': { cursor: 'default', opacity: 0.55 },
+  ':disabled': { opacity: 0.55, cursor: 'default' },
 });
 export const destMap = style({
   display: 'block',
@@ -134,26 +135,26 @@ export const destMap = style({
 });
 export const destName = style({
   fontFamily: vars.font.serif,
-  fontWeight: 500,
   fontSize: fontSize.heading,
+  fontWeight: 500,
   lineHeight: 1.15,
   textWrap: 'balance',
 });
 export const destNote = style({
   marginTop: space.sp1,
-  fontSize: fontSize.meta,
   color: vars.color.textSecondary,
+  fontSize: fontSize.meta,
   fontVariantNumeric: 'tabular-nums',
 });
 export const destAdd = style({
   display: 'inline-flex',
-  alignItems: 'center',
   gap: space.sp2,
+  alignItems: 'center',
   marginTop: 'auto',
   paddingTop: space.sp4,
+  color: vars.color.accent,
   fontSize: fontSize.body,
   fontWeight: 500,
-  color: vars.color.accent,
 });
 globalStyle(`${destAdd} svg`, { width: 14, height: 14 });
 
@@ -161,14 +162,14 @@ export const more = style({ marginTop: 0 });
 
 globalStyle(`${more} > summary`, {
   display: 'inline-flex',
-  alignItems: 'center',
   gap: space.sp2,
+  alignItems: 'center',
   minHeight: 40,
-  cursor: 'pointer',
-  listStyle: 'none',
+  color: vars.color.textSecondary,
   fontSize: fontSize.body,
   fontWeight: 500,
-  color: vars.color.textSecondary,
+  listStyle: 'none',
+  cursor: 'pointer',
 });
 
 globalStyle(`${more} > summary::-webkit-details-marker`, { display: 'none' });
@@ -178,36 +179,31 @@ export const moreN = style({ fontWeight: 400 });
 export const group = style({ marginTop: space.sp4 });
 
 globalStyle(`${group} h3`, {
+  ...caps,
   margin: `0 0 ${space.sp2}`,
   fontFamily: vars.font.sans,
-  fontSize: fontSize.label,
   fontWeight: 500,
-  letterSpacing: 1.4,
-  textTransform: 'uppercase',
-  color: vars.color.textMuted,
 });
 
 export const chips = style({
-  listStyle: 'none',
-  margin: 0,
-  padding: 0,
   display: 'flex',
   flexWrap: 'wrap',
   gap: space.sp2,
+  listStyle: 'none',
 });
 export const chip = style({
   ...press,
   display: 'inline-flex',
-  alignItems: 'center',
   gap: space.sp2,
+  alignItems: 'center',
   minHeight: 40,
   padding: `${space.sp2} ${space.sp4} ${space.sp2} ${space.sp2}`,
-  borderRadius: 999,
-  background: vars.color.background,
   border: `1px solid ${vars.color.border}`,
+  borderRadius: vars.radius.pill,
+  background: vars.color.background,
+  color: vars.color.text,
   fontFamily: vars.font.sans,
   fontSize: fontSize.body,
-  color: vars.color.text,
   cursor: 'pointer',
   ':focus-visible': focusRing,
   ':disabled': { opacity: 0.5, cursor: 'not-allowed' },
@@ -226,8 +222,8 @@ globalStyle(`${chip} svg`, {
 
 export const chipNote = style({
   marginLeft: space.sp1,
-  fontSize: fontSize.meta,
   color: vars.color.textMuted,
+  fontSize: fontSize.meta,
 });
 
 // no goals yet: the sticker sits below a hairline, where the goals will be
@@ -239,11 +235,9 @@ export const empty = style({
 });
 
 export const goalList = style({
-  listStyle: 'none',
-  margin: 0,
-  padding: 0,
   display: 'grid',
   gap: space.sp6,
+  listStyle: 'none',
 });
 export const goal = style({
   display: 'grid',
@@ -265,8 +259,8 @@ export const plate = style({
   width: '100%',
   height: 'auto',
   aspectRatio: '176 / 110',
+  borderRadius: vars.radius.sm,
   background: vars.map.sea,
-  borderRadius: 8,
 });
 
 globalStyle(`${goal} ${plate}`, {
@@ -275,9 +269,9 @@ globalStyle(`${goal} ${plate}`, {
 });
 
 globalStyle(`${plate} path`, {
+  stroke: vars.color.border,
   strokeWidth: 0.6,
   vectorEffect: 'non-scaling-stroke',
-  stroke: vars.color.border,
 });
 
 export const shapeSet = style({ fill: vars.color.olive });
@@ -308,9 +302,9 @@ export const plank = style({
 });
 export const compass = style({
   position: 'absolute',
-  zIndex: 1,
   right: 11,
   bottom: 10,
+  zIndex: 1,
   width: 22,
   height: 22,
   overflow: 'visible',
@@ -335,87 +329,86 @@ export const goalBody = style({
 });
 export const goalHead = style({
   display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'baseline',
   gap: space.sp4,
+  alignItems: 'baseline',
+  justifyContent: 'space-between',
   minWidth: 0,
 });
 export const goalName = style({
-  margin: 0,
+  fontFamily: vars.font.display,
+  fontSize: fontSize.heading,
+  fontWeight: 500,
+  lineHeight: 1.2,
+  overflowWrap: 'break-word',
   // a goal just added gets focus on its name, shown as an underline rather than a box round the title
   ':focus': { outline: 'none' },
   ':focus-visible': {
     textDecoration: `underline 2px ${vars.color.accent}`,
     textUnderlineOffset: 5,
   },
-  fontFamily: vars.font.display,
-  fontSize: fontSize.heading,
-  fontWeight: 500,
-  lineHeight: 1.2,
-  overflowWrap: 'break-word',
 });
 export const goalMeta = style({
   margin: `${space.sp1} 0 0`,
-  fontSize: fontSize.body,
   color: vars.color.textSecondary,
+  fontSize: fontSize.body,
 });
 export const goalCount = style({
   flex: 'none',
-  textAlign: 'right',
-  fontSize: fontSize.body,
   color: vars.color.textSecondary,
+  fontSize: fontSize.body,
   fontVariantNumeric: 'tabular-nums',
+  textAlign: 'right',
   whiteSpace: 'nowrap',
 });
 
 globalStyle(`${goalCount} b`, {
+  color: vars.color.text,
   fontFamily: vars.font.serif,
   fontSize: fontSize.numerals,
   fontWeight: 400,
-  color: vars.color.text,
 });
 
 export const goalPct = style({});
 export const goalReached = style({
-  '@media': { [phone]: { whiteSpace: 'normal', textAlign: 'right' } },
   display: 'flex',
   flexDirection: 'column',
-  alignItems: 'flex-end',
   gap: space.sp1,
+  alignItems: 'flex-end',
   marginTop: space.sp1,
+  color: vars.color.oliveInk,
   fontSize: fontSize.label,
   letterSpacing: 1.2,
   textTransform: 'uppercase',
-  color: vars.color.oliveInk,
+  '@media': { [phone]: { textAlign: 'right', whiteSpace: 'normal' } },
 });
 export const goalPast = style({
-  letterSpacing: 1,
   color: vars.color.textMuted,
+  letterSpacing: 1,
 });
 
 export const goalFoot = style({
   display: 'flex',
   flexWrap: 'wrap',
-  justifyContent: 'space-between',
-  alignItems: 'baseline',
   gap: `${space.sp2} ${space.sp4}`,
+  alignItems: 'baseline',
+  justifyContent: 'space-between',
   marginTop: space.sp2,
   '@media': { [phone]: { gridColumn: '1 / -1' } },
 });
 export const goalTodo = style({
   flex: '1 1 auto',
-  fontSize: fontSize.body,
   color: vars.color.textSecondary,
+  fontSize: fontSize.body,
 });
 
 globalStyle(`${goalTodo} summary`, {
   display: 'inline-flex',
-  alignItems: 'center',
   gap: space.sp2,
+  alignItems: 'center',
   minHeight: 40,
-  cursor: 'pointer',
-  listStyle: 'none',
   fontWeight: 500,
+  listStyle: 'none',
+  cursor: 'pointer',
 });
 
 globalStyle(`${goalTodo} summary::-webkit-details-marker`, { display: 'none' });
@@ -423,12 +416,12 @@ globalStyle(`${goalTodo} summary::before`, caret(7));
 globalStyle(`${goalTodo}[open] summary::before`, { rotate: '45deg' });
 
 globalStyle(`${goalTodo} p`, {
+  maxWidth: '62ch',
   margin: `${space.sp1} 0 0`,
   lineHeight: 1.5,
-  maxWidth: '62ch',
 });
 
-globalStyle(`${goalTodo} b`, { fontWeight: 500, color: vars.color.text });
+globalStyle(`${goalTodo} b`, { color: vars.color.text, fontWeight: 500 });
 export const goalActions = style({
   display: 'flex',
   flexWrap: 'wrap',
@@ -447,13 +440,13 @@ export const route = style({
   '@media': { [phone]: { gridColumn: '1 / -1' } },
 });
 export const routeTheme = style({});
-const road = { position: 'absolute', left: 0, right: 16, top: '50%' } as const;
+const road = { position: 'absolute', top: '50%', right: 16, left: 0 } as const;
 
 export const routeTrack = style({
   ...road,
   height: 3,
   marginTop: -1,
-  borderRadius: 99,
+  borderRadius: vars.radius.pill,
   background: vars.color.border,
 });
 const fillIn = keyframes({ from: { transform: 'scaleX(0)' } });
@@ -463,7 +456,7 @@ export const routeFill = style({
   zIndex: 1,
   height: 7,
   marginTop: `calc(${space.sp1} * -1)`,
-  borderRadius: 99,
+  borderRadius: vars.radius.pill,
   background: vars.color.primary,
   transform: 'scaleX(var(--p))',
   transformOrigin: 'left center',
@@ -472,8 +465,8 @@ export const routeFill = style({
   '@media': {
     [reducedMotion]: { animation: 'none' },
     [forcedColors]: {
-      forcedColorAdjust: 'none',
       background: 'CanvasText',
+      forcedColorAdjust: 'none',
     },
   },
 });
@@ -485,27 +478,27 @@ export const routeStops = style({
 });
 export const stop = style({
   position: 'absolute',
-  left: 'calc(var(--k) * 100%)',
   top: 0,
+  left: 'calc(var(--k) * 100%)',
   width: 12,
   height: 12,
-  translate: '-50% -50%',
   borderRadius: '50%',
-  background: vars.color.background,
   boxShadow: `inset 0 0 0 2px ${vars.color.textMuted}`,
+  background: vars.color.background,
+  translate: '-50% -50%',
 });
 export const stopHit = style([
   stop,
   {
-    background: vars.color.primary,
     boxShadow: `0 0 0 2px ${vars.color.background}`,
+    background: vars.color.primary,
   },
 ]);
 export const routePin = style({
   position: 'absolute',
-  zIndex: 3,
-  left: 'calc(var(--p) * (100% - 16px))',
   top: '50%',
+  left: 'calc(var(--p) * (100% - 16px))',
+  zIndex: 3,
   width: 24,
   height: 24,
   transform: 'translate(-50%, -72%)',
@@ -522,9 +515,9 @@ globalStyle(`${routeTheme} ${routePin} path`, { fill: vars.color.textMuted });
 globalStyle(`${routePin} circle`, { fill: vars.color.background });
 export const routeFlag = style({
   position: 'absolute',
-  zIndex: 3,
-  right: 0,
   top: '50%',
+  right: 0,
+  zIndex: 3,
   width: 16,
   height: 20,
   transform: 'translateY(-84%)',
@@ -545,49 +538,44 @@ export const field = style({ marginBottom: space.sp4 });
 export const label = style({
   display: 'block',
   marginBottom: space.sp2,
+  color: vars.color.textSecondary,
   fontFamily: vars.font.sans,
   fontSize: fontSize.body,
   fontWeight: 500,
   lineHeight: 1.2,
-  color: vars.color.textSecondary,
 });
 export const input = style({
   width: '100%',
   height: 48,
   padding: `0 ${space.sp4}`,
-  borderRadius: 12,
-  background: vars.color.background,
   border: `1.5px solid ${vars.color.fieldLine}`,
+  borderRadius: vars.radius.md,
+  background: vars.color.background,
+  color: vars.color.text,
   fontFamily: vars.font.sans,
   fontSize: fontSize.item,
-  color: vars.color.text,
-  ':focus': {
-    borderColor: vars.color.primary,
-    boxShadow: '0 0 0 3px rgba(74, 106, 64, 0.18)',
-    outline: 'none',
-  },
+  ':focus': fieldFocus,
   ':disabled': { color: vars.color.textMuted, cursor: 'not-allowed' },
   selectors: { '&[aria-invalid="true"]': { borderColor: vars.color.error } },
 });
 
 export const picked = style({
-  listStyle: 'none',
-  margin: `${space.sp2} 0 0`,
-  padding: 0,
   display: 'flex',
   flexWrap: 'wrap',
   gap: space.sp2,
+  margin: `${space.sp2} 0 0`,
+  listStyle: 'none',
 });
 
 globalStyle(`${picked} li`, {
   display: 'inline-flex',
-  alignItems: 'center',
   gap: space.sp1,
+  alignItems: 'center',
   padding: `${space.sp1} ${space.sp1} ${space.sp1} ${space.sp4}`,
-  borderRadius: 999,
+  borderRadius: vars.radius.pill,
   background: vars.color.oliveWash,
-  fontSize: fontSize.body,
   color: vars.color.oliveInk,
+  fontSize: fontSize.body,
 });
 
 globalStyle(`${picked} button`, {
@@ -613,8 +601,8 @@ export const search = style({ position: 'relative' });
 
 globalStyle(`${search} svg`, {
   position: 'absolute',
-  left: 16,
   bottom: 16,
+  left: 16,
   width: 16,
   height: 16,
   color: vars.color.textMuted,
@@ -623,20 +611,19 @@ globalStyle(`${search} svg`, {
 
 globalStyle(`${search} input`, { paddingLeft: space.sp7 });
 export const picker = style({
-  margin: `${space.sp4} 0 0`,
-  padding: 0,
-  border: 0,
   minWidth: 0,
+  margin: `${space.sp4} 0 0`,
+  border: 0,
 });
 
 globalStyle(`${picker} ul`, {
-  listStyle: 'none',
-  margin: 0,
-  padding: `${space.sp1} 0`,
   maxHeight: 280,
   overflowY: 'auto',
   overscrollBehavior: 'contain',
+  margin: 0,
+  padding: `${space.sp1} 0`,
   borderBlock: `1px solid ${vars.color.border}`,
+  listStyle: 'none',
 });
 
 globalStyle(`${picker} label`, {
@@ -649,13 +636,13 @@ globalStyle(`${picker} label`, {
 });
 
 // the checkbox sits centred beside the title and author
-export const pickBox = style({ alignSelf: 'center', gridRow: '1 / span 2' });
+export const pickBox = style({ gridRow: '1 / span 2', alignSelf: 'center' });
 
 export const pickTitle = style({ fontWeight: 500, overflowWrap: 'break-word' });
 export const pickAuthor = style({
   gridColumn: 2,
-  fontSize: fontSize.meta,
   color: vars.color.textSecondary,
+  fontSize: fontSize.meta,
 });
 
 export { srOnly } from '../../styles/global.css';
@@ -663,15 +650,15 @@ export { srOnly } from '../../styles/global.css';
 /* ---------- the reached stamp: a green postmark pressed over the plate's top-right corner ---------- */
 export const stamp = style({
   position: 'absolute',
-  zIndex: 2,
   top: -20,
   right: -8,
+  zIndex: 2,
   width: 132,
   height: 88,
-  rotate: '-12deg',
   overflow: 'visible',
+  rotate: '-12deg',
   pointerEvents: 'none',
-  '@media': { [phone]: { width: 84, height: 56, top: -12, right: -2 } },
+  '@media': { [phone]: { top: -12, right: -2, width: 84, height: 56 } },
 });
 export const pmRing = style({
   fill: 'none',
@@ -691,23 +678,23 @@ export const pmWave = style({
   opacity: 0.85,
 });
 export const pmArc = style({
+  fill: vars.color.accent,
   fontFamily: vars.font.sans,
   fontSize: 8.4,
   fontWeight: 700,
-  fill: vars.color.accent,
 });
 export const pmFlag = style({
   fill: 'none',
   stroke: vars.color.accent,
   strokeWidth: 1.4,
-  strokeLinejoin: 'round',
   strokeLinecap: 'round',
+  strokeLinejoin: 'round',
 });
 export const pmDate = style({
+  fill: vars.color.accent,
   fontFamily: vars.font.serif,
   fontSize: 10.5,
   fontWeight: 600,
-  fill: vars.color.accent,
 });
 
 /* ---------- the arrival: the pin runs the last stretch, the flag rises and catches gold, the count ticks once,
@@ -752,10 +739,10 @@ const doneIn = keyframes({
 });
 
 const stampIn = keyframes({
-  from: { opacity: 0, scale: '1.6', rotate: '-26deg' },
-  '60%': { opacity: 1, scale: '.9', rotate: '-8deg' },
+  from: { opacity: 0, rotate: '-26deg', scale: '1.6' },
+  '60%': { opacity: 1, rotate: '-8deg', scale: '.9' },
   '80%': { scale: '1.04' },
-  to: { opacity: 1, scale: '1', rotate: '-12deg' },
+  to: { opacity: 1, rotate: '-12deg', scale: '1' },
 });
 
 const arrive = (name: string, ms: number, delay: number) =>

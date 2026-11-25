@@ -3,7 +3,7 @@ import { globalStyle, style } from '@vanilla-extract/css';
 import { fontSize, space, vars } from '../../styles/theme.css';
 import { focusRing, phone } from '../../styles/global.css';
 
-export const list = style({ listStyle: 'none', margin: 0, padding: 0 });
+export const list = style({ listStyle: 'none' });
 export const row = style({
   display: 'grid',
   gridTemplateColumns: 'minmax(0, 1.1fr) minmax(0, 1.4fr) auto',
@@ -23,16 +23,16 @@ export const cover = style({
 });
 export const rowTitle = style({
   display: 'block',
+  color: vars.color.text,
   fontFamily: vars.font.display,
   fontSize: fontSize.item,
   lineHeight: 1.15,
-  color: vars.color.text,
 });
 export const rowAuthor = style({
   display: 'block',
   marginTop: 2,
-  fontSize: fontSize.body,
   color: vars.color.textSecondary,
+  fontSize: fontSize.body,
 });
 export const rowMarks = style({
   display: 'flex',
@@ -40,32 +40,32 @@ export const rowMarks = style({
   gap: space.sp1,
   minWidth: 0,
   paddingTop: 2,
-  fontSize: fontSize.body,
   color: vars.color.textSecondary,
+  fontSize: fontSize.body,
   '@media': { [phone]: { clear: 'both' } },
 });
 export const mark = style({
   display: 'flex',
-  alignItems: 'baseline',
   gap: space.sp2,
+  alignItems: 'baseline',
   minWidth: 0,
   overflowWrap: 'anywhere',
 });
 
 export const markCountry = style({
-  fontStyle: 'normal',
   color: vars.color.textMuted,
+  fontStyle: 'normal',
 });
 export const markNone = style({
-  fontStyle: 'italic',
   color: vars.color.textMuted,
+  fontStyle: 'italic',
 });
 
 globalStyle(`${rowAuthor} time`, {
   display: 'block',
   marginTop: 2,
-  fontSize: fontSize.meta,
   color: vars.color.textMuted,
+  fontSize: fontSize.meta,
   fontVariantNumeric: 'tabular-nums',
   whiteSpace: 'nowrap',
 });
@@ -76,12 +76,12 @@ export const rowSide = style({
 });
 export const edit = style({
   display: 'inline-flex',
-  alignItems: 'center',
   gap: space.sp2,
+  alignItems: 'center',
   padding: `${space.sp2} 2px`,
+  color: vars.color.textSecondary,
   fontSize: fontSize.body,
   fontWeight: 500,
-  color: vars.color.textSecondary,
   textDecoration: 'none',
   ':hover': { color: vars.color.text },
   ':focus-visible': focusRing,

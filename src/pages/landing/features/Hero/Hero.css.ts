@@ -1,24 +1,26 @@
 import { keyframes, style } from '@vanilla-extract/css';
 
 import { fontSize, space, vars } from '../../../../styles/theme.css';
-import { reducedMotion } from '../../../../styles/global.css';
-import { headline } from '../../LandingPage.css';
+import {
+  compact,
+  headline,
+  motionOk,
+  reducedMotion,
+} from '../../../../styles/global.css';
 
 const settle = 'cubic-bezier(.16, 1, .3, 1)'; // one-time set-in, a longer tail than the UI's ease-out
-const motionOk = '(prefers-reduced-motion: no-preference)';
-const narrow = 'screen and (max-width: 899px)';
 
 export const hero = style({
   position: 'relative',
+  overflow: 'hidden',
   padding: `${space.sp8} 0 ${space.sp8}`,
   textAlign: 'center',
-  overflow: 'hidden',
-  '@media': { [narrow]: { paddingTop: space.sp9 } },
+  '@media': { [compact]: { paddingTop: space.sp9 } },
 });
 
 /* the hero sets in once on load: the two headline lines, then the line under them, then the button */
 const setIn = keyframes({
-  from: { opacity: 0, translate: '0 24px', filter: 'blur(4px)' },
+  from: { opacity: 0, filter: 'blur(4px)', translate: '0 24px' },
 });
 
 const fadeIn = keyframes({ from: { opacity: 0 } });
@@ -48,8 +50,8 @@ export const line2 = style({ display: 'block', ...enter(0.12) });
 export const heroSub = style({
   maxWidth: '34em',
   margin: `${space.sp5} auto 0`,
-  fontSize: 'clamp(17px, 1.5vw, 19px)',
   color: vars.color.textSecondary,
+  fontSize: 'clamp(17px, 1.5vw, 19px)',
   textWrap: 'pretty',
   ...enter(0.28),
 });
@@ -57,34 +59,34 @@ export const heroSub = style({
 export const heroCta = style({
   display: 'flex',
   flexDirection: 'column',
-  alignItems: 'center',
   gap: space.sp4,
+  alignItems: 'center',
   marginTop: space.sp6,
   ...enter(0.4),
 });
 
 export const note = style({
+  color: vars.color.textMuted,
   fontFamily: vars.font.sans,
   fontSize: fontSize.body,
   lineHeight: 1,
-  color: vars.color.textMuted,
 });
 
 /* the stickers, tilted and kept to the margins of the headline: they turn in, then drift */
 const stkIn = keyframes({
-  from: { opacity: 0, scale: '.9', rotate: 'calc(var(--r) - 18deg)' },
+  from: { opacity: 0, rotate: 'calc(var(--r) - 18deg)', scale: '.9' },
 });
 
 const stkDrift = keyframes({ to: { translate: '0 -8px' } });
 
 export const sticker = style({
   position: 'absolute',
-  left: 'calc(var(--x) - var(--s) / 2)',
   top: 'calc(var(--y) - var(--s) / 2)',
+  left: 'calc(var(--x) - var(--s) / 2)',
   width: 'var(--s)',
   height: 'var(--s)',
-  rotate: 'var(--r)',
   overflow: 'visible',
+  rotate: 'var(--r)',
   pointerEvents: 'none',
   '@media': {
     [motionOk]: {
@@ -98,11 +100,11 @@ export const sticker = style({
 // narrow screens keep two stickers, tucked above the headline (!important beats the inline placement).
 // Centered 48px down, a 64px sticker spans 16–80px: inside the hero, which clips its edges, even while it
 // turns in and drifts, and clear of the headline under the hero's 96px top padding
-const hide = { '@media': { [narrow]: { display: 'none' } } };
+const hide = { '@media': { [compact]: { display: 'none' } } };
 
 const corner = (left: string) => ({
   '@media': {
-    [narrow]: {
+    [compact]: {
       vars: {
         '--x': `${left} !important`,
         '--y': '48px !important',

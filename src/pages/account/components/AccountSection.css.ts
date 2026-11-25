@@ -23,11 +23,11 @@ export const section = style({
 
 export const sectionTitle = style({
   margin: `0 0 ${space.sp3}`,
+  color: vars.color.text,
   fontFamily: vars.font.display,
   fontSize: fontSize.heading,
   fontWeight: 500,
   lineHeight: 1.15,
-  color: vars.color.text,
   '@media': { [wide]: { gridColumn: 1, gridRow: '1 / span 8', margin: 0 } },
 });
 

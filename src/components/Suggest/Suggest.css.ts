@@ -7,19 +7,18 @@ import { hover } from '../../styles/global.css';
 export const menu = style({
   position: 'fixed',
   inset: 'auto',
-  margin: 0,
   boxSizing: 'border-box',
   overflow: 'auto',
   overscrollBehavior: 'contain',
   padding: space.sp2,
-  listStyle: 'none',
+  border: `1px solid ${vars.color.border}`,
+  borderRadius: vars.radius.lg,
   background: vars.color.surface,
   color: vars.color.textSecondary,
-  border: `1px solid ${vars.color.border}`,
-  borderRadius: 16,
   fontFamily: vars.font.sans,
   fontSize: fontSize.body,
   fontWeight: 500,
+  listStyle: 'none',
 });
 
 export const option = style({
@@ -27,7 +26,7 @@ export const option = style({
   alignItems: 'center',
   minHeight: 40,
   padding: `0 ${space.sp4}`,
-  borderRadius: 8,
+  borderRadius: vars.radius.sm,
   cursor: 'pointer',
   selectors: {
     '&[aria-selected="true"]': {

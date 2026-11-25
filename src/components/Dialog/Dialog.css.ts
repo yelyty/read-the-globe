@@ -29,14 +29,14 @@ const fade = keyframes({ from: { opacity: 0 } });
 
 const base = style({
   maxHeight: 'calc(100dvh - 48px)',
-  margin: 'auto',
-  padding: space.sp5,
   overflow: 'auto',
   overscrollBehavior: 'contain',
+  margin: 'auto',
+  padding: space.sp5,
+  border: `1px solid ${vars.color.border}`,
+  borderRadius: vars.radius.lg,
   background: vars.color.surface,
   color: vars.color.text,
-  border: `1px solid ${vars.color.border}`,
-  borderRadius: 16,
   selectors: {
     '&[open]': { animation: `${rise} .22s ${easeOut}` },
     '&::backdrop': { background: `rgba(${vars.shadow.ink}, .35)` },
@@ -63,8 +63,8 @@ export const dialog = styleVariants({
           maxHeight: '92dvh',
           margin: 'auto 0 0',
           padding: `${space.sp5} ${space.sp5} 0`,
-          borderRadius: '16px 16px 0 0',
           borderBottom: 0,
+          borderRadius: `${vars.radius.lg} ${vars.radius.lg} 0 0`,
           selectors: {
             '&[open]': { animation: `${sheetUp} .26s ${easeOut}` },
           },
@@ -78,12 +78,12 @@ export const dialog = styleVariants({
       width: 'min(560px, 100% - 32px)',
       maxHeight: 'calc(100dvh - 32px)',
       padding: space.sp7,
-      background: vars.color.background,
       border: 0,
       borderRadius: 24,
+      background: vars.color.background,
       selectors: {
         '&[open]': { animation: `${lift} .2s ${easeOut}` },
-        '&::backdrop': { background: 'rgba(28, 24, 17, 0.48)' },
+        '&::backdrop': { background: vars.color.overlay },
       },
       '@media': {
         [small]: { padding: space.sp5 },
@@ -95,9 +95,9 @@ export const dialog = styleVariants({
 
 const headBase = style({
   display: 'flex',
+  gap: space.sp4,
   alignItems: 'flex-start',
   justifyContent: 'space-between',
-  gap: space.sp4,
 });
 
 export const head = styleVariants({
@@ -106,7 +106,7 @@ export const head = styleVariants({
   hero: [headBase, { marginBottom: space.sp5 }],
 });
 
-const titleBase = style({ margin: 0, lineHeight: 1.15 });
+const titleBase = style({ lineHeight: 1.15 });
 
 export const title = styleVariants({
   default: [
@@ -129,8 +129,8 @@ export const title = styleVariants({
     titleBase,
     {
       fontFamily: vars.font.sans,
-      fontWeight: 800,
       fontSize: fontSize.title,
+      fontWeight: 800,
       lineHeight: 1.05,
       letterSpacing: '-.025em',
       textWrap: 'balance',
@@ -142,18 +142,17 @@ export const title = styleVariants({
 // the same round button as the theme toggle; the tint mixes with transparent so it reads the same on any card
 export const close = style({
   display: 'grid',
-  placeItems: 'center',
   flex: 'none',
+  placeItems: 'center',
   width: 40,
   height: 40,
   margin: `calc(${space.sp2} * -1) calc(${space.sp2} * -1) 0 0`,
-  padding: 0,
   border: 0,
   borderRadius: '50%',
   background: `color-mix(in srgb, ${vars.color.text} 6%, transparent)`,
   color: vars.color.textSecondary,
-  cursor: 'pointer',
   transition: `background-color .15s ${easeOut}, color .15s ${easeOut}`,
+  cursor: 'pointer',
   ':focus-visible': focusRing,
   '@media': {
     [hover]: {
@@ -170,16 +169,16 @@ export const close = style({
 globalStyle(`${close} svg`, { width: 18, height: 18 });
 
 export const text = style({
-  margin: `0 0 ${space.sp4}`,
   maxWidth: '52ch',
+  margin: `0 0 ${space.sp4}`,
   color: vars.color.textSecondary,
 });
 
 export const actions = style({
   display: 'flex',
   flexWrap: 'wrap',
+  gap: `${space.sp3} ${space.sp5}`,
   alignItems: 'center',
   justifyContent: 'flex-end',
-  gap: `${space.sp3} ${space.sp5}`,
   marginTop: space.sp5,
 });

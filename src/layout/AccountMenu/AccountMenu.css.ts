@@ -1,12 +1,17 @@
 import { globalStyle, keyframes, style } from '@vanilla-extract/css';
 
 import { fontSize, space, vars } from '../../styles/theme.css';
-import { hover, reducedMotion } from '../../styles/global.css';
-import { navLink, twoRows } from '../AppHeader/AppHeader.css';
+import {
+  hover,
+  narrowNav,
+  pressed,
+  reducedMotion,
+} from '../../styles/global.css';
+import { navLink } from '../AppHeader/AppHeader.css';
 
 export const menu = style({
   position: 'relative',
-  '@media': { [twoRows]: { flex: '1 1 auto' } },
+  '@media': { [narrowNav]: { flex: '1 1 auto' } },
 });
 
 export const button = style([
@@ -20,7 +25,7 @@ export const button = style([
         color: vars.color.text,
       },
     },
-    '@media': { [twoRows]: { width: '100%', justifyContent: 'center' } },
+    '@media': { [narrowNav]: { justifyContent: 'center', width: '100%' } },
   },
 ]);
 
@@ -32,20 +37,19 @@ export const caret = style({
   '@media': { [reducedMotion]: { transition: 'none' } },
 });
 
-const listIn = keyframes({ from: { opacity: 0, transform: 'scale(.97)' } });
+const listIn = keyframes({ from: { opacity: 0, ...pressed } });
 
 export const list = style({
   position: 'absolute',
-  right: -12,
   top: 'calc(100% + 10px)',
+  right: -12,
   zIndex: 80,
   minWidth: 176,
-  margin: 0,
   padding: space.sp1,
-  listStyle: 'none',
-  background: vars.color.surface,
   border: `1px solid ${vars.color.border}`,
-  borderRadius: 16,
+  borderRadius: vars.radius.lg,
+  background: vars.color.surface,
+  listStyle: 'none',
   transformOrigin: 'top right',
   animation: `${listIn} .15s cubic-bezier(.23, 1, .32, 1)`,
   selectors: { '&[hidden]': { display: 'none' } },
@@ -65,19 +69,19 @@ export const item = style({
   minHeight: 40,
   padding: `0 ${space.sp3}`,
   border: 0,
-  borderRadius: 8,
+  borderRadius: vars.radius.sm,
   background: 'none',
+  color: vars.color.textSecondary,
   fontFamily: vars.font.sans,
   fontSize: fontSize.body,
   fontWeight: 500,
-  color: vars.color.textSecondary,
-  textDecoration: 'none',
   textAlign: 'left',
+  textDecoration: 'none',
   cursor: 'pointer',
   ':focus-visible': {
+    outline: 'none',
     background: vars.color.primary,
     color: vars.color.onAccent,
-    outline: 'none',
   },
   '@media': {
     [hover]: {

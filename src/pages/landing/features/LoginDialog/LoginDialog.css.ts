@@ -1,7 +1,7 @@
 import { globalStyle, style, styleVariants } from '@vanilla-extract/css';
 
 import { fontSize, space, vars } from '../../../../styles/theme.css';
-import { buttonSize, easeOut } from '../../../../styles/global.css';
+import { buttonSize, easeOut, pressed } from '../../../../styles/global.css';
 import {
   formError as fieldFormError,
   formNotice as fieldFormNotice,
@@ -9,8 +9,8 @@ import {
 
 export const dialogSub = style({
   margin: `${space.sp2} 0 0`,
-  fontSize: fontSize.action,
   color: vars.color.textSecondary,
+  fontSize: fontSize.action,
   textWrap: 'pretty',
 });
 
@@ -27,8 +27,8 @@ export const formNotice = style([
 
 export const strength = style({
   display: 'flex',
-  alignItems: 'center',
   gap: space.sp2,
+  alignItems: 'center',
   marginTop: space.sp2,
   selectors: { '&[hidden]': { display: 'none' } },
 });
@@ -36,16 +36,16 @@ export const strength = style({
 export const strengthBar = style({
   flex: 1,
   height: 4,
-  borderRadius: 999,
-  background: vars.color.backgroundDeep,
   overflow: 'hidden',
+  borderRadius: vars.radius.pill,
+  background: vars.color.backgroundDeep,
 });
 
 const strengthFillBase = style({
-  height: '100%',
   width: '100%',
+  height: '100%',
+  borderRadius: vars.radius.pill,
   transformOrigin: 'left center',
-  borderRadius: 999,
   transition: `transform .2s ${easeOut}, background .2s ${easeOut}`,
 });
 
@@ -58,9 +58,9 @@ export const strengthFill = styleVariants({
 });
 
 export const strengthLabel = style({
+  color: vars.color.textMuted,
   fontFamily: vars.font.sans,
   fontSize: fontSize.body,
-  color: vars.color.textMuted,
   whiteSpace: 'nowrap',
 });
 
@@ -71,14 +71,14 @@ const btn = style([
     alignItems: 'center',
     justifyContent: 'center',
     border: 0,
-    borderRadius: 999,
+    borderRadius: vars.radius.pill,
     fontFamily: vars.font.sans,
     fontWeight: 500,
     textDecoration: 'none',
+    transition: `scale .14s ${easeOut}, background .14s ${easeOut}`,
     cursor: 'pointer',
-    transition: `transform .14s ${easeOut}, background .14s ${easeOut}`,
     selectors: {
-      '&:active': { transform: 'scale(.97)' },
+      '&:active': pressed,
       '&[disabled]': { opacity: 0.72, cursor: 'progress' },
     },
   },
@@ -87,8 +87,8 @@ const btn = style([
 export const btnPrimary = style([
   btn,
   {
-    color: vars.color.onAccent,
     background: vars.color.primary,
+    color: vars.color.onAccent,
     ':hover': { background: vars.color.primaryHover },
   },
 ]);
@@ -97,21 +97,21 @@ export const btnBlock = style({ width: '100%', marginTop: space.sp2 });
 
 export const altAction = style({
   margin: `${space.sp4} 0 0`,
+  color: vars.color.textSecondary,
   fontFamily: vars.font.sans,
   fontSize: fontSize.body,
   lineHeight: 1.4,
-  color: vars.color.textSecondary,
 });
 
 export const altLink = style({
-  padding: `${space.sp3} ${space.sp1}`,
   margin: `calc(${space.sp3} * -1) calc(${space.sp1} * -1)`,
-  background: 'none',
+  padding: `${space.sp3} ${space.sp1}`,
   border: 0,
+  background: 'none',
+  color: vars.color.text,
   fontFamily: vars.font.sans,
   fontSize: fontSize.body,
   fontWeight: 500,
-  color: vars.color.text,
   textDecoration: 'underline',
   textUnderlineOffset: 4,
   cursor: 'pointer',
@@ -120,8 +120,8 @@ export const altLink = style({
 export const links = style({
   display: 'flex',
   flexWrap: 'wrap',
-  justifyContent: 'space-between',
   gap: `${space.sp2} ${space.sp4}`,
+  justifyContent: 'space-between',
   marginTop: space.sp4,
 });
 globalStyle(`${links} ${altAction}`, { margin: 0 });
@@ -130,20 +130,20 @@ globalStyle(`${links} ${altAction}`, { margin: 0 });
 export const example = style({
   display: 'grid',
   gridTemplateColumns: 'auto 1fr',
-  alignItems: 'center',
   gap: `0 ${space.sp2}`,
+  alignItems: 'center',
   margin: `0 0 ${space.sp4}`,
+  color: vars.color.text,
   fontFamily: vars.font.sans,
   fontSize: fontSize.body,
   fontWeight: 500,
   lineHeight: 1.4,
-  color: vars.color.text,
   cursor: 'pointer',
 });
 
 export const exampleHint = style({
   gridColumn: 2,
-  fontWeight: 400,
-  fontSize: fontSize.body,
   color: vars.color.textMuted,
+  fontSize: fontSize.body,
+  fontWeight: 400,
 });

@@ -6,10 +6,10 @@ import { forcedColors } from '../../styles/global.css';
 // a small olive tag beside the wordmark: the app is still in beta
 export const betaChip = style({
   display: 'inline-flex',
-  alignItems: 'center',
   flex: 'none',
+  alignItems: 'center',
   padding: `${space.sp1} ${space.sp2}`,
-  borderRadius: 999,
+  borderRadius: vars.radius.pill,
   background: vars.color.oliveWash,
   color: vars.color.oliveInk,
   fontFamily: vars.font.sans,

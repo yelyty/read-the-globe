@@ -72,6 +72,7 @@ export const vars = createThemeContract({
     sm: null,
     md: null,
     lg: null,
+    pill: null,
   },
 });
 
@@ -141,8 +142,10 @@ export const light = {
   radius: {
     xs: '4px',
     sm: '8px',
-    md: '10px',
+    md: '12px',
     lg: '16px',
+    // fully rounded ends: chips, pills, round buttons
+    pill: '999px',
   },
 };
 

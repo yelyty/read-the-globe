@@ -13,15 +13,15 @@ export const options = style({});
 
 export const summary = style({
   display: 'flex',
-  alignItems: 'center',
   gap: space.sp2,
+  alignItems: 'center',
   width: 'fit-content',
   minHeight: 40,
   marginTop: space.sp4,
+  color: vars.color.text,
   fontFamily: vars.font.sans,
   fontSize: fontSize.body,
   fontWeight: 500,
-  color: vars.color.text,
   listStyle: 'none',
   cursor: 'pointer',
   // This caret is the same as the caret of Show countries.
@@ -40,15 +40,15 @@ globalStyle(`${summary}::-webkit-details-marker`, { display: 'none' });
 globalStyle(`${options}[open] > ${summary}::before`, { rotate: '45deg' });
 
 export const summaryNote = style({
-  fontWeight: 400,
   color: vars.color.textMuted,
+  fontWeight: 400,
 });
 
 export const row = style({
   display: 'flex',
   flexWrap: 'wrap',
-  alignItems: 'center',
   gap: `${space.sp2} ${space.sp4}`,
+  alignItems: 'center',
   marginTop: space.sp4,
 });
 
@@ -64,13 +64,14 @@ export const pill = style({
   minHeight: 36,
   padding: `${space.sp2} ${space.sp4}`,
   border: `1px solid ${vars.color.border}`,
-  borderRadius: 999,
+  borderRadius: vars.radius.pill,
   background: 'none',
+  color: vars.color.textSecondary,
   fontFamily: vars.font.sans,
   fontSize: fontSize.body,
   fontWeight: 500,
-  color: vars.color.textSecondary,
   cursor: 'pointer',
+  ':focus-visible': focusRing,
   selectors: {
     '&[aria-pressed="true"]': {
       borderColor: 'transparent',
@@ -78,7 +79,6 @@ export const pill = style({
       color: vars.color.text,
     },
   },
-  ':focus-visible': focusRing,
   '@media': {
     [hover]: {
       selectors: { '&:hover': { background: picked, color: vars.color.text } },
@@ -103,8 +103,8 @@ export const swatch = style({
   border: `2px solid ${vars.color.surface}`,
   borderRadius: '50%',
   boxShadow: ring,
-  cursor: 'pointer',
   transition: `box-shadow .15s ${easeOut}`,
+  cursor: 'pointer',
   // The touch area is 40 px. It does not overlap the adjacent swatches.
   '::before': {
     content: '""',
@@ -112,14 +112,14 @@ export const swatch = style({
     inset: -5,
     borderRadius: '50%',
   },
+  ':focus-visible': {
+    outline: `2px solid ${vars.color.accent}`,
+    outlineOffset: 3,
+  },
   selectors: {
     '&[aria-pressed="true"]': {
       boxShadow: ringPicked,
     },
-  },
-  ':focus-visible': {
-    outline: `2px solid ${vars.color.accent}`,
-    outlineOffset: 3,
   },
   '@media': {
     [hover]: {
@@ -133,8 +133,8 @@ export const swatch = style({
 });
 
 export const colorName = style({
+  color: vars.color.textSecondary,
   fontFamily: vars.font.sans,
   fontSize: fontSize.body,
   fontWeight: 500,
-  color: vars.color.textSecondary,
 });

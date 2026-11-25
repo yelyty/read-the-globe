@@ -8,6 +8,8 @@ import tseslint from 'typescript-eslint';
 import storybook from 'eslint-plugin-storybook';
 import { defineConfig, globalIgnores } from 'eslint/config';
 
+import styleOrder from './eslint-rules/style-order.js';
+
 export default defineConfig([
   globalIgnores([
     // installed agent skills (npx skills add): third-party code
@@ -121,6 +123,12 @@ export default defineConfig([
         },
       ],
     },
+  },
+  {
+    // style properties are grouped: position, layout, size, spacing, border, colours, text, motion
+    files: ['**/*.css.ts'],
+    plugins: { local: { rules: { 'style-order': styleOrder } } },
+    rules: { 'local/style-order': 'error' },
   },
   {
     plugins: { '@stylistic': stylistic },

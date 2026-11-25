@@ -4,17 +4,16 @@ import { vars } from '../../styles/theme.css';
 import { coarse, hover, phone } from '../../styles/global.css';
 
 export const themeBtn = style({
+  display: 'grid',
+  flex: 'none',
+  placeItems: 'center',
   width: 40,
   height: 40,
-  display: 'grid',
-  placeItems: 'center',
-  flex: 'none',
-  background: `color-mix(in srgb, ${vars.color.text} 6%, ${vars.color.background})`,
   border: 0,
-  borderRadius: 999,
+  borderRadius: vars.radius.pill,
+  background: `color-mix(in srgb, ${vars.color.text} 6%, ${vars.color.background})`,
   // the same as the nav links beside it
   color: vars.color.textSecondary,
-  padding: 0,
   cursor: 'pointer',
   '@media': {
     [hover]: {

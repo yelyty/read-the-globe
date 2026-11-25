@@ -1,17 +1,14 @@
 import { style } from '@vanilla-extract/css';
 
 import { fontSize, space, vars } from '../../styles/theme.css';
-import { coarse, hover, phone } from '../../styles/global.css';
-import { wrap } from '../../pages/landing/LandingPage.css';
-
-const pillFloats = 'screen and (max-width: 899px)';
+import { coarse, compact, hover, phone, wrap } from '../../styles/global.css';
 
 export const footer = style({
   marginTop: 'auto',
   borderTop: `1px solid ${vars.color.stroke}`,
+  color: vars.color.textMuted,
   fontFamily: vars.font.sans,
   fontSize: fontSize.meta,
-  color: vars.color.textMuted,
 });
 
 export const row = style([
@@ -19,11 +16,11 @@ export const row = style([
   {
     display: 'flex',
     flexWrap: 'wrap',
-    alignItems: 'baseline',
     gap: `${space.sp2} ${space.sp5}`,
+    alignItems: 'baseline',
     paddingBlock: `${space.sp4} ${space.sp5}`,
     '@media': {
-      [pillFloats]: { paddingBottom: space.sp9 },
+      [compact]: { paddingBottom: space.sp9 },
     },
   },
 ]);
@@ -37,6 +34,13 @@ export const links = style({
 export const link = style({
   color: vars.color.textSecondary,
   textDecoration: 'none',
+  selectors: {
+    '&:focus-visible': {
+      borderRadius: 3,
+      outline: `2px solid ${vars.color.accent}`,
+      outlineOffset: 2,
+    },
+  },
   '@media': {
     [hover]: {
       selectors: {
@@ -51,21 +55,14 @@ export const link = style({
     [phone]: {
       display: 'inline-flex',
       alignItems: 'center',
-      minHeight: 44,
-      minWidth: 44,
       justifyContent: 'center',
-    },
-  },
-  selectors: {
-    '&:focus-visible': {
-      outline: `2px solid ${vars.color.accent}`,
-      outlineOffset: 2,
-      borderRadius: 3,
+      minWidth: 44,
+      minHeight: 44,
     },
   },
 });
 
 export const credit = style({
   marginLeft: 'auto',
-  '@media': { [pillFloats]: { marginLeft: 0 } },
+  '@media': { [compact]: { marginLeft: 0 } },
 });

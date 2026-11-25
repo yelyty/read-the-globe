@@ -6,17 +6,19 @@ import {
 } from '@vanilla-extract/css';
 
 import { fontSize, space, vars } from '../../../../styles/theme.css';
-import { easeOut, hover } from '../../../../styles/global.css';
+import {
+  easeOut,
+  hover,
+  motionOk,
+  narrow,
+} from '../../../../styles/global.css';
 import { sectionTitle } from '../../LandingPage.css';
-
-const narrow = 'screen and (max-width: 799px)';
-const motionOk = '(prefers-reduced-motion: no-preference)';
 
 export const close = style({
   position: 'relative',
+  overflow: 'hidden',
   padding: '176px 0 208px',
   textAlign: 'center',
-  overflow: 'hidden',
 });
 // set once the promise is in view (useReveal; at once under reduced motion)
 export const stamped = style({});
@@ -39,8 +41,8 @@ export const cta = style({ marginTop: space.sp6 });
 
 // a stamp coming down, no bounce
 const press = keyframes({
-  from: { opacity: 0, scale: '1.25', rotate: '-10deg' },
-  to: { opacity: 1, scale: '1', rotate: '0deg' },
+  from: { opacity: 0, rotate: '-10deg', scale: '1.25' },
+  to: { opacity: 1, rotate: '0deg', scale: '1' },
 });
 
 export const stamp = style({
@@ -84,25 +86,25 @@ globalStyle(`${stamp}:hover svg`, {
 const tipBase = style({
   position: 'absolute',
   zIndex: 2,
+  visibility: 'hidden',
   width: 'max-content',
   maxWidth: 240,
   padding: `${space.sp2} ${space.sp3}`,
+  border: `1px solid ${vars.color.border}`,
+  borderRadius: vars.radius.sm,
   background: vars.color.surface,
   color: vars.color.text,
-  border: `1px solid ${vars.color.border}`,
-  borderRadius: 8,
+  opacity: 0,
   fontFamily: vars.font.sans,
   fontSize: fontSize.body,
   fontWeight: 500,
   lineHeight: 1.3,
   textAlign: 'center',
   textWrap: 'balance',
-  opacity: 0,
-  visibility: 'hidden',
-  pointerEvents: 'none',
   transition: `opacity .15s ${easeOut}, visibility .15s`,
+  pointerEvents: 'none',
   selectors: {
-    [`${stamp}:hover &`]: { opacity: 1, visibility: 'visible' },
+    [`${stamp}:hover &`]: { visibility: 'visible', opacity: 1 },
   },
 });
 
