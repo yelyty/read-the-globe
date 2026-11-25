@@ -9,7 +9,7 @@ import {
   reducedMotion,
 } from '../../styles/global.css';
 
-export const plate = style({ position: 'relative', margin: 0 });
+export const plate = style({ position: 'relative' });
 
 export const scroll = style({
   '@media': {
@@ -43,12 +43,12 @@ export const hint = style({
   '@media': {
     [phone]: {
       display: 'flex',
+      gap: space.sp2,
       alignItems: 'center',
       justifyContent: 'center',
-      gap: space.sp2,
       margin: `${space.sp2} 0 0`,
-      fontSize: fontSize.meta,
       color: vars.color.textSecondary,
+      fontSize: fontSize.meta,
     },
   },
 });
@@ -62,12 +62,12 @@ export const map = style({
 });
 
 export const land = style({
+  outline: 'none',
   fill: vars.color.backgroundDeep,
   fillOpacity: 0.55,
   stroke: vars.color.border,
   strokeWidth: 0.5,
   strokeLinejoin: 'round',
-  outline: 'none',
   transition: 'fill-opacity .18s ease, fill .18s ease',
 });
 export const set = style({});
@@ -91,7 +91,7 @@ export const open = style({
 
 // a pinned country settles in: it inks from nothing under a gold edge
 const landIn = keyframes({
-  '0%': { fillOpacity: 0, strokeWidth: 2, stroke: vars.color.secondary },
+  '0%': { fillOpacity: 0, stroke: vars.color.secondary, strokeWidth: 2 },
   '55%': { fillOpacity: 1 },
   '100%': { stroke: vars.color.border },
 });

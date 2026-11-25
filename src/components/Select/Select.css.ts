@@ -8,6 +8,8 @@ import {
   fillHover,
   focusRing,
   hover,
+  icon,
+  pressed,
   reducedMotion,
 } from '../../styles/global.css';
 import { input } from '../Field/Field.css';
@@ -18,23 +20,23 @@ export const wrap = styleVariants({
   field: {},
   pill: {},
   footer: {
+    color: vars.color.onAccent,
     fontSize: fontSize.body,
     fontWeight: 500,
-    color: vars.color.onAccent,
   },
 });
 
 /* the button: the chosen option, then a caret with room to breathe on the right */
 const triggerBase = style({
   display: 'flex',
+  gap: space.sp2,
   alignItems: 'center',
   justifyContent: 'space-between',
-  gap: space.sp2,
   fontFamily: vars.font.sans,
   textAlign: 'left',
   cursor: 'pointer',
   ':focus-visible': focusRing,
-  ':disabled': { cursor: 'not-allowed', opacity: 0.6 },
+  ':disabled': { opacity: 0.6, cursor: 'not-allowed' },
 });
 
 export const trigger = styleVariants({
@@ -45,10 +47,10 @@ export const trigger = styleVariants({
       minHeight: 32,
       padding: `0 ${space.sp3}`,
       border: `1px solid ${vars.color.border}`,
-      borderRadius: 8,
+      borderRadius: vars.radius.sm,
       background: vars.color.background,
-      fontSize: fontSize.body,
       color: vars.color.text,
+      fontSize: fontSize.body,
     },
   ],
   // a form field, like the text inputs beside it
@@ -60,10 +62,10 @@ export const trigger = styleVariants({
       minHeight: 40,
       padding: `0 ${space.sp4} 0 ${space.sp4}`,
       border: 0,
-      borderRadius: 999,
+      borderRadius: vars.radius.pill,
       background: fill,
-      fontSize: fontSize.body,
       color: vars.color.textSecondary,
+      fontSize: fontSize.body,
       '@media': {
         [hover]: {
           selectors: { '&:hover:not(:disabled)': { background: fillHover } },
@@ -76,15 +78,15 @@ export const trigger = styleVariants({
   footer: [
     triggerBase,
     {
-      height: 40,
       minWidth: 160,
+      height: 40,
       padding: `0 ${space.sp4} 0 ${space.sp4}`,
       border: `1.5px solid ${vars.color.onAccentMuted}`,
-      borderRadius: 8,
+      borderRadius: vars.radius.sm,
       background: vars.color.primary,
+      color: vars.color.onAccent,
       fontSize: fontSize.body,
       fontWeight: 500,
-      color: vars.color.onAccent,
       ':focus-visible': {
         outline: `2px solid ${vars.color.secondaryBright}`,
         outlineOffset: 2,
@@ -116,21 +118,20 @@ export const caret = style({
 
 /* the list: a card like the account menu's, in the top layer (a popover) so no dialog or scroll box clips it;
    Select places it under the button, or over it where there's no room below */
-const listIn = keyframes({ from: { opacity: 0, transform: 'scale(.97)' } });
+const listIn = keyframes({ from: { opacity: 0, ...pressed } });
 
 export const list = style({
   position: 'fixed',
   inset: 'auto',
-  margin: 0,
   maxHeight: 320,
   overflowY: 'auto',
   padding: space.sp1,
-  listStyle: 'none',
+  border: `1px solid ${vars.color.border}`,
+  borderRadius: vars.radius.md,
+  boxShadow: `0 8px 24px rgba(${vars.shadow.ink}, .12)`,
   background: vars.color.surface,
   color: vars.color.text,
-  border: `1px solid ${vars.color.border}`,
-  borderRadius: 12,
-  boxShadow: '0 8px 24px rgba(0, 0, 0, .12)',
+  listStyle: 'none',
   animation: `${listIn} .15s ${easeOut}`,
   ':focus-visible': { outline: 'none' }, // the active option shows where focus is
   '@media': { [reducedMotion]: { animation: 'none' } },
@@ -138,17 +139,17 @@ export const list = style({
 
 export const option = style({
   display: 'flex',
+  gap: space.sp4,
   alignItems: 'center',
   justifyContent: 'space-between',
-  gap: space.sp4,
   minHeight: 40,
   padding: `0 ${space.sp3}`,
-  borderRadius: 8,
+  borderRadius: vars.radius.sm,
+  color: vars.color.textSecondary,
   fontFamily: vars.font.sans,
   fontSize: fontSize.body,
   fontWeight: 500,
   whiteSpace: 'nowrap',
-  color: vars.color.textSecondary,
   cursor: 'pointer',
   selectors: {
     '&[aria-selected="true"]': { color: vars.color.text },
@@ -159,4 +160,4 @@ export const option = style({
   },
 });
 
-export const check = style({ flex: 'none', width: 16, height: 16 });
+export const check = style(icon);

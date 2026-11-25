@@ -54,8 +54,8 @@ export const card = style({
     zIndex: -1,
     borderRadius: vars.radius.sm,
     background: `color-mix(in srgb, ${vars.color.secondary} 32%, ${vars.color.background})`,
-    rotate: '4.5deg',
     translate: '8px 4px',
+    rotate: '4.5deg',
   },
   '@media': {
     [phone]: { rotate: '-1deg' },
@@ -64,7 +64,7 @@ export const card = style({
 });
 
 globalStyle(`${card}::before`, {
-  '@media': { [phone]: { rotate: '3deg', translate: '4px 2px' } },
+  '@media': { [phone]: { translate: '4px 2px', rotate: '3deg' } },
 });
 
 export const canvas = style({
@@ -78,9 +78,9 @@ export const canvas = style({
 
 export const foot = style({
   margin: `${space.sp4} 0 0`,
-  textAlign: 'center',
-  fontSize: fontSize.meta,
   color: vars.color.textMuted,
+  fontSize: fontSize.meta,
+  textAlign: 'center',
 });
 
 export const send = style({ marginTop: space.sp6, paddingTop: space.sp5 });

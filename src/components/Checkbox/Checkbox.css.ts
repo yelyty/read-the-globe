@@ -2,7 +2,7 @@ import { globalStyle, style } from '@vanilla-extract/css';
 
 import { vars } from '../../styles/theme.css';
 import {
-  focusGlow,
+  fieldFocus,
   forcedColors,
   hover,
   reducedMotion,
@@ -20,25 +20,20 @@ export const checkbox = style({
 
 export const box = style({
   gridArea: '1 / 1',
-  appearance: 'none',
   width: 20,
   height: 20,
-  margin: 0,
-  background: vars.color.background,
   border: `1.5px solid ${vars.color.fieldLine}`,
   borderRadius: 6,
-  cursor: 'pointer',
+  background: vars.color.background,
   transition: 'background-color .15s, border-color .15s, box-shadow .15s',
+  cursor: 'pointer',
+  appearance: 'none',
   ':checked': {
+    borderColor: vars.color.primary,
     background: vars.color.primary,
-    borderColor: vars.color.primary,
   },
-  ':focus-visible': {
-    borderColor: vars.color.primary,
-    boxShadow: focusGlow,
-    outline: 'none',
-  },
-  ':disabled': { cursor: 'not-allowed', opacity: 0.5 },
+  ':focus-visible': fieldFocus,
+  ':disabled': { opacity: 0.5, cursor: 'not-allowed' },
   '@media': {
     [hover]: {
       selectors: {
@@ -46,8 +41,8 @@ export const box = style({
           borderColor: vars.color.primary,
         },
         '&:checked:not(:disabled):hover': {
-          background: vars.color.primaryHover,
           borderColor: vars.color.primaryHover,
+          background: vars.color.primaryHover,
         },
       },
     },
@@ -63,10 +58,10 @@ export const tick = style({
   width: 14,
   height: 14,
   color: vars.color.onAccent,
-  pointerEvents: 'none',
   opacity: 0,
   scale: 0.6,
   transition: 'opacity .12s, scale .15s',
+  pointerEvents: 'none',
   '@media': {
     [reducedMotion]: { transition: 'none' },
     [forcedColors]: { display: 'none' },

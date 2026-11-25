@@ -6,10 +6,10 @@ import { hatch } from '../../styles/global.css';
 const dot = style({
   display: 'inline-block',
   flex: 'none',
+  alignSelf: 'center',
   width: 9,
   height: 9,
   borderRadius: '50%',
-  alignSelf: 'center',
   verticalAlign: '0.05em',
 });
 

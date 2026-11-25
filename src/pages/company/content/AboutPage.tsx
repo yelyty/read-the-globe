@@ -25,9 +25,9 @@ const AboutPage = () => (
       you the perspective. Keeping both on the map lets you see the difference
       between reading about a place and reading from it.
     </p>
-    <h2>What it isn’t</h2>
+    <h2>Progress you can see on the map</h2>
     <p>
-      There are no streaks to keep and no leaderboard to climb. The map is the
+      Your atlas fills in as you read, at whatever pace you read. The map is the
       only progress bar, and it’s yours. When you want to show someone, you send
       a postcard.
     </p>

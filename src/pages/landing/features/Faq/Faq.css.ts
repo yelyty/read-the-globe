@@ -4,6 +4,7 @@ import {
   band,
   easeOut,
   hover,
+  narrow,
   reducedMotion,
 } from '../../../../styles/global.css';
 import { space, vars } from '../../../../styles/theme.css';
@@ -20,7 +21,7 @@ export const inner = style({
   marginInline: 'auto',
   padding: `${space.sp9} 0`,
   '@media': {
-    'screen and (max-width: 799px)': {
+    [narrow]: {
       gridTemplateColumns: 'minmax(0, 1fr)',
       gap: space.sp6,
       padding: `${space.sp8} 0`,
@@ -31,18 +32,18 @@ export const inner = style({
 export const title = style(sectionTitle);
 export const list = style({ display: 'grid', gap: space.sp2 });
 export const item = style({
+  borderRadius: vars.radius.lg,
   background: vars.color.background,
-  borderRadius: 16,
 });
 
 export const summary = style({
   display: 'flex',
+  gap: space.sp4,
   alignItems: 'center',
   justifyContent: 'space-between',
-  gap: space.sp4,
   minHeight: 56,
   padding: `${space.sp4} ${space.sp5}`,
-  borderRadius: 16,
+  borderRadius: vars.radius.lg,
   fontWeight: 500,
   lineHeight: 1.35,
   listStyle: 'none',

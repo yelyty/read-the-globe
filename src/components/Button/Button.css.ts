@@ -8,6 +8,7 @@ import {
   focusRing,
   forcedColors,
   hover,
+  pressed,
   reducedMotion,
 } from '../../styles/global.css';
 
@@ -18,14 +19,14 @@ export const button = recipe({
       display: 'inline-flex',
       alignItems: 'center',
       border: 0,
-      borderRadius: 999,
+      borderRadius: vars.radius.pill,
       fontFamily: vars.font.sans,
       fontWeight: 500,
       textDecoration: 'none',
-      cursor: 'pointer',
       transition: `scale .16s ${easeOut}, background-color .16s ${easeOut}`,
+      cursor: 'pointer',
       ':focus-visible': focusRing,
-      selectors: { '&:not(:disabled):active': { scale: '.97' } },
+      selectors: { '&:not(:disabled):active': pressed },
       '@media': { [reducedMotion]: { transition: 'none' } },
     },
   ],
@@ -35,7 +36,7 @@ export const button = recipe({
       primary: {
         background: vars.color.primary,
         color: vars.color.onAccent,
-        selectors: { '&[disabled]': { cursor: 'progress', opacity: 0.72 } },
+        selectors: { '&[disabled]': { opacity: 0.72, cursor: 'progress' } },
         '@media': {
           [hover]: {
             selectors: {
@@ -51,7 +52,7 @@ export const button = recipe({
         boxShadow: `inset 0 0 0 1px ${vars.color.border}`,
         background: vars.color.surface,
         color: vars.color.text,
-        selectors: { '&[disabled]': { cursor: 'progress', opacity: 0.72 } },
+        selectors: { '&[disabled]': { opacity: 0.72, cursor: 'progress' } },
         '@media': {
           [hover]: {
             selectors: { '&:hover': { background: vars.color.backgroundDeep } },
@@ -61,9 +62,9 @@ export const button = recipe({
       },
       // an olive ring: a second choice beside the primary, like "Make your own goal"
       secondary: {
+        boxShadow: `inset 0 0 0 1.5px ${vars.color.primary}`,
         background: vars.color.background,
         color: vars.color.oliveInk,
-        boxShadow: `inset 0 0 0 1.5px ${vars.color.primary}`,
         selectors: { '&[disabled]': { opacity: 0.5, cursor: 'not-allowed' } },
         '@media': {
           [hover]: {
@@ -80,8 +81,8 @@ export const button = recipe({
         padding: `${space.sp2} 2px`,
         borderRadius: 0,
         background: 'none',
-        fontSize: fontSize.body,
         color: vars.color.textSecondary,
+        fontSize: fontSize.body,
         whiteSpace: 'nowrap',
         selectors: {
           '&:active': { scale: '1' },
@@ -93,8 +94,8 @@ export const button = recipe({
         },
       },
       quiet: {
-        background: vars.color.background,
         boxShadow: `inset 0 0 0 1.5px ${vars.color.markerAuthor}`,
+        background: vars.color.background,
         color: vars.color.markerAuthor,
         '@media': {
           [hover]: {
@@ -104,8 +105,8 @@ export const button = recipe({
         },
       },
       dangerOutline: {
-        background: vars.color.background,
         boxShadow: `inset 0 0 0 1.5px ${vars.color.markerAuthor}`,
+        background: vars.color.background,
         color: vars.color.markerAuthor,
         '@media': {
           [hover]: {
@@ -137,20 +138,10 @@ export const button = recipe({
           },
         },
       },
-      outlined: {
-        backgroundColor: 'transparent',
-        color: vars.color.text,
-        borderColor: vars.color.primary,
-        selectors: {
-          '&:not(:disabled):hover': {
-            backgroundColor: 'rgba(0, 112, 243, 0.08)',
-          },
-        },
-      },
       text: {
+        paddingInline: space.sp2,
         backgroundColor: 'transparent',
         color: vars.color.primary,
-        paddingInline: space.sp2,
       },
     },
     // an inline link in running text keeps its underline
@@ -159,19 +150,19 @@ export const button = recipe({
     },
     size: {
       sm: {
-        fontSize: fontSize.meta,
         paddingBlock: space.sp2,
         paddingInline: space.sp3,
+        fontSize: fontSize.meta,
       },
       md: {
-        fontSize: fontSize.body,
         paddingBlock: space.sp3,
         paddingInline: space.sp4,
+        fontSize: fontSize.body,
       },
       lg: {
-        fontSize: fontSize.action,
         paddingBlock: space.sp4,
         paddingInline: space.sp5,
+        fontSize: fontSize.action,
       },
     },
   },

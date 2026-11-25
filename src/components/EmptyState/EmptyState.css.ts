@@ -15,23 +15,23 @@ export const emptyState = style({
 
 export const title = style({
   margin: `0 0 ${space.sp2}`,
+  color: vars.color.text,
   fontFamily: vars.font.display,
   fontSize: fontSize.heading,
   fontWeight: 500,
-  color: vars.color.text,
 });
 
 export const text = style({
-  margin: '0 auto',
   maxWidth: '56ch',
+  margin: '0 auto',
   color: vars.color.textSecondary,
 });
 
 export const actions = style({
   display: 'flex',
   flexDirection: 'column',
-  alignItems: 'center',
   gap: space.sp4,
+  alignItems: 'center',
   marginTop: space.sp6,
 });
 
@@ -39,7 +39,7 @@ export const actions = style({
 export const note = style({
   maxWidth: '48ch',
   margin: `${space.sp5} auto 0`,
+  color: vars.color.textMuted,
   fontSize: fontSize.meta,
   lineHeight: 1.6,
-  color: vars.color.textMuted,
 });

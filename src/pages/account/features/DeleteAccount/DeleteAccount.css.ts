@@ -5,13 +5,13 @@ import { space, vars } from '../../../../styles/theme.css';
 export const keepCopy = style({
   display: 'flex',
   flexWrap: 'wrap',
-  alignItems: 'center',
   gap: `${space.sp2} ${space.sp3}`,
+  alignItems: 'center',
   margin: `0 0 ${space.sp4}`,
   padding: `${space.sp3} ${space.sp4}`,
-  background: vars.color.background,
   border: `1px solid ${vars.color.border}`,
   borderRadius: vars.radius.sm,
+  background: vars.color.background,
 });
 
 globalStyle(`${keepCopy} > p:first-child`, {

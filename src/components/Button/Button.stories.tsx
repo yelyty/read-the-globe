@@ -15,7 +15,6 @@ const meta = {
         'primary',
         'neutral',
         'secondary',
-        'outlined',
         'text',
         'link',
         'quiet',
@@ -39,8 +38,6 @@ export const Primary: Story = { args: { variant: 'primary' } };
 export const Neutral: Story = { args: { variant: 'neutral' } };
 
 export const Secondary: Story = { args: { variant: 'secondary' } };
-
-export const Outlined: Story = { args: { variant: 'outlined' } };
 
 export const Text: Story = { args: { variant: 'text' } };
 

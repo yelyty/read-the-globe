@@ -5,11 +5,14 @@ import {
   styleVariants,
 } from '@vanilla-extract/css';
 
-import { band as bandFill } from '../../../../styles/global.css';
+import {
+  band as bandFill,
+  motionOk,
+  narrow,
+} from '../../../../styles/global.css';
 import { space, vars } from '../../../../styles/theme.css';
 import { sectionTitle } from '../../LandingPage.css';
 
-const narrow = 'screen and (max-width: 799px)';
 // the panels stack only where a panel fits under the header with room to spare
 const stacking = 'screen and (min-width: 800px) and (min-height: 640px)';
 
@@ -39,8 +42,8 @@ export const title = style({
 export const sub = style({
   maxWidth: '32em',
   margin: `${space.sp4} auto 0`,
-  textAlign: 'center',
   color: vars.color.textSecondary,
+  textAlign: 'center',
   textWrap: 'pretty',
 });
 
@@ -58,16 +61,16 @@ globalStyle(`${panels}::after`, {
 
 /* each panel pins under the header, 24px lower than the one before, and the next slides over it;
    the one underneath settles back a touch, where the browser can tie that to the scroll */
-const settle = keyframes({ to: { scale: '.94', filter: 'brightness(.92)' } });
+const settle = keyframes({ to: { filter: 'brightness(.92)', scale: '.94' } });
 
 const panelBase = style({
   position: 'relative',
   display: 'flex',
   flexDirection: 'column',
   height: 760,
+  overflow: 'hidden',
   padding: `${space.sp8} ${space.sp8} 0`,
   borderRadius: 32,
-  overflow: 'hidden',
   background: 'var(--pb)',
   color: 'var(--pf)',
   '@media': {
@@ -96,7 +99,7 @@ globalStyle(`${panelBase}:not(:last-child)`, {
       '@supports': {
         '(animation-timeline: view())': {
           '@media': {
-            '(prefers-reduced-motion: no-preference)': {
+            [motionOk]: {
               animation: `${settle} linear both`,
               animationTimeline: 'view()',
               animationRange: 'exit-crossing 0% exit-crossing 60%',
@@ -149,8 +152,8 @@ export const panel = styleVariants({
 export const panelText = style({
   display: 'grid',
   gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
-  alignItems: 'end',
   gap: `${space.sp4} ${space.sp7}`,
+  alignItems: 'end',
   paddingBottom: space.sp7,
   '@media': {
     [narrow]: {
@@ -161,13 +164,13 @@ export const panelText = style({
 });
 
 globalStyle(`${panelText} h3`, {
+  color: 'inherit',
   fontFamily: vars.font.sans,
-  fontWeight: 800,
   fontSize: 'clamp(32px, 3.6vw, 48px)',
+  fontWeight: 800,
   lineHeight: 1.02,
   letterSpacing: '-.025em',
   textWrap: 'balance',
-  color: 'inherit',
 });
 
 globalStyle(`${panelText} p`, {
@@ -180,10 +183,10 @@ export const shot = style({
   position: 'relative',
   flex: '1 1 0',
   minHeight: 0,
-  padding: `${space.sp2} ${space.sp2} 0`,
   overflow: 'hidden',
+  padding: `${space.sp2} ${space.sp2} 0`,
+  borderRadius: `${vars.radius.lg} ${vars.radius.lg} 0 0`,
   background: '#1E1A12',
-  borderRadius: '16px 16px 0 0',
   '@media': { [narrow]: { flexBasis: 400 } },
 });
 
@@ -191,7 +194,7 @@ globalStyle(`${shot} img`, {
   display: 'block',
   width: '100%',
   height: 'auto',
-  borderRadius: '8px 8px 0 0',
+  borderRadius: `${vars.radius.sm} ${vars.radius.sm} 0 0`,
   outline: '1px solid rgba(255, 255, 255, .08)', // a faint edge on the dark frame
   outlineOffset: -1,
 });

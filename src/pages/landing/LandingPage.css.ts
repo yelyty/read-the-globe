@@ -1,7 +1,7 @@
 import { style, globalStyle } from '@vanilla-extract/css';
 
 import { fontSize, space, vars } from '../../styles/theme.css';
-import { band, gutter, reducedMotion } from '../../styles/global.css';
+import { band, headline, reducedMotion } from '../../styles/global.css';
 
 // the mock's illustration colours (hero stickers, feature panels) that the app's theme has no token for
 const illustration = {
@@ -26,6 +26,9 @@ const illustration = {
     '--globe': '#D6A77B',
     '--o-globe': '#794F0F',
     '--stand': '#5A4A2E',
+    // the hero stickers' die-cut edge and the shadow that lifts them off the page
+    '--die-cut': '#FFFFFF',
+    '--die-shadow': 'rgba(74, 56, 24, .22)',
   },
   dark: {
     '--green': '#2E4527',
@@ -42,20 +45,13 @@ const illustration = {
     '--globe': '#8C6A4A',
     '--o-globe': '#E0B88A',
     '--stand': '#A8955F',
+    // a warm paper white, so the edge doesn't glare on the dark page
+    '--die-cut': '#F4ECDA',
+    '--die-shadow': 'rgba(0, 0, 0, .5)',
   },
 };
 
-export const phone = 'screen and (max-width: 639px)';
 export const page = style({
-  minHeight: '100vh',
-  background: vars.color.background,
-  color: vars.color.text,
-  fontFamily: vars.font.serif,
-  fontSize: fontSize.item,
-  lineHeight: 1.55,
-  overflowX: 'clip',
-  caretColor: vars.color.primary,
-  fontVariantNumeric: 'tabular-nums',
   vars: {
     ...illustration.light,
     '--rust': vars.color.markerAuthor,
@@ -69,32 +65,40 @@ export const page = style({
     '--ink3': vars.color.textMuted,
     '--band': band,
   },
+  minHeight: '100vh',
+  overflowX: 'clip',
+  background: vars.color.background,
+  color: vars.color.text,
+  caretColor: vars.color.primary,
+  fontFamily: vars.font.serif,
+  fontSize: fontSize.item,
+  fontVariantNumeric: 'tabular-nums',
+  lineHeight: 1.55,
 });
 globalStyle(`:root[data-theme="dark"] ${page}`, { vars: illustration.dark });
 
 /* :where() keeps these at one class of specificity, so component classes win. */
 globalStyle(`${page} :where(h1, h2, h3)`, {
-  margin: 0,
   fontFamily: vars.font.display,
   fontWeight: 500,
 });
 
-globalStyle(`${page} :where(p)`, { margin: 0 });
-
 globalStyle(`${page} :where(a)`, {
   color: vars.color.text,
+  textDecorationSkipInk: 'auto',
   textUnderlineOffset: 3,
   textUnderlinePosition: 'from-font',
-  textDecorationSkipInk: 'auto',
 });
 
 // no weight at all (:where on both), so any button's own class, its size included, wins over it
 globalStyle(`:where(${page}) :where(button, input, textarea)`, {
-  font: 'inherit',
   color: 'inherit',
+  font: 'inherit',
 });
 
-globalStyle(`${page} ::selection`, { background: 'rgba(74, 106, 64, 0.25)' });
+globalStyle(`${page} ::selection`, {
+  background: `color-mix(in srgb, ${vars.color.primary} 25%, transparent)`,
+});
 
 globalStyle('body:has(dialog[open])', { overflow: 'hidden' });
 
@@ -105,31 +109,18 @@ globalStyle(`html:has(${page})`, {
   '@media': { [reducedMotion]: { scrollBehavior: 'auto' } },
 });
 
-export const headline = {
-  fontFamily: vars.font.sans,
-  fontWeight: 800,
-  lineHeight: 1.02,
-  letterSpacing: '-.03em',
-  textWrap: 'balance',
-} as const;
 export const sectionTitle = {
   ...headline,
   fontSize: 'clamp(34px, 4.6vw, 56px)',
 } as const;
 
-export const wrap = style({
-  maxWidth: 1240,
-  marginInline: 'auto',
-  paddingInline: gutter,
-});
-
 export const skip = style({
   position: 'absolute',
-  left: 16,
   top: -64,
+  left: 16,
   zIndex: 100,
   padding: `${space.sp3} ${space.sp4}`,
-  borderRadius: 8,
+  borderRadius: vars.radius.sm,
   background: vars.color.primary,
   color: vars.color.onAccent,
   fontFamily: vars.font.sans,
