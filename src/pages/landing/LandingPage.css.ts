@@ -26,6 +26,9 @@ const illustration = {
     '--globe': '#D6A77B',
     '--o-globe': '#794F0F',
     '--stand': '#5A4A2E',
+    // the hero stickers' die-cut edge and the shadow that lifts them off the page
+    '--die-cut': '#FFFFFF',
+    '--die-shadow': 'rgba(74, 56, 24, .22)',
   },
   dark: {
     '--green': '#2E4527',
@@ -42,6 +45,9 @@ const illustration = {
     '--globe': '#8C6A4A',
     '--o-globe': '#E0B88A',
     '--stand': '#A8955F',
+    // a warm paper white, so the edge doesn't glare on the dark page
+    '--die-cut': '#F4ECDA',
+    '--die-shadow': 'rgba(0, 0, 0, .5)',
   },
 };
 

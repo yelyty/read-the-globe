@@ -79,6 +79,22 @@ const stkIn = keyframes({
 
 const stkDrift = keyframes({ to: { translate: '0 -8px' } });
 
+// the die-cut edge: sharp copies of the drawing pushed out in four directions, so the white follows its
+// real outline, then one soft shadow under it all to lift the sticker off the page. Each drop-shadow copies
+// the result of the one before, so four sides already fill the corners. The edge grows with the sticker
+const edge = 'max(2px, calc(var(--s) * .035))';
+
+const dieCut = [
+  `0 calc(-1 * ${edge})`,
+  `${edge} 0`,
+  `0 ${edge}`,
+  `calc(-1 * ${edge}) 0`,
+]
+  .map((offset) => `drop-shadow(${offset} 0 var(--die-cut))`)
+  .join(' ');
+
+const lift = 'drop-shadow(0 2px 3px var(--die-shadow))';
+
 export const sticker = style({
   position: 'absolute',
   top: 'calc(var(--y) - var(--s) / 2)',
@@ -86,6 +102,7 @@ export const sticker = style({
   width: 'var(--s)',
   height: 'var(--s)',
   overflow: 'visible',
+  filter: `${dieCut} ${lift}`,
   rotate: 'var(--r)',
   pointerEvents: 'none',
   '@media': {
