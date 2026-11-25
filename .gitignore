@@ -33,3 +33,6 @@ storybook-static
 
 # test coverage reports
 coverage
+
+# local agent context, kept out of the repo
+.agents/
