@@ -83,7 +83,8 @@ globalStyle(`${page} :where(h1, h2, h3)`, {
   fontWeight: 500,
 });
 
-globalStyle(`${page} :where(a)`, {
+// no weight at all, like the buttons below: a tie with a link's own class (the footer's, on the green) went to whichever sheet loaded last
+globalStyle(`:where(${page}) :where(a)`, {
   color: vars.color.text,
   textDecorationSkipInk: 'auto',
   textUnderlineOffset: 3,

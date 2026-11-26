@@ -95,8 +95,8 @@ const ContactPage = () => {
     >
       <h1>Write to us</h1>
       <p className={styles.lede}>
-        A question, a bug, a book we should suggest? Send it here, or email{' '}
-        <a href="mailto:hello@readtheglobe.app">hello@readtheglobe.app</a>.
+        A question, a bug, a book we should suggest? Send it with the form
+        below, or open an issue on GitHub.
       </p>
       {sent ? (
         <p

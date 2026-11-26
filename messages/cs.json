@@ -357,7 +357,7 @@
   "contact_send": "Odeslat zprávu",
   "contact_email_invalid": "Zadej platnou e-mailovou adresu, ať ti můžeme odpovědět.",
   "contact_message_missing": "Nejdřív napiš pár slov.",
-  "contact_failed": "Zprávu se nepodařilo odeslat. Zkus to znovu, nebo nám napiš e-mail.",
+  "contact_failed": "Zprávu se nepodařilo odeslat. Zkus to za chvíli znovu, nebo založ issue na GitHubu.",
   "contact_sent": "Díky, zpráva je na cestě. Obvykle odpovídáme do několika dnů.",
   "field_show": "Zobrazit",
   "field_required": "Povinné",

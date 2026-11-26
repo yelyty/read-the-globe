@@ -339,7 +339,7 @@
   "contact_send": "Send message",
   "contact_email_invalid": "Enter a valid email address, so we can write back.",
   "contact_message_missing": "Write a few words first.",
-  "contact_failed": "Your message couldn’t be sent. Try again, or email us.",
+  "contact_failed": "Your message couldn’t be sent. Try again in a moment, or open an issue on GitHub.",
   "contact_sent": "Thanks, your message is on its way. We usually reply within a few days.",
   "field_show": "Show",
   "field_required": "Required",
